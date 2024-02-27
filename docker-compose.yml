@@ -13,7 +13,7 @@ services:
       - "5432:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
-      interval: 10m
+      interval: 10s
       timeout: 5s
       retries: 3
 
@@ -27,7 +27,7 @@ services:
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:8055/server/health || exit 1
       start_period: 15s
-      interval: 10m
+      interval: 10s
       timeout: 5s
       retries: 3
     depends_on:
