@@ -15,6 +15,9 @@ jobs:
       - name: Set up Git
         run: git config --global user.email "actions@github.com" && git config --global user.name "GitHub Actions"
 
+      - name: Set outputs
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       
       - name: Build Docker images
         run: bash .github/scripts/releases.sh
@@ -28,7 +31,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.event.head_commit.timestamp }}
+          tag_name: ${{ steps.vars.outputs.sha_short }}
           release_name: Release ${{ github.sha }}
           body: ${{ github.event.head_commit.message }}
           draft: false
