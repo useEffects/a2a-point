@@ -1,7 +1,7 @@
 #!/bin/bash
 
-APPS_DIR="../../apps"
-RELEASES_DIR="../releases/tarballs"
+APPS_DIR="./apps"
+RELEASES_DIR=".github/releases/tarballs"
 
 mkdir -p "$RELEASES_DIR"
 
