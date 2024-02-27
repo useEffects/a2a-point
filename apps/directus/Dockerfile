@@ -10,5 +10,5 @@ COPY . .
 
 EXPOSE 8055
 
-CMD ["npm", "run", "start"]
+CMD ["sh", "-c", "npx directus bootstrap && npm run start"]
 
