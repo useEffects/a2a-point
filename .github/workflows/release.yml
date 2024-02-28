@@ -17,10 +17,6 @@ jobs:
       - name: Set up Git
         run: git config --global user.email "actions@github.com" && git config --global user.name "GitHub Actions"
 
-      - name: Set outputs
-        id: vars
-        run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
-      
       - name: Build Docker images
         run: bash .github/scripts/releases.sh
 
@@ -33,8 +29,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.vars.outputs.tag }}
-          release_name: Release ${{ github.sha }}
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
           body: ${{ github.event.head_commit.message }}
           draft: false
           prerelease: false
