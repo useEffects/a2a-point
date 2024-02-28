@@ -19,7 +19,7 @@ jobs:
 
       - name: Set outputs
         id: vars
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
       
       - name: Build Docker images
         run: bash .github/scripts/releases.sh
@@ -33,7 +33,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.vars.outputs.sha_short }}
+          tag_name: ${{ steps.vars.outputs.tag }}
           release_name: Release ${{ github.sha }}
           body: ${{ github.event.head_commit.message }}
           draft: false
