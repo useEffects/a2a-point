@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@directus/sdk": "^15.0.1",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-brands-svg-icons": "^6.5.1",
     "@fortawesome/free-regular-svg-icons": "^6.5.1",
@@ -22,16 +23,20 @@
     "clsx": "^2.1.0",
     "lucide-react": "^0.341.0",
     "next": "14.1.0",
+    "next-auth": "^4.24.6",
     "next-themes": "^0.2.1",
     "react": "^18",
     "react-dom": "^18",
+    "sonner": "^1.4.3",
     "tailwind-merge": "^2.2.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "valid-url": "^1.0.9"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/valid-url": "^1.0.7",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
