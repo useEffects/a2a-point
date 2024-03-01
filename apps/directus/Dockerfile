@@ -8,7 +8,7 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 8055
+EXPOSE 5000
 
 CMD ["sh", "-c", "npx directus bootstrap && npm run start"]
 
