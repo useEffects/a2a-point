@@ -16,6 +16,23 @@ import { useRouter } from 'next/navigation'
 import { toast } from "sonner"
 import * as validUrl from "valid-url"
 import { signIn, useSession } from 'next-auth/react';
+import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
+
+const passwordRegex = new RegExp(
+    "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})"
+);
+
+const DisplayingErrorMessagesSchema = Yup.object().shape({
+
+    name: Yup.string().min(3).required("Please enter your name."),
+    lname: Yup.string().min(3).required("Please enter your last name."),
+    email: Yup.string().email('Invalid email').required('Required'),
+    password: Yup.string().matches(passwordRegex, "Please enter valid password.").required("Please enter your password."),
+    cpassword: Yup.string().oneOf([Yup.ref("password")], "Password do NOT match!").required("Please enter confirm password."),
+    date: Yup.date().required("Please enter your dob"),
+
+});
 
 const items = [
     {
@@ -52,14 +69,37 @@ function SignIn({ setShowLogin }: { setShowLogin: Dispatch<SetStateAction<boolea
         <img src={a2a.src} alt="img" className="mx-auto w-[185px] h-[78px]"></img>
         <p className="text-4xl font-medium">Nice to see you again</p>
         <div className="flex flex-col gap-2">
-            <div className="">
-                <Label htmlFor="email">Work Email </Label>
-                <Input value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} type="email" placeholder="Email or phone number " />
-            </div>
-            <div className="">
-                <Label htmlFor="password">Password</Label>
-                <Input value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} type="password" placeholder="Enter password" />
-            </div>
+            <Formik initialValues={{
+
+                email: '',
+
+                password: '',
+
+            }}
+
+                validationSchema={DisplayingErrorMessagesSchema}
+
+                onSubmit={values => {
+
+                    console.log(values);
+
+                }}>
+                {({ errors, touched }) => (
+
+                    <Form>
+                        <div className="flex flex-col gap-4">
+                            <Label htmlFor="email">Work Email </Label>
+                            <Field type="email" name="email" placeholder="Email or phone number " />
+                            {touched.email && errors.email && <div>{errors.email}</div>}
+                            <Label htmlFor="password">Password</Label>
+                            <Field type="password" name="password" placeholder="Enter password" />
+                            {errors.password && touched.password && <div>{errors.password}</div>}
+                        </div>
+
+                    </Form>
+
+                )}
+            </Formik>
             <p className="text-right text-sm">Forgot Password?</p>
         </div>
         {loading ? <Button disabled className="flex gap-4"> <FontAwesomeIcon icon={faSpinner} className="animate-spin" /> Please Wait </Button> : <Button onClick={(e) => { e.preventDefault(); handleSubmit() }}>Continue</Button>}
@@ -119,36 +159,66 @@ function Register({ setShowLogin }: { setShowLogin: Dispatch<SetStateAction<bool
             <p className="text-muted-foreground">We recommend  using your work email - it keeps work and life separate</p>
         </div>
         <div className="flex flex-col gap-2">
-            <div className="flex gap-4">
-                <div className="w-1/2">
-                    <Label htmlFor="name">First name </Label>
-                    <Input value={form.firstName} onChange={e => setForm({ ...form, firstName: e.target.value })} type="name" placeholder="Enter first name" />
-                </div>
-                <div className="w-1/2">
-                    <Label htmlFor="name">Last name </Label>
-                    <Input value={form.lastName} onChange={e => setForm({ ...form, lastName: e.target.value })} type="name" placeholder="Enter last name" />
-                </div>
-            </div>
-            <div className="flex gap-4">
-                <div className="w-1/2">
-                    <Label htmlFor="email">Email </Label>
-                    <Input value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} type="email" placeholder="Enter email" />
-                </div>
-                <div className="w-1/2">
-                    <Label htmlFor="date">Date of birth(dd/mm/yyyy) </Label>
-                    <Input type="date" placeholder="Enter dob" />
-                </div>
-            </div>
-            <div className="flex gap-4">
-                <div className="w-1/2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} type="password" placeholder="Enter password" />
-                </div>
-                <div className="w-1/2">
-                    <Label htmlFor="password">Confirm password </Label>
-                    <Input value={form.confirmPassword} onChange={e => setForm({ ...form, confirmPassword: e.target.value })} type="password" placeholder="Enter password again" />
-                </div>
-            </div>
+            <Formik initialValues={{
+  
+                name:'',
+                lname:'',
+                email: '',
+                password: '',
+                cpassword:'',
+                date:'',
+            }}
+
+                validationSchema={DisplayingErrorMessagesSchema}
+
+                onSubmit={values => {
+
+                    console.log(values);
+
+                }}>
+                {({ errors, touched }) => (
+
+                    <Form className="flex flex-col  gap-4">
+                        <div className="flex gap-4">
+                            <div className="w-1/2">
+                                <Label htmlFor="name">First name </Label>
+                                <Field type="name" name="name" placeholder="Enter first name" />
+                                {touched.name && errors.name && <div>{errors.name}</div>}
+                            </div>
+                            <div className="w-1/2">
+                                <Label htmlFor="lname">Last name </Label>
+                                <Field type="name" name="lname" placeholder="Enter last name" />
+                                {touched.lname && errors.lname && <div>{errors.lname}</div>}
+                            </div>
+                        </div>
+                        <div className="flex gap-4">
+                            <div className="w-1/2">
+                                <Label htmlFor="email">Email </Label>
+                                <Field type="email" name="email" placeholder="Enter email" />
+                                {touched.email && errors.email && <div>{errors.email}</div>}
+                            </div>
+                            <div className="w-1/2">
+                                <Label htmlFor="date">Date of birth(dd/mm/yyyy) </Label>
+                                <Field type="date" name="date" placeholder="Enter dob" />
+                                {touched.date && errors.date && <div>{errors.date}</div>}
+                            </div>
+                        </div>
+                        <div className="flex gap-4">
+                            <div className="w-1/2">
+                                <Label htmlFor="password">Password</Label>
+                                <Field type="password" name="password" placeholder="Enter password" />
+                                {touched.password && errors.password && <div>{errors.password}</div>}
+                            </div>
+                            <div className="w-1/2">
+                                <Label htmlFor="cpassword">Confirm password </Label>
+                                <Field type="password" name="cpassword" placeholder="Enter password again" />
+                                {touched.cpassword && errors.cpassword && <div>{errors.cpassword}</div>}
+                            </div>
+                        </div>
+                    </Form>
+
+                )}
+            </Formik>
         </div>
         <div className="flex flex-col gap-4">
             <div className="flex items-center space-x-2">
