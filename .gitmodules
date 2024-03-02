@@ -1,3 +1,0 @@
-[submodule "apps/keycloak/keycloak-theme"]
-	path = apps/keycloak/keycloak-theme
-	url = https://github.com/useEffects/keycloak-theme-shadcn.git

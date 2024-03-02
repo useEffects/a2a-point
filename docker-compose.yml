@@ -7,14 +7,47 @@ services:
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
-      POSTGRES_DB: directus
+      POSTGRES_DB1: directus
+      POSTGRES_DB2: keycloak
     ports:
       - "5432:5432"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB1 && pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB2" ]
       interval: 10s
       timeout: 5s
       retries: 3
+    volumes:
+      - ./scripts/docker-init-scripts/create-databases.sh:/docker-entrypoint-initdb.d/create-databases.sh
+
+  keycloak:
+    build:
+      context: ./apps/keycloak
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin@a2apoint.com
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB_USERNAME: admin
+      KC_DB_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres
+      KC_HOSTNAME_URL: http://localhost:8080
+      KC_PROXY: edge
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_DEBUG: true
+
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8080/auth/realms/master || exit 1
+      start_period: 15s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   directus:
     build:
@@ -30,6 +63,8 @@ services:
       retries: 3
     depends_on:
       postgres:
+        condition: service_healthy
+      keycloak:
         condition: service_healthy
 
   client:
