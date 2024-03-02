@@ -21,7 +21,7 @@ services:
       context: ./apps/directus
       dockerfile: Dockerfile
     ports:
-      - "8055:8055"
+      - "5000:5000"
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:8055/server/health || exit 1
       start_period: 15s
