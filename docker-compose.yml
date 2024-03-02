@@ -21,8 +21,8 @@ services:
 
   keycloak:
     build:
-      context: ./apps/keycloak
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/keycloak/Dockerfile
     ports:
       - "8080:8080"
     environment:
