@@ -1,3 +1,3 @@
 const { tailwindConfig } = require("shadcn/src/tailwind")
-
-module.exports = tailwindConfig
+/** @type {import('tailwindcss').Config} */
+export default tailwindConfig

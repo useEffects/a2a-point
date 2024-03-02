@@ -19,7 +19,7 @@ FROM alpine:latest AS theme-jar-builder
 WORKDIR /opt/keycloak
 COPY --from=theme-builder /app/apps/keycloak/dist_keycloak/target/keycloakify-starter-keycloak-theme-6.1.1.jar /opt/keycloak/providers/keycloakify-starter-keycloak-theme-6.1.1.jar
 COPY --from=theme-builder /app/apps/keycloak/dist_keycloak/src/main/resources/theme/account-v1 /opt/keycloak/themes/account-v1
-COPY --from=theme-builder /app/apps/keycloak/dist_keycloak/src/main/resources/theme/keycloakify-starter /opt/keycloak/themes/keycloakify-starter
+COPY --from=theme-builder /app/apps/keycloak/dist_keycloak/src/main/resources/theme/keycloakify-starter /opt/keycloak/themes/custom-theme
 COPY --from=theme-builder /app/apps/keycloak/dist_keycloak/src/main/resources/theme/keycloakify-starter_retrocompat /opt/keycloak/themes/keycloakify-starter_retrocompat
 
 # Build the keycloak server
