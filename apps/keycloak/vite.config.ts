@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react'
 // to a local version of the keycloakify package. This is not needed for normal usage.
 import commonjs from "vite-plugin-commonjs";
 import { keycloakify } from "keycloakify/vite-plugin";
+import path from 'path';
 
 
 // https://vitejs.dev/config/
@@ -53,5 +54,10 @@ export default defineConfig({
   //base: "/keycloakify-starter/"
   build: {
     sourcemap: true
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
   }
 })
