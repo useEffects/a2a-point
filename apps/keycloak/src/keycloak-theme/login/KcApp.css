@@ -1,16 +1,12 @@
-
-.my-color {
-	color: red;
+.tw-container {
+    width: 100% !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+    padding-right: 2rem/* 32px */ !important;
+    padding-left: 2rem/* 32px */ !important;
 }
-
-.my-font {
-	font-family: 'Work Sans';
-}
-
-.my-root-class {
-	background: white;
-}
-
-.my-root-class body {
-	background: url(./assets/background.svg) no-repeat center center fixed;
+@media (min-width: 1400px) {
+    .tw-container {
+        max-width: 1400px !important;
+    }
 }
