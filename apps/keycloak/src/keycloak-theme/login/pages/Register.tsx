@@ -4,6 +4,9 @@ import type { PageProps } from "keycloakify/login/pages/PageProps";
 import { useGetClassName } from "keycloakify/login/lib/useGetClassName";
 import type { KcContext } from "../kcContext";
 import type { I18n } from "../i18n";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function Register(props: PageProps<Extract<KcContext, { pageId: "register.ftl" }>, I18n>) {
     const { kcContext, i18n, doUseDefaultCss, Template, classes } = props;
@@ -19,7 +22,7 @@ export default function Register(props: PageProps<Extract<KcContext, { pageId: "
 
     return (
         <Template {...{ kcContext, i18n, doUseDefaultCss, classes }} headerNode={msg("registerTitle")}>
-            <form id="kc-register-form" className={getClassName("kcFormClass")} action={url.registrationAction} method="post">
+            <form id="kc-register-form" className="flex flex-col gap-2" action={url.registrationAction} method="post">
                 <div
                     className={clsx(
                         getClassName("kcFormGroupClass"),
@@ -27,12 +30,12 @@ export default function Register(props: PageProps<Extract<KcContext, { pageId: "
                     )}
                 >
                     <div className={getClassName("kcLabelWrapperClass")}>
-                        <label htmlFor="firstName" className={getClassName("kcLabelClass")}>
+                        <Label htmlFor="firstName" className={getClassName("kcLabelClass")}>
                             {msg("firstName")}
-                        </label>
+                        </Label>
                     </div>
                     <div className={getClassName("kcInputWrapperClass")}>
-                        <input
+                        <Input
                             type="text"
                             id="firstName"
                             className={getClassName("kcInputClass")}
@@ -49,12 +52,12 @@ export default function Register(props: PageProps<Extract<KcContext, { pageId: "
                     )}
                 >
                     <div className={getClassName("kcLabelWrapperClass")}>
-                        <label htmlFor="lastName" className={getClassName("kcLabelClass")}>
+                        <Label htmlFor="lastName" className={getClassName("kcLabelClass")}>
                             {msg("lastName")}
-                        </label>
+                        </Label>
                     </div>
                     <div className={getClassName("kcInputWrapperClass")}>
-                        <input
+                        <Input
                             type="text"
                             id="lastName"
                             className={getClassName("kcInputClass")}
@@ -63,17 +66,16 @@ export default function Register(props: PageProps<Extract<KcContext, { pageId: "
                         />
                     </div>
                 </div>
-
                 <div
                     className={clsx(getClassName("kcFormGroupClass"), messagesPerField.printIfExists("email", getClassName("kcFormGroupErrorClass")))}
                 >
                     <div className={getClassName("kcLabelWrapperClass")}>
-                        <label htmlFor="email" className={getClassName("kcLabelClass")}>
+                        <Label htmlFor="email" className={getClassName("kcLabelClass")}>
                             {msg("email")}
-                        </label>
+                        </Label>
                     </div>
                     <div className={getClassName("kcInputWrapperClass")}>
-                        <input
+                        <Input
                             type="text"
                             id="email"
                             className={getClassName("kcInputClass")}
@@ -91,12 +93,12 @@ export default function Register(props: PageProps<Extract<KcContext, { pageId: "
                         )}
                     >
                         <div className={getClassName("kcLabelWrapperClass")}>
-                            <label htmlFor="username" className={getClassName("kcLabelClass")}>
+                            <Label htmlFor="username" className={getClassName("kcLabelClass")}>
                                 {msg("username")}
-                            </label>
+                            </Label>
                         </div>
                         <div className={getClassName("kcInputWrapperClass")}>
-                            <input
+                            <Input
                                 type="text"
                                 id="username"
                                 className={getClassName("kcInputClass")}
@@ -116,12 +118,12 @@ export default function Register(props: PageProps<Extract<KcContext, { pageId: "
                             )}
                         >
                             <div className={getClassName("kcLabelWrapperClass")}>
-                                <label htmlFor="password" className={getClassName("kcLabelClass")}>
+                                <Label htmlFor="password" className={getClassName("kcLabelClass")}>
                                     {msg("password")}
-                                </label>
+                                </Label>
                             </div>
                             <div className={getClassName("kcInputWrapperClass")}>
-                                <input
+                                <Input
                                     type="password"
                                     id="password"
                                     className={getClassName("kcInputClass")}
@@ -138,12 +140,12 @@ export default function Register(props: PageProps<Extract<KcContext, { pageId: "
                             )}
                         >
                             <div className={getClassName("kcLabelWrapperClass")}>
-                                <label htmlFor="password-confirm" className={getClassName("kcLabelClass")}>
+                                <Label htmlFor="password-confirm" className={getClassName("kcLabelClass")}>
                                     {msg("passwordConfirm")}
-                                </label>
+                                </Label>
                             </div>
                             <div className={getClassName("kcInputWrapperClass")}>
-                                <input type="password" id="password-confirm" className={getClassName("kcInputClass")} name="password-confirm" />
+                                <Input type="password" id="password-confirm" className={getClassName("kcInputClass")} name="password-confirm" />
                             </div>
                         </div>
                     </>
@@ -155,26 +157,22 @@ export default function Register(props: PageProps<Extract<KcContext, { pageId: "
                         </div>
                     </div>
                 )}
-                <div className={getClassName("kcFormGroupClass")}>
+                <div className="flex flex-col gap-2">
                     <div id="kc-form-options" className={getClassName("kcFormOptionsClass")}>
                         <div className={getClassName("kcFormOptionsWrapperClass")}>
                             <span>
-                                <a href={url.loginUrl}>{msg("backToLogin")}</a>
+                                <a className="text-muted-foreground hover:text-foreground" href={url.loginUrl}>{msg("backToLogin")}</a>
                             </span>
                         </div>
                     </div>
-
                     <div id="kc-form-buttons" className={getClassName("kcFormButtonsClass")}>
-                        <input
-                            className={clsx(
-                                getClassName("kcButtonClass"),
-                                getClassName("kcButtonPrimaryClass"),
-                                getClassName("kcButtonBlockClass"),
-                                getClassName("kcButtonLargeClass")
-                            )}
+                        <Button
+                            className="w-full"
                             type="submit"
                             value={msgStr("doRegister")}
-                        />
+                        >
+                            Register
+                        </Button>
                     </div>
                 </div>
             </form>

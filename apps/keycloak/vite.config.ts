@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 import commonjs from "vite-plugin-commonjs";
 import { keycloakify } from "keycloakify/vite-plugin";
 import path from 'path';
-import tailwindcss from "tailwindcss";
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -58,11 +58,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-    },
-  },
-  css: {
-    postcss: {
-      plugins: [tailwindcss()],
     },
   },
 })
