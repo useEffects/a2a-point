@@ -4,9 +4,9 @@ import type { PageProps } from "keycloakify/login/pages/PageProps";
 import { useGetClassName } from "keycloakify/login/lib/useGetClassName";
 import type { KcContext } from "../kcContext";
 import type { I18n } from "../i18n";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@radix-ui/react-label";
+import { Input } from "@/components/ui/input";
 
 export default function Register(props: PageProps<Extract<KcContext, { pageId: "register.ftl" }>, I18n>) {
     const { kcContext, i18n, doUseDefaultCss, Template, classes } = props;
@@ -21,8 +21,8 @@ export default function Register(props: PageProps<Extract<KcContext, { pageId: "
     const { msg, msgStr } = i18n;
 
     return (
-        <Template {...{ kcContext, i18n, doUseDefaultCss, classes }} headerNode={msg("registerTitle")}>
-            <form id="kc-register-form" className="flex flex-col gap-2" action={url.registrationAction} method="post">
+        <Template {...{ kcContext, i18n, doUseDefaultCss, classes }} headerNode={msg("doRegister")}>
+            <form id="kc-register-form" className={getClassName("kcFormClass")} action={url.registrationAction} method="post">
                 <div
                     className={clsx(
                         getClassName("kcFormGroupClass"),
@@ -66,6 +66,7 @@ export default function Register(props: PageProps<Extract<KcContext, { pageId: "
                         />
                     </div>
                 </div>
+
                 <div
                     className={clsx(getClassName("kcFormGroupClass"), messagesPerField.printIfExists("email", getClassName("kcFormGroupErrorClass")))}
                 >
@@ -157,22 +158,24 @@ export default function Register(props: PageProps<Extract<KcContext, { pageId: "
                         </div>
                     </div>
                 )}
-                <div className="flex flex-col gap-2">
+                <div className={getClassName("kcFormGroupClass")}>
                     <div id="kc-form-options" className={getClassName("kcFormOptionsClass")}>
                         <div className={getClassName("kcFormOptionsWrapperClass")}>
-                            <span>
-                                <a className="text-muted-foreground hover:text-foreground" href={url.loginUrl}>{msg("backToLogin")}</a>
+                            <span className="tw-text-base">
+                                <a className="tw-text-primary hover:!tw-text-primary active:!tw-text-primary focus:!tw-text-primary hover:!tw-no-underline" href={url.loginUrl}>{msg("backToLogin")}</a>
                             </span>
                         </div>
                     </div>
+
                     <div id="kc-form-buttons" className={getClassName("kcFormButtonsClass")}>
                         <Button
-                            className="w-full"
+                            className={clsx(
+                                getClassName("kcButtonClass"),
+                                getClassName("kcButtonBlockClass"),
+                                getClassName("kcButtonLargeClass")
+                            )}
                             type="submit"
-                            value={msgStr("doRegister")}
-                        >
-                            Register
-                        </Button>
+                        > {msgStr("doRegister")} </Button>
                     </div>
                 </div>
             </form>

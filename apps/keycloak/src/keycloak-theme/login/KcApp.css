@@ -1,12 +1,19 @@
-.login-pf,
-body {
-	@apply !bg-none !bg-background;
-}
-
 html {
 	font-size: 100%;
 }
 
+.login-pf, body {
+	@apply !tw-bg-none !tw-bg-white
+}
+
+body {
+	@apply !tw-text-base
+}
+
 input {
-	@apply hover:!border-border active:!border-border focus:!border-border;
+	@apply hover:!tw-border-border active:!tw-border-border focus:!tw-border-border
+}
+
+#kc-info {
+	@apply tw-mb-0 tw-pb-0
 }
