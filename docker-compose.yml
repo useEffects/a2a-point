@@ -40,7 +40,7 @@ services:
       KC_HOSTNAME_DEBUG: true
 
     healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost:8080/auth/realms/master || exit 1
+      test: wget --no-verbose --tries=1 --spider http://localhost:8080 || exit 1
       start_period: 15s
       interval: 10s
       timeout: 5s
@@ -51,8 +51,8 @@ services:
 
   directus:
     build:
-      context: ./apps/directus
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/directus/Dockerfile
     ports:
       - "5000:5000"
     healthcheck:
@@ -64,8 +64,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      keycloak:
-        condition: service_healthy
+      # keycloak:
+      #   condition: service_healthy
 
   client:
     build:
