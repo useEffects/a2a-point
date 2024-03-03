@@ -5,8 +5,8 @@ import type { PageProps } from "keycloakify/login/pages/PageProps";
 import { useGetClassName } from "keycloakify/login/lib/useGetClassName";
 import type { KcContext } from "../kcContext";
 import type { I18n } from "../i18n";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 
@@ -55,13 +55,13 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
             displayWide={realm.password && social.providers !== undefined}
             headerNode={msg("doLogIn")}
             infoNode={
-                <div className="flex justify-between mt-4">
-                    <span>
+                <div id="kc-registration">
+                    <span className="tw-text-base">
                         {msg("noAccount")}
+                        <a className="tw-text-primary hover:!tw-text-primary active:!tw-text-primary focus:!tw-text-primary hover:!tw-no-underline" tabIndex={6} href={url.registrationUrl}>
+                            {msg("doRegisterNow")}
+                        </a>
                     </span>
-                    <a className="hover:!text-primary hover:!no-underline" tabIndex={6} href={url.registrationUrl}>
-                        {msg("doRegister")}
-                    </a>
                 </div>
             }
         >
@@ -74,7 +74,7 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
                     )}
                 >
                     {realm.password && (
-                        <form id="kc-form-login" className="flex flex-col gap-2" onSubmit={onSubmit} action={url.loginAction} method="post">
+                        <form id="kc-form-login" onSubmit={onSubmit} action={url.loginAction} method="post">
                             <div className={getClassName("kcFormGroupClass")}>
                                 {!usernameHidden &&
                                     (() => {
@@ -121,21 +121,16 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
                                     autoComplete="off"
                                 />
                             </div>
-                            <div className="flex flex-col gap-2">
+                            <div className={clsx(getClassName("kcFormGroupClass"), getClassName("kcFormSettingClass"), "tw-flex tw-items-center")}>
                                 <div id="kc-form-options">
                                     {realm.rememberMe && !usernameHidden && (
-                                        <div className="flex items-center gap-2">
-                                            <Checkbox
-                                                tabIndex={3}
-                                                id="rememberMe"
-                                                name="rememberMe"
-                                                {...(login.rememberMe === "on"
-                                                    ? {
-                                                        "checked": true
-                                                    }
-                                                    : {})}
-                                            />
-                                            <Label className="translate-y-[2px]" htmlFor="rememberMe">
+                                        <div className="tw-flex tw-items-center tw-gap-2">
+                                            <Checkbox tabIndex={3} id="rememberMe" name="rememberMe" {...(login.rememberMe === "on"
+                                                ? {
+                                                    "checked": true
+                                                }
+                                                : {})} />
+                                            <Label htmlFor="rememberMe" className="tw-my-auto">
                                                 {msg("rememberMe")}
                                             </Label>
                                         </div>
@@ -144,14 +139,14 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
                                 <div className={getClassName("kcFormOptionsWrapperClass")}>
                                     {realm.resetPasswordAllowed && (
                                         <span>
-                                            <a className="!text-muted-foreground hover:!text-foreground hover:!no-underline" tabIndex={5} href={url.loginResetCredentialsUrl}>
+                                            <a tabIndex={5} href={url.loginResetCredentialsUrl}>
                                                 {msg("doForgotPassword")}
                                             </a>
                                         </span>
                                     )}
                                 </div>
                             </div>
-                            <div className="flex flex-col gap-2">
+                            <div id="kc-form-buttons" className={getClassName("kcFormGroupClass")}>
                                 <Input
                                     type="hidden"
                                     id="id-hidden-input"
@@ -162,41 +157,44 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
                                         }
                                         : {})}
                                 />
-                                <Button disabled={isLoginButtonDisabled} type="submit" tabIndex={4}> {msgStr("doLogIn")} </Button>
+                                <Button
+                                    tabIndex={4}
+                                    className={clsx(
+                                        getClassName("kcButtonClass"),
+                                        getClassName("kcButtonPrimaryClass"),
+                                        getClassName("kcButtonBlockClass"),
+                                        getClassName("kcButtonLargeClass")
+                                    )}
+                                    name="login"
+                                    id="kc-login"
+                                    type="submit"
+                                    value={msgStr("doLogIn")}
+                                    disabled={isLoginButtonDisabled}
+                                > {msgStr("doContinue")} </Button>
                             </div>
                         </form>
                     )}
                 </div>
-                <hr className="bg-foreground my-4" />
                 {realm.password && social.providers !== undefined && (
-                    <>
-                        {/*<div
-                            id="kc-social-providers"
-                            className={clsx(getClassName("kcFormSocialAccountContentClass"), getClassName("kcFormSocialAccountClass"))}
+                    <div
+                        id="kc-social-providers"
+                        className={clsx(getClassName("kcFormSocialAccountContentClass"), getClassName("kcFormSocialAccountClass"))}
+                    >
+                        <ul
+                            className={clsx(
+                                getClassName("kcFormSocialAccountListClass"),
+                                social.providers.length > 4 && getClassName("kcFormSocialAccountDoubleListClass")
+                            )}
                         >
-                            <ul
-                                className={clsx(
-                                    getClassName("kcFormSocialAccountListClass"),
-                                    social.providers.length > 4 && getClassName("kcFormSocialAccountDoubleListClass")
-                                )}
-                            >
-                                {social.providers.map(p => (
-                                    <li key={p.providerId} className={getClassName("kcFormSocialAccountListLinkClass")}>
-                                        <a href={p.loginUrl} id={`zocial-${p.alias}`} className={clsx("zocial", p.providerId)}>
-                                            <span>{p.displayName}</span>
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div> */}
-                        <div className="w-full">
-                            {social.providers.map(p => <a className="w-full" key={p.providerId} href={p.loginUrl}>
-                                <Button className="!w-full my-1" tabIndex={7}>
-                                    {p.displayName}
+                            {social.providers.map(p => (
+                                <Button key={p.providerId} className={clsx(getClassName("kcFormSocialAccountListLinkClass"), "tw-block tw-w-full")}>
+                                    <a href={p.loginUrl} id={`zocial-${p.alias}`} className={clsx("zocial", p.providerId, "!tw-text-primary-foreground !tw-bg-transparent hover:!tw-bg-transparent focus:!tw-bg-transparent active:!tw-bg-transparent hover:!tw-text-primary-foreground active:!tw-text-primary-foreground focus:!tw-text-primary-foreground hover:!tw-no-underline")}>
+                                        <span>{p.displayName}</span>
+                                    </a>
                                 </Button>
-                            </a>)}
-                        </div>
-                    </>
+                            ))}
+                        </ul>
+                    </div>
                 )}
             </div>
         </Template>
