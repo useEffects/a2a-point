@@ -35,7 +35,7 @@ export const { getKcContext } = createGetKcContext<KcContextExtension>({
 			//NOTE: You will either use register.ftl (legacy) or register-user-profile.ftl, not both
 			pageId: "register-user-profile.ftl",
 			locale: {
-				currentLanguageTag: "en"
+				currentLanguageTag: "fr"
 			},
 			profile: {
 				attributes: [
@@ -97,7 +97,7 @@ export const { getKcContext } = createGetKcContext<KcContextExtension>({
 
 export const { kcContext } = getKcContext({
 	// Uncomment to test the login page for development.
-	mockPageId: "login.ftl",
+	// mockPageId: "register.ftl",
 });
 
 

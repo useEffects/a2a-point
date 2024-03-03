@@ -1,12 +1,12 @@
-.tw-container {
-    width: 100% !important;
-    margin-right: auto !important;
-    margin-left: auto !important;
-    padding-right: 2rem/* 32px */ !important;
-    padding-left: 2rem/* 32px */ !important;
+.login-pf,
+body {
+	@apply !bg-none !bg-background;
 }
-@media (min-width: 1400px) {
-    .tw-container {
-        max-width: 1400px !important;
-    }
+
+html {
+	font-size: 100%;
+}
+
+input {
+	@apply hover:!border-border active:!border-border focus:!border-border;
 }

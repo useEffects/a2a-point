@@ -1,0 +1,7 @@
+{
+  "name": "assets",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "author": "useEffects",
+  "license": "MIT"
+}
