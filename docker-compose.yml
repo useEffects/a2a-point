@@ -38,13 +38,14 @@ services:
       KC_HOSTNAME_STRICT_HTTPS: false
       KC_HTTP_ENABLED: true
       KC_HOSTNAME_DEBUG: true
+      KC_HEALTH_ENABLED: true
 
     healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost:8080 || exit 1
+      test: ["CMD-SHELL", 'exec 3<>/dev/tcp/localhost/8080 && echo -e "GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n" >&3 || exit 1']
       start_period: 15s
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 5
     depends_on:
       postgres:
         condition: service_healthy
@@ -60,12 +61,12 @@ services:
       start_period: 15s
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 5
     depends_on:
       postgres:
         condition: service_healthy
-      # keycloak:
-      #   condition: service_healthy
+      keycloak:
+        condition: service_healthy
 
   client:
     build:
