@@ -32,14 +32,13 @@ services:
       KC_DB_PASSWORD: admin
       KC_DB: postgres
       KC_DB_URL_HOST: postgres
-      KC_HOSTNAME_URL: http://localhost:8080
+      KC_HOSTNAME_URL: https://auth.a2apoint.com
       KC_PROXY: edge
       KC_HOSTNAME_STRICT: false
       KC_HOSTNAME_STRICT_HTTPS: false
       KC_HTTP_ENABLED: true
       KC_HOSTNAME_DEBUG: true
       KC_HEALTH_ENABLED: true
-
     healthcheck:
       test: ["CMD-SHELL", 'exec 3<>/dev/tcp/localhost/8080 && echo -e "GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n" >&3 || exit 1']
       start_period: 15s
@@ -57,44 +56,92 @@ services:
     ports:
       - "5000:5000"
     healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost:8055/server/health || exit 1
+      test: wget --no-verbose --tries=1 --spider http://0.0.0.0:5000/server/health || exit 1
       start_period: 15s
       interval: 10s
       timeout: 5s
       retries: 5
+    environment:
+      ADMIN_EMAIL: admin@a2apoint.com
+      ADMIN_PASSWORD: admin
+      HOST: 0.0.0.0
+      PORT: 5000
+      PUBLIC_URL: https://dashboard.a2apoint.com
+      DB_CLIENT: pg
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: directus
+      DB_USER: admin
+      DB_PASSWORD: admin
+      DB_SSL: false
+      RATE_LIMITER_ENABLED: false
+      RATE_LIMITER_STORE: memory
+      RATE_LIMITER_POINTS: 25
+      RATE_LIMITER_DURATION: 1
+      CACHE_ENABLED: false
+      CACHE_STORE: memory
+      ASSETS_CACHE_TTL: "30d"
+      CORS_ENABLED: true
+      CORS_ORIGIN: true
+      CORS_METHODS: "GET,POST,PATCH,DELETE"
+      CORS_ALLOWED_HEADERS: "Content-Type,Authorization"
+      CORS_EXPOSED_HEADERS: "Content-Range"
+      CORS_CREDENTIALS: true
+      CORS_MAX_AGE: 18000
+      KEY: "576acf6f-e118-4b27-98c9-83136b17b282"
+      SECRET: "1cgSyCqmstShcd3hZxK57KJrlKpr8KTT"
+      ACCESS_TOKEN_TTL: 15m
+      REFRESH_TOKEN_TTL: 7d"
+      REFRESH_TOKEN_COOKIE_SECURE: false
+      REFRESH_TOKEN_COOKIE_SAME_SITE: None
+      REFRESH_TOKEN_COOKIE_DOMAIN: dashboard.a2apoint.com
+      AUTH_PROVIDERS: "keycloak"
+      AUTH_KEYCLOAK_DRIVER: openid
+      AUTH_KEYCLOAK_CLIENT_ID: directus
+      AUTH_KEYCLOAK_CLIENT_SECRET: Kgmbo2gjnggdBVzXgGkWzfW2hnbp3VuH
+      AUTH_KEYCLOAK_ISSUER_URL: "http://keycloak:8080/realms/a2apoint/.well-known/openid-configuration"
+      AUTH_KEYCLOAK_IDENTIFIER_KEY: email
+      AUTH_KEYCLOAK_ALLOW_PUBLIC_REGISTRATION: true
+
     depends_on:
       postgres:
         condition: service_healthy
       keycloak:
         condition: service_healthy
 
-  client:
-    build:
-      context: ./apps/client
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
-      start_period: 15s
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    depends_on:
-      directus:
-        condition: service_healthy
+  # client:
+  #   build:
+  #     context: ./apps/client
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   healthcheck:
+  #     test: wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
+  #     start_period: 15s
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 3
+  #   depends_on:
+  #     directus:
+  #       condition: service_healthy
 
-  nginx:
+  caddy:
     build:
-      context: ./apps/nginx
+      context: ./apps/caddy
       dockerfile: Dockerfile
+    environment:
+      ACME_AGREE: true
     depends_on:
       directus:
         condition: service_healthy
-      client:
-        condition: service_healthy
+      # client:
+      #   condition: service_healthy
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - ./apps/caddy/caddy_data:/data
+      - ./apps/caddy/caddy_config:/config
     
 
 

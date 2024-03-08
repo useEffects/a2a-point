@@ -38,3 +38,5 @@ yarn-error.log*
 *.pem
 
 .github/releases/tarballs
+caddy_config
+caddy_data
