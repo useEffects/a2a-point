@@ -11,6 +11,9 @@ WORKDIR /app
 COPY . .
 WORKDIR /app/apps/directus
 EXPOSE 5000
+RUN  apt-get update \
+  && apt-get install -y wget \
+  && rm -rf /var/lib/apt/lists/*
 
 CMD ["sh", "-c", "npx directus bootstrap && yarn start"]
 
