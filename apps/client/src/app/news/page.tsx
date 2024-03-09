@@ -62,7 +62,7 @@ const data = [
 ]
 
 export default function News() {
-    return <div className="flex flex-col gap-4 m-4">
+    return <div className="container flex flex-col gap-4 m-4">
         <div className="flex justify-between m-4 ">
             <img src={a2a.src} className="w-32 object-contain"></img>
             <div className="flex gap-8 jutsify-evenly">
@@ -78,8 +78,8 @@ export default function News() {
             </div>
         </div>
         <div className="flex flex-col items-center gap-4 m-4">
-            <p className="text-6xl">News and insights</p>
-            <p className="container max-w-xl">Learn about Real Estate, Marketing, and Property Insight, discover latest product updates, partnership announcements, user stories,
+            <p className="text-6xl font-bold">News and insights</p>
+            <p className=" max-w-lg text-center">Learn about Real Estate, Marketing, and Property Insight, discover latest product updates, partnership announcements, user stories,
                 and more.</p>
         </div>
         <div className="flex justify-center m-4">
@@ -91,14 +91,14 @@ export default function News() {
             </div>
 
         </div>
-        <div className="flex w-full justify-center">
-            <div className="w-1/3 object-contain">
-                <img src={home.src} className="w-800 object-cover"></img>
+        <div className="flex w-full h-[400px] justify-center">
+            <div className="w-1/2 h-full ">
+                <img src={home.src} className="h-full object-contain"></img>
             </div>
-            <div className="flex flex-col gap-4 w-1/3 ml-16 h-full">
+            <div className="flex flex-col gap-4 w-1/2 h-full border-solid border-[1px]">
                 <div className="flex gap-8 m-4">
                     <p className="">News</p>
-                    <p className="font-semibold">5 min read</p>
+                    <p className="font-bold">5 min read</p>
                 </div>
                 <div className="flex flex-col gap-4">
                     <p className="text-4xl">There is a property where you can invest</p>
@@ -136,4 +136,5 @@ export default function News() {
 
 
     </div>
+
 }
