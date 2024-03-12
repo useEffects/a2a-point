@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "bootstrap": "directus bootstrap",
     "init": "directus init",
     "start": "directus start",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,8 +13,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "directus": "^10.9.3",
+    "directus": "10.10.1",
     "pg": "^8.11.3",
+    "sharp": "^0.33.2",
     "sqlite3": "^5.1.7"
   }
 }
