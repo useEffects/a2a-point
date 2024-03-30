@@ -32,7 +32,7 @@ const ListingCard = (props: ListingDetailed) => {
 
     const handleClickToChat = async ([currentUserId, postCreatorId]: [string, string]) => {
         const roomId = await getDMRoomId([currentUserId, postCreatorId], authData?.access_token!)
-        router.push({ pathname: "/chat", params: { roomId} })
+        router.navigate(`/chat/${roomId}`)
     }
 
     return <View className="w-full px-4 py-6 flex flex-col gap-3 [&>*]:my-0 border-solid border-[1px] border-primary-foreground rounded">
@@ -69,11 +69,9 @@ const ListingCard = (props: ListingDetailed) => {
         </View>
         <Hr />
         <View className="flex-row justify-between items-center">
-            {userData?.id !== props.user_created.id ? <Link href="/chat" asChild>
-                <Button onPress={() => handleClickToChat([userData?.id!, props.user_created.id])} variant="outline">
-                    <Text> Chat </Text>
-                </Button>
-            </Link>
+            {userData?.id !== props.user_created.id ? <Button onPress={() => handleClickToChat([userData?.id!, props.user_created.id])} variant="outline">
+                <Text> Chat </Text>
+            </Button>
                 : <View></View>}
             <View className="flex-row gap-4 justify-start items-center">
                 <Image className="w-8 h-8 rounded-full" source={{ uri: buildAssetUrl(props.user_created.avatar) }} />
@@ -110,7 +108,7 @@ export default function Listings() {
     const allListings = allData.data
     const filteredListings = filteredData?.data
 
-    return <View className="web:max-w-lg w-full mx-auto">
+    return <View className="web:max-w-lg w-full mx-auto flex-1">
         <FlatList
             ListHeaderComponent={<SearchBar
                 placeholder="Search ..."

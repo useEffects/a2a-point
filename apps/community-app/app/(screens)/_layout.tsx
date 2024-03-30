@@ -1,13 +1,13 @@
+import { MaterialIcons } from '@expo/vector-icons';
 import { cx } from "class-variance-authority";
 import { Tabs } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import React from "react";
-import { View, Settings, Image, Platform } from "react-native";
+import { Image, Platform, View } from "react-native";
+import { Text } from '~/components/ui/text';
 import { AuthContext } from "~/context/auth";
 import { UserContext } from "~/context/user";
 import { directusUrl } from "~/lib/constants";
-import { MaterialIcons } from '@expo/vector-icons';
-
 
 const WebNavigation = () => {
     const userData = React.useContext(UserContext)
@@ -16,12 +16,19 @@ const WebNavigation = () => {
     return (
         <View className='w-full h-full flex items-center min-h-screen'>
             <View className='container h-full'>
-                <Drawer initialRouteName="index" screenOptions={{ drawerType: "permanent", headerShown: false }}>
+                <Drawer initialRouteName="index" screenOptions={{ drawerType: "permanent", drawerLabelStyle: { display: "none" }, drawerItemStyle: { width: 40 }, drawerStyle: { width: 64 }, headerLeft: () => <View> </View> }}>
                     <Drawer.Screen
-                        name="chat"
+                        name="chat/index"
                         options={{
                             title: "Chat",
                             drawerIcon: ({ color, size }) => <MaterialIcons name="chat" size={size} color={color} />,
+                        }}
+                    />
+                    <Drawer.Screen
+                        name="chat/[roomId]"
+                        options={{
+                            headerShown: false,
+                            drawerItemStyle: { display: "none" }
                         }}
                     />
                     <Drawer.Screen
@@ -50,7 +57,7 @@ const WebNavigation = () => {
                         options={{
                             title: "Profile",
                             drawerIcon: ({ color, focused, size }) => (
-                                <Image className={cx('w-8 h-8 rounded-full border-solid border-[1px]', focused ? "border-primary" : "border-secondary")} source={{ uri: `${directusUrl}/assets/${userData?.avatar}?access_token=${authData?.access_token}` }} />
+                                <Image className={cx('w-6 h-6 m-auto rounded-full border-solid border-[1px]', focused ? "border-primary" : "border-secondary")} source={{ uri: `${directusUrl}/assets/${userData?.avatar}?access_token=${authData?.access_token}` }} />
                             ),
                         }}
                     />
@@ -68,7 +75,7 @@ const MobileNavigation = () => {
             <Tabs.Screen
                 name="chat"
                 options={{
-                    headerTitle: "Chat",
+                    headerShown: false,
                     tabBarIcon: ({ color, focused, size }) => (
                         <MaterialIcons name="chat" size={size} color={color} />
                     ),
