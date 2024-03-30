@@ -12,7 +12,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const directus = createDirectus(directusUrl)
                 .with(authentication("cookie", { credentials: "include", autoRefresh: true }))
                 .with(rest());
-            const result = await directus.login("admin@a2apoint.com", "admin");
+            const result = await directus.login("admin@example.com", "admin");
             setAuthData(result)
         })()
     }, [])
