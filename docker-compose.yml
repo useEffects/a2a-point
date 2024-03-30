@@ -9,6 +9,7 @@ services:
       POSTGRES_PASSWORD: admin
       POSTGRES_DB1: directus
       POSTGRES_DB2: keycloak
+      POSTGRES_DB3: synapse
     ports:
       - "5432:5432"
     healthcheck:
@@ -92,14 +93,14 @@ services:
       SECRET: "1cgSyCqmstShcd3hZxK57KJrlKpr8KTT"
       ACCESS_TOKEN_TTL: 15m
       REFRESH_TOKEN_TTL: 7d"
-      REFRESH_TOKEN_COOKIE_SECURE: false
-      REFRESH_TOKEN_COOKIE_SAME_SITE: None
-      REFRESH_TOKEN_COOKIE_DOMAIN: dashboard.a2apoint.com
+      SESSION_COOKIE_DOMAIN: "directus.a2apoint.com"
+      SESSION_COOKIE_SECURE: "true"
+      SESSION_COOKIE_SAME_SITE: "None"
       AUTH_PROVIDERS: "keycloak"
       AUTH_KEYCLOAK_DRIVER: openid
       AUTH_KEYCLOAK_CLIENT_ID: directus
-      AUTH_KEYCLOAK_CLIENT_SECRET: Kgmbo2gjnggdBVzXgGkWzfW2hnbp3VuH
-      AUTH_KEYCLOAK_ISSUER_URL: "http://keycloak:8080/realms/a2apoint/.well-known/openid-configuration"
+      AUTH_KEYCLOAK_CLIENT_SECRET: Tfb7J2zkxoUQHnHVn2coRo1KYgiMt1Yr
+      AUTH_KEYCLOAK_ISSUER_URL: "http://keycloak:8080/realms/master/.well-known/openid-configuration"
       AUTH_KEYCLOAK_IDENTIFIER_KEY: email
       AUTH_KEYCLOAK_ALLOW_PUBLIC_REGISTRATION: true
 
@@ -127,21 +128,24 @@ services:
 
   caddy:
     build:
-      context: ./apps/caddy
+      context: ./services/caddy
       dockerfile: Dockerfile
     environment:
       ACME_AGREE: true
     depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
       directus:
         condition: service_healthy
-      # client:
-      #   condition: service_healthy
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./apps/caddy/caddy_data:/data
-      - ./apps/caddy/caddy_config:/config
+      - ./caddy_data:/data
+      - ./caddy_config:/config
     
-
-
+volumes:
+  caddy_data:
+  caddy_config:
