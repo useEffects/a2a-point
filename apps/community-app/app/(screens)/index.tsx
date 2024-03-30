@@ -4,7 +4,7 @@ import { FlatList, Image, View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { AuthContext } from "~/context/auth";
 import { directusUrl } from "~/lib/constants";
-import { buildAssetUrl } from "~/lib/helpers";
+import { buildAssetUrl, getDMRoomId } from "~/lib/helpers";
 import { Listing, User } from "~/types";
 import { Hr } from "~/components/ui/hr";
 import { MaterialIcons } from '@expo/vector-icons';
@@ -12,7 +12,7 @@ import { Button } from "~/components/ui/button";
 import { SearchBar } from "@rneui/themed";
 import { useDebounce } from "@uidotdev/usehooks";
 import { UserContext } from "~/context/user";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 
 type ListingDetailed = Listing & { user_created: User }
 
@@ -28,15 +28,21 @@ const ListingIconTile = ({ icon, text, value }: { icon: ReactNode, text: string,
 
 const ListingCard = (props: ListingDetailed) => {
     const userData = useContext(UserContext)
+    const authData = useContext(AuthContext)
+
+    const handleClickToChat = async ([currentUserId, postCreatorId]: [string, string]) => {
+        const roomId = await getDMRoomId([currentUserId, postCreatorId], authData?.access_token!)
+        router.push({ pathname: "/chat", params: { roomId} })
+    }
 
     return <View className="w-full px-4 py-6 flex flex-col gap-3 [&>*]:my-0 border-solid border-[1px] border-primary-foreground rounded">
         <Text className="text-2xl font-extrabold">{props.title}</Text>
         <View className="flex-row items-center justify-between">
-            <View className="flex-row items-center">
+            <View className="flex-row items-center gap-2">
                 <MaterialIcons size={18} color={"white"} name="location-pin" />
                 <Text className="text-muted-foreground">{props.location}</Text>
             </View>
-            <View className="flex-row items-center">
+            <View className="flex-row items-center gap-2">
                 <MaterialIcons size={18} color={"white"} name="calendar-month" />
                 <Text className="text-muted-foreground">{new Date(props.date_created).toLocaleTimeString()}</Text>
             </View>
@@ -44,34 +50,34 @@ const ListingCard = (props: ListingDetailed) => {
         <View className="flex flex-row justify-between items-center">
             <View className="flex flex-row gap-4">
                 {props.tags.map((tag, i) =>
-                    <Text key={i} className="bg-primary px-1 rounded text-primary-foreground w-auto text-sm"> {tag} </Text>)}
+                    <Text key={i} className="bg-primary px-1 rounded text-primary-foreground w-auto text-sm">{tag}</Text>)}
             </View>
             <Text className="bg-primary px-1 rounded text-primary-foreground w-auto text-sm"> For {props.type} </Text>
         </View>
         <View className="flex-row gap-4 items-center">
-            <Text className="text-green-400 font-extrabold text-xl"> AED {Number(props.price).toLocaleString()} </Text>
-            <Text className="border-solid border-[1px] border-primary rounded-full px-1 text-sm"> {props.mode_of_payment} </Text>
-            <Text className="border-solid border-[1px] border-primary rounded-full px-1 text-sm"> <Text className="text-muted-foreground text-sm font-light"> Expected fee </Text> {props.expected_broker_fees} % </Text>
+            <Text className="text-green-400 font-extrabold text-xl">AED {Number(props.price).toLocaleString()} </Text>
+            <Text className="border-solid border-[1px] border-primary rounded-full px-1 text-sm">{props.mode_of_payment}</Text>
+            <Text className="border-solid border-[1px] border-primary rounded-full px-1 text-sm"> <Text className="text-muted-foreground text-sm font-light">Expected fee</Text> {Number(props.expected_broker_fees).toLocaleString()} % </Text>
         </View>
         <Hr />
-        <Text className="text-xl font-extrabold"> {props.carpet_area} sq ft</Text>
+        <Text className="text-xl font-extrabold"> {Number(props.carpet_area).toLocaleString()} sq ft</Text>
         <View className="flex flex-row justify-between">
-            <ListingIconTile icon={<MaterialIcons name="bed" size={18} color={"white"} />} text="Beds" value={props.bedrooms} />
-            <ListingIconTile icon={<MaterialIcons name="bathtub" size={18} color={"white"} />} text="Baths" value={props.bathrooms} />
-            <ListingIconTile icon={<MaterialIcons name="garage" size={18} color={"white"} />} text="Garages" value={props.garages} />
-            <ListingIconTile icon={<MaterialIcons name="stairs" size={18} color={"white"} />} text="Floors" value={props.floors} />
+            {props.bedrooms && <ListingIconTile icon={<MaterialIcons name="bed" size={18} color={"white"} />} text="Beds" value={props.bedrooms} />}
+            {props.bathrooms && <ListingIconTile icon={<MaterialIcons name="bathtub" size={18} color={"white"} />} text="Baths" value={props.bathrooms} />}
+            {props.garages && <ListingIconTile icon={<MaterialIcons name="garage" size={18} color={"white"} />} text="Garages" value={props.garages} />}
+            {props.floors && <ListingIconTile icon={<MaterialIcons name="stairs" size={18} color={"white"} />} text="Floors" value={props.floors} />}
         </View>
         <Hr />
         <View className="flex-row justify-between items-center">
-            {true ? <Link href="/chat" asChild>
-                <Button variant="outline">
+            {userData?.id !== props.user_created.id ? <Link href="/chat" asChild>
+                <Button onPress={() => handleClickToChat([userData?.id!, props.user_created.id])} variant="outline">
                     <Text> Chat </Text>
                 </Button>
             </Link>
                 : <View></View>}
-            <View className="flex-row justify-start items-center">
+            <View className="flex-row gap-4 justify-start items-center">
                 <Image className="w-8 h-8 rounded-full" source={{ uri: buildAssetUrl(props.user_created.avatar) }} />
-                <Text className=""> {props.user_created.first_name} </Text>
+                <Text className="">{props.user_created.first_name}</Text>
             </View>
         </View>
     </View>
@@ -104,7 +110,7 @@ export default function Listings() {
     const allListings = allData.data
     const filteredListings = filteredData?.data
 
-    return <View className="web:max-w-lg mx-auto">
+    return <View className="web:max-w-lg w-full mx-auto">
         <FlatList
             ListHeaderComponent={<SearchBar
                 placeholder="Search ..."

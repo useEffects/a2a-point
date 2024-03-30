@@ -51,5 +51,12 @@ export type User = {
     theme_dark_overrides: any;
 }
 
-
-
+export type Room = {
+    date_created: string;
+    id: string;
+    isGroup: boolean;
+    members: string[];
+    messages: string[];
+    title: string | null;
+    user_created: string;
+}
