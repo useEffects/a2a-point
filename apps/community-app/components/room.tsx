@@ -1,3 +1,1 @@
-export const Room = () => {
-    
-}
+export const Room = () => {};
