@@ -112,7 +112,9 @@ const Trigger = React.forwardRef<PressableRef, SlottablePressableProps>(
     );
 
     function onPress(ev: GestureResponderEvent) {
-      if (disabled) return;
+      if (disabled) {
+        return;
+      }
       triggerRef.current?.measure((_x, _y, width, height, pageX, pageY) => {
         setTriggerPosition({ width, pageX, pageY: pageY, height });
       });

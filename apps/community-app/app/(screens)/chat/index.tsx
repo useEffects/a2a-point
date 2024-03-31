@@ -69,7 +69,9 @@ export default function Chat() {
       ).then((res) => res.json()),
   });
 
-  if (isRoomsResLoading) return <View></View>;
+  if (isRoomsResLoading) {
+    return <View />;
+  }
   const { data: rooms } = roomsRes as { data: ChatListRowProp[] };
 
   return (
@@ -79,7 +81,7 @@ export default function Chat() {
         renderItem={({ item }) => <ChatListRow {...item} />}
         keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={() => (
-          <View className="h-[1px] bg-foreground mx-2"></View>
+          <View className="h-[1px] bg-foreground mx-2" />
         )}
       />
     </View>
