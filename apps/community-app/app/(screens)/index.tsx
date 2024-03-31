@@ -29,9 +29,9 @@ const ListingIconTile = ({
     <View>
       <View className="flex-row gap-2 items-center">
         {icon}
-        <Text className="font-bold"> {value} </Text>
+        <Text className="font-bold">{value}</Text>
       </View>
-      <Text className="font-light text-muted-foreground"> {text} </Text>
+      <Text className="font-light text-muted-foreground">{text}</Text>
     </View>
   );
 };
@@ -78,28 +78,25 @@ const ListingCard = (props: ListingDetailed) => {
           ))}
         </View>
         <Text className="bg-primary px-1 rounded text-primary-foreground w-auto text-sm">
-          {" "}
-          For {props.type}{" "}
+          For {props.type}
         </Text>
       </View>
       <View className="flex-row gap-4 items-center">
         <Text className="text-green-400 font-extrabold text-xl">
-          AED {Number(props.price).toLocaleString()}{" "}
+          AED {Number(props.price).toLocaleString()}
         </Text>
         <Text className="border-solid border-[1px] border-primary rounded-full px-1 text-sm">
           {props.mode_of_payment}
         </Text>
         <Text className="border-solid border-[1px] border-primary rounded-full px-1 text-sm">
-          {" "}
           <Text className="text-muted-foreground text-sm font-light">
             Expected fee
-          </Text>{" "}
-          {Number(props.expected_broker_fees).toLocaleString()} %{" "}
+          </Text>
+          {Number(props.expected_broker_fees).toLocaleString()} %
         </Text>
       </View>
       <Hr />
       <Text className="text-xl font-extrabold">
-        {" "}
         {Number(props.carpet_area).toLocaleString()} sq ft
       </Text>
       <View className="flex flex-row justify-between">
@@ -144,7 +141,7 @@ const ListingCard = (props: ListingDetailed) => {
             <Text> Chat </Text>
           </Button>
         ) : (
-          <View></View>
+          <View />
         )}
         <View className="flex-row gap-4 justify-start items-center">
           <Image
@@ -191,7 +188,9 @@ export default function Listings() {
     enabled: !!debouncedSearchText,
   });
 
-  if (isLoading) return <View></View>;
+  if (isLoading) {
+    return <View />;
+  }
   const allListings = allData.data;
   const filteredListings = filteredData?.data;
 
@@ -221,8 +220,8 @@ export default function Listings() {
         data={filteredListings || allListings}
         renderItem={({ item }) => <ListingCard {...item} />}
         keyExtractor={(item) => item.id.toString()}
-        ItemSeparatorComponent={() => <View className="h-4"></View>}
-      ></FlatList>
+        ItemSeparatorComponent={() => <View className="h-4" />}
+      />
     </View>
   );
 }

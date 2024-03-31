@@ -19,13 +19,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
       }).then((res) => res.json());
     },
   });
-  if (isLoading) return <View></View>;
+  if (isLoading) {
+    return <View />;
+  }
 
   return userData ? (
     <UserContext.Provider value={userData.data as User}>
       {children}
     </UserContext.Provider>
   ) : (
-    <View></View>
+    <View />
   );
 }

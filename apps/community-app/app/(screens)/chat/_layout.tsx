@@ -7,7 +7,7 @@ export default function ChatLayout() {
     <Drawer
       screenOptions={{
         drawerType: "permanent",
-        headerLeft: () => <View></View>,
+        headerLeft: () => <View />,
       }}
     >
       <Drawer.Screen name="index" options={{ headerTitle: "Chat" }} />

@@ -91,7 +91,10 @@ const MobileNavigation = () => {
   return (
     <Tabs
       initialRouteName="index"
-      screenOptions={{ tabBarLabelStyle: { display: "none" }, headerTitle: "" }}
+      screenOptions={{
+        tabBarLabelStyle: { display: "none" },
+        headerTitle: "",
+      }}
     >
       <Tabs.Screen
         name="chat"
@@ -154,7 +157,9 @@ export default function Layout() {
   const [isLargeScreen, setIsLargeScreen] = React.useState(false);
 
   React.useEffect(() => {
-    if (Platform.OS !== "web") return;
+    if (Platform.OS !== "web") {
+      return;
+    }
     const handleResize = () => setIsLargeScreen(window.innerWidth >= 640);
     handleResize();
     window.addEventListener("resize", handleResize);

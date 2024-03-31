@@ -40,7 +40,9 @@ export function PortalHost({ name = DEFAULT_PORTAL_HOST }: { name?: string }) {
   const portalMap =
     usePortal((state) => state.map).get(name) ??
     new Map<string, React.ReactNode>();
-  if (portalMap.size === 0) return null;
+  if (portalMap.size === 0) {
+    return null;
+  }
   return <>{Array.from(portalMap.values())}</>;
 }
 

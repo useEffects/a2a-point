@@ -27,7 +27,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })();
   }, []);
 
-  if (!authData) return <View></View>;
+  if (!authData) {
+    return <View />;
+  }
 
   return (
     <AuthContext.Provider value={authData}>{children}</AuthContext.Provider>
