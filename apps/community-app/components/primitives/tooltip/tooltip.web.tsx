@@ -1,21 +1,24 @@
-import * as Tooltip from '@radix-ui/react-tooltip';
-import * as React from 'react';
-import { Pressable, View, type GestureResponderEvent } from 'react-native';
-import { useAugmentedRef, useControllableState } from '~/components/primitives/hooks';
-import * as Slot from '~/components/primitives/slot';
+import * as Tooltip from "@radix-ui/react-tooltip";
+import * as React from "react";
+import { Pressable, View, type GestureResponderEvent } from "react-native";
+import {
+  useAugmentedRef,
+  useControllableState,
+} from "~/components/primitives/hooks";
+import * as Slot from "~/components/primitives/slot";
 import type {
   PositionedContentProps,
   PressableRef,
   SlottablePressableProps,
   SlottableViewProps,
   ViewRef,
-} from '~/components/primitives/types';
+} from "~/components/primitives/types";
 import type {
   RootContext,
   TooltipOverlayProps,
   TooltipPortalProps,
   TooltipRootProps,
-} from './types';
+} from "./types";
 
 const RootContext = React.createContext<RootContext | null>(null);
 
@@ -61,12 +64,14 @@ const Root = React.forwardRef<ViewRef, SlottableViewProps & TooltipRootProps>(
   }
 );
 
-Root.displayName = 'RootWebTooltip';
+Root.displayName = "RootWebTooltip";
 
 function useTooltipContext() {
   const context = React.useContext(RootContext);
   if (!context) {
-    throw new Error('Tooltip compound components cannot be rendered outside the Tooltip component');
+    throw new Error(
+      "Tooltip compound components cannot be rendered outside the Tooltip component"
+    );
   }
   return context;
 }
@@ -85,8 +90,8 @@ const Trigger = React.forwardRef<PressableRef, SlottablePressableProps>(
     React.useLayoutEffect(() => {
       if (augmentedRef.current) {
         const augRef = augmentedRef.current as unknown as HTMLButtonElement;
-        augRef.dataset.state = open ? 'open' : 'closed';
-        augRef.type = 'button';
+        augRef.dataset.state = open ? "open" : "closed";
+        augRef.type = "button";
       }
     }, [open]);
 
@@ -96,7 +101,7 @@ const Trigger = React.forwardRef<PressableRef, SlottablePressableProps>(
         <Component
           ref={augmentedRef}
           onPress={onPress}
-          role='button'
+          role="button"
           disabled={disabled}
           {...props}
         />
@@ -105,28 +110,38 @@ const Trigger = React.forwardRef<PressableRef, SlottablePressableProps>(
   }
 );
 
-Trigger.displayName = 'TriggerWebTooltip';
+Trigger.displayName = "TriggerWebTooltip";
 
 function Portal({ forceMount, container, children }: TooltipPortalProps) {
-  return <Tooltip.Portal forceMount={forceMount} children={children} container={container} />;
+  return (
+    <Tooltip.Portal
+      forceMount={forceMount}
+      children={children}
+      container={container}
+    />
+  );
 }
 
-const Overlay = React.forwardRef<PressableRef, SlottablePressableProps & TooltipOverlayProps>(
-  ({ asChild, forceMount, ...props }, ref) => {
-    const Component = asChild ? Slot.Pressable : Pressable;
-    return <Component ref={ref} {...props} />;
-  }
-);
+const Overlay = React.forwardRef<
+  PressableRef,
+  SlottablePressableProps & TooltipOverlayProps
+>(({ asChild, forceMount, ...props }, ref) => {
+  const Component = asChild ? Slot.Pressable : Pressable;
+  return <Component ref={ref} {...props} />;
+});
 
-Overlay.displayName = 'OverlayWebTooltip';
+Overlay.displayName = "OverlayWebTooltip";
 
-const Content = React.forwardRef<ViewRef, SlottableViewProps & PositionedContentProps>(
+const Content = React.forwardRef<
+  ViewRef,
+  SlottableViewProps & PositionedContentProps
+>(
   (
     {
       asChild = false,
       forceMount,
-      align = 'center',
-      side = 'top',
+      align = "center",
+      side = "top",
       sideOffset = 0,
       alignOffset = 0,
       avoidCollisions = true,
@@ -162,6 +177,6 @@ const Content = React.forwardRef<ViewRef, SlottableViewProps & PositionedContent
   }
 );
 
-Content.displayName = 'ContentWebTooltip';
+Content.displayName = "ContentWebTooltip";
 
 export { Content, Overlay, Portal, Root, Trigger };
