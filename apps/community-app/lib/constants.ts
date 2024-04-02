@@ -17,4 +17,5 @@ export const NAV_THEME = {
   },
 };
 
-export const directusUrl = "http://192.168.0.109:8055";
+export const directusUrl = "http://dashboard.a2apoint.com";
+export const directusWSUrl = "ws://dashboard.a2apoint.com/websocket";

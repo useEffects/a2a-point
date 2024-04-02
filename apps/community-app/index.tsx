@@ -1,8 +1,10 @@
 import { registerRootComponent } from "expo";
 import { ExpoRoot } from "expo-router";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/query-core"
+import { RequireContext } from "expo-router/build/types";
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 // https://docs.expo.dev/router/reference/troubleshooting/#expo_router_app_root-not-defined
 
@@ -11,7 +13,7 @@ export function App() {
   const ctx = require.context("./app");
   return (
     <QueryClientProvider client={queryClient}>
-      <ExpoRoot context={ctx} />
+      <ExpoRoot context={ctx as RequireContext} />
     </QueryClientProvider>
   );
 }

@@ -3,14 +3,14 @@ import "~/global.css";
 import "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Theme, ThemeProvider } from "@react-navigation/native";
-import { SplashScreen, Stack } from "expo-router";
+import { SplashScreen, Stack, router, useSegments } from "expo-router";
 import * as React from "react";
 import { Platform } from "react-native";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { PortalHost } from "~/components/primitives/portal";
 import { UserProvider } from "~/context/user";
-import { AuthProvider } from "~/context/auth";
+import { AuthContext, AuthProvider } from "~/context/auth";
 
 const LIGHT_THEME: Theme = {
   dark: false,
@@ -26,6 +26,7 @@ export { ErrorBoundary } from "expo-router";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const authData = React.useContext(AuthContext)
   const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
 
@@ -62,8 +63,9 @@ export default function RootLayout() {
     <AuthProvider>
       <UserProvider>
         <ThemeProvider value={DARK_THEME}>
-          <Stack>
-            <Stack.Screen name="(screens)" options={{ headerShown: false }} />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(screens)" />
+            <Stack.Screen name="login" />
           </Stack>
           <PortalHost />
         </ThemeProvider>

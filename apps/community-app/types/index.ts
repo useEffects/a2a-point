@@ -59,4 +59,14 @@ export type Room = {
   messages: string[];
   title: string | null;
   user_created: string;
+  avatar: string;
+};
+
+export type Message = {
+  id: string;
+  content: string;
+  date_created: string;
+  image: string | null;
+  room: string;
+  user_created: string;
 };

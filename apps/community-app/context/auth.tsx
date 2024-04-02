@@ -19,7 +19,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           authentication("cookie", {
             credentials: "include",
             autoRefresh: true,
-          })
+          }),
         )
         .with(rest());
       const result = await directus.login("admin@example.com", "admin");

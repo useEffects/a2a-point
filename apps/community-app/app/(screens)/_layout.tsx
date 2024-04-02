@@ -1,10 +1,9 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { cx } from "class-variance-authority";
-import { Tabs } from "expo-router";
+import { Redirect, Stack, Tabs, router, useSegments } from "expo-router";
 import { Drawer } from "expo-router/drawer";
-import React from "react";
+import React, { useContext } from "react";
 import { Image, Platform, View } from "react-native";
-import { Text } from "~/components/ui/text";
 import { AuthContext } from "~/context/auth";
 import { UserContext } from "~/context/user";
 import { directusUrl } from "~/lib/constants";
@@ -24,8 +23,7 @@ const WebNavigation = () => {
             drawerItemStyle: { width: 40 },
             drawerStyle: { width: 64 },
             headerLeft: () => <View> </View>,
-          }}
-        >
+          }}>
           <Drawer.Screen
             name="chat"
             options={{
@@ -70,7 +68,7 @@ const WebNavigation = () => {
                 <Image
                   className={cx(
                     "w-6 h-6 m-auto rounded-full border-solid border-[1px]",
-                    focused ? "border-primary" : "border-secondary"
+                    focused ? "border-primary" : "border-secondary",
                   )}
                   source={{
                     uri: `${directusUrl}/assets/${userData?.avatar}?access_token=${authData?.access_token}`,
@@ -94,8 +92,7 @@ const MobileNavigation = () => {
       screenOptions={{
         tabBarLabelStyle: { display: "none" },
         headerTitle: "",
-      }}
-    >
+      }}>
       <Tabs.Screen
         name="chat"
         options={{
@@ -140,7 +137,7 @@ const MobileNavigation = () => {
             <Image
               className={cx(
                 "w-8 h-8 rounded-full border-solid border-[1px]",
-                focused ? "border-primary" : "border-secondary"
+                focused ? "border-primary" : "border-secondary",
               )}
               source={{
                 uri: `${directusUrl}/assets/${userData?.avatar}?access_token=${authData?.access_token}`,
@@ -153,8 +150,12 @@ const MobileNavigation = () => {
   );
 };
 
+
 export default function Layout() {
   const [isLargeScreen, setIsLargeScreen] = React.useState(false);
+  const authData = useContext(AuthContext)
+  const segments = useSegments()
+  const forbidden = !authData && segments[0] === "(screens)"
 
   React.useEffect(() => {
     if (Platform.OS !== "web") {
@@ -165,6 +166,10 @@ export default function Layout() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [Platform]);
+
+  if (true) {
+    return <Redirect href={"/login"} />
+  }
 
   return isLargeScreen ? <WebNavigation /> : <MobileNavigation />;
 }

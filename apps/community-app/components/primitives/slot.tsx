@@ -56,7 +56,7 @@ const View = React.forwardRef<React.ElementRef<typeof RNView>, RNViewProps>(
         ? composeRefs(forwardedRef, (children as any).ref)
         : (children as any).ref,
     });
-  }
+  },
 );
 
 View.displayName = "SlotView";
@@ -79,7 +79,7 @@ const Text = React.forwardRef<React.ElementRef<typeof RNText>, RNTextProps>(
         ? composeRefs(forwardedRef, (children as any).ref)
         : (children as any).ref,
     });
-  }
+  },
 );
 
 Text.displayName = "SlotText";
@@ -197,7 +197,7 @@ function combineStyles(slotStyle?: Style, childValue?: Style) {
 export function isTextChildren(
   children:
     | React.ReactNode
-    | ((state: PressableStateCallbackType) => React.ReactNode)
+    | ((state: PressableStateCallbackType) => React.ReactNode),
 ) {
   return Array.isArray(children)
     ? children.every((child) => typeof child === "string")
