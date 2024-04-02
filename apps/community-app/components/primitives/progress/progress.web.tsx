@@ -19,13 +19,12 @@ const Root = React.forwardRef<ViewRef, SlottableViewProps & ProgressRootProps>(
           value={value}
           max={max}
           getValueLabel={getValueLabel}
-          asChild
-        >
+          asChild>
           <Component ref={ref} {...props} />
         </Progress.Root>
       </ProgressContext.Provider>
     );
-  }
+  },
 );
 
 Root.displayName = "RootProgress";
@@ -38,7 +37,7 @@ const Indicator = React.forwardRef<ViewRef, SlottableViewProps>(
         <Component ref={ref} {...props} />
       </Progress.Indicator>
     );
-  }
+  },
 );
 
 Indicator.displayName = "IndicatorProgress";

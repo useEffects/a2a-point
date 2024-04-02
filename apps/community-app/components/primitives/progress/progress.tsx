@@ -22,7 +22,7 @@ const Root = React.forwardRef<ViewRef, SlottableViewProps & ProgressRootProps>(
       getValueLabel = defaultGetValueLabel,
       ...props
     },
-    ref
+    ref,
   ) => {
     const max = maxProp ?? DEFAULT_MAX;
     const value = isValidValueNumber(valueProp, max) ? valueProp : 0;
@@ -45,7 +45,7 @@ const Root = React.forwardRef<ViewRef, SlottableViewProps & ProgressRootProps>(
         {...props}
       />
     );
-  }
+  },
 );
 
 Root.displayName = "RootProgress";
@@ -54,7 +54,7 @@ const Indicator = React.forwardRef<ViewRef, SlottableViewProps>(
   ({ asChild, ...props }, ref) => {
     const Component = asChild ? Slot.View : View;
     return <Component ref={ref} role="presentation" {...props} />;
-  }
+  },
 );
 
 Indicator.displayName = "IndicatorProgress";

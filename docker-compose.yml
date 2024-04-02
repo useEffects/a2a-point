@@ -10,8 +10,6 @@ services:
       POSTGRES_DB1: directus
       POSTGRES_DB2: keycloak
       POSTGRES_DB3: synapse
-    ports:
-      - "5432:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB1 && pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB2" ]
       interval: 10s
@@ -24,11 +22,10 @@ services:
     build:
       context: .
       dockerfile: ./apps/keycloak/Dockerfile
-    ports:
-      - "8080:8080"
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+      KEYCLOAK_ADMIN_EMAIl: admin@example.com
       KC_DB_USERNAME: admin
       KC_DB_PASSWORD: admin
       KC_DB: postgres
@@ -93,16 +90,20 @@ services:
       SECRET: "1cgSyCqmstShcd3hZxK57KJrlKpr8KTT"
       ACCESS_TOKEN_TTL: 15m
       REFRESH_TOKEN_TTL: 7d"
-      SESSION_COOKIE_DOMAIN: "directus.a2apoint.com"
+      SESSION_COOKIE_DOMAIN: "dashboard.a2apoint.com"
       SESSION_COOKIE_SECURE: "true"
       SESSION_COOKIE_SAME_SITE: "None"
       AUTH_PROVIDERS: "keycloak"
       AUTH_KEYCLOAK_DRIVER: openid
+      AUTH_KEYCLOAK_MODE: session
       AUTH_KEYCLOAK_CLIENT_ID: directus
-      AUTH_KEYCLOAK_CLIENT_SECRET: Tfb7J2zkxoUQHnHVn2coRo1KYgiMt1Yr
-      AUTH_KEYCLOAK_ISSUER_URL: "http://keycloak:8080/realms/master/.well-known/openid-configuration"
+      AUTH_KEYCLOAK_CLIENT_SECRET: fS7skzQeOxCinYO0pPrOqZQy5uHzsmDB
+      AUTH_KEYCLOAK_ISSUER_URL: "https://auth.a2apoint.com/realms/master/.well-known/openid-configuration"
+      AUTH_KEYCLOAK_DEFAULT_ROLE_ID: "57c36204-4abe-4e4e-808e-52e0d96b8d06"
       AUTH_KEYCLOAK_IDENTIFIER_KEY: email
       AUTH_KEYCLOAK_ALLOW_PUBLIC_REGISTRATION: true
+      LOG_STYLE: raw
+      LOG_HTTP_IGNORE_PATHS: /server/health
 
     depends_on:
       postgres:
@@ -137,8 +138,7 @@ services:
         condition: service_healthy
       keycloak:
         condition: service_healthy
-      directus:
-        condition: service_healthy
+      
     ports:
       - "80:80"
       - "443:443"

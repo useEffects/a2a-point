@@ -50,7 +50,7 @@ const Root = React.forwardRef<ViewRef, SlottableViewProps & TooltipRootProps>(
       disableHoverableContent: _disableHoverableContent,
       ...viewProps
     },
-    ref
+    ref,
   ) => {
     const nativeID = React.useId();
     const [triggerPosition, setTriggerPosition] =
@@ -75,12 +75,11 @@ const Root = React.forwardRef<ViewRef, SlottableViewProps & TooltipRootProps>(
           setContentLayout,
           setTriggerPosition,
           triggerPosition,
-        }}
-      >
+        }}>
         <Component ref={ref} {...viewProps} />
       </RootContext.Provider>
     );
-  }
+  },
 );
 
 Root.displayName = "RootNativeTooltip";
@@ -89,7 +88,7 @@ function useTooltipContext() {
   const context = React.useContext(RootContext);
   if (!context) {
     throw new Error(
-      "Tooltip compound components cannot be rendered outside the Tooltip component"
+      "Tooltip compound components cannot be rendered outside the Tooltip component",
     );
   }
   return context;
@@ -108,7 +107,7 @@ const Trigger = React.forwardRef<PressableRef, SlottablePressableProps>(
         }
         return triggerRef.current;
       },
-      [triggerRef.current]
+      [triggerRef.current],
     );
 
     function onPress(ev: GestureResponderEvent) {
@@ -134,7 +133,7 @@ const Trigger = React.forwardRef<PressableRef, SlottablePressableProps>(
         {...props}
       />
     );
-  }
+  },
 );
 
 Trigger.displayName = "TriggerNativeTooltip";
@@ -174,7 +173,7 @@ const Overlay = React.forwardRef<
       closeOnPress = true,
       ...props
     },
-    ref
+    ref,
   ) => {
     const { open, onOpenChange, setContentLayout, setTriggerPosition } =
       useTooltipContext();
@@ -196,7 +195,7 @@ const Overlay = React.forwardRef<
 
     const Component = asChild ? Slot.Pressable : Pressable;
     return <Component ref={ref} onPress={onPress} {...props} />;
-  }
+  },
 );
 
 Overlay.displayName = "OverlayNativeTooltip";
@@ -223,7 +222,7 @@ const Content = React.forwardRef<
       disablePositioningStyle,
       ...props
     },
-    ref
+    ref,
   ) => {
     const {
       open,
@@ -243,7 +242,7 @@ const Content = React.forwardRef<
           setContentLayout(null);
           onOpenChange(false);
           return true;
-        }
+        },
       );
 
       return () => {
@@ -288,7 +287,7 @@ const Content = React.forwardRef<
         {...props}
       />
     );
-  }
+  },
 );
 
 Content.displayName = "ContentNativeTooltip";

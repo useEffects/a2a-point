@@ -39,7 +39,7 @@ function useControllableState<T>({
           setUncontrolledProp(nextValue);
         }
       },
-      [isControlled, prop, setUncontrolledProp, handleChange]
+      [isControlled, prop, setUncontrolledProp, handleChange],
     );
 
   return [value, setValue] as const;
@@ -69,7 +69,7 @@ function useUncontrolledState<T>({
  * prop or avoid re-executing effects when passed as a dependency
  */
 function useCallbackRef<T extends (...args: any[]) => any>(
-  callback: T | undefined
+  callback: T | undefined,
 ): T {
   const callbackRef = React.useRef(callback);
 
@@ -80,7 +80,7 @@ function useCallbackRef<T extends (...args: any[]) => any>(
   // https://github.com/facebook/react/issues/19240
   return React.useMemo(
     () => ((...args) => callbackRef.current?.(...args)) as T,
-    []
+    [],
   );
 }
 

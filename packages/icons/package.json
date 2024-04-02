@@ -1,0 +1,18 @@
+{
+  "name": "icons",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "dependencies": {
+    "svgtofont": "^4.2.0"
+  },
+  "scripts": {
+    "font": "svgtofont --sources ./svg --output ./fonts"
+  },
+  "svgtofont": {
+    "css": {
+      "fontName": "svgIcons",
+      "fontSize": "12px"
+    }
+  }
+}

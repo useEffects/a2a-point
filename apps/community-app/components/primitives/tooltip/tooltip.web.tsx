@@ -34,7 +34,7 @@ const Root = React.forwardRef<ViewRef, SlottableViewProps & TooltipRootProps>(
       disableHoverableContent,
       ...viewProps
     },
-    ref
+    ref,
   ) => {
     const [open = false, onOpenChange] = useControllableState({
       prop: openProp,
@@ -48,20 +48,18 @@ const Root = React.forwardRef<ViewRef, SlottableViewProps & TooltipRootProps>(
         <Tooltip.Provider
           delayDuration={delayDuration}
           skipDelayDuration={skipDelayDuration}
-          disableHoverableContent={disableHoverableContent}
-        >
+          disableHoverableContent={disableHoverableContent}>
           <Tooltip.Root
             open={open}
             onOpenChange={onOpenChange}
             delayDuration={delayDuration}
-            disableHoverableContent={disableHoverableContent}
-          >
+            disableHoverableContent={disableHoverableContent}>
             <Component ref={ref} {...viewProps} />
           </Tooltip.Root>
         </Tooltip.Provider>
       </RootContext.Provider>
     );
-  }
+  },
 );
 
 Root.displayName = "RootWebTooltip";
@@ -70,7 +68,7 @@ function useTooltipContext() {
   const context = React.useContext(RootContext);
   if (!context) {
     throw new Error(
-      "Tooltip compound components cannot be rendered outside the Tooltip component"
+      "Tooltip compound components cannot be rendered outside the Tooltip component",
     );
   }
   return context;
@@ -107,7 +105,7 @@ const Trigger = React.forwardRef<PressableRef, SlottablePressableProps>(
         />
       </Tooltip.Trigger>
     );
-  }
+  },
 );
 
 Trigger.displayName = "TriggerWebTooltip";
@@ -155,7 +153,7 @@ const Content = React.forwardRef<
       hideWhenDetached,
       ...props
     },
-    ref
+    ref,
   ) => {
     const Component = asChild ? Slot.View : View;
     return (
@@ -169,12 +167,11 @@ const Content = React.forwardRef<
         alignOffset={alignOffset}
         avoidCollisions={avoidCollisions}
         sticky={sticky}
-        hideWhenDetached={hideWhenDetached}
-      >
+        hideWhenDetached={hideWhenDetached}>
         <Component ref={ref} {...props} />
       </Tooltip.Content>
     );
-  }
+  },
 );
 
 Content.displayName = "ContentWebTooltip";

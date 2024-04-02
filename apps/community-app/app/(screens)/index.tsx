@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { ReactNode, useContext, useEffect, useState } from "react";
-import { FlatList, Image, View } from "react-native";
+import { FlatList, Image, Platform, View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { AuthContext } from "~/context/auth";
 import { directusUrl } from "~/lib/constants";
@@ -9,10 +9,12 @@ import { Listing, User } from "~/types";
 import { Hr } from "~/components/ui/hr";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Button } from "~/components/ui/button";
-import { SearchBar } from "@rneui/themed";
+import { BottomSheet, SearchBar } from "@rneui/themed";
 import { useDebounce } from "@uidotdev/usehooks";
 import { UserContext } from "~/context/user";
 import { Link, router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { cn } from "~/lib/utils";
 
 type ListingDetailed = Listing & { user_created: User };
 
@@ -42,11 +44,11 @@ const ListingCard = (props: ListingDetailed) => {
 
   const handleClickToChat = async ([currentUserId, postCreatorId]: [
     string,
-    string
+    string,
   ]) => {
     const roomId = await getDMRoomId(
       [currentUserId, postCreatorId],
-      authData?.access_token!
+      authData?.access_token!,
     );
     router.navigate(`/chat/${roomId}`);
   };
@@ -71,8 +73,7 @@ const ListingCard = (props: ListingDetailed) => {
           {props.tags.map((tag, i) => (
             <Text
               key={i}
-              className="bg-primary px-1 rounded text-primary-foreground w-auto text-sm"
-            >
+              className="bg-primary px-1 rounded text-primary-foreground w-auto text-sm">
               {tag}
             </Text>
           ))}
@@ -88,12 +89,14 @@ const ListingCard = (props: ListingDetailed) => {
         <Text className="border-solid border-[1px] border-primary rounded-full px-1 text-sm">
           {props.mode_of_payment}
         </Text>
-        <Text className="border-solid border-[1px] border-primary rounded-full px-1 text-sm">
+        <View className="flex flex-row gap-2 items-center border-solid border-[1px] border-primary rounded-full px-2">
           <Text className="text-muted-foreground text-sm font-light">
             Expected fee
           </Text>
-          {Number(props.expected_broker_fees).toLocaleString()} %
-        </Text>
+          <Text className="text-sm">
+            {Number(props.expected_broker_fees).toLocaleString()} %
+          </Text>
+        </View>
       </View>
       <Hr />
       <Text className="text-xl font-extrabold">
@@ -136,8 +139,7 @@ const ListingCard = (props: ListingDetailed) => {
             onPress={() =>
               handleClickToChat([userData?.id!, props.user_created.id])
             }
-            variant="outline"
-          >
+            variant="outline">
             <Text> Chat </Text>
           </Button>
         ) : (
@@ -149,7 +151,7 @@ const ListingCard = (props: ListingDetailed) => {
             source={{
               uri: buildAssetUrl(
                 props.user_created.avatar,
-                authData?.access_token!
+                authData?.access_token!,
               ),
             }}
           />
@@ -160,7 +162,60 @@ const ListingCard = (props: ListingDetailed) => {
   );
 };
 
-export default function Listings() {
+const ListHeaderComponent = ({
+  showLoading,
+  value,
+  onChangeText,
+}: {
+  showLoading: boolean;
+  value: string;
+  onChangeText: (val: string) => void;
+}) => {
+  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
+  return (
+    <View className="flex-row items-center">
+      <SearchBar
+        placeholder="Search ..."
+        showLoading={showLoading}
+        round={true}
+        containerStyle={{ backgroundColor: "transparent", flexGrow: 1 }}
+        inputContainerStyle={{
+          backgroundColor: "transparent",
+          borderColor: "gray",
+          borderWidth: 1,
+          borderStyle: "solid",
+          borderRadius: 9999,
+          borderBottomWidth: 1,
+        }}
+        inputStyle={{ color: "white" }}
+        value={value}
+        onChangeText={onChangeText}
+        className="outline-none"
+      />
+      <Ionicons
+        onPress={() => setBottomSheetVisible(!bottomSheetVisible)}
+        name={"filter-outline"}
+        size={24}
+        className="!text-foreground mx-4"
+      />
+      <BottomSheet isVisible={bottomSheetVisible}>
+        <View className="bg-background p-4 rounded">
+          <View className="flex-row justify-between">
+            <Text>Filter listings</Text>
+            <Ionicons
+              onPress={() => setBottomSheetVisible(!bottomSheetVisible)}
+              name={bottomSheetVisible ? "close-outline" : "filter-outline"}
+              size={24}
+              className="!text-foreground"
+            />
+          </View>
+        </View>
+      </BottomSheet>
+    </View>
+  );
+};
+
+const Listings = () => {
   const authData = useContext(AuthContext);
   const [searchText, setSearchText] = useState("");
   const [debouncedSearchText] = useDebounce([searchText], 500);
@@ -183,7 +238,7 @@ export default function Listings() {
           headers: {
             Authorization: `Bearer ${authData?.access_token}`,
           },
-        }
+        },
       ).then((res) => res.json()),
     enabled: !!debouncedSearchText,
   });
@@ -195,33 +250,26 @@ export default function Listings() {
   const filteredListings = filteredData?.data;
 
   return (
-    <View className="web:max-w-lg w-full mx-auto flex-1">
-      <FlatList
-        ListHeaderComponent={
-          <SearchBar
-            placeholder="Search ..."
-            showLoading={filteredLoading}
-            round={true}
-            containerStyle={{ backgroundColor: "transparent" }}
-            inputContainerStyle={{
-              backgroundColor: "transparent",
-              borderColor: "gray",
-              borderWidth: 1,
-              borderStyle: "solid",
-              borderRadius: 9999,
-              borderBottomWidth: 1,
-            }}
-            inputStyle={{ color: "white" }}
-            value={searchText}
-            onChangeText={(val) => setSearchText(val)}
-            className="outline-none"
-          />
-        }
-        data={filteredListings || allListings}
-        renderItem={({ item }) => <ListingCard {...item} />}
-        keyExtractor={(item) => item.id.toString()}
-        ItemSeparatorComponent={() => <View className="h-4" />}
-      />
+    <FlatList
+      ListHeaderComponent={
+        <ListHeaderComponent
+          showLoading={filteredLoading}
+          onChangeText={(val) => setSearchText(val)}
+          value={searchText}
+        />
+      }
+      data={filteredListings || allListings}
+      renderItem={({ item }) => <ListingCard {...item} />}
+      keyExtractor={(item) => item.id.toString()}
+      ItemSeparatorComponent={() => <View className="h-4" />}
+    />
+  );
+};
+
+export default function Home() {
+  return (
+    <View className={cn(Platform.OS === "web" && "mx-auto")}>
+      <Listings />
     </View>
   );
 }
