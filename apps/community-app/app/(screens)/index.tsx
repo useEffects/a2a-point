@@ -8,13 +8,12 @@ import { FlatList, Image, Platform, View } from "react-native";
 import { Button } from "~/components/ui/button";
 import { Hr } from "~/components/ui/hr";
 import { Text } from "~/components/ui/text";
-import { AuthContext } from "~/context/auth";
-import { UserContext } from "~/context/user";
 import { buildAssetUrl, getDMRoomId } from "~/lib/helpers";
 import { cn } from "~/lib/utils";
 import directusStore from "~/store/directus";
 import { Listing, User } from "~/types";
 import { useDebounce } from 'use-debounce';
+import userStore from "~/store/user";
 
 type ListingDetailed = Listing & { user_created: User };
 
@@ -39,8 +38,7 @@ const ListingIconTile = ({
 };
 
 const ListingCard = (props: ListingDetailed) => {
-  const userData = useContext(UserContext);
-  const authData = useContext(AuthContext);
+  const { user } = userStore()
 
   const handleClickToChat = async ([currentUserId, postCreatorId]: [
     string,
@@ -48,7 +46,6 @@ const ListingCard = (props: ListingDetailed) => {
   ]) => {
     const roomId = await getDMRoomId(
       [currentUserId, postCreatorId],
-      authData?.access_token!,
     );
     router.navigate(`/chat/${roomId}`);
   };
@@ -134,10 +131,10 @@ const ListingCard = (props: ListingDetailed) => {
       </View>
       <Hr />
       <View className="flex-row justify-between items-center">
-        {userData?.id !== props.user_created.id ? (
+        {user?.id !== props.user_created.id ? (
           <Button
             onPress={() =>
-              handleClickToChat([userData?.id!, props.user_created.id])
+              handleClickToChat([user?.id!, props.user_created.id])
             }
             variant="outline">
             <Text> Chat </Text>
@@ -224,10 +221,9 @@ const Listings = () => {
     queryFn: async () => await rest.request(readItems("listings", {
       search: debouncedSearchText,
       fields: ["*", "user_created.*"]
-    }))
+    })),
+    initialData: []
   })
-
-  if (isLoading) return <View />
 
   return (
     <FlatList
@@ -248,7 +244,7 @@ const Listings = () => {
 
 export default function Home() {
   return (
-    <View className={cn(Platform.OS === "web" && "mx-auto")}>
+    <View className={cn(Platform.OS === "web" && "mx-auto", "max-w-2xl w-full")}>
       <Listings />
     </View>
   );

@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import { directusUrl } from "./constants";
-import { AuthContext } from "~/context/auth";
 import {
   digestStringAsync,
   CryptoDigestAlgorithm,
@@ -37,8 +36,8 @@ export async function combineUUIDs(
 
 export const getDMRoomId = async (
   [userId1, userId2]: [string, string],
-  access_token: string,
 ) => {
+  const { token } = directusStore.getState()
   const filters = JSON.stringify({
     _and: [
       {
@@ -55,7 +54,7 @@ export const getDMRoomId = async (
   });
   const room = await fetch(`${directusUrl}/items/rooms?filters=${filters}`, {
     headers: {
-      Authorization: `Bearer ${access_token}`,
+      Authorization: `Bearer ${token}`,
     },
   }).then((res) => res.json());
   if (!room.data || !room.data.length || !room.data[0].members.length) {
