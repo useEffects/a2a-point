@@ -1,9 +1,12 @@
 import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { cx } from "class-variance-authority";
 import { Redirect, Stack, Tabs, router, useSegments } from "expo-router";
 import { Drawer } from "expo-router/drawer";
+import { maybeCompleteAuthSession } from "expo-web-browser";
 import React, { useContext } from "react";
 import { Image, Platform, View } from "react-native";
+import { Text } from "~/components/ui/text";
 import { AuthContext } from "~/context/auth";
 import { UserContext } from "~/context/user";
 import { directusUrl } from "~/lib/constants";
@@ -152,24 +155,33 @@ const MobileNavigation = () => {
 
 
 export default function Layout() {
+
   const [isLargeScreen, setIsLargeScreen] = React.useState(false);
-  const authData = useContext(AuthContext)
-  const segments = useSegments()
-  const forbidden = !authData && segments[0] === "(screens)"
+  const [isReady, setIsReady] = React.useState(false)
 
   React.useEffect(() => {
     if (Platform.OS !== "web") {
       return;
-    }
+    };
+
+    maybeCompleteAuthSession()
+
     const handleResize = () => setIsLargeScreen(window.innerWidth >= 640);
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [Platform]);
 
-  if (true) {
-    return <Redirect href={"/login"} />
-  }
+  React.useEffect(() => {
+    (async () => {
+      const accessToken = await AsyncStorage.getItem("accessToken")
+      if (!accessToken) {
+        router.replace("/login")
+      } else {
+        setIsReady(true)
+      }
+    })()
+  })
 
-  return isLargeScreen ? <WebNavigation /> : <MobileNavigation />;
+  return isReady ? (isLargeScreen ? <WebNavigation /> : <MobileNavigation />) : (<View />)
 }

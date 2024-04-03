@@ -15,6 +15,8 @@ import { UserContext } from "~/context/user";
 import { Link, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { cn } from "~/lib/utils";
+import directusStore from "~/store/directus";
+import { readItems } from "@directus/sdk";
 
 type ListingDetailed = Listing & { user_created: User };
 
@@ -219,50 +221,37 @@ const Listings = () => {
   const authData = useContext(AuthContext);
   const [searchText, setSearchText] = useState("");
   const [debouncedSearchText] = useDebounce([searchText], 500);
+  const client = directusStore.getState().client
 
-  const { data: allData, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["Get Listings"],
-    queryFn: () =>
-      fetch(`${directusUrl}/items/listings?fields=*,user_created.*`, {
-        headers: {
-          Authorization: `Bearer ${authData?.access_token}`,
-        },
-      }).then((res) => res.json()),
-  });
-  const { data: filteredData, isLoading: filteredLoading } = useQuery({
-    queryKey: ["Get Filtered Listings", debouncedSearchText],
-    queryFn: () =>
-      fetch(
-        `${directusUrl}/items/listings?fields=*,user_created.*&search=${debouncedSearchText}`,
-        {
-          headers: {
-            Authorization: `Bearer ${authData?.access_token}`,
-          },
-        },
-      ).then((res) => res.json()),
-    enabled: !!debouncedSearchText,
+    queryFn: async () => await client.request(readItems("listings", {
+      search: debouncedSearchText,
+      fields: ["*", "user_created.*"]
+    })),
   });
 
   if (isLoading) {
     return <View />;
   }
-  const allListings = allData.data;
-  const filteredListings = filteredData?.data;
+
+  console.log(data)
 
   return (
-    <FlatList
-      ListHeaderComponent={
-        <ListHeaderComponent
-          showLoading={filteredLoading}
-          onChangeText={(val) => setSearchText(val)}
-          value={searchText}
-        />
-      }
-      data={filteredListings || allListings}
-      renderItem={({ item }) => <ListingCard {...item} />}
-      keyExtractor={(item) => item.id.toString()}
-      ItemSeparatorComponent={() => <View className="h-4" />}
-    />
+    // <FlatList
+    //   ListHeaderComponent={
+    //     <ListHeaderComponent
+    //       showLoading={isLoading}
+    //       onChangeText={(val) => setSearchText(val)}
+    //       value={searchText}
+    //     />
+    //   }
+    //   data={data.data}
+    //   renderItem={({ item }) => <ListingCard {...item} />}
+    //   keyExtractor={(item) => item.id.toString()}
+    //   ItemSeparatorComponent={() => <View className="h-4" />}
+    // />
+    <View />
   );
 };
 

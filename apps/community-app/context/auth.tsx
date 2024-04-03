@@ -15,14 +15,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     (async function () {
       const directus = createDirectus(directusUrl)
-        .with(
-          authentication("cookie", {
-            credentials: "include",
-            autoRefresh: true,
-          }),
-        )
+        .with(authentication())
         .with(rest());
       const result = await directus.login("admin@example.com", "admin");
+      console.log(result)
       setAuthData(result);
     })();
   }, []);

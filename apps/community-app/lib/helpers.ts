@@ -6,6 +6,7 @@ import {
   CryptoDigestAlgorithm,
   CryptoEncoding,
 } from 'expo-crypto';
+import { Alert, Linking } from "react-native";
 
 export const buildAssetUrl = (id: string, access_token: string) => {
   return `${directusUrl}/assets/${id}?access_token=${access_token}`;
@@ -86,3 +87,12 @@ export const getDMRoomId = async (
     return room.data[0].id as string;
   }
 };
+
+export const openUrl = async (url: string) => {
+  const supported = await Linking.canOpenURL(url)
+  if (supported) {
+    await Linking.openURL(url)
+  } else {
+    Alert.alert(`Don't know how to open this URL: ${url}`)
+  }
+}
