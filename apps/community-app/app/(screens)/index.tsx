@@ -1,22 +1,20 @@
+import { readItems } from "@directus/sdk";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { BottomSheet, SearchBar } from "@rneui/themed";
 import { useQuery } from "@tanstack/react-query";
+import { router } from "expo-router";
 import { ReactNode, useContext, useEffect, useState } from "react";
 import { FlatList, Image, Platform, View } from "react-native";
+import { Button } from "~/components/ui/button";
+import { Hr } from "~/components/ui/hr";
 import { Text } from "~/components/ui/text";
 import { AuthContext } from "~/context/auth";
-import { directusUrl } from "~/lib/constants";
-import { buildAssetUrl, getDMRoomId } from "~/lib/helpers";
-import { Listing, User } from "~/types";
-import { Hr } from "~/components/ui/hr";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Button } from "~/components/ui/button";
-import { BottomSheet, SearchBar } from "@rneui/themed";
-import { useDebounce } from "@uidotdev/usehooks";
 import { UserContext } from "~/context/user";
-import { Link, router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { buildAssetUrl, getDMRoomId } from "~/lib/helpers";
 import { cn } from "~/lib/utils";
 import directusStore from "~/store/directus";
-import { readItems } from "@directus/sdk";
+import { Listing, User } from "~/types";
+import { useDebounce } from 'use-debounce';
 
 type ListingDetailed = Listing & { user_created: User };
 
@@ -153,7 +151,6 @@ const ListingCard = (props: ListingDetailed) => {
             source={{
               uri: buildAssetUrl(
                 props.user_created.avatar,
-                authData?.access_token!,
               ),
             }}
           />
@@ -218,40 +215,34 @@ const ListHeaderComponent = ({
 };
 
 const Listings = () => {
-  const authData = useContext(AuthContext);
   const [searchText, setSearchText] = useState("");
-  const [debouncedSearchText] = useDebounce([searchText], 500);
-  const client = directusStore.getState().client
+  const [debouncedSearchText] = useDebounce(searchText, 500);
+  const { rest } = directusStore()
 
   const { data, isLoading } = useQuery({
-    queryKey: ["Get Listings"],
-    queryFn: async () => await client.request(readItems("listings", {
+    queryKey: ["Fetch Listings", debouncedSearchText],
+    queryFn: async () => await rest.request(readItems("listings", {
       search: debouncedSearchText,
       fields: ["*", "user_created.*"]
-    })),
-  });
+    }))
+  })
 
-  if (isLoading) {
-    return <View />;
-  }
-
-  console.log(data)
+  if (isLoading) return <View />
 
   return (
-    // <FlatList
-    //   ListHeaderComponent={
-    //     <ListHeaderComponent
-    //       showLoading={isLoading}
-    //       onChangeText={(val) => setSearchText(val)}
-    //       value={searchText}
-    //     />
-    //   }
-    //   data={data.data}
-    //   renderItem={({ item }) => <ListingCard {...item} />}
-    //   keyExtractor={(item) => item.id.toString()}
-    //   ItemSeparatorComponent={() => <View className="h-4" />}
-    // />
-    <View />
+    <FlatList
+      ListHeaderComponent={
+        <ListHeaderComponent
+          showLoading={isLoading}
+          onChangeText={(val) => setSearchText(val)}
+          value={searchText}
+        />
+      }
+      data={data as ListingDetailed[]}
+      renderItem={({ item }) => <ListingCard {...item} />}
+      keyExtractor={(item) => item.id.toString()}
+      ItemSeparatorComponent={() => <View className="h-4" />}
+    />
   );
 };
 
