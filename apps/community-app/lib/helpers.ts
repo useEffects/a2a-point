@@ -7,9 +7,11 @@ import {
   CryptoEncoding,
 } from 'expo-crypto';
 import { Alert, Linking } from "react-native";
+import directusStore from "~/store/directus";
 
-export const buildAssetUrl = (id: string, access_token: string) => {
-  return `${directusUrl}/assets/${id}?access_token=${access_token}`;
+export const buildAssetUrl = (id: string) => {
+  const { token } = directusStore.getState()
+  return `${directusUrl}/assets/${id}?access_token=${token}`;
 };
 
 export async function combineUUIDs(

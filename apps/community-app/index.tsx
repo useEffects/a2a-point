@@ -1,7 +1,7 @@
 import { registerRootComponent } from "expo";
 import { ExpoRoot } from "expo-router";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { QueryClient } from "@tanstack/query-core"
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+// import { QueryClient } from "@tanstack/query-core"
 import { RequireContext } from "expo-router/build/types";
 
 export const queryClient = new QueryClient();

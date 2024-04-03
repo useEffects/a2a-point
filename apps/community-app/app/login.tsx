@@ -1,15 +1,18 @@
 import { makeRedirectUri } from "expo-auth-session";
 import { router, useGlobalSearchParams } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
+import { useContext } from "react";
 import { View } from "react-native";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
+import { DirectusContext } from "~/context/directus";
 import { directusUrl, portfolioUrl } from "~/lib/constants";
 import { openUrl } from "~/lib/helpers";
 import directusStore from "~/store/directus";
 
 export default function LoginScreen() {
     const params = useGlobalSearchParams();
+    const { initialize } = directusStore()
 
     const handleLogin = async () => {
         const appUrl = makeRedirectUri()
@@ -17,10 +20,11 @@ export default function LoginScreen() {
         if (result.type === "success") {
             const accessToken = result.url.split("access_token=")[1]
             if (accessToken) {
-                console.log("here")
-                directusStore.getState().initialize(accessToken)
+                await initialize(accessToken)
                 if (params?.redirect && typeof params.redirect === "string") {
                     router.replace(params.redirect)
+                } else {
+                    router.replace("/")
                 }
             }
         }

@@ -1,26 +1,25 @@
-import { DirectusClient, RestClient, WebSocketClient, createDirectus, realtime, rest, staticToken } from "@directus/sdk";
+import { DirectusClient, RestClient, StaticTokenClient, WebSocketClient, createDirectus, realtime, rest, staticToken } from "@directus/sdk";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { create } from "zustand";
-import { directusLocalUrl, directusUrl, directusWSLocalUrl } from "~/lib/constants";
+import { directusUrl, directusWSUrl } from "~/lib/constants";
 import { User } from "~/types";
 import userStore from "./user";
 
 type DirectusStore = {
-    client: DirectusClient<any> & RestClient<any>,
-    ws: DirectusClient<any> & WebSocketClient<any>,
-    getClient: () => DirectusClient<any>,
+    token: string,
+    rest: DirectusClient<any> & RestClient<any> & StaticTokenClient<any>,
+    realtime: DirectusClient<any> & WebSocketClient<any> & StaticTokenClient<any>,
     initialize: (accessToken: string) => void
 }
 
-export const directusStore = create<DirectusStore>((set, get) => {
+export const directusStore = create<DirectusStore>((set) => {
     return {
-        isReady: false,
-        client: createDirectus(directusLocalUrl).with(rest()),
-        ws: createDirectus(directusWSLocalUrl).with(realtime()),
-        getClient: () => get().client,
+        token: "",
+        rest: createDirectus(directusUrl).with(rest()).with(staticToken("")),
+        realtime: createDirectus(directusWSUrl).with(realtime()).with(staticToken("")),
         initialize: async (accessToken: string) => {
-            const data = await fetch(`${directusLocalUrl}/users/me`, {
+            const data = await fetch(`${directusUrl}/users/me`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },
@@ -31,8 +30,11 @@ export const directusStore = create<DirectusStore>((set, get) => {
                     router.replace("/login")
                 }
             })
-            get().client.with(staticToken(accessToken))
-            get().ws.with(staticToken(accessToken))
+            set(state => ({
+                rest: state.rest.with(staticToken(accessToken)),
+                realtime: state.realtime.with(staticToken(accessToken)),
+                token: accessToken
+            }))
             userStore.getState().setUser(data.data as User)
             await AsyncStorage.setItem("accessToken", accessToken)
         }

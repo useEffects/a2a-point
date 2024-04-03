@@ -1,19 +1,20 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { cx } from "class-variance-authority";
-import { Redirect, Stack, Tabs, router, useSegments } from "expo-router";
+import { Tabs, router } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import { maybeCompleteAuthSession } from "expo-web-browser";
-import React, { useContext } from "react";
+import React from "react";
 import { Image, Platform, View } from "react-native";
-import { Text } from "~/components/ui/text";
 import { AuthContext } from "~/context/auth";
 import { UserContext } from "~/context/user";
 import { directusUrl } from "~/lib/constants";
+import { buildAssetUrl } from "~/lib/helpers";
+import directusStore from "~/store/directus";
+import userStore from "~/store/user";
 
 const WebNavigation = () => {
-  const userData = React.useContext(UserContext);
-  const authData = React.useContext(AuthContext);
+  const { user } = userStore()
 
   return (
     <View className="w-full h-full flex items-center min-h-screen">
@@ -74,7 +75,7 @@ const WebNavigation = () => {
                     focused ? "border-primary" : "border-secondary",
                   )}
                   source={{
-                    uri: `${directusUrl}/assets/${userData?.avatar}?access_token=${authData?.access_token}`,
+                    uri: buildAssetUrl(user?.avatar),
                   }}
                 />
               ),
@@ -87,8 +88,8 @@ const WebNavigation = () => {
 };
 
 const MobileNavigation = () => {
-  const userData = React.useContext(UserContext);
-  const authData = React.useContext(AuthContext);
+  const { user } = userStore()
+
   return (
     <Tabs
       initialRouteName="index"
@@ -143,7 +144,7 @@ const MobileNavigation = () => {
                 focused ? "border-primary" : "border-secondary",
               )}
               source={{
-                uri: `${directusUrl}/assets/${userData?.avatar}?access_token=${authData?.access_token}`,
+                uri: buildAssetUrl(user?.avatar),
               }}
             />
           ),
@@ -156,6 +157,7 @@ const MobileNavigation = () => {
 
 export default function Layout() {
 
+  const { rest, initialize } = directusStore()
   const [isLargeScreen, setIsLargeScreen] = React.useState(false);
   const [isReady, setIsReady] = React.useState(false)
 
@@ -174,14 +176,19 @@ export default function Layout() {
 
   React.useEffect(() => {
     (async () => {
-      const accessToken = await AsyncStorage.getItem("accessToken")
+      const accessToken = await rest.getToken()
       if (!accessToken) {
-        router.replace("/login")
+        const accessToken = await AsyncStorage.getItem("accessToken")
+        if (!accessToken) {
+          router.replace("/login")
+        } else {
+          initialize(accessToken)
+        }
       } else {
         setIsReady(true)
       }
     })()
-  })
+  }, [rest])
 
   return isReady ? (isLargeScreen ? <WebNavigation /> : <MobileNavigation />) : (<View />)
 }
