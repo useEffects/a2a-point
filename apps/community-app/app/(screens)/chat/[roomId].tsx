@@ -4,8 +4,6 @@ import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react
 import { Image, Platform, View } from "react-native";
 import { IMessage, GiftedChat, InputToolbar } from "react-native-gifted-chat";
 import { Text } from "~/components/ui/text";
-import { AuthContext } from "~/context/auth";
-import { UserContext } from "~/context/user";
 import { directusUrl, directusWSUrl } from "~/lib/constants";
 import { buildAssetUrl } from "~/lib/helpers";
 import { User, Room, Message } from "~/types";
@@ -39,7 +37,7 @@ const addMessages = (ws: WebSocket, dispatcher: Dispatch<SetStateAction<IMessage
         createdAt: new Date(d.date_created),
         user: {
             _id: d.user_created.id,
-            avatar: buildAssetUrl(d.user_created.avatar, access_token),
+            avatar: buildAssetUrl(d.user_created.avatar),
             name: d.user_created.first_name,
         },
     }));

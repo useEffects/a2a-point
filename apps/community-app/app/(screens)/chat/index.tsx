@@ -1,17 +1,12 @@
+import { readItems } from "@directus/sdk";
 import { useQuery } from "@tanstack/react-query";
-import {
-  router,
-  useGlobalSearchParams,
-  useLocalSearchParams,
-} from "expo-router";
-import { useCallback, useContext } from "react";
+import { router } from "expo-router";
 import { Image, Platform, Pressable, View } from "react-native";
 import { FlatList } from "react-native";
 import { Text } from "~/components/ui/text";
-import { AuthContext } from "~/context/auth";
-import { UserContext } from "~/context/user";
-import { directusUrl } from "~/lib/constants";
 import { buildAssetUrl } from "~/lib/helpers";
+import directusStore from "~/store/directus";
+import userStore from "~/store/user";
 import { Room, User } from "~/types";
 
 type ChatListRowProp = Pick<Room, "avatar" | "id" | "isGroup" | "title"> & {
@@ -19,20 +14,18 @@ type ChatListRowProp = Pick<Room, "avatar" | "id" | "isGroup" | "title"> & {
 };
 
 const ChatListRow = (room: ChatListRowProp) => {
-  const userData = useContext(UserContext);
-  const authData = useContext(AuthContext);
+  const { user } = userStore();
   const receiver = room.members.find(
-    (member) => member.directus_users_id.id !== userData?.id,
+    (member) => member.directus_users_id.id !== user?.id,
   );
   const [roomName, roomAvatar] = room.isGroup
-    ? [room.title, buildAssetUrl(room.avatar, authData?.access_token!)]
+    ? [room.title, buildAssetUrl(room.avatar)]
     : [
-        receiver!.directus_users_id.first_name,
-        buildAssetUrl(
-          receiver!.directus_users_id.avatar,
-          authData?.access_token!,
-        ),
-      ];
+      receiver!.directus_users_id.first_name,
+      buildAssetUrl(
+        receiver!.directus_users_id.avatar,
+      ),
+    ];
 
   return (
     <Pressable
@@ -45,44 +38,32 @@ const ChatListRow = (room: ChatListRowProp) => {
 };
 
 export const ChatList = () => {
-  const userData = useContext(UserContext);
-  const authData = useContext(AuthContext);
+  const { rest } = directusStore()
+  const { user } = userStore();
 
-  const { data: roomsRes, isLoading: isRoomsResLoading } = useQuery({
-    queryKey: ["Chat Rooms", userData?.id],
-    queryFn: () => {
-      const filter = JSON.stringify({
+  const { data: rooms, isLoading } = useQuery({
+    queryKey: ["Chat Rooms", user?.id],
+    queryFn: (async () => await rest.request(readItems("rooms", {
+      fields: ['id', 'avatar', 'isGroup', 'title', 'members.directus_users_id.first_name', 'members.directus_users_id.id', 'members.directus_users_id.avatar'
+      ],
+      filter: {
         members: {
           directus_users_id: {
             id: {
-              _eq: userData?.id,
+              _eq: user?.id,
             },
           },
         },
-      });
-      return fetch(
-        `${directusUrl}/items/rooms?filter=${filter}&fields=id,avatar,isGroup,title,members.directus_users_id.first_name,members.directus_users_id.id,members.directus_users_id.avatar`,
-        {
-          headers: {
-            Authorization: `Bearer ${authData?.access_token}`,
-          },
-        },
-      ).then((res) => res.json());
-    },
+      }
+    })) as ChatListRowProp[]),
   });
 
-  if (isRoomsResLoading) {
-    return <View />;
-  }
-  const { data: rooms } = roomsRes as { data: ChatListRowProp[] };
-
-  return (
+  return isLoading ? <View /> :
     <FlatList
       data={rooms}
       renderItem={({ item }) => <ChatListRow {...item} />}
       keyExtractor={(item) => item.id.toString()}
     />
-  );
 };
 
 export default function ChatScreen() {
