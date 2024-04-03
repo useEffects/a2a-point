@@ -32,6 +32,7 @@ export default function RootLayout() {
 
   React.useEffect(() => {
     (async () => {
+
       const theme = await AsyncStorage.getItem("theme");
       if (Platform.OS === "web") {
         // Adds the background color to the html element to prevent white background on overscroll.
@@ -60,16 +61,12 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthProvider>
-      <UserProvider>
         <ThemeProvider value={DARK_THEME}>
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="(screens)" />
-            <Stack.Screen name="login" />
+            <Stack.Screen options={{ headerShown: true, headerTitle: "Login" }} name="login" />
           </Stack>
           <PortalHost />
         </ThemeProvider>
-      </UserProvider>
-    </AuthProvider>
   );
 }
