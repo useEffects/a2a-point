@@ -9,9 +9,6 @@ import { Platform } from "react-native";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { PortalHost } from "~/components/primitives/portal";
-import { UserProvider } from "~/context/user";
-import { AuthContext, AuthProvider } from "~/context/auth";
-import { DirectusProvider } from "~/context/directus";
 
 const LIGHT_THEME: Theme = {
   dark: false,
@@ -61,7 +58,6 @@ export default function RootLayout() {
   }
 
   return (
-    <DirectusProvider>
       <ThemeProvider value={DARK_THEME}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(screens)" />
@@ -69,6 +65,5 @@ export default function RootLayout() {
         </Stack>
         <PortalHost />
       </ThemeProvider>
-    </DirectusProvider>
   );
 }

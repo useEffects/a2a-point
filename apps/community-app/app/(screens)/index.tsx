@@ -1,19 +1,98 @@
-import { readItems } from "@directus/sdk";
+import { createItem, readItems } from "@directus/sdk";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { BottomSheet, SearchBar } from "@rneui/themed";
 import { useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { ReactNode, useContext, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import { FlatList, Image, Platform, View } from "react-native";
 import { Button } from "~/components/ui/button";
 import { Hr } from "~/components/ui/hr";
 import { Text } from "~/components/ui/text";
-import { buildAssetUrl, getDMRoomId } from "~/lib/helpers";
+import { buildAssetUrl, combineUUIDs } from "~/lib/helpers";
 import { cn } from "~/lib/utils";
 import directusStore from "~/store/directus";
 import { Listing, User } from "~/types";
 import { useDebounce } from 'use-debounce';
 import userStore from "~/store/user";
+import { queryClient } from "~/index";
+
+const getDMRoomId = async (
+  [userId1, userId2]: [string, string],
+) => {
+  const { rest } = directusStore.getState()
+  const rooms = await queryClient.fetchQuery({
+    queryKey: ["Fetch Room"],
+    queryFn: async () => await rest.request(readItems("rooms", {
+      filter: {
+        isGroup: false,
+        _or: [
+          {
+            _and: [
+              {
+                user_created: {
+                  id: {
+                    _eq: userId1
+                  }
+                }
+              },
+              {
+                members: {
+                  directus_users_id: {
+                    id: {
+                      _eq: userId2
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            _and: [
+              {
+                user_created: {
+                  id: {
+                    _eq: userId2
+                  }
+                }
+              },
+              {
+                members: {
+                  directus_users_id: {
+                    id: {
+                      _eq: userId1
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      fields: ["id"]
+    }))
+  })
+  if (!rooms.length) {
+    const room = await queryClient.fetchQuery({
+      queryKey: ["Create Room"],
+      queryFn: async () => await rest.request(createItem("rooms", {
+        isGroup: false,
+        members: [
+          {
+            directus_users_id: userId1
+          }, {
+            directus_users_id: userId2
+          }
+        ]
+      }, {
+        fields: ["id"]
+      }
+      ))
+    })
+    return room.id as string
+  } else {
+    return rooms[0].id as string;
+  }
+};
 
 type ListingDetailed = Listing & { user_created: User };
 

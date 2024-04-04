@@ -32,7 +32,7 @@ export type User = {
   title: string | null;
   description: string | null;
   tags: string[] | null;
-  avatar: string;
+  avatar: string | null;
   language: string | null;
   tfa_secret: string | null;
   status: "active" | "inactive";
