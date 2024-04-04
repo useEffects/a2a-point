@@ -18,5 +18,5 @@ export const NAV_THEME = {
 };
 
 export const directusUrl = "https://directus.itzapril.tech";
-export const directusWSUrl = "ws:/directus.itzapril.tech/websocket";
+export const directusWSUrl = "ws://192.168.0.109:8055/websocket";
 export const portfolioUrl = "https://next.itzapril.tech/api/expo-redirect"

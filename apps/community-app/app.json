@@ -2,6 +2,9 @@
   "expo": {
     "name": "Community",
     "slug": "community",
-    "scheme": "a2apoint"
+    "scheme": "a2apoint",
+    "android": {
+      "package": "com.a2apoint"
+    }
   }
 }

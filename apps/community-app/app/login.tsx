@@ -5,7 +5,6 @@ import { useContext } from "react";
 import { View } from "react-native";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
-import { DirectusContext } from "~/context/directus";
 import { directusUrl, portfolioUrl } from "~/lib/constants";
 import { openUrl } from "~/lib/helpers";
 import directusStore from "~/store/directus";

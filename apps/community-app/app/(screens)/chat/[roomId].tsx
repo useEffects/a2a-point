@@ -1,105 +1,79 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useGlobalSearchParams, useNavigation } from "expo-router";
-import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Image, Platform, View } from "react-native";
 import { IMessage, GiftedChat, InputToolbar } from "react-native-gifted-chat";
 import { Text } from "~/components/ui/text";
-import { directusUrl, directusWSUrl } from "~/lib/constants";
 import { buildAssetUrl } from "~/lib/helpers";
 import { User, Room, Message } from "~/types";
 import { MaterialIcons } from "@expo/vector-icons";
+import directusStore from "~/store/directus";
+import { readItem, readItems } from "@directus/sdk";
+import userStore from "~/store/user";
 
-type ChatMessage = Message & { user_created: Pick<User, "first_name" | "id" | "avatar"> }
+type ChatMessage = (Message & { user_created: Pick<User, "first_name" | "id" | "avatar"> })
 
-const readMessages = (ws: WebSocket, page: number, roomId: string) => {
-    ws.send(JSON.stringify({
-        type: "items",
-        collection: "messages",
-        action: "read",
-        query: {
+const ChatScreen = ({ roomId }: { roomId: string }) => {
+    const { realtime, rest } = directusStore()
+    const { user } = userStore()
+    const [ready, setReady] = useState(false)
+    const [messages, setMessages] = useState<IMessage[]>([])
+    const [page, setPage] = useState(1)
+
+    const { data: initialMessages, isLoading: isInitialMessagesLoading } = useQuery({
+        queryKey: ["Fetch Messages", roomId],
+        queryFn: async () => await rest.request(readItems("messages", {
             filter: {
                 room: {
                     _eq: roomId
                 }
             },
-            fields: ["*", "user_created.id", "user_created.avatar", "user_created.first_name"],
-            sort: "-date_created",
-            page: page
+            fields: ["*", "user_created.avatar", "user_created.id"],
+            sort: ["-date_created"]
+        })),
+        enabled: !!roomId
+    }) as { data: ChatMessage[], isLoading: boolean }
+
+    useEffect(() => {
+        if (isInitialMessagesLoading) {
+            return
+        } else {
+            const _initialMessages = initialMessages.map(message => ({
+                _id: message.id,
+                text: message.content,
+                createdAt: new Date(message.date_created),
+                user: {
+                    _id: message.user_created.id,
+                    avatar: buildAssetUrl(message.user_created.avatar)
+                },
+                image: message.image ? buildAssetUrl(message.image) : undefined,
+                sent: true
+            })) as IMessage[]
+            console.log(_initialMessages)
+            setMessages(_initialMessages)
+            realtime.connect().then(async () => {
+                setReady(true)
+            })
         }
-    }))
-}
+    }, [roomId, isInitialMessagesLoading])
 
-const addMessages = (ws: WebSocket, dispatcher: Dispatch<SetStateAction<IMessage[]>>, access_token: string, data: { data: ChatMessage[] }) => {
-    const { data: messagesRes } = data
-    const _messages: IMessage[] = messagesRes.map((d) => ({
-        _id: d.id,
-        text: d.content,
-        createdAt: new Date(d.date_created),
-        user: {
-            _id: d.user_created.id,
-            avatar: buildAssetUrl(d.user_created.avatar),
-            name: d.user_created.first_name,
-        },
-    }));
-    dispatcher(prev => {
-        const newMessages = _messages.filter(_message => !prev.some(message => message._id === _message._id));
-        return [...prev, ...newMessages];
-    });
-}
-
-const ChatScreen = ({ roomId }: { roomId: string }) => {
-    const userData = useContext(UserContext);
-    const authData = useContext(AuthContext);
-    const [messages, setMessages] = useState<IMessage[]>([])
-    const [page, setPage] = useState(1)
-    const [ws, setWs] = useState<WebSocket>()
-
-    useEffect(() => {
-        const connection = new WebSocket(directusWSUrl);
-        connection.addEventListener("open", () => {
-            connection.send(JSON.stringify({
-                type: "auth",
-                access_token: authData?.access_token
-            }))
-        })
-        connection.addEventListener("open", () => {
-            connection.send(JSON.stringify({
-                type: "auth",
-                access_token: authData?.access_token
-            }))
-        })
-        connection.addEventListener("message", (message: { data: any }) => {
-            const data = JSON.parse(message.data)
-            if (data.type === "auth" && data.status === "ok") {
-                connection.send(JSON.stringify({
-                    type: "subscribe",
-                    collection: "messages",
-                }))
-            }
-            setWs(connection)
-        })
-    }, [])
-
-    useEffect(() => {
-        if (!ws) return
-        console.log("here")
-        ws.addEventListener("message", (message: { data: any }) => {
-            const data = JSON.parse(message.data)
-            // console.log(data)
-            if (data.type === "ping") {
-                ws.send(JSON.stringify({ type: "pong" }))
-            }
-            if (data.type === "subscription" && data.event === "init") {
-                readMessages(ws, page, roomId)
-            }
-            if (data.type === "items" || (data.type === "subscription" && data.event === "create")) {
-                addMessages(ws, setMessages, authData?.access_token!, data)
-            }
-        })
-    }, [ws]);
+    const handleSend = ([message]: IMessage[]) => {
+        setMessages(prev => GiftedChat.append(prev, [message]))
+        realtime.sendMessage({
+            type: 'items',
+            collection: 'messages',
+            action: 'create',
+            data: {
+                content: message.text,
+                room: {
+                    id: roomId
+                }
+            },
+        });
+    }
 
     return (
-        <GiftedChat
+        ready ? <GiftedChat
             renderInputToolbar={(props) => (
                 <InputToolbar
                     {...props}
@@ -110,51 +84,43 @@ const ChatScreen = ({ roomId }: { roomId: string }) => {
                 />
             )}
             messages={messages}
-            user={{ _id: userData?.id! }}
-        />
+            onSend={handleSend}
+            user={{ _id: user.id }}
+        /> : <View />
     );
 };
 
 export default function RoomScreen() {
-    const authData = useContext(AuthContext);
-    const userData = useContext(UserContext);
     const { roomId } = useGlobalSearchParams();
+    const { rest } = directusStore()
+    const { user } = userStore()
 
-
-    const { data: roomRes, isLoading: isRoomResLoading } = useQuery({
+    const { data: room, isLoading } = useQuery({
         queryKey: ["Fetch Room by ID", roomId],
-        queryFn: () =>
-            fetch(
-                `${directusUrl}/items/rooms/${roomId}?fields=isGroup,title,avatar,members.directus_users_id.id,members.directus_users_id.first_name,members.directus_users_id.avatar`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${authData?.access_token}`,
-                    },
-                },
-            ).then((res) => res.json()),
-        enabled: !!roomId,
-    });
-
+        queryFn: async () => await rest.request(readItem("rooms", roomId as string, {
+            fields: ["id", 'isGroup', 'title', 'avatar', 'members.directus_users_id.id', 'members.directus_users_id.first_name', 'members.directus_users_id.avatar']
+        })),
+        enabled: !!roomId && typeof roomId === "string"
+    }) as {
+        data: Pick<Room, "avatar" | "id" | "isGroup" | "title"> & {
+            members: {
+                directus_users_id: Pick<User, "avatar" | "first_name" | "id">;
+            }[];
+        }, isLoading: boolean
+    }
     const navigation = useNavigation();
     useEffect(() => {
-        if (isRoomResLoading || !roomRes?.data) {
+        if (isLoading || !room?.id) {
             return;
         }
-        const { data: room } = roomRes as {
-            data: Pick<Room, "avatar" | "id" | "isGroup" | "title"> & {
-                members: {
-                    directus_users_id: Pick<User, "avatar" | "first_name" | "id">;
-                }[];
-            };
-        };
         const receiver = room.members.find(
-            (m) => m.directus_users_id.id !== userData?.id,
+            (m) => m.directus_users_id.id !== user?.id,
         )?.directus_users_id;
         const [roomName, roomAvatar] = room.isGroup
-            ? [room.title, buildAssetUrl(room.avatar, authData?.access_token!)]
+            ? [room.title, buildAssetUrl(room.avatar)]
             : [
                 receiver!.first_name,
-                buildAssetUrl(receiver!.avatar, authData?.access_token!),
+                buildAssetUrl(receiver!.avatar),
             ];
         navigation.setOptions({
             headerLeft:
@@ -175,10 +141,10 @@ export default function RoomScreen() {
                 </View>
             ),
         });
-    }, [navigation, roomRes, isRoomResLoading]);
+    }, [navigation, room, isLoading]);
 
-    return isRoomResLoading ||
-        !roomRes?.data ? (
+    return isLoading ||
+        !room?.id ? (
         <View />
     ) : (
         <ChatScreen roomId={roomId as string} />
