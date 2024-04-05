@@ -15,6 +15,7 @@ import { Listing, User } from "~/types";
 import { useDebounce } from 'use-debounce';
 import userStore from "~/store/user";
 import { queryClient } from "~/index";
+import { useColorScheme } from "~/lib/useColorScheme";
 
 const getDMRoomId = async (
   [userId1, userId2]: [string, string],
@@ -118,6 +119,7 @@ const ListingIconTile = ({
 
 const ListingCard = (props: ListingDetailed) => {
   const { user } = userStore()
+  const { colors } = useColorScheme()
 
   const handleClickToChat = async ([currentUserId, postCreatorId]: [
     string,
@@ -130,15 +132,15 @@ const ListingCard = (props: ListingDetailed) => {
   };
 
   return (
-    <View className="w-full px-4 py-6 flex flex-col gap-3 [&>*]:my-0 border-solid border-[1px] border-primary-foreground rounded">
+    <View className="w-full px-4 py-6 flex flex-col gap-3 [&>*]:my-0 border-solid border-[1px] border-border rounded">
       <Text className="text-2xl font-extrabold">{props.title}</Text>
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center gap-2">
-          <MaterialIcons size={18} color={"white"} name="location-pin" />
+          <MaterialIcons size={18} color={colors.foreground} name="location-pin" />
           <Text className="text-muted-foreground">{props.location}</Text>
         </View>
         <View className="flex-row items-center gap-2">
-          <MaterialIcons size={18} color={"white"} name="calendar-month" />
+          <MaterialIcons size={18} color={colors.foreground} name="calendar-month" />
           <Text className="text-muted-foreground">
             {new Date(props.date_created).toLocaleTimeString()}
           </Text>
@@ -159,13 +161,13 @@ const ListingCard = (props: ListingDetailed) => {
         </Text>
       </View>
       <View className="flex-row gap-4 items-center">
-        <Text className="text-green-400 font-extrabold text-xl">
+        <Text className="text-primary font-extrabold text-xl">
           AED {Number(props.price).toLocaleString()}
         </Text>
-        <Text className="border-solid border-[1px] border-primary rounded-full px-1 text-sm">
+        <Text className="border-solid border-[1px] border-border rounded-full px-1 text-sm">
           {props.mode_of_payment}
         </Text>
-        <View className="flex flex-row gap-2 items-center border-solid border-[1px] border-primary rounded-full px-2">
+        <View className="flex flex-row gap-2 items-center border-solid border-[1px] border-border rounded-full px-2">
           <Text className="text-muted-foreground text-sm font-light">
             Expected fee
           </Text>
@@ -247,16 +249,18 @@ const ListHeaderComponent = ({
   onChangeText: (val: string) => void;
 }) => {
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
+  const { colors } = useColorScheme()
+
   return (
-    <View className="flex-row items-center">
+    <View className="flex-row items-center w-full">
       <SearchBar
         placeholder="Search ..."
         showLoading={showLoading}
         round={true}
         containerStyle={{ backgroundColor: "transparent", flexGrow: 1 }}
         inputContainerStyle={{
-          backgroundColor: "transparent",
-          borderColor: "gray",
+          backgroundColor: colors.background,
+          borderColor: colors.border,
           borderWidth: 1,
           borderStyle: "solid",
           borderRadius: 9999,
@@ -313,6 +317,7 @@ const Listings = () => {
           value={searchText}
         />
       }
+      ListHeaderComponentStyle={{borderWidth: 0}}
       data={data as ListingDetailed[]}
       renderItem={({ item }) => <ListingCard {...item} />}
       keyExtractor={(item) => item.id.toString()}

@@ -1,12 +1,22 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Pressable, View } from "react-native";
+import { useContext } from "react";
+import { Platform, Pressable, View } from "react-native";
 import { MoonStar, Sun } from "~/components/Icons";
-import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { cn } from "~/lib/utils";
+import * as NavigationBar from 'expo-navigation-bar';
 
 export function ThemeToggle() {
-  const { isDarkColorScheme, setColorScheme } = useColorScheme();
+  const { isDarkColorScheme, setColorScheme, palette } = useColorScheme();
+
+  async function setAndroidNavigationBar(theme: 'light' | 'dark') {
+    if (Platform.OS !== 'android') {
+      return;
+    }
+    await NavigationBar.setButtonStyleAsync(theme === 'dark' ? 'light' : 'dark');
+    await NavigationBar.setBackgroundColorAsync(palette[theme].background);
+  }
+
   return (
     <Pressable
       onPress={() => {

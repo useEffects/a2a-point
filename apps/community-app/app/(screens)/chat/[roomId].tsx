@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useGlobalSearchParams, useNavigation } from "expo-router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Image, Platform, View } from "react-native";
-import { IMessage, GiftedChat, InputToolbar } from "react-native-gifted-chat";
+import { IMessage, GiftedChat, InputToolbar, Composer } from "react-native-gifted-chat";
 import { Text } from "~/components/ui/text";
 import { buildAssetUrl } from "~/lib/helpers";
 import { User, Room, Message } from "~/types";
@@ -10,15 +10,59 @@ import { MaterialIcons } from "@expo/vector-icons";
 import directusStore from "~/store/directus";
 import { readItem, readItems } from "@directus/sdk";
 import userStore from "~/store/user";
+import { LargeScreenContext } from "~/context/large-screen";
+import { directusWSUrl } from "~/lib/constants";
 
 type ChatMessage = (Message & { user_created: Pick<User, "first_name" | "id" | "avatar"> })
 
 const ChatScreen = ({ roomId }: { roomId: string }) => {
-    const { realtime, rest } = directusStore()
+    const { rest, token } = directusStore()
+    const [ws, setWs] = useState<WebSocket>()
     const { user } = userStore()
-    const [ready, setReady] = useState(false)
     const [messages, setMessages] = useState<IMessage[]>([])
+    const [ready, setReady] = useState(false)
     const [page, setPage] = useState(1)
+
+    function subscribe() {
+        ws?.send(JSON.stringify({
+            type: "subscribe",
+            collection: "messages",
+            query: {
+                fields: ["*", "user_created.avatar", "user_created.id"]
+            }
+        }))
+    }
+
+    useEffect(() => {
+        const ws = new WebSocket(`${directusWSUrl}?access_token=${token}`)
+        ws.onopen = () => {
+            setReady(true)
+            setWs(ws)
+            subscribe()
+        }
+        ws.addEventListener('open', function () {
+            console.log({ event: 'onopen' });
+        });
+
+        ws.addEventListener('message', function (message) {
+            const data = JSON.parse(message.data);
+            console.log({ event: 'onmessage', data });
+            if (data.type === "ping") {
+                ws.send(JSON.stringify({
+                    type: "pong"
+                }))
+            }
+        });
+
+        ws.addEventListener('close', function () {
+            console.log({ event: 'onclose' });
+        });
+
+        ws.addEventListener('error', function (error) {
+            console.log({ event: 'onerror', error });
+        });
+        return () => ws.close()
+    }, [])
 
     const { data: initialMessages, isLoading: isInitialMessagesLoading } = useQuery({
         queryKey: ["Fetch Messages", roomId],
@@ -49,17 +93,14 @@ const ChatScreen = ({ roomId }: { roomId: string }) => {
                 image: message.image ? buildAssetUrl(message.image) : undefined,
                 sent: true
             })) as IMessage[]
-            console.log(_initialMessages)
             setMessages(_initialMessages)
-            realtime.connect().then(async () => {
-                setReady(true)
-            })
+            setReady(true)
         }
     }, [roomId, isInitialMessagesLoading])
 
     const handleSend = ([message]: IMessage[]) => {
         setMessages(prev => GiftedChat.append(prev, [message]))
-        realtime.sendMessage({
+        ws?.send(JSON.stringify({
             type: 'items',
             collection: 'messages',
             action: 'create',
@@ -69,25 +110,24 @@ const ChatScreen = ({ roomId }: { roomId: string }) => {
                     id: roomId
                 }
             },
-        });
+        }));
     }
 
-    return (
-        ready ? <GiftedChat
-            renderInputToolbar={(props) => (
-                <InputToolbar
-                    {...props}
-                    containerStyle={{
-                        borderRadius: 9999,
-                        backgroundColor: "transparent",
-                    }}
-                />
-            )}
-            messages={messages}
-            onSend={handleSend}
-            user={{ _id: user.id }}
-        /> : <View />
-    );
+    return ready ? <GiftedChat
+        renderInputToolbar={(props) => (
+            <InputToolbar
+                {...props}
+                containerStyle={{
+                    borderRadius: 9999,
+                    backgroundColor: "transparent",
+                }}
+            />
+        )}
+        renderComposer={(props) => <Composer {...props} textInputStyle={{ color: "hsl(var(--primary-foreground))" }} />}
+        messages={messages}
+        onSend={handleSend}
+        user={{ _id: user.id }}
+    /> : <View />
 };
 
 export default function RoomScreen() {
@@ -123,14 +163,7 @@ export default function RoomScreen() {
                 buildAssetUrl(receiver!.avatar),
             ];
         navigation.setOptions({
-            headerLeft:
-                Platform.OS === "web"
-                    ? () => <View />
-                    : ({ tintColor }: { tintColor: string }) => (
-                        <Link href={"/chat/"}>
-                            <MaterialIcons name="arrow-left" size={24} color={tintColor} />
-                        </Link>
-                    ),
+            headerBackButtonEnabled: true,
             headerTitle: () => (
                 <View className="flex-row gap-4 items-center">
                     <Image
@@ -146,7 +179,5 @@ export default function RoomScreen() {
     return isLoading ||
         !room?.id ? (
         <View />
-    ) : (
-        <ChatScreen roomId={roomId as string} />
-    );
+    ) : <ChatScreen roomId={roomId as string} />
 }
