@@ -2,6 +2,18 @@
   "name": "assets",
   "version": "1.0.0",
   "main": "index.ts",
+  "type": "module",
   "author": "useEffects",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@types/color-convert": "^2.0.3",
+    "color-convert": "^2.0.1",
+    "postcss-value-parser": "^4.2.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.2"
+  },
+  "scripts": {
+    "build": "tsup"
+  }
 }

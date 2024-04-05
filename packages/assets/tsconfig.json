@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "target": "ESNext", // Set the target JavaScript version (e.g., es5, es2015, etc.)
+        "strict": true, // Enable strict type checking
+        "noImplicitAny": true, // Disallow implicit usage of the 'any' type,
+        "esModuleInterop": true,
+        "resolveJsonModule": true
+    }
+}
