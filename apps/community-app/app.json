@@ -2,9 +2,13 @@
   "expo": {
     "name": "Community",
     "slug": "community",
+    "userInterfaceStyle": "automatic",
     "scheme": "a2apoint",
     "android": {
       "package": "com.a2apoint"
+    },
+    "ios": {
+      "bundleIdentifier": "com.a2apoint"
     }
   }
 }

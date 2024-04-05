@@ -1,9 +1,11 @@
 import { readItems } from "@directus/sdk";
 import { useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
+import { useContext } from "react";
 import { Image, Platform, Pressable, View } from "react-native";
 import { FlatList } from "react-native";
 import { Text } from "~/components/ui/text";
+import { LargeScreenContext } from "~/context/large-screen";
 import { buildAssetUrl } from "~/lib/helpers";
 import directusStore from "~/store/directus";
 import userStore from "~/store/user";
@@ -67,9 +69,10 @@ export const ChatList = () => {
 };
 
 export default function ChatScreen() {
+  const isLargeScreen = useContext(LargeScreenContext)
   return (
     <View className="max-w-lg mx-auto p-2 w-full flex-row justify-center">
-      {Platform.OS === "web" ? <View /> : <ChatList />}
+      {isLargeScreen ? <View /> : <ChatList />}
     </View>
   );
 }

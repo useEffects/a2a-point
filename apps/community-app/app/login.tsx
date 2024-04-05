@@ -1,7 +1,6 @@
 import { makeRedirectUri } from "expo-auth-session";
 import { router, useGlobalSearchParams } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
-import { useContext } from "react";
 import { View } from "react-native";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
@@ -15,7 +14,8 @@ export default function LoginScreen() {
 
     const handleLogin = async () => {
         const appUrl = makeRedirectUri()
-        const result = await WebBrowser.openAuthSessionAsync(`${directusUrl}/auth/login/google?redirect=${portfolioUrl}?appUrl=${appUrl}`, appUrl);
+        console.log(appUrl)
+        const result = await WebBrowser.openAuthSessionAsync(`${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/expo-redirect?appUrl=${appUrl}`, appUrl);
         if (result.type === "success") {
             const accessToken = result.url.split("access_token=")[1]
             if (accessToken) {

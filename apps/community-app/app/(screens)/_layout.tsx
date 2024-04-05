@@ -4,8 +4,9 @@ import { cx } from "class-variance-authority";
 import { Tabs, router } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import { maybeCompleteAuthSession } from "expo-web-browser";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Image, Platform, View } from "react-native";
+import { LargeScreenContext } from "~/context/large-screen";
 import { buildAssetUrl } from "~/lib/helpers";
 import directusStore from "~/store/directus";
 import userStore from "~/store/user";
@@ -17,7 +18,6 @@ const WebNavigation = () => {
     <View className="w-full h-full flex items-center min-h-screen">
       <View className="container h-full">
         <Drawer
-          initialRouteName="index"
           screenOptions={{
             drawerType: "permanent",
             drawerLabelStyle: { display: "none" },
@@ -155,20 +155,13 @@ const MobileNavigation = () => {
 export default function Layout() {
 
   const { rest, initialize } = directusStore()
-  const [isLargeScreen, setIsLargeScreen] = React.useState(false);
+  const isLargeScreen = useContext(LargeScreenContext)
   const [isReady, setIsReady] = React.useState(false)
 
   React.useEffect(() => {
-    if (Platform.OS !== "web") {
-      return;
+    if (Platform.OS === "web") {
+      maybeCompleteAuthSession()
     };
-
-    maybeCompleteAuthSession()
-
-    const handleResize = () => setIsLargeScreen(window.innerWidth >= 640);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
   }, [Platform]);
 
   React.useEffect(() => {
@@ -179,11 +172,10 @@ export default function Layout() {
         if (!accessToken) {
           router.replace("/login")
         } else {
-          initialize(accessToken)
+          await initialize(accessToken)
         }
-      } else {
-        setIsReady(true)
       }
+      setIsReady(true)
     })()
   }, [rest])
 
