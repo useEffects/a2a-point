@@ -1,2 +1,4 @@
-export * as logo from "./logo.svg"
-export * from "./shadcn-theme"
+import "./shadcn-theme.css"
+import colors from "./shadcn-theme.json"
+
+export default colors
