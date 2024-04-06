@@ -4,6 +4,8 @@
         "strict": true, // Enable strict type checking
         "noImplicitAny": true, // Disallow implicit usage of the 'any' type,
         "esModuleInterop": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "moduleResolution": "NodeNext",
+        "module": "NodeNext"
     }
 }

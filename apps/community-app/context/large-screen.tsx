@@ -6,7 +6,6 @@ export const LargeScreenContext = createContext(false)
 
 export const LargeScreenProvider = ({ children }: { children: ReactNode }) => {
     const [isLargeScreen, setIsLargeScreen] = useState(false)
-    const { realtime } = directusStore()
 
     useEffect(() => {
         if (Platform.OS !== "web") {

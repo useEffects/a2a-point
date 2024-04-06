@@ -132,7 +132,7 @@ const ListingCard = (props: ListingDetailed) => {
   };
 
   return (
-    <View className="w-full px-4 py-6 flex flex-col gap-3 [&>*]:my-0 border-solid border-[1px] border-border rounded">
+    <View className="w-[calc(100%-16px)] mx-4 px-4 py-6 flex flex-col gap-3 [&>*]:my-0 border-solid border-[1px] border-border rounded">
       <Text className="text-2xl font-extrabold">{props.title}</Text>
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center gap-2">
@@ -257,7 +257,7 @@ const ListHeaderComponent = ({
         placeholder="Search ..."
         showLoading={showLoading}
         round={true}
-        containerStyle={{ backgroundColor: "transparent", flexGrow: 1 }}
+        containerStyle={{ backgroundColor: "transparent", flexGrow: 1, borderWidth: 0, borderColor: "transparent" }}
         inputContainerStyle={{
           backgroundColor: colors.background,
           borderColor: colors.border,
@@ -317,7 +317,6 @@ const Listings = () => {
           value={searchText}
         />
       }
-      ListHeaderComponentStyle={{borderWidth: 0}}
       data={data as ListingDetailed[]}
       renderItem={({ item }) => <ListingCard {...item} />}
       keyExtractor={(item) => item.id.toString()}
@@ -328,7 +327,7 @@ const Listings = () => {
 
 export default function Home() {
   return (
-    <View className={cn(Platform.OS === "web" && "mx-auto", "max-w-2xl w-full")}>
+    <View className={cn(Platform.OS === "web" && "mx-auto", "max-w-2xl w-full pb-4")}>
       <Listings />
     </View>
   );
