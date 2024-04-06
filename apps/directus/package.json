@@ -13,9 +13,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "directus": "10.10.1",
+    "directus": "10.10.4",
     "pg": "^8.11.3",
-    "sharp": "^0.33.2",
+    "sharp": "^0.33.3",
     "sqlite3": "^5.1.7"
   }
 }
