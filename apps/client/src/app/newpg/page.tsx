@@ -19,6 +19,9 @@ type NewsFeeds = {
     time: string
 
 
+
+    
+
 }
 
 export default async function Feed() {

@@ -19,8 +19,8 @@ type NewsFeeds = {
 }
 
 export default function Card(props: NewsFeeds) {
-    return <div className="flex flex-col gap-4 m-4t">
-        <img src={props.image}></img>
+    return <div className="flex flex-col gap-4 m-4">
+        <img src={props.image} className="w-full h-1/5"></img>
         <div className="flex gap-4">
             <p>{props.title}</p>
             <p>{props.time}</p>
