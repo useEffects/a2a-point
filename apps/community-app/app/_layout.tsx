@@ -1,5 +1,4 @@
-import "~/global.css";
-import "assets/dist/index.css"
+import "tailwind-theme/global.css"
 
 import "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -34,22 +33,12 @@ export default function RootLayout() {
   React.useEffect(() => {
     (async () => {
       const theme = await AsyncStorage.getItem("theme");
+      setColorScheme(theme === "light" ? theme : theme === "dark" ? theme : "system");
+      setIsColorSchemeLoaded(true)
       if (Platform.OS === "web") {
         // Adds the background color to the html element to prevent white background on overscroll.
         document.documentElement.classList.add("bg-background");
       }
-      if (!theme) {
-        AsyncStorage.setItem("theme", colorScheme);
-        setIsColorSchemeLoaded(true);
-        return;
-      }
-      const colorTheme = theme === "dark" ? "dark" : "light";
-      if (colorTheme !== colorScheme) {
-        setColorScheme(colorTheme);
-        setIsColorSchemeLoaded(true);
-        return;
-      }
-      setIsColorSchemeLoaded(true);
     })().finally(() => {
       SplashScreen.hideAsync();
     });

@@ -1,5 +1,48 @@
 import { useColorScheme as useNativewindColorScheme } from "nativewind";
-import shadcnTheme from "assets/shadcn-theme.json"
+const theme = {
+  "light": {
+      "background": "#FFFFFF",
+      "foreground": "#020817",
+      "card": "#FFFFFF",
+      "card-foreground": "#020817",
+      "popover": "#FFFFFF",
+      "popover-foreground": "#020817",
+      "primary": "#FF7F00",
+      "primary-foreground": "#F8FAFC",
+      "secondary": "#F1F5F9",
+      "secondary-foreground": "#0F172A",
+      "muted": "#F1F5F9",
+      "muted-foreground": "#64748B",
+      "accent": "#F1F5F9",
+      "accent-foreground": "#0F172A",
+      "destructive": "#EF4444",
+      "destructive-foreground": "#F8FAFC",
+      "border": "#E2E8F0",
+      "input": "#E2E8F0",
+      "ring": "#020817"
+  },
+  "dark": {
+      "background": "#020817",
+      "foreground": "#F8FAFC",
+      "card": "#020817",
+      "card-foreground": "#F8FAFC",
+      "popover": "#020817",
+      "popover-foreground": "#F8FAFC",
+      "primary": "#FF7F00",
+      "primary-foreground": "#0F172A",
+      "secondary": "#1E293B",
+      "secondary-foreground": "#F8FAFC",
+      "muted": "#1E293B",
+      "muted-foreground": "#94A3B8",
+      "accent": "#1E293B",
+      "accent-foreground": "#F8FAFC",
+      "destructive": "#7F1D1D",
+      "destructive-foreground": "#F8FAFC",
+      "border": "#1E293B",
+      "input": "#1E293B",
+      "ring": "#CBD5E1"
+  }
+}
 
 export function useColorScheme() {
   const { colorScheme, setColorScheme, toggleColorScheme } = useNativewindColorScheme();
@@ -9,7 +52,7 @@ export function useColorScheme() {
     isDarkColorScheme: colorScheme === "dark",
     setColorScheme,
     toggleColorScheme,
-    colors: shadcnTheme[colorScheme ?? "light"],
-    palette: shadcnTheme
+    colors: theme[colorScheme ?? "light"],
+    palette: theme
   };
 }

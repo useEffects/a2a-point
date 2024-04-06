@@ -6,8 +6,17 @@ import { Drawer } from "expo-router/drawer";
 import { maybeCompleteAuthSession } from "expo-web-browser";
 import React, { useContext, useEffect } from "react";
 import { Image, Platform, View } from "react-native";
+import BookMarkDual from "~/components/bottom-icons/bookmark/dual";
+import BookMarkOutline from "~/components/bottom-icons/bookmark/outer";
+import CardSearchDual from "~/components/bottom-icons/card-search/dual";
+import CardSearchOutline from "~/components/bottom-icons/card-search/outer";
+import ChatSquareDual from "~/components/bottom-icons/chat-square/dual";
+import ChatSquareOutline from "~/components/bottom-icons/chat-square/outer";
+import UsersGroupDual from "~/components/bottom-icons/users-group/dual";
+import UsersGroupOutline from "~/components/bottom-icons/users-group/outer";
 import { LargeScreenContext } from "~/context/large-screen";
 import { buildAssetUrl } from "~/lib/helpers";
+import { useColorScheme } from "~/lib/useColorScheme";
 import directusStore from "~/store/directus";
 import userStore from "~/store/user";
 
@@ -65,7 +74,7 @@ const WebNavigation = () => {
             name="settings"
             options={{
               title: "Profile",
-              drawerIcon: ({ color, focused, size }) => (
+              drawerIcon: ({ focused }) => (
                 <Image
                   className={cx(
                     "w-6 h-6 m-auto rounded-full border-solid border-[1px]",
@@ -86,6 +95,7 @@ const WebNavigation = () => {
 
 const MobileNavigation = () => {
   const { user } = userStore()
+  const { colors } = useColorScheme()
 
   return (
     <Tabs
@@ -98,8 +108,9 @@ const MobileNavigation = () => {
         name="chat"
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, focused, size }) => (
-            <MaterialIcons name="chat" size={size} color={color} />
+          tabBarIcon: ({ focused, size }) => (
+            focused ?
+              <ChatSquareDual color={colors.primary} width={size} height={size} /> : <ChatSquareOutline color={colors.primary} width={size} height={size} />
           ),
         }}
       />
@@ -107,8 +118,8 @@ const MobileNavigation = () => {
         name="community"
         options={{
           headerTitle: "Community",
-          tabBarIcon: ({ color, focused, size }) => (
-            <MaterialIcons name="groups" size={size} color={color} />
+          tabBarIcon: ({ focused, size }) => (
+            focused ? <UsersGroupDual color={colors.primary} width={size} height={size} /> : <UsersGroupOutline color={colors.primary} width={size} height={size} />
           ),
         }}
       />
@@ -116,8 +127,9 @@ const MobileNavigation = () => {
         name="index"
         options={{
           headerTitle: "Leads",
-          tabBarIcon: ({ color, focused, size }) => (
-            <MaterialIcons name="explore" size={size} color={color} />
+          tabBarIcon: ({ focused, size }) => (
+            focused ? <CardSearchDual color={colors.primary} width={size} height={size} /> :
+              <CardSearchOutline color={colors.primary} width={size} height={size} />
           ),
         }}
       />
@@ -125,8 +137,8 @@ const MobileNavigation = () => {
         name="saved"
         options={{
           headerTitle: "Saved",
-          tabBarIcon: ({ color, focused, size }) => (
-            <MaterialIcons name="bookmark" size={size} color={color} />
+          tabBarIcon: ({ focused, size }) => (
+            focused ? <BookMarkDual color={colors.primary} width={size} height={size} /> : <BookMarkOutline color={colors.primary} width={size} height={size} />
           ),
         }}
       />
@@ -134,7 +146,7 @@ const MobileNavigation = () => {
         name="settings"
         options={{
           headerTitle: "Profile",
-          tabBarIcon: ({ color, focused, size }) => (
+          tabBarIcon: ({ focused }) => (
             <Image
               className={cx(
                 "w-8 h-8 rounded-full border-solid border-[1px]",
@@ -150,7 +162,6 @@ const MobileNavigation = () => {
     </Tabs>
   );
 };
-
 
 export default function Layout() {
 

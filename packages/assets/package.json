@@ -8,6 +8,7 @@
   "dependencies": {
     "@types/color-convert": "^2.0.3",
     "color-convert": "^2.0.1",
+    "postcss": "^8.4.38",
     "postcss-value-parser": "^4.2.0"
   },
   "devDependencies": {

@@ -52,7 +52,7 @@ const variableNames: (keyof ColorVariables)[] = [
 function extractColors(cssPath: string, isDarkTheme: boolean): ColorVariables {
     const colors = {} as ColorVariables;
     const cssContent = fs.readFileSync(cssPath, 'utf8');
-    const rootSelector = isDarkTheme ? '.dark' : ':root';
+    const rootSelector = isDarkTheme ? '.dark:root' : ':root';
 
     const parsedCss = postcss.parse(cssContent);
 
@@ -64,7 +64,6 @@ function extractColors(cssPath: string, isDarkTheme: boolean): ColorVariables {
                     if (variableNames.includes(variableName)) {
                         const parsedValue = postcssValueParser(decl.value);
                         let hslValues: number[] = [];
-
                         // Iterate through nodes to find HSL values
                         parsedValue.walk((node) => {
                             if (node.type === 'word') {
@@ -98,3 +97,5 @@ export const colorVariables: {
     light: lightThemeColors,
     dark: darkThemeColors
 }
+
+fs.writeFileSync("shadcn-theme.json", JSON.stringify(colorVariables))
