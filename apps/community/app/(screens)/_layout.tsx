@@ -34,8 +34,8 @@ const _navigationItem: NavigationItem[] = [
         ),
     },
     {
-        name: "index",
-        title: "Explore",
+        name: "(home)",
+        title: "",
         icon: (color, size) => (
             <MaterialIcons name="explore" size={size} color={color} />
         ),
@@ -107,7 +107,7 @@ const MobileNavigation = () => {
                 key={navItem.name}
                 name={navItem.name}
                 options={{
-                    headerShown: navItem.name !== "chat",
+                    headerShown: !["chat", "(home)"].includes(navItem.name),
                     headerTitle: navItem.title,
                     tabBarIcon: ({ focused, size }) =>
                         navItem.icon(
@@ -139,7 +139,7 @@ const MobileNavigation = () => {
 
     return (
         <Tabs
-            initialRouteName="index"
+            initialRouteName="(home)"
             screenOptions={{
                 tabBarLabelStyle: { display: "none" },
                 headerTitle: "",
