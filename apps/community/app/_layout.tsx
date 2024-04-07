@@ -33,7 +33,6 @@ export default function RootLayout() {
   React.useEffect(() => {
     (async () => {
       const theme = await AsyncStorage.getItem("theme");
-      console.log(theme)
       if (!theme) {
         await AsyncStorage.setItem("theme", colorScheme);
       } else {
@@ -45,13 +44,11 @@ export default function RootLayout() {
         document.documentElement.classList.add("bg-background");
       }
     })().finally(() => {
-      SplashScreen.hideAsync();
+      if (isColorSchemeLoaded) {
+        SplashScreen.hideAsync();
+      }
     });
-  }, []);
-
-  if (!isColorSchemeLoaded) {
-    return null;
-  }
+  }, [isColorSchemeLoaded]);
 
   return (
     <ThemeProvider value={theme}>

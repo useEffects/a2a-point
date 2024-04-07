@@ -22,34 +22,52 @@ export type Listing = {
     mode_of_payment: string;
 };
 
+export type SocialMedia = {
+    social_media: string;
+    link: string;
+}
+
+export type WorkExperience = {
+    company_name: string;
+    title: string;
+    company_logo: string;
+    location: string;
+    description: string;
+    start_date: string;
+    end_date: string | null;
+}
+
 export type User = {
     id: string;
     first_name: string;
     last_name: string;
     email: string;
-    password: string;
+    password: string | null;
     location: string | null;
     title: string | null;
     description: string | null;
     tags: string[] | null;
-    avatar: string | null;
+    avatar: string;
     language: string | null;
     tfa_secret: string | null;
-    status: "active" | "inactive";
+    status: string;
     role: string;
-    token: string | null;
+    token: string;
     last_access: string;
     last_page: string;
     provider: string;
-    external_identifier: string | null;
-    auth_data: any;
+    external_identifier: string;
+    auth_data: string;
     email_notifications: boolean;
-    appearance: any;
-    theme_dark: any;
-    theme_light: any;
-    theme_light_overrides: any;
-    theme_dark_overrides: any;
-};
+    appearance: any | null;
+    theme_dark: any | null;
+    theme_light: any | null;
+    theme_light_overrides: any | null;
+    theme_dark_overrides: any | null;
+    social_media: SocialMedia[];
+    work_experience: WorkExperience[];
+}
+
 
 export type Room = {
     date_created: string;
