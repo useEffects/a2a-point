@@ -2,13 +2,11 @@ import { readItems } from "@directus/sdk";
 import { useQuery } from "@tanstack/react-query";
 import { FlatList, Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { SmallListCard, SmallListCardProps } from "~/components/listings-cards/small";
+import { SmallListCard, SmallListCardProps } from "~/components/listings-cards/molecules/small";
 import { Text } from "~/components/ui/text";
-import { useColorScheme } from "~/lib/useColorScheme";
 import directusStore from "~/store/directus";
-import { Feather, FontAwesome } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { Button } from "~/components/ui/button";
-import { hairlineWidth } from "nativewind/theme";
 
 const LocationCards = () => {
     return <View>
@@ -18,7 +16,6 @@ const LocationCards = () => {
 
 export default function Home() {
     const insets = useSafeAreaInsets();
-    const { colors } = useColorScheme();
     const { rest } = directusStore();
 
     const { data: featuredLists } = useQuery({
@@ -26,7 +23,12 @@ export default function Home() {
         queryFn: async () => await rest.request(readItems("listings", {
             fields: ["id", "title", "price", "location", "user_created.id", "user_created.avatar"],
             limit: 5,
-            sort: ["-date_created"]
+            sort: ["-date_created"],
+            filter: {
+                featured: {
+                    _eq: true
+                }
+            }
         })),
         initialData: [],
     })

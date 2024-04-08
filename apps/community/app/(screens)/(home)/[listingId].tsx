@@ -2,11 +2,13 @@ import { readItem } from "@directus/sdk";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalSearchParams, useNavigation } from "expo-router";
 import { useEffect } from "react";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
+import { RenderListings, bodies, sortFeatured } from "~/components/listings-cards/body";
+import { FullListingCard, FullListingDetailed } from "~/components/listings-cards/molecules/full";
+import { Hr } from "~/components/ui/hr";
+import { Text } from "~/components/ui/text";
 import directusStore from "~/store/directus";
-import { Listing, User } from "~/types";
 
-type ListingDetailed = Listing & { user_created: Pick<User, "id" | "avatar" | "first_name" | "email"> }
 
 export default function ListingScreen() {
   const { listingId } = useGlobalSearchParams()
@@ -16,9 +18,9 @@ export default function ListingScreen() {
   const { data: listing, isLoading } = useQuery({
     queryKey: ["listing", listingId],
     queryFn: async () => await rest.request(readItem("listings", listingId as string, {
-      fields: ["*", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.email"]
+      fields: ["*", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.email", "amenities.additional_value", "amenities.amenities_id.*"]
     })),
-  }) as { data: ListingDetailed, isLoading: boolean }
+  }) as { data: FullListingDetailed, isLoading: boolean }
 
   useEffect(() => {
     if (listing?.title) {
@@ -29,9 +31,12 @@ export default function ListingScreen() {
     }
   }, [listing])
 
-  return isLoading && (
-    <View>
-
-    </View>
+  return !isLoading && (
+    <ScrollView contentContainerStyle={{ gap: 16, padding: 8 }}>
+      <FullListingCard {...listing} />
+      <Hr />
+      <Text>Browse Featured Listings</Text>
+      <RenderListings render={bodies.small} filter={sortFeatured} horizontal />
+    </ScrollView>
   );
 }
