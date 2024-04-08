@@ -1,17 +1,27 @@
-export type Listing = {
+export type Amenity = {
+    id: number,
+    icon: string,
+    label: string
+}
+
+export type ListingAmenity = {
     id: number;
+    listings_id: string;
+    amenities_id: number;
+    additional_value: null | string; // Change this type based on your requirements
+};
+
+export type Listing = {
+    id: string;
     status: string;
-    sort: null | any;
-    user_created: string;
+    sort: null;
+    user_created: User;
     date_created: string;
-    user_updated: null | string;
-    date_updated: null | string;
+    date_updated: string;
     title: string;
     type: string;
+    deal_type: string;
     tags: string[];
-    location: string;
-    visibility: null | any;
-    photo: string;
     bathrooms: number;
     bedrooms: number;
     garages: number;
@@ -19,8 +29,16 @@ export type Listing = {
     price: number;
     carpet_area: number;
     expected_broker_fees: number;
-    mode_of_payment: string;
+    address: string;
+    description: string;
+    mode_of_payments: string[];
+    room: null;
+    featured: boolean;
+    amenities: ListingAmenity[];
+    saved_by: any[];
+    viewed_by: any[];
 };
+
 
 export type SocialMedia = {
     social_media: string;

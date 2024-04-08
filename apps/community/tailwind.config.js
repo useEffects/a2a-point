@@ -5,6 +5,9 @@ module.exports = {
   darkMode: 'class',
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
   presets: [require('nativewind/preset')],
+  corePlugin: {
+    backgroundOpacity: true,
+  },
   theme: {
     extend: {
       colors: {
