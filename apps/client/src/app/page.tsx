@@ -1,122 +1,65 @@
-import { ToggleTheme } from "@/components/toggle-theme";
+import { GridBackground } from "@/components/dot-gradient";
 import { Button } from "@/components/ui/button";
-import photo from "@/assests/photo.png";
+import { Separator } from "@/components/ui/separator";
+import hero from '@/assets/hero.png';
+import hero2 from "@/assets/hero2.png";
+import HeroBg from "@/assets/svg/hero-bg";
 
-
-const items = [
+const heroSideCardProps = [
   {
-    title: "Additional Services",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec blandit eros purus"
-
+    label: "Properties",
+    value: "100",
   },
   {
-    title: "Professional Network",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec blandit eros purus"
-
+    label: "Agents",
+    value: "100",
   },
   {
-    title: "Market Knowledge",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec blandit eros purus"
-
-  },
-  {
-    title: "24 Hours Consultation",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec blandit eros purus"
-
+    label: "Transactions",
+    value: "100",
   }
 ]
 
+const HeroSideCard = ({ label, value }: { label: string, value: string }) => {
+  return <div className="rounded-lg border border-solid p-2 backdrop-blur-lg shadow-lg">
+    <p className="text-sm">{label}</p>
+    <p className="font-extrabold text-primary">{value}</p>
+  </div>
+}
+
 export default function Home() {
-  return <div>
-    <ToggleTheme />
-    <div className="flex flex-col gap-2">
-      <p className="text-2xl font-bold flex justify-center">Top agents</p>
-      <div className="flex gap-4 m-4 justify-evenly">
-        <div className="flex flex-col gap-1 border-2 border-amber-600 ">
-          <div className="flex flex gap-2 m-2">
-            <div className="flex">
-              <img src={photo.src}></img>
-            </div>
-            <div className=" flex flex-col gap-2 m-4">
-              <p className="text-2xl">Mr.Dale</p>
-              <p>Agency name</p>
-            </div>
-          </div>
-          <div className="flex flex-col gap-2 m-2">
-
-            <p className="text-4xl">$906.00</p>
-            <p>Cappacale Date</p>
-            <p>Coimbatore</p>
-          </div>
-          <div className="flex  gap-4 m-2 justify-between">
-            <p>3 Bed</p>
-            <p>1 Bath</p>
-            <p>3000 sqft</p>
-          </div>
-        </div>
-        <div className="flex flex-col gap-1 border-2 border-amber-600 ">
-          <div className="flex flex gap-2 m-2">
-            <div className="flex">
-              <img src={photo.src}></img>
-            </div>
-            <div className=" flex flex-col gap-2 m-4">
-              <p className="text-2xl">Mr.Dale</p>
-              <p>Agency name</p>
-            </div>
-          </div>
-          <div className="flex flex-col gap-2 m-2">
-
-            <p className="text-4xl">$906.00</p>
-            <p>Cappacale Date</p>
-            <p>Coimbatore</p>
-          </div>
-          <div className="flex  gap-4 m-2 justify-between">
-            <p>3 Bed</p>
-            <p>1 Bath</p>
-            <p>3000 sqft</p>
-          </div>
-        </div>
-        <div className="flex flex-col gap-1 border-2 border-amber-600 ">
-          <div className="flex flex gap-2 m-2">
-            <div className="flex">
-              <img src={photo.src}></img>
-            </div>
-            <div className=" flex flex-col gap-2 m-4">
-              <p className="text-2xl">Mr.Dale</p>
-              <p>Agency name</p>
-            </div>
-          </div>
-          <div className="flex flex-col gap-2 m-2">
-
-            <p className="text-4xl">$906.00</p>
-            <p>Cappacale Date</p>
-            <p>Coimbatore</p>
-          </div>
-          <div className="flex  gap-4 m-2 justify-between">
-            <p>3 Bed</p>
-            <p>1 Bath</p>
-            <p>3000 sqft</p>
-          </div>
-        </div>
-
+  return <div className="flex justify-center container gap-4">
+    <div className="top-0 bottom-0 left-0 right-0 absolute opacity-10 z-10">
+      <HeroBg />
+    </div>
+    <div className="flex flex-col item-center justify-center gap-12 w-1/2 relative z-20">
+      <div className="flex flex-col gap-4">
+        <p className="text-xl md:text-3xl font-bold text-muted-foreground"> Elevate your Real Estate Game </p>
+        <p className="text-3xl md:text-7xl font-bold"> The <span className="text-primary"> One Stop </span> for All Agents </p>
+        <p className="text-muted-foreground">In the dynamic world of real estate, efficiency, transparency, and seamless
+          collaboration are paramount. Introducing A2A POINT, a revolutionary portal
+          designed exclusively for real estate agents, redefining the landscape of property
+          transactions and deal management.</p>
+      </div>
+      <div className="flex gap-4 w-full [&>*]:w-1/2 [&>*]:rounded-full">
+        <Button size={"lg"}> Browse Plans </Button>
+        <Button variant={"outline"} size={"lg"}> See Testimonials </Button>
       </div>
     </div>
-    <div className="flex flex-col m-4">
-      <p className="text-2xl font-bold flex justify-center">Why choose us?</p>
-      <div className="grid grid-row-2 grid-col-2 gap-4 border-2 border-amber-600 ">
-        {
-          items.map((item, i) => <div key={i}>
-            <div>
-              <p>{item.title}</p>
-              <p>{item.content}</p>
-            </div>
-
-          </div>)
-        }
-
-
+    <GridBackground className="w-1/2 h-[calc(100vh-12rem)] p-4">
+      <div className="flex w-full h-full">
+        <div className="w-full h-full flex flex-col relative">
+          <div className="flex-grow absolute z-10 flex flex-col gap-4 left-auto -right-4">
+            {heroSideCardProps.map((props, index) => <HeroSideCard key={index} {...props} />)}
+          </div>
+          <div className="border-4 border-primary rounded m-4 backdrop-blur-sm shadow-lg mt-auto mb-4">
+            <img src={hero2.src} className="w-full h-full object-contain" alt="" />
+          </div>
+        </div>
+        <div className="h-2/3 aspect-[2/3] rounded-full bg-primary shadow-lg">
+          <img src={hero.src} className="object-fill h-full w-full rounded-full" alt="" />
+        </div>
       </div>
-    </div>
-
+    </GridBackground>
   </div>
 }

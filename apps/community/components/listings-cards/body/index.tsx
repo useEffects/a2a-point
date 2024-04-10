@@ -17,7 +17,7 @@ interface RenderType<T> {
 
 export const bodies = {
     small: {
-        fields: ["id", "title", "price", "location", "user_created.id", "user_created.avatar"],
+        fields: ["id", "title", "price", "address", "type", "user_created.id", "user_created.avatar"],
         renderMethod: SmallListCard
     }
 }
@@ -39,6 +39,6 @@ export const RenderListings = ({ render, filter, horizontal }: { render: RenderT
         <FlatList
             horizontal={horizontal}
             data={data}
-            renderItem={({ item }) => render.renderMethod(item)}
+            renderItem={({ item }) => <render.renderMethod {...item} />}
         />
 }

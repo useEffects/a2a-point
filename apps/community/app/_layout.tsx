@@ -9,6 +9,7 @@ import { Platform, Text, View } from "react-native";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { PortalHost } from "~/components/primitives/portal";
 import { LargeScreenProvider } from "~/context/large-screen";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -52,13 +53,15 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={theme}>
-      <LargeScreenProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(screens)" />
-          <Stack.Screen options={{ headerShown: true, headerTitle: "Login" }} name="login" />
-        </Stack>
-        <PortalHost />
-      </LargeScreenProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <LargeScreenProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(screens)" />
+            <Stack.Screen options={{ headerShown: true, headerTitle: "Login" }} name="login" />
+          </Stack>
+          <PortalHost />
+        </LargeScreenProvider>
+      </GestureHandlerRootView>
     </ThemeProvider>
   );
 }

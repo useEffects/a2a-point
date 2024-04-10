@@ -1,13 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import image4 from "@/assests/image4.png"
-import person from "@/assests/person.png"
-import roadmap from "@/assests/roadmap.png"
-
-
-
-
-
+import image4 from "@/assets/image4.png"
+import person from "@/assets/person.png"
+import roadmap from "@/assets/roadmap.png"
 
 export default  function Courses() {
     return <div className="container flex flex-col gap-8 m-4">

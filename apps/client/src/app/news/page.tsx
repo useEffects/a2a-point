@@ -1,8 +1,8 @@
-import a2a from "@/assests/a2a.png"
-import home from "@/assests/home.png"
-import image1 from "@/assests/image1.png"
-import image2 from "@/assests/image2.png"
-import image3 from "@/assests/image3.png"
+import a2a from "@/assets/a2a.png"
+import home from "@/assets/home.png"
+import image1 from "@/assets/image1.png"
+import image2 from "@/assets/image2.png"
+import image3 from "@/assets/image3.png"
 import directus from "@/lib/directus"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -23,8 +23,6 @@ type NewsFeeds = {
     tags: string[],
     image: string,
     time: string
-
-
 }
 
 const sidebar = ["Dashboard", "Courses", "News", "Pricing", "Contact Us"]
@@ -133,7 +131,6 @@ export default async function News() {
             {
                 newsFeeds.map((item, i) => <div key={i} className="flex flex-col gap-4 m-4" >
                     <Card  {...item}/>
-                  
                 </div>)
             }
 
