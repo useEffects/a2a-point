@@ -7,6 +7,7 @@ import { Text } from "~/components/ui/text";
 import directusStore from "~/store/directus";
 import { Feather } from '@expo/vector-icons';
 import { Button } from "~/components/ui/button";
+import { router } from "expo-router";
 
 const LocationCards = () => {
     return <View>
@@ -18,10 +19,20 @@ export default function Home() {
     const insets = useSafeAreaInsets();
     const { rest } = directusStore();
 
-    const { data: featuredLists } = useQuery({
-        queryKey: ["featured-lists"],
+    const { data: latestListings, isLoading: isLatestListingsLoading } = useQuery({
+        queryKey: ["latest-listings"],
         queryFn: async () => await rest.request(readItems("listings", {
-            fields: ["id", "title", "price", "location", "user_created.id", "user_created.avatar"],
+            fields: ["id", "title", "price", "address", "type", "user_created.id", "user_created.avatar"],
+            limit: 5,
+            sort: ["-date_created"],
+        })),
+        initialData: [],
+    })
+
+    const { data: featuredListings } = useQuery({
+        queryKey: ["featured-listings"],
+        queryFn: async () => await rest.request(readItems("listings", {
+            fields: ["id", "title", "price", "address", "type", "user_created.id", "user_created.avatar"],
             limit: 5,
             sort: ["-date_created"],
             filter: {
@@ -34,9 +45,9 @@ export default function Home() {
     })
 
     return <View style={{ paddingTop: insets.top }} className="w-full container p-4 flex-col gap-12">
-        <View className="mt-4">
+        <View className="mt-4 flex-col gap-4">
             <View className="flex flex-row items-center justify-between">
-                <Text className="text-xl">Trending</Text>
+                <Text className="text-xl">Latest</Text>
                 <Button size={"sm"} variant={"ghost"} className="flex-row items-center">
                     <Text className="">View All</Text>
                     <Feather name="arrow-right" className="!text-foreground !text-base ml-2" />
@@ -46,15 +57,15 @@ export default function Home() {
                 horizontal={true}
                 scrollEnabled={true}
                 showsHorizontalScrollIndicator={Platform.OS === "web" ? true : false}
-                data={featuredLists}
-                renderItem={({ item }) => SmallListCard(item as SmallListCardProps)}
+                data={latestListings}
+                renderItem={({ item }) => <SmallListCard {...item as SmallListCardProps} />}
                 ItemSeparatorComponent={() => <View className="w-4" />}
             />
         </View>
-        <View>
+        <View className="flex-col gap-4">
             <View className="flex flex-row items-center justify-between">
                 <Text className="text-xl">Featured</Text>
-                <Button size={"sm"} variant={"ghost"} className="flex-row items-center">
+                <Button onPress={() => router.navigate("/discover")} size={"sm"} variant={"ghost"} className="flex-row items-center">
                     <Text className="">View All</Text>
                     <Feather name="arrow-right" className="!text-foreground !text-base ml-2" />
                 </Button>
@@ -63,8 +74,8 @@ export default function Home() {
                 horizontal={true}
                 scrollEnabled={true}
                 showsHorizontalScrollIndicator={Platform.OS === "web" ? true : false}
-                data={featuredLists}
-                renderItem={({ item }) => SmallListCard(item as SmallListCardProps)}
+                data={featuredListings}
+                renderItem={({ item }) => <SmallListCard {...item as SmallListCardProps} />}
                 ItemSeparatorComponent={() => <View className="w-4" />}
             />
         </View>

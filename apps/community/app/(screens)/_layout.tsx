@@ -5,6 +5,7 @@ import { Drawer } from "expo-router/drawer";
 import { maybeCompleteAuthSession } from "expo-web-browser";
 import React, { useContext } from "react";
 import { View, Image, Platform } from "react-native";
+import { ThemeToggle } from "~/components/ThemeToggle";
 import { LargeScreenContext } from "~/context/large-screen";
 import { buildAssetUrl } from "~/lib/helpers";
 import { useColorScheme } from "~/lib/useColorScheme";
@@ -17,6 +18,8 @@ interface NavigationItem {
     title: string;
     icon: (color: string, size: number) => JSX.Element;
 }
+
+const _disabledNavigationItems: string[] = []
 
 const _navigationItem: NavigationItem[] = [
     {
@@ -107,7 +110,7 @@ const MobileNavigation = () => {
                 key={navItem.name}
                 name={navItem.name}
                 options={{
-                    headerShown: !["chat", "(home)"].includes(navItem.name),
+                    headerShown: !["chat", "(home)", "profile"].includes(navItem.name),
                     headerTitle: navItem.title,
                     tabBarIcon: ({ focused, size }) =>
                         navItem.icon(
@@ -121,8 +124,9 @@ const MobileNavigation = () => {
 
     navigationItems.push(
         <Tabs.Screen key={_navigationItem.length} name="profile" options={{
-            headerShown: true,
+            headerShown: false,
             headerTitle: "Profile",
+            headerRight: () => <ThemeToggle />,
             tabBarIcon: ({ focused }) => (
                 <Image
                     className={cn(
@@ -136,6 +140,18 @@ const MobileNavigation = () => {
             ),
         }} />
     );
+
+    _disabledNavigationItems.forEach((navItem, i) => {
+        navigationItems.push(
+            <Tabs.Screen
+                key={i + _navigationItem.length}
+                name={navItem}
+                options={{
+                    href: null
+                }}
+            />
+        );
+    })
 
     return (
         <Tabs

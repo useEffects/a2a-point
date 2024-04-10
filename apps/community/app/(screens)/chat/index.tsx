@@ -12,7 +12,7 @@ import userStore from "~/store/user";
 import { Room, User } from "~/types";
 
 type ChatListRowProp = Pick<Room, "avatar" | "id" | "isGroup" | "title"> & {
-  members: { directus_users_id: Pick<User, "avatar" | "first_name" | "id"> }[];
+  members: { directus_users_id: Pick<User, "avatar" | "first_name" | "last_name" | "id"> }[];
 };
 
 const ChatListRow = (room: ChatListRowProp) => {
@@ -23,7 +23,7 @@ const ChatListRow = (room: ChatListRowProp) => {
   const [roomName, roomAvatar] = room.isGroup
     ? [room.title, buildAssetUrl(room.avatar)]
     : [
-      receiver!.directus_users_id.first_name,
+      `${receiver!.directus_users_id.first_name} ${receiver!.directus_users_id.last_name}`,
       buildAssetUrl(
         receiver!.directus_users_id.avatar,
       ),
@@ -46,7 +46,7 @@ export const ChatList = () => {
   const { data: rooms, isLoading } = useQuery({
     queryKey: ["Chat Rooms", user?.id],
     queryFn: (async () => await rest.request(readItems("rooms", {
-      fields: ['id', 'avatar', 'isGroup', 'title', 'members.directus_users_id.first_name', 'members.directus_users_id.id', 'members.directus_users_id.avatar'
+      fields: ['id', 'avatar', 'isGroup', 'title', 'members.directus_users_id.first_name', 'members.directus_users_id.last_name', 'members.directus_users_id.id', 'members.directus_users_id.avatar'
       ],
       filter: {
         members: {

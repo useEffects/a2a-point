@@ -32,7 +32,7 @@ export type Listing = {
     address: string;
     description: string;
     mode_of_payments: string[];
-    room: null;
+    comment_room: null;
     featured: boolean;
     amenities: ListingAmenity[];
     saved_by: any[];

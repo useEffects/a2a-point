@@ -28,7 +28,7 @@ export default function ChatLayout() {
         animation: "slide_from_right",
       }}>
       <Stack.Screen name="index" options={{ headerTitle: "Chat" }} />
-      <Stack.Screen name="[roomId]" options={{ headerTitle: "" }} />
+      <Stack.Screen name="[roomId]" options={{ headerTitle: "", headerBackButtonMenuEnabled: true }} />
     </Stack>
   );
 }
