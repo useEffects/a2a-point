@@ -17,6 +17,11 @@ type NewsFeeds = {
     tags: string[],
     image: string,
     time: string
+
+
+
+    
+
 }
 
 export default async function Feed() {
