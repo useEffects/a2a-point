@@ -1,3 +1,29 @@
+export type File = {
+    id: string;
+    storage: string;
+    filename_disk: string;
+    filename_download: string;
+    title: string;
+    type: string;
+    folder: string;
+    uploaded_by: string;
+    uploaded_on: string;
+    modified_by: string | null;
+    modified_on: string;
+    charset: string | null;
+    filesize: number;
+    width: number;
+    height: number;
+    duration: number | null;
+    embed: string | null;
+    description: string | null;
+    location: string | null;
+    tags: string[] | null;
+    metadata: Record<string, any>;
+    focal_point_x: number | null;
+    focal_point_y: number | null;
+};
+
 export type Amenity = {
     id: number,
     icon: string,
@@ -102,7 +128,7 @@ export type Message = {
     id: string;
     content: string;
     date_created: string;
-    image: string | null;
+    assets: string[] | null;
     room: string;
     user_created: string;
 };
