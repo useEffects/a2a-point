@@ -64,14 +64,9 @@ services:
       ADMIN_PASSWORD: admin
       HOST: 0.0.0.0
       PORT: 5000
-      PUBLIC_URL: https://dashboard.a2apoint.com
-      DB_CLIENT: pg
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_DATABASE: directus
-      DB_USER: admin
-      DB_PASSWORD: admin
-      DB_SSL: false
+      PUBLIC_URL: http://localhost:5000
+      DB_CLIENT: sqlite3
+      DB_FILENAME: database.db
       RATE_LIMITER_ENABLED: false
       RATE_LIMITER_STORE: memory
       RATE_LIMITER_POINTS: 25
@@ -88,28 +83,24 @@ services:
       CORS_MAX_AGE: 18000
       KEY: "576acf6f-e118-4b27-98c9-83136b17b282"
       SECRET: "1cgSyCqmstShcd3hZxK57KJrlKpr8KTT"
-      ACCESS_TOKEN_TTL: 15m
-      REFRESH_TOKEN_TTL: 7d"
-      SESSION_COOKIE_DOMAIN: "dashboard.a2apoint.com"
-      SESSION_COOKIE_SECURE: "true"
-      SESSION_COOKIE_SAME_SITE: "None"
-      AUTH_PROVIDERS: "keycloak"
-      AUTH_KEYCLOAK_DRIVER: openid
-      AUTH_KEYCLOAK_MODE: session
-      AUTH_KEYCLOAK_CLIENT_ID: directus
-      AUTH_KEYCLOAK_CLIENT_SECRET: fS7skzQeOxCinYO0pPrOqZQy5uHzsmDB
-      AUTH_KEYCLOAK_ISSUER_URL: "https://auth.a2apoint.com/realms/master/.well-known/openid-configuration"
-      AUTH_KEYCLOAK_DEFAULT_ROLE_ID: "57c36204-4abe-4e4e-808e-52e0d96b8d06"
-      AUTH_KEYCLOAK_IDENTIFIER_KEY: email
-      AUTH_KEYCLOAK_ALLOW_PUBLIC_REGISTRATION: true
-      LOG_STYLE: raw
-      LOG_HTTP_IGNORE_PATHS: /server/health
+      ACCESS_TOKEN_TTL: 15d
+      REFRESH_TOKEN_TTL: 7d
+      REFRESH_TOKEN_COOKIE_SECURE: false
+      REFRESH_TOKEN_COOKIE_SAME_SITE: None
+      # REFRESH_TOKEN_COOKIE_DOMAIN: dashboard.a2apoint.com
+      # AUTH_PROVIDERS: "keycloak"
+      # AUTH_KEYCLOAK_DRIVER: openid
+      # AUTH_KEYCLOAK_CLIENT_ID: directus
+      # AUTH_KEYCLOAK_CLIENT_SECRET: Kgmbo2gjnggdBVzXgGkWzfW2hnbp3VuH
+      # AUTH_KEYCLOAK_ISSUER_URL: "http://keycloak:8080/realms/a2apoint/.well-known/openid-configuration"
+      # AUTH_KEYCLOAK_IDENTIFIER_KEY: email
+      # AUTH_KEYCLOAK_ALLOW_PUBLIC_REGISTRATION: true
 
     depends_on:
       postgres:
         condition: service_healthy
-      keycloak:
-        condition: service_healthy
+      # keycloak:
+      #   condition: service_healthy
 
   # client:
   #   build:
