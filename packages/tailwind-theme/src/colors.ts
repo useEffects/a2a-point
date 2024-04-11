@@ -18,7 +18,14 @@ export const theme = {
         "destructive-foreground": "#F8FAFC",
         "border": "#E2E8F0",
         "input": "#E2E8F0",
-        "ring": "#020817"
+        "ring": "#020817",
+        "warning":"#FFE100",
+        "warning-foreground": "#4c4f69",
+        "success":"#40A02B",
+        "success-foreground": "#4c4f69",
+        "info":"1E66F5",
+        "info-foreground": "#4c4f69",
+        "subtext":"#414141"
     },
     "dark": {
         "background": "#191724",
@@ -39,6 +46,13 @@ export const theme = {
         "destructive-foreground": "#F8FAFC",
         "border": "#1E293B",
         "input": "#1E293B",
-        "ring": "#CBD5E1"
+        "ring": "#CBD5E1",
+        "warning":"#FFE100",
+        "warning-foreground":"#000000",
+        "success":"#40A02B",
+        "success-foreground":"#000000",
+        "info":"1E66F5",
+        "info-foreground":"#000000",
+        "subtext":"#D9D9D9"
     }
 }
