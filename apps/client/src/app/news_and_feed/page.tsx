@@ -3,6 +3,7 @@ import Card from "@/components/card"
 import directus from "@/lib/directus"
 import { readItems } from "@directus/sdk"
 import { directusUrl } from '@/lib/constants';
+import { useLocation } from 'react-router-dom';
 
 type NewsFeeds = {
     id: string,
@@ -19,6 +20,9 @@ type NewsFeeds = {
     time: string
 
 }
+const {state} = useLocation();
+//const item = location.state.item;
+//console.log(item)
 
 export default async function Feed() {
     const data = await fetch(`${directusUrl}/items/news_and_feeds`).then(res => res.json())
