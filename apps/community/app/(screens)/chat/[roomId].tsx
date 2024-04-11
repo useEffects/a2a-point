@@ -8,7 +8,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Image, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDebounce } from "use-debounce";
-import { ChatMessage, ChatUi, CurrentMessage } from "~/components/chat-ui";
+import { ChatMessage, ChatUi, CurrentMessage, withId, withUri } from "~/components/chat-ui";
 import { Button } from "~/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Text } from "~/components/ui/text";
@@ -18,7 +18,7 @@ import { buildAssetUrl, searchBarContainerStyle, searchBarInputContainerStyle } 
 import { useColorScheme } from "~/lib/useColorScheme";
 import directusStore from "~/store/directus";
 import userStore from "~/store/user";
-import { Room, User } from "~/types";
+import { File, Message, Room, User } from "~/types";
 
 const FormData = global.FormData;
 
@@ -51,7 +51,7 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
     const navigator = useNavigation()
     const [ws, setWs] = useState<WebSocket>()
     const { user } = userStore()
-    const [messages, setMessages] = useState<ChatMessage[]>([])
+    const [messages, setMessages] = useState<ChatMessage<withId | withUri>[]>([])
     const [ready, setReady] = useState(true)
     const [searchBarVisible, setSearchBarVisible] = useState(false)
     const [searchText, setSearchText] = useState("")
@@ -63,10 +63,10 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
     const [toUpdateForSent, setToUpdateForSent] = useState<{ id: string }[]>([])
     const [currentMessage, setCurrentMessage] = useState<CurrentMessage>({ text: "" })
 
-    function handleUpdateReadReceipt(props: { data: ChatMessage, type: string }) {
+    function handleUpdateReadReceipt(props: { data: ChatMessage<withId>, type: string }) {
         const { data, type } = props
         if (type === "items") {
-            queryClient.setQueryData(fetchInitialMessagesQueryKey, (prev: ChatMessage[]) => [...prev, data].sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime()))
+            queryClient.setQueryData(fetchInitialMessagesQueryKey, (prev: ChatMessage<withId>[]) => [...prev, data].sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime()))
             setToUpdateForSent(p => [...p, { id: data.id }])
         }
     }
@@ -129,11 +129,20 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
                     _eq: roomId
                 }
             },
-            fields: ["*", "user_created.avatar", "user_created.id"],
+            fields: ["*", "user_created.avatar", "user_created.id", "user_created.first_name", "assets.directus_files_id.id", "assets.directus_files_id.type", "assets.directus_files_id.filename_download"],
             sort: ["-date_created"]
         })),
         enabled: !!roomId
-    }) as { data: ChatMessage[], isLoading: boolean }
+    }) as {
+        data: (Omit<Message, "assets"> & {
+            user_created: Pick<User, "avatar" | "id" | "first_name">
+        } & {
+            assets: {
+                directus_files_id: Pick<File, "id" | "type" | "filename_download">
+            }[]
+        }
+        )[], isLoading: boolean
+    }
 
     useEffect(() => {
         navigator.setOptions({
@@ -184,12 +193,28 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
         return initializeWebSocket()
     }, [])
 
-
     useEffect(() => {
         if (isInitialMessagesLoading) {
             return
         } else {
-            setMessages(initialMessages.map(message => ({ ...message, sent: true })))
+            const _initialMessage: ChatMessage<withId>[] = initialMessages.map(message => ({
+                content: message.content,
+                date_created: message.date_created,
+                id: message.id,
+                room: roomId,
+                sent: true,
+                user_created: {
+                    avatar: message.user_created.avatar,
+                    id: message.user_created.id,
+                    first_name: message.user_created.first_name,
+                },
+                assets: message.assets.map(asset => ({
+                    id: asset.directus_files_id.id,
+                    mimeType: asset.directus_files_id.type,
+                    name: asset.directus_files_id.filename_download
+                }))
+            }))
+            setMessages(_initialMessage)
             setReady(true)
         }
     }, [roomId, isInitialMessagesLoading])
@@ -212,7 +237,6 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
             content: currentMessage.text,
             date_created: new Date().toISOString(),
             id,
-            image: null,
             room: roomId,
             sent: false,
             user_created: {
