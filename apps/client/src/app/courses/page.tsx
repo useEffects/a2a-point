@@ -5,10 +5,6 @@ import person from "@/assests/person.png"
 import roadmap from "@/assests/roadmap.png"
 
 
-
-
-
-
 export default  function Courses() {
     return <div className="container flex flex-col gap-8 m-4">
 
@@ -30,12 +26,6 @@ export default  function Courses() {
             <p  className="text-4xl font-bold " >Perks of Certification from A2A</p>
         </div>
         <img src={roadmap.src} className="m-8"></img>
-
-
-
-
-
-
         <div className="flex flex-col items-center gap-8 ">
             <p className="text-4xl">Stay in the loop</p>
             <p className="container max-w-xl">Subscribe to our newsletter to receive the latest updates on the A2A and stay informed about Certification trends. Don’t miss out the magic!</p>
