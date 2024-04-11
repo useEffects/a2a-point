@@ -4,6 +4,6 @@ const directus = createDirectus(process.env.NEXT_PUBLIC_DIRECTUS_URL!)
     .with(authentication("json", {autoRefresh: true}))
     .with(rest());
 
-await directus.login("admin@a2apoint.com", "admin");
+await directus.login("admin@example.com", "admin");
 
 export default directus;

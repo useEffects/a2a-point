@@ -16,7 +16,7 @@ export default  function Courses() {
             <div className="flex flex-col gap-8 w-1/2">
                 <p className="text-6xl font-bold w-[60%]">Real Estate and Agent Certification Courses</p>
                 <Button className="w-[40%]">Start now</Button>
-                <div className="flex m-4">
+                <div className="flex ">
                     <img src={person.src} className="flex justify-left"></img>
                 </div>
             </div>

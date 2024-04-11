@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import { directusUrl } from "@/lib/constants"
 
 type NewsFeeds = {
     id: string,
@@ -9,9 +10,8 @@ type NewsFeeds = {
     user_upadted: null,
     date_updated: null,
     title: string,
-    description: string,
     content: string,
-    tags: string[],
+    category: string,
     image: string,
     time: string
 
@@ -20,13 +20,13 @@ type NewsFeeds = {
 
 export default function Card(props: NewsFeeds) {
     return <div className="flex flex-col gap-4 m-4">
-        <img src={props.image} className="w-full h-1/5"></img>
+        <img src={`${directusUrl}/assets/${props.image}`} className="w-full object-contain"></img>
         <div className="flex gap-4">
-            <p>{props.title}</p>
-            <p>{props.time}</p>
+            <Button>{props.category}</Button>
+            <p className="p-2">{props.time}</p>
         </div>
-        <p className="text-2xl font-bold">{props.description}</p>
+        <p className="text-2xl font-bold ">{props.title}</p>
         <p>{props.content}</p>
         <Button className="w-32 object-contain">Read More &nbsp; &gt;</Button>
-    </div>
+    </div >
 }
