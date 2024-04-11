@@ -1,24 +1,26 @@
-import { useQuery } from "@tanstack/react-query";
-import { Link, useGlobalSearchParams, useNavigation } from "expo-router";
-import { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from "react";
-import { FlatList, Image, Platform, View } from "react-native";
-import { Text } from "~/components/ui/text";
-import { buildAssetUrl, searchBarContainerStyle, searchBarInputContainerStyle } from "~/lib/helpers";
-import { User, Room, Message } from "~/types";
-import directusStore from "~/store/directus";
 import { readItem, readItems } from "@directus/sdk";
-import userStore from "~/store/user";
-import { directusWSUrl } from "~/lib/constants";
-import { useColorScheme } from "~/lib/useColorScheme";
-import { queryClient } from "~/index";
 import { Ionicons } from "@expo/vector-icons";
-import { Button } from "~/components/ui/button";
 import { SearchBar } from "@rneui/themed";
+import { useQuery } from "@tanstack/react-query";
+import { randomUUID } from "expo-crypto";
+import { useGlobalSearchParams, useNavigation } from "expo-router";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Image, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDebounce } from "use-debounce";
-import { ChatMessage, ChatUi } from "~/components/chat-ui";
+import { ChatMessage, ChatUi, CurrentMessage } from "~/components/chat-ui";
+import { Button } from "~/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
-import { randomUUID } from "expo-crypto"
+import { Text } from "~/components/ui/text";
+import { queryClient } from "~/index";
+import { directusWSUrl } from "~/lib/constants";
+import { buildAssetUrl, searchBarContainerStyle, searchBarInputContainerStyle } from "~/lib/helpers";
+import { useColorScheme } from "~/lib/useColorScheme";
+import directusStore from "~/store/directus";
+import userStore from "~/store/user";
+import { Room, User } from "~/types";
+
+const FormData = global.FormData;
 
 const ChatDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateAction<boolean>> }) => {
     return <DropdownMenu open={props.open} onOpenChange={props.setOpen}>
@@ -58,8 +60,8 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
     const [page, setPage] = useState(1)
     const { colors } = useColorScheme()
     const [openDropdown, setOpenDropdown] = useState(false)
-    const [inputText, setInputText] = useState("")
     const [toUpdateForSent, setToUpdateForSent] = useState<{ id: string }[]>([])
+    const [currentMessage, setCurrentMessage] = useState<CurrentMessage>({ text: "" })
 
     function handleUpdateReadReceipt(props: { data: ChatMessage, type: string }) {
         const { data, type } = props
@@ -135,7 +137,7 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
 
     useEffect(() => {
         navigator.setOptions({
-            header: () => <View className="pt-2 flex-col justify-center h-16" style={{ marginTop: insets.top }}>
+            header: () => <View className="pt-2 flex-col justify-center h-24 shadow bg-card" style={{ paddingTop: insets.top + 8 }}>
                 {searchBarVisible ? <View className="flex-row items-center pr-2">
                     <SearchBar
                         placeholder="Search"
@@ -148,14 +150,16 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
                         showLoading={isScrollToMessagesLoading}
                         autoFocus={true}
                     />
-                    {(scrollToMessages && scrollToMessages.length) ? <View className="flex-row gap-2 items-center">
+                    {(scrollToMessages && scrollToMessages.length) ? <View className="flex-row gap-2 items-center px-1">
                         <Text>{scrollToIndex + 1} / {scrollToMessages.length}</Text>
-                        <Button onPress={() => (scrollToIndex < scrollToMessages.length - 1) && setScrollToIndex(p => p + 1)} variant={"ghost"} size={"icon"}>
-                            <Ionicons name={"chevron-up-outline"} size={18} className="!text-foreground" />
-                        </Button>
-                        <Button variant={"ghost"} size={"icon"} onPress={() => (scrollToIndex > 0) && setScrollToIndex(p => p - 1)}>
-                            <Ionicons name={"chevron-down-outline"} size={18} className="!text-foreground" />
-                        </Button>
+                        <View className="flex-row">
+                            <Button disabled={scrollToIndex === scrollToMessages.length - 1} className="mx-0" onPress={() => (scrollToIndex < scrollToMessages.length - 1) && setScrollToIndex(p => p + 1)} variant={"ghost"} size={"icon"}>
+                                <Ionicons name={"chevron-up-outline"} size={18} className="!text-foreground" />
+                            </Button>
+                            <Button disabled={scrollToIndex === 0} className="mx-0" variant={"ghost"} size={"icon"} onPress={() => (scrollToIndex > 0) && setScrollToIndex(p => p - 1)}>
+                                <Ionicons name={"chevron-down-outline"} size={18} className="!text-foreground" />
+                            </Button>
+                        </View>
                     </View> : <></>}
                     <Button variant={"ghost"} size={"icon"} onPress={() => { setSearchBarVisible(false); setSearchText("") }}>
                         <Ionicons name={"return-up-forward-outline"} size={18} className="!text-foreground" />
@@ -205,7 +209,7 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
     const handleSend = () => {
         const id = randomUUID()
         setMessages(p => [{
-            content: inputText,
+            content: currentMessage.text,
             date_created: new Date().toISOString(),
             id,
             image: null,
@@ -215,15 +219,16 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
                 avatar: user?.avatar!,
                 id: user?.id!,
                 first_name: user?.first_name!,
-            }
+            },
+            assets: currentMessage.assets
         }, ...p])
-        setInputText("")
+        setCurrentMessage({ text: "" })
         ws?.send(JSON.stringify({
             type: 'items',
             collection: 'messages',
             action: 'create',
             data: {
-                content: inputText,
+                content: currentMessage,
                 room: {
                     id: roomId
                 },
@@ -239,8 +244,8 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
         currentUserId={user?.id!}
         messages={messages}
         goToId={scrollToMessages[scrollToIndex]?.id}
-        inputText={inputText}
-        inputTextDispatcher={setInputText}
+        currentMessage={currentMessage}
+        currentMessageDispatcher={setCurrentMessage}
         onSend={handleSend}
     />
         : <View />
