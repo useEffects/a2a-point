@@ -1,56 +1,127 @@
-import { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from "react"
-import { View, FlatList } from "react-native"
+import { Feather, FontAwesome, MaterialIcons } from '@expo/vector-icons'
+import * as DocumentPicker from 'expo-document-picker'
+import * as ImagePicker from "expo-image-picker"
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
+import { FlatList, View } from "react-native"
+import Autolink from 'react-native-autolink'
 import { Swipeable } from "react-native-gesture-handler"
-import { Message, User } from "~/types"
-import { Text } from "./ui/text"
-import { cn } from "~/lib/utils"
 import { useColorScheme } from "~/lib/useColorScheme"
-import { Input } from "./ui/input"
+import { cn } from "~/lib/utils"
+import { Message, User } from "~/types"
 import { Button } from "./ui/button"
-import { FontAwesome, EvilIcons } from '@expo/vector-icons';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
+import { Input } from "./ui/input"
+import { Text } from "./ui/text"
 
-export type ChatMessage = (Omit<Message, "user_created"> & { user_created: Pick<User, "first_name" | "id" | "avatar"> } & { sent: boolean })
+export type Asset = {
+    uri: string,
+    mimeType: string,
+    name: string,
+    type: "image" | "document"
+}
+
+export type ChatMessage = (Omit<Message, "user_created"> & { user_created: Pick<User, "first_name" | "id" | "avatar"> } & { sent: boolean, assets?: Asset[] })
+
+export type CurrentMessage = {
+    text: string,
+    assets?: Asset[]
+}
 
 type ChatUiProps = {
     messages: ChatMessage[],
     goToId?: string,
     currentUserId: string,
-    inputText: string,
-    inputTextDispatcher: Dispatch<SetStateAction<string>>
-    onSend: () => void
+    currentMessage: CurrentMessage,
+    currentMessageDispatcher: Dispatch<SetStateAction<CurrentMessage>>,
+    onSend: () => void,
 }
 
 export const ChatBubble = (props: ChatMessage & { currentUserId: string } & { goToId?: string, isFirst: boolean, isLast: boolean }) => {
     const { colors } = useColorScheme()
     const renderRight = props.user_created.id === props.currentUserId
 
-    const isTextBig = props.content.length > 10
+    const isTextBig = props.content.length > 40
     const additionalSpacing = renderRight ? isTextBig ? "mr-0" : "mr-2" : isTextBig ? "ml-0" : "ml-2"
     const textAlign = renderRight ? "text-left" : "text-right"
     const toHighlight = props.goToId === props.id
     const flexDirection = isTextBig ? "flex-col" : "flex-row"
     const containerStyle = renderRight ? "bg-primary text-primary-foreground flex-start" : "bg-secondary bg-secondary-foreground flex-end"
-    const roundedStyle = renderRight ? cn("rounded-tl-[12px] rounded-bl-[12px]", props.isFirst ? "rounded-br-[12px]" : "", props.isLast ? "rounded-tr-[12px]" : "") : cn("rounded-tr-full rounded-br-full", props.isLast ? "rounded-tl-full" : "")
+    const roundedStyle = renderRight ? cn("rounded-tl-2xl rounded-bl-2xl", props.isFirst ? "rounded-br-2xl" : "", props.isLast ? "rounded-tr-2xl" : "") : cn("rounded-tr-full rounded-br-full", props.isLast ? "rounded-tl-full" : "")
     const infoPositioning = renderRight ? "ml-auto mr-0" : "mr-auto ml-0"
 
     return <Swipeable containerStyle={{ marginVertical: 1, alignItems: renderRight ? "flex-end" : "flex-start", backgroundColor: toHighlight ? colors.accent : undefined }}>
         <View className={cn("p-1 px-2 items-center max-w-[80%]", containerStyle, roundedStyle, flexDirection)}>
-            <Text className={cn(additionalSpacing, textAlign, "text-inherit")}>{props.content}</Text>
+            <Text className={cn(additionalSpacing, textAlign, "text-inherit")}>
+                <Autolink text={props.content} email url phone="sms" />
+            </Text>
             <View className={cn("flex-row gap-1 items-center", infoPositioning)}>
                 <Text className={cn("text-xs font-light text-inherit")}>{(new Date(props.date_created)).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</Text>
-                <EvilIcons name={props.sent ? "check" : "clock"} className={"text-inherit"} />
+                <Feather name={props.sent ? "check" : "clock"} className={"text-inherit"} />
             </View>
         </View>
     </Swipeable>
 }
 
-const Footer = ({ val, setVal, onSend }: { val: string, setVal: Dispatch<SetStateAction<string>>, onSend: () => void }) => {
+const FooterDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, currentMessageDispatcher: Dispatch<SetStateAction<CurrentMessage>> }) => {
+
+    const handleAssetUpload = async (type: "document" | "image") => {
+        const result = type === "document" ? await DocumentPicker.getDocumentAsync({ multiple: true }) : await ImagePicker.launchImageLibraryAsync({ allowsMultipleSelection: true })
+
+        if (!result.canceled) {
+            const _assets = result.assets.map(asset => ({ uri: asset.uri, mimeType: asset.mimeType ?? "application/octet-stream", type, name: type === "document" ? (asset as DocumentPicker.DocumentPickerAsset).name : (asset as ImagePicker.ImagePickerAsset).fileName ?? "pancakes" }))
+            props.currentMessageDispatcher(p => ({ ...p, assets: _assets }))
+        }
+    }
+
+    return <DropdownMenu open={props.open} onOpenChange={props.setOpen}>
+        <DropdownMenuTrigger asChild>
+            <Button size={"icon"} variant={"ghost"} onPress={() => props.setOpen(p => !p)}>
+                <FontAwesome name="paperclip" size={16} className="!text-foreground" />
+            </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent side="top">
+            <DropdownMenuItem>
+                <View className="flex-row gap-2 items-center">
+                    <MaterialIcons name="camera-alt" size={16} className="!text-primary" />
+                    <Text className="!text-sm">Open Camera</Text>
+                </View>
+            </DropdownMenuItem>
+            <DropdownMenuItem onPress={() => handleAssetUpload("image")}>
+                <View className="flex-row gap-2 items-center">
+                    <MaterialIcons name="photo" size={16} className="!text-primary" />
+                    <Text className="!text-sm">Upload Image</Text>
+                </View>
+            </DropdownMenuItem>
+            <DropdownMenuItem onPress={() => handleAssetUpload("document")}>
+                <View className="flex-row gap-2 items-center">
+                    <MaterialIcons name="file-upload" size={16} className="!text-primary" />
+                    <Text className="!text-sm">Upload Document</Text>
+                </View>
+            </DropdownMenuItem>
+        </DropdownMenuContent>
+    </DropdownMenu >
+}
+
+const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispatcher" | "onSend">) => {
     const { colors } = useColorScheme()
-    return <View className="flex-row gap-2 native:h-16 h-14 w-full p-2 items-center">
-        <Input value={val} onChangeText={setVal} selectionColor={colors.foreground} className="grow-1 flex-1" />
-        {val && <Button size={"icon"} className="rounded-full" onPress={onSend}>
-            <FontAwesome name="send" size={16} className="!text-primary-foreground" />
-        </Button>}
+    const [open, setOpen] = useState(false)
+
+    const { currentMessage, currentMessageDispatcher, onSend } = props
+
+    return <View className='flex-col mt-1'>
+        {currentMessage.assets && currentMessage.assets.length ? <View className='border-solid border-0 border-l-4 border-primary bg-accent p-2 flex-row justify-between items-center'>
+            <Text>Selected {currentMessage.assets.length} {currentMessage.assets.length === 1 ? "asset" : "assets"}</Text>
+            <Button onPress={() => currentMessageDispatcher(p => ({ text: p.text }))} size={"icon"} className='w-5 h-5 bg-destructive'>
+                <Feather name='x' size={12} className='text-destructive-foreground' />
+            </Button>
+        </View> : <></>}
+        <View className="flex-row gap-2 native:h-16 h-14 w-full p-2 items-center bg-card">
+            <FooterDropDownMenu open={open} setOpen={setOpen} currentMessageDispatcher={currentMessageDispatcher} />
+            <Input multiline={true} placeholder="Type ..." placeholderTextColor={colors.muted} value={currentMessage.text} onChangeText={(newVal) => currentMessageDispatcher({ text: newVal })} selectionColor={colors.foreground} className="grow-1 flex-1 rounded-full" />
+            <Button variant={"outline"} disabled={!Boolean(currentMessage.text) || !Boolean(currentMessage.assets)} size={"icon"} className="rounded-full justify-center items-center border-primary" onPress={onSend}>
+                <FontAwesome name="send" size={16} className="!text-foreground" />
+            </Button>
+        </View>
     </View>
 }
 
@@ -76,6 +147,6 @@ export const ChatUi = (props: ChatUiProps) => {
                 keyExtractor={(_, index) => index.toString() as string}
             />
         </View>
-        <Footer val={props.inputText} setVal={props.inputTextDispatcher} onSend={props.onSend} />
+        <Footer currentMessage={props.currentMessage} currentMessageDispatcher={props.currentMessageDispatcher} onSend={props.onSend} />
     </View>
 }
