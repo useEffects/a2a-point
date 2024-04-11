@@ -1,11 +1,11 @@
-import { readItem, readItems } from "@directus/sdk";
+import { readItem, readItems, uploadFiles } from "@directus/sdk";
 import { Ionicons } from "@expo/vector-icons";
 import { SearchBar } from "@rneui/themed";
 import { useQuery } from "@tanstack/react-query";
 import { randomUUID } from "expo-crypto";
 import { useGlobalSearchParams, useNavigation } from "expo-router";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Image, View } from "react-native";
+import { Image, Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDebounce } from "use-debounce";
 import { ChatMessage, ChatUi, CurrentMessage, withId, withUri } from "~/components/chat-ui";
@@ -13,12 +13,13 @@ import { Button } from "~/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Text } from "~/components/ui/text";
 import { queryClient } from "~/index";
-import { directusWSUrl } from "~/lib/constants";
-import { buildAssetUrl, searchBarContainerStyle, searchBarInputContainerStyle } from "~/lib/helpers";
+import { directusUrl, directusWSUrl } from "~/lib/constants";
+import { buildAssetUrl, searchBarContainerStyle, searchBarInputContainerStyle, uriToBlob } from "~/lib/helpers";
 import { useColorScheme } from "~/lib/useColorScheme";
 import directusStore from "~/store/directus";
 import userStore from "~/store/user";
 import { File, Message, Room, User } from "~/types";
+import * as FileSystem from "expo-file-system";
 
 const FormData = global.FormData;
 
@@ -65,7 +66,7 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
 
     function handleUpdateReadReceipt(props: { data: ChatMessage<withId>, type: string }) {
         const { data, type } = props
-        if (type === "items") {
+        if (type === "items" && data && data.id) {
             queryClient.setQueryData(fetchInitialMessagesQueryKey, (prev: ChatMessage<withId>[]) => [...prev, data].sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime()))
             setToUpdateForSent(p => [...p, { id: data.id }])
         }
@@ -231,8 +232,21 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
         }
     }, [messages, toUpdateForSent])
 
-    const handleSend = () => {
+    const handleSend = async () => {
         const id = randomUUID()
+        const responsePromises: Promise<FileSystem.FileSystemUploadResult>[] = []
+        currentMessage.assets?.forEach(asset => {
+            const response = FileSystem.uploadAsync(`${directusUrl}/files?fields=id`, asset.uri, {
+                fieldName: 'file',
+                httpMethod: 'POST',
+                uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
+                }
+            });
+            responsePromises.push(response)
+        })
         setMessages(p => [{
             content: currentMessage.text,
             date_created: new Date().toISOString(),
@@ -246,17 +260,29 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
             },
             assets: currentMessage.assets
         }, ...p])
+        const responses = await Promise.all(responsePromises)
+        const fileIds = responses.map(r => {
+            const body = JSON.parse(r.body) as { data: { id: string } }
+            console.log(body)
+            return body.data.id
+        })
+
         setCurrentMessage({ text: "" })
         ws?.send(JSON.stringify({
             type: 'items',
             collection: 'messages',
             action: 'create',
             data: {
-                content: currentMessage,
+                content: currentMessage.text,
                 room: {
                     id: roomId
                 },
-                id
+                id,
+                assets: fileIds.length ? fileIds.map(id => ({
+                    directus_files_id: {
+                        id
+                    }
+                })) : undefined
             },
             query: {
                 fields: ["*", "user_created.avatar", "user_created.id"]
@@ -273,7 +299,7 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
         onSend={handleSend}
     />
         : <View />
-};
+}
 
 export default function RoomScreen() {
     const { roomId } = useGlobalSearchParams();

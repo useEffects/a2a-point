@@ -4,20 +4,22 @@ import * as WebBrowser from "expo-web-browser";
 import { View } from "react-native";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
+import useDeepLink from "~/hooks/deep-link";
 import { directusUrl, portfolioUrl } from "~/lib/constants";
 import { openUrl } from "~/lib/helpers";
 import directusStore from "~/store/directus";
 
 export default function LoginScreen() {
     const params = useGlobalSearchParams();
+    const { linkedURL } = useDeepLink()
     const { initialize } = directusStore()
 
+
     const handleLogin = async () => {
-        const appUrl = makeRedirectUri()
-        console.log(appUrl)
-        const result = await WebBrowser.openAuthSessionAsync(`${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/expo-redirect?appUrl=${appUrl}`, appUrl);
+        const result = await WebBrowser.openAuthSessionAsync(`${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/expo-redirect?appUrl=${linkedURL}`, linkedURL);
         if (result.type === "success") {
             const accessToken = result.url.split("access_token=")[1]
+            console.log(result.url)
             if (accessToken) {
                 await initialize(accessToken)
                 if (params?.redirect && typeof params.redirect === "string") {

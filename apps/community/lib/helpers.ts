@@ -1,5 +1,5 @@
 import { aggregate, createItem, deleteItems, readItems } from "@directus/sdk";
-import { Alert, Linking } from "react-native";
+import { Alert, Linking, Platform } from "react-native";
 import { ListingCardMetrics } from "~/components/listings-cards/molecules/full";
 import directusStore from "~/store/directus";
 import { queryClient } from "..";
@@ -179,19 +179,17 @@ export const searchBarInputContainerStyle = {
   flexGrow: 1
 }
 
-export const uriToBlob = (uri: string) => {
-  return new Promise<Blob>((resolve, reject) => {
-    const xhr = new XMLHttpRequest(); xhr.onload = function () {
-      // return the blob
+export function uriToBlob(uri: string): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
       resolve(xhr.response);
     };
-
-    xhr.onerror = function () {
-      // something went wrong
+    xhr.onerror = function (e) {
       reject(new Error('uriToBlob failed'));
-    };    // this helps us get a blob
-    xhr.responseType = 'blob'; xhr.open('GET', uri, true);
-
+    };
+    xhr.responseType = 'blob';
+    xhr.open('GET', uri, true);
     xhr.send(null);
   });
-}
+};

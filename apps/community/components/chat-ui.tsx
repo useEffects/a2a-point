@@ -48,8 +48,6 @@ export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserI
     const roundedStyle = renderRight ? cn("rounded-tl-2xl rounded-bl-2xl", props.isFirst ? "rounded-br-2xl" : "", props.isLast ? "rounded-tr-2xl" : "") : cn("rounded-tr-full rounded-br-full", props.isLast ? "rounded-tl-full" : "")
     const infoPositioning = renderRight ? "ml-auto mr-0" : "mr-auto ml-0"
 
-    console.log(props.assets)
-
     return <Swipeable containerStyle={{ marginVertical: 1, alignItems: renderRight ? "flex-end" : "flex-start", backgroundColor: toHighlight ? colors.accent : undefined }}>
         <View className={cn("p-1 px-2 items-center max-w-[80%]", containerStyle, roundedStyle, flexDirection)}>
             <View className='flex-col'>
@@ -121,8 +119,8 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
         </View> : <></>}
         <View className="flex-row gap-2 native:h-16 h-14 w-full p-2 items-center bg-card">
             <FooterDropDownMenu open={open} setOpen={setOpen} currentMessageDispatcher={currentMessageDispatcher} />
-            <Input multiline={true} placeholder="Type ..." placeholderTextColor={colors.muted} value={currentMessage.text} onChangeText={(newVal) => currentMessageDispatcher({ text: newVal })} selectionColor={colors.foreground} className="grow-1 flex-1 rounded-full" />
-            <Button variant={"outline"} disabled={!Boolean(currentMessage.text) || !Boolean(currentMessage.assets)} size={"icon"} className="rounded-full justify-center items-center border-primary" onPress={onSend}>
+            <Input multiline={true} placeholder="Type ..." placeholderTextColor={colors.muted} value={currentMessage.text} onChangeText={(newVal) => currentMessageDispatcher(p => ({ ...p, text: newVal }))} selectionColor={colors.foreground} className="grow-1 flex-1 rounded-full" />
+            <Button variant={"outline"} disabled={!Boolean(currentMessage.text) && !Boolean(currentMessage.assets)} size={"icon"} className="rounded-full justify-center items-center border-primary" onPress={onSend}>
                 <FontAwesome name="send" size={16} className="!text-foreground" />
             </Button>
         </View>
