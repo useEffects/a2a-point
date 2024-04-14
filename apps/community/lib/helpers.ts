@@ -3,7 +3,9 @@ import { Alert, Linking, Platform } from "react-native";
 import { ListingCardMetrics } from "~/components/listings-cards/molecules/full";
 import directusStore from "~/store/directus";
 import { queryClient } from "..";
-import { directusUrl } from "./constants";
+import { appName, directusUrl } from "./constants";
+import { Asset, withUri } from "~/components/chat-ui";
+import * as FileSystem from "expo-file-system";
 
 export const buildAssetUrl = (id: string | null) => {
   if (null) {
@@ -193,3 +195,19 @@ export function uriToBlob(uri: string): Promise<Blob> {
     xhr.send(null);
   });
 };
+
+export const shortString = (str: string, maxLength = 20) => {
+  return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
+}
+
+export const getNewFileUrl = async (asset: Asset<withUri>) => {
+  if (Platform.OS === "web") return asset.uri
+  const uploadFolder = `${FileSystem.documentDirectory}/${appName}`
+  const info = await FileSystem.getInfoAsync(uploadFolder)
+  if (!info.exists) {
+    await FileSystem.makeDirectoryAsync(uploadFolder, { intermediates: true })
+  }
+  const newUri = `${uploadFolder}/${asset.name}`
+  await FileSystem.copyAsync({ from: asset.uri, to: newUri })
+  return newUri
+}

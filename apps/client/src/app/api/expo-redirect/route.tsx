@@ -4,19 +4,23 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
     const token = cookies().get("directus_session_token")?.value
     const appUrl = req.nextUrl.searchParams.get("appUrl")
-    console.log(appUrl)
-    return new NextResponse(`
+    console.log({appUrl, token})
+    if (appUrl && token) {
+        const url = new URL(appUrl!)
+        url.searchParams.append("access_token", token!)
+        return new NextResponse(`
         <!DOCTYPE html>
         <html>
             <body>
-                <script>
-                    window.location.replace("${appUrl}?access_token=${token}")
-                </script>
-            </body>
+            <script>
+                window.location.replace("${url.toString()}")
+            </script>
+        </body>
         </html>
-    `, {
-        headers: {
-            "content-type": "text/html"
-        }
-    })
+        `, {
+            headers: {
+                "content-type": "text/html"
+            }
+        })
+    }
 }

@@ -1,6 +1,7 @@
 import { makeRedirectUri } from "expo-auth-session";
 import { router, useGlobalSearchParams } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
+import { useEffect } from "react";
 import { View } from "react-native";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
@@ -13,6 +14,10 @@ export default function LoginScreen() {
     const params = useGlobalSearchParams();
     const { linkedURL } = useDeepLink()
     const { initialize } = directusStore()
+    
+    useEffect(() => {
+        console.log({ linkedURL })
+    }, [linkedURL])
 
 
     const handleLogin = async () => {
@@ -31,7 +36,7 @@ export default function LoginScreen() {
         }
     }
 
-    return <View className="flex-row justify-center items-center h-full">
+    return linkedURL ? <View className="flex-row justify-center items-center h-full">
         <View className="max-w-md flex flex-col gap-4 justify-center items-center">
             <Text className="text-lg font-medium">Welcome to A2A Point Community App</Text>
             <Text className="text-muted-foreground">If you are a new user, visit <Text onPress={() => openUrl("https://a2apoint.com")}>here</Text></Text>
@@ -39,5 +44,5 @@ export default function LoginScreen() {
                 <Text>Login</Text>
             </Button>
         </View>
-    </View>
+    </View> : <View />
 }

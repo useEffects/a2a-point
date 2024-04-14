@@ -13,6 +13,7 @@ import { Button } from "./ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { Input } from "./ui/input"
 import { Text } from "./ui/text"
+import * as FileSystem from "expo-file-system"
 
 export type withId = { id: string }
 export type withUri = { uri: string }
@@ -67,10 +68,23 @@ export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserI
 const FooterDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, currentMessageDispatcher: Dispatch<SetStateAction<CurrentMessage>> }) => {
 
     const handleAssetUpload = async (type: "document" | "image") => {
-        const result = type === "document" ? await DocumentPicker.getDocumentAsync({ multiple: true }) : await ImagePicker.launchImageLibraryAsync({ allowsMultipleSelection: true })
+        const result = type === "document" ? await DocumentPicker.getDocumentAsync() : await ImagePicker.launchImageLibraryAsync({ allowsMultipleSelection: true })
 
         if (!result.canceled) {
-            const _assets = result.assets.map(asset => ({ uri: asset.uri, mimeType: asset.mimeType ?? "application/octet-stream", type, name: type === "document" ? (asset as DocumentPicker.DocumentPickerAsset).name : (asset as ImagePicker.ImagePickerAsset).fileName ?? "pancakes" }))
+            const _assets = result.assets.map(asset => {
+                return {
+                    uri: asset.uri,
+                    mimeType: asset.mimeType ?? "application/octet-stream", type,
+                    name: type === "document" ? (asset as DocumentPicker.DocumentPickerAsset).name : (asset as ImagePicker.ImagePickerAsset).fileName ?? "pancakes"
+                }
+            }).filter(async asset => {
+                const fileInfo = await FileSystem.getInfoAsync(asset.uri, { size: true }) as FileSystem.FileInfo & { size: number }
+                if (fileInfo.size > 1 * 1024 * 1024) {
+                    alert(`File size exceeds 1MB limit for ${asset.name} (${fileInfo.size / 1000 / 1000}MB)`)
+                    return false
+                }
+                return true
+            })
             props.currentMessageDispatcher(p => ({ ...p, assets: _assets }))
         }
     }

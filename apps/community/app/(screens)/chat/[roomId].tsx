@@ -13,8 +13,8 @@ import { Button } from "~/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Text } from "~/components/ui/text";
 import { queryClient } from "~/index";
-import { directusUrl, directusWSUrl } from "~/lib/constants";
-import { buildAssetUrl, searchBarContainerStyle, searchBarInputContainerStyle, uriToBlob } from "~/lib/helpers";
+import { directusUrl, directusWSUrl, messagesFolderName } from "~/lib/constants";
+import { buildAssetUrl, getNewFileUrl, searchBarContainerStyle, searchBarInputContainerStyle, uriToBlob } from "~/lib/helpers";
 import { useColorScheme } from "~/lib/useColorScheme";
 import directusStore from "~/store/directus";
 import userStore from "~/store/user";
@@ -235,16 +235,26 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
     const handleSend = async () => {
         const id = randomUUID()
         const responsePromises: Promise<FileSystem.FileSystemUploadResult>[] = []
+        const newFileUriPromises: Promise<string>[] = []
         currentMessage.assets?.forEach(asset => {
-            const response = FileSystem.uploadAsync(`${directusUrl}/files?fields=id`, asset.uri, {
-                fieldName: 'file',
-                httpMethod: 'POST',
-                uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
-                }
-            });
+            newFileUriPromises.push(getNewFileUrl(asset))
+        })
+        const newFileUris = await Promise.all(newFileUriPromises)
+        currentMessage.assets?.forEach((asset, i) => {
+            const response = FileSystem.uploadAsync(`${directusUrl}/files?fields=id`, newFileUris[i]
+                , {
+                    fieldName: "file",
+                    httpMethod: 'POST',
+                    uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+                    mimeType: asset.mimeType,
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
+                    },
+                    parameters: {
+                        "folder": messagesFolderName
+                    }
+                });
             responsePromises.push(response)
         })
         setMessages(p => [{
@@ -285,7 +295,7 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
                 })) : undefined
             },
             query: {
-                fields: ["*", "user_created.avatar", "user_created.id"]
+                fields: ["*", "user_created.avatar", "user_created.id", "user_created.first_name", "assets.directus_files_id.id", "assets.directus_files_id.type", "assets.directus_files_id.filename_download"]
             }
         }));
     }
