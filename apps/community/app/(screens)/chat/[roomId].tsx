@@ -69,6 +69,7 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
         if (type === "items" && data && data.id) {
             queryClient.setQueryData(fetchInitialMessagesQueryKey, (prev: ChatMessage<withId>[]) => [...prev, data].sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime()))
             setToUpdateForSent(p => [...p, { id: data.id }])
+            console.log(data)
         }
     }
 
@@ -147,7 +148,7 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
 
     useEffect(() => {
         navigator.setOptions({
-            header: () => <View className="pt-2 flex-col justify-center h-24 shadow bg-card" style={{ paddingTop: insets.top + 8 }}>
+            header: () => <View className="pt-2 flex-col justify-center shadow bg-card" style={{ paddingTop: insets.top + 8 }}>
                 {searchBarVisible ? <View className="flex-row items-center pr-2">
                     <SearchBar
                         placeholder="Search"
@@ -188,7 +189,7 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
                 </View>}
             </View>
         })
-    }, [searchBarVisible, searchText, scrollToMessages, scrollToIndex, openDropdown])
+    }, [searchBarVisible, searchText, scrollToMessages, scrollToIndex, openDropdown, roomId, roomAvatar, roomName])
 
     useEffect(() => {
         return initializeWebSocket()
@@ -273,7 +274,6 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
         const responses = await Promise.all(responsePromises)
         const fileIds = responses.map(r => {
             const body = JSON.parse(r.body) as { data: { id: string } }
-            console.log(body)
             return body.data.id
         })
 

@@ -14,7 +14,7 @@ export default function Profile({ user }: { user: User }) {
                     <Text className="text-primary">{user.first_name} {user.last_name}</Text>
                     <Text>{user.email}</Text>
                     <Text>{user.location}</Text>
-                    <Text className="text-muted-foreground">{user.title}</Text>
+                    <Text className="text-subtext">{user.title}</Text>
                 </View>
             </View>
             {(user.description && user.tags && user.tags.length) ? <View className="flex flex-col gap-4">

@@ -7,17 +7,17 @@ import { Text } from "../../ui/text"
 import { Button } from "../../ui/button"
 import { Feather, FontAwesome } from '@expo/vector-icons';
 
-export type MediumListCardProps = Pick<Listing, "id" | "title" | "price" | "address"> & { user_created: Pick<User, "id" | "avatar"> }
+export type MediumListingCardProps = Pick<Listing, "id" | "title" | "price" | "address"> & { user_created: Pick<User, "id" | "avatar"> }
 
-export const MediumListCard = (item: MediumListCardProps) => {
+export const MediumListingCard = (item: MediumListingCardProps) => {
     return <View className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start">
         <Image source={{ uri: buildAssetUrl(item.user_created.avatar) }} className="w-8 h-8 rounded-full" />
         <View className="flex-col gap-4">
             <View>
                 <Text className="text-lg font-medium">{item.title}</Text>
-                <Text className="text-muted-foreground">{item.address}</Text>
+                <Text className="text-subtext">{item.address}</Text>
                 <View className="flex-row justify-between gap-4 items-center">
-                    <Text className="text-muted-foreground">AED {Number(item.price).toLocaleString()}</Text>
+                    <Text className="text-subtext">AED {Number(item.price).toLocaleString()}</Text>
                     <Text className="border-solid rounded-full border-foreground border px-2 my-1">Listing</Text>
                 </View>
             </View>

@@ -3,8 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useGlobalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
-import { RenderListings, bodies, sortFeatured } from "~/components/listings-cards/body";
+import { RenderListings, bodies, commonFilters } from "~/components/listings-cards/body";
 import { FullListingCard, FullListingDetailed } from "~/components/listings-cards/molecules/full";
+import { SmallListingCardProps } from "~/components/listings-cards/molecules/small";
 import { Button } from "~/components/ui/button";
 import { Hr } from "~/components/ui/hr";
 import { Text } from "~/components/ui/text";
@@ -62,16 +63,18 @@ export default function ListingScreen() {
   }, [listing])
 
   return !isLoading && listing && (
-    <ScrollView contentContainerStyle={{ gap: 16, padding: 8 }}>
-      {Object.keys(listing).length && <FullListingCard {...listing} />}
-      <Hr />
-      <View className="flex-row justify-between items-center">
-        <Text>Browse Featured Listings</Text>
-        <Button variant={"ghost"} size={"sm"}>
-          <Text>View All</Text>
-        </Button>
+    <ScrollView className="flex-col" contentContainerClassName="items-center">
+      <View className="web:max-w-lg">
+        {Object.keys(listing).length && <FullListingCard {...listing} />}
+        <Hr />
+        <View className="flex-row justify-between items-center">
+          <Text>Browse Featured Listings</Text>
+          <Button variant={"ghost"} size={"sm"}>
+            <Text>View All</Text>
+          </Button>
+        </View>
+        <RenderListings<SmallListingCardProps> render={bodies.small} filter={commonFilters.filterFeatured} flatListProps={{ horizontal: true }} />
       </View>
-      <RenderListings render={bodies.small} filter={sortFeatured} horizontal />
     </ScrollView>
   );
 }

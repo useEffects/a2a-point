@@ -9,9 +9,14 @@ import { Feather, Ionicons } from '@expo/vector-icons';
 import { ListingCardMetrics } from "./full"
 import { useIsFocused } from "@react-navigation/native"
 
-export type SmallListCardProps = Pick<Listing, "id" | "title" | "price" | "address" | "type"> & { user_created: Pick<User, "id" | "avatar"> }
+export const OpenDetailsButton = ({id, size = "default"}: {id: string, size?: "default" | "sm" | "lg" | "icon" | null | undefined}) => <Button onPress={() => router.push(`/${id}`)} size={size} variant={"ghost"} className="flex flex-row gap-2 items-center">
+    <Text>Details</Text>
+    <Feather name="external-link" className="!text-foreground !text-base" />
+</Button>
 
-export const SmallListCard = (item: SmallListCardProps) => {
+export type SmallListingCardProps = Pick<Listing, "id" | "title" | "price" | "address" | "type"> & { user_created: Pick<User, "id" | "avatar"> }
+
+export const SmallListingCard = (item: SmallListingCardProps) => {
     const [metrics, setMetrics] = useState<ListingCardMetrics | null>(null)
     const isFocused = useIsFocused()
 
@@ -28,17 +33,14 @@ export const SmallListCard = (item: SmallListCardProps) => {
         <View className="flex-col gap-4">
             <View>
                 <Text className="text-lg font-medium w-[300px]">{item.title}</Text>
-                <Text className="text-muted-foreground">{item.address}</Text>
+                <Text className="text-subtext">{item.address}</Text>
                 <View className="flex-row justify-between gap-4 items-center">
-                    <Text className="text-muted-foreground">AED {Number(item.price).toLocaleString()}</Text>
+                    <Text className="text-subtext">AED {Number(item.price).toLocaleString()}</Text>
                     <Text className="border-solid rounded-full border-foreground border px-2 my-1">{item.type}</Text>
                 </View>
             </View>
             <View className="flex-row justify-between items-center">
-                <Button onPress={() => router.push(`/${item.id}`)} variant={"ghost"} className="flex flex-row gap-2 items-center">
-                    <Text>Details</Text>
-                    <Feather name="external-link" className="!text-foreground !text-base" />
-                </Button>
+                <OpenDetailsButton id={item.id} />
                 <View className="flex-row gap-4">
                     {metrics ? <>
                         <View className="flex-row gap-2">

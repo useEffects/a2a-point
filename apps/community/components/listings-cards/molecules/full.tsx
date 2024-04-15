@@ -28,7 +28,7 @@ export const ListingIconTile = ({
                 {icon}
                 <Text className="font-bold">{value}</Text>
             </View>
-            <Text className="font-light text-muted-foreground">{text}</Text>
+            <Text className="font-light text-subtext">{text}</Text>
         </View>
     );
 };
@@ -103,15 +103,15 @@ export const FullListingCard = (props: FullListingDetailed) => {
     return <View className="flex-col gap-4 p-2">
         <View className="flex-col gap-2">
             <Text className="text-xl font-medium text-primary">{props.title}</Text>
-            <Text className="text-muted-foreground">{props.address}</Text>
+            <Text className="text-subtext">{props.address}</Text>
             <View className="flex-row gap-4">
                 <Text className="">AED {Number(props.price).toLocaleString()}</Text>
                 <FlatList
                     scrollEnabled={false}
-                    ItemSeparatorComponent={() => <Text className="text-muted-foreground"> | </Text>}
+                    ItemSeparatorComponent={() => <Text className="text-subtext"> | </Text>}
                     horizontal={true}
                     data={props.mode_of_payments}
-                    renderItem={({ item }) => <Text className="text-muted-foreground">{item}</Text>}
+                    renderItem={({ item }) => <Text className="text-subtext">{item}</Text>}
                 />
             </View>
         </View>
@@ -176,7 +176,7 @@ export const FullListingCard = (props: FullListingDetailed) => {
             <View className="flex-col gap-2">
                 <View>
                     <Text className="text-lg font-medium">{props.user_created.first_name} {props.user_created.last_name}</Text>
-                    <Text className="text-muted-foreground">{props.user_created.email}</Text>
+                    <Text className="text-subtext">{props.user_created.email}</Text>
                 </View>
                 <View className="flex-row gap-2">
                     <Button onPress={handleChat} size={"sm"} variant={"outline"}><Text className="!text-sm">Chat</Text></Button>
@@ -188,15 +188,15 @@ export const FullListingCard = (props: FullListingDetailed) => {
         {metrics && <View className="flex-row gap-4 justify-around">
             <View className="flex-col gap-2 items-center">
                 <Ionicons name="eye" className="!text-foreground" size={18} />
-                <Text className="text-sm text-muted-foreground">{metrics.views} Views</Text>
+                <Text className="text-sm text-subtext">{metrics.views} Views</Text>
             </View>
             <Pressable onPress={handleSave} className="flex-col gap-2 items-center">
                 <Ionicons name={savedId ? "bookmark" : "bookmark-outline"} className="!text-foreground" size={18} />
-                <Text className="text-sm text-muted-foreground">{metrics.saves} Saves</Text>
+                <Text className="text-sm text-subtext">{metrics.saves} Saves</Text>
             </Pressable>
             <Pressable onPress={() => Linking.openURL(`${directusUrl}/admin/content/listings/${props.id}`)} className="flex-col gap-2 items-center">
                 <Feather name="external-link" className="!text-foreground" size={18} />
-                <Text className="text-sm text-muted-foreground">Dashboard</Text>
+                <Text className="text-sm text-subtext">Dashboard</Text>
             </Pressable>
         </View>}
     </View>

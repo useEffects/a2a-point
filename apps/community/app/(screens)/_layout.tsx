@@ -38,7 +38,7 @@ const _navigationItem: NavigationItem[] = [
     },
     {
         name: "(home)",
-        title: "",
+        title: "Home",
         icon: (color, size) => (
             <MaterialIcons name="explore" size={size} color={color} />
         ),
@@ -54,48 +54,41 @@ const _navigationItem: NavigationItem[] = [
 
 const WebNavigation = () => {
     const { user } = userStore();
-    const { colors } = useColorScheme();
-    const navigationItems: React.JSX.Element[] = [];
 
     return (
-        <View className="w-full h-full flex items-center min-h-screen">
-            <View className="container h-full">
-                <Drawer
-                    screenOptions={{
-                        drawerType: "permanent",
-                        drawerLabelStyle: { display: "none" },
-                        drawerItemStyle: { width: 40 },
-                        drawerStyle: { width: 64 },
-                        headerLeft: () => <View></View>,
+
+        <Drawer
+            screenOptions={{
+                drawerType: "permanent",
+                headerLeft: () => <View />,
+                headerShown: false,
+            }}
+        >
+            {_navigationItem.map((navItem) => (
+                <Drawer.Screen
+                    key={navItem.name}
+                    name={navItem.name}
+                    options={{
+                        title: navItem.title,
+                        drawerIcon: ({ color, size }) => navItem.icon(color, size),
                     }}
-                >
-                    {_navigationItem.map((navItem) => (
-                        <Drawer.Screen
-                            key={navItem.name}
-                            name={navItem.name}
-                            options={{
-                                title: navItem.title,
-                                drawerIcon: ({ color, size }) => navItem.icon(color, size),
-                            }}
-                        />
-                    ))}
-                    <Drawer.Screen key={_navigationItem.length} name="profile" options={{
-                        title: "Profile",
-                        drawerIcon: ({ focused }) => (
-                            <Image
-                                className={cn(
-                                    "w-6 h-6 m-auto rounded-full border-solid border-[1px]",
-                                    focused ? "border-primary" : "border-secondary",
-                                )}
-                                source={{
-                                    uri: buildAssetUrl(user?.avatar),
-                                }}
-                            />
-                        ),
-                    }} />
-                </Drawer>
-            </View>
-        </View>
+                />
+            ))}
+            <Drawer.Screen key={_navigationItem.length} name="profile" options={{
+                title: "Profile",
+                drawerIcon: ({ focused }) => (
+                    <Image
+                        className={cn(
+                            "w-6 h-6 m-auto rounded-full border-solid border-[1px]",
+                            focused ? "border-primary" : "border-secondary",
+                        )}
+                        source={{
+                            uri: buildAssetUrl(user?.avatar),
+                        }}
+                    />
+                ),
+            }} />
+        </Drawer>
     );
 };
 

@@ -20,7 +20,7 @@ imageMimeTypes.push("image/jpeg")
 const ImageTile = ({ asset, full = false }: { asset: Asset<withId | withUri>, full?: boolean }) => {
     return imageMimeTypes.includes(asset.mimeType) ? full ? <FullWidthImage source={{ uri: getUrl(asset) }} /> : <Image className="w-28 h-28 object-contain rounded" source={{ uri: getUrl(asset) }} /> : <View className="w-28 h-12 bg-card rounded-2xl flex-row gap-1 justify-center items-center">
         <Feather size={18} className="!text-card-foreground" name="file" />
-        <Text className="text-white text-xs">{shortString(asset.name)}</Text>
+        <Text className="text-card-foreground text-xs">{shortString(asset.name)}</Text>
     </View>
 }
 
