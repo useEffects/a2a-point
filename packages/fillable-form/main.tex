@@ -1,0 +1,35 @@
+\documentclass{article}
+\usepackage[a4paper,margin=0.5cm]{geometry}
+\usepackage{sansmathfonts} % Ensure consistent sans-serif fonts in math mode
+\renewcommand{\familydefault}{\sfdefault} % Set default font family to sans-serif
+\usepackage{hyperref}
+\usepackage{helvet} % Add 
+\usepackage{parskip}
+
+\input{atoms/textfield.tex}
+\input{molecules/parties.tex}
+
+\begin{document}
+
+\fontsize{8pt}{10.5}\selectfont % Set the font size for the entire document
+
+\begin{minipage}[t]{0.48\textwidth}
+    \partyEstablishment{buyer} \\
+    \uppercase{\textbf{Declaration by agent A}}\\
+    I hereby declare, I have read and understood the Real Estate Brokers Code of Ethics. I have a current signed
+    Seller's Agreement FORM A. I shall respond to a reasonable offer to purchase the listed property from
+    Agent B and shall not contact Agent B's Buyer nor confer with their client under no circumstances unless
+    the nominated Buyer herein has already discussed the stated listed property with our Office.
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+    \partyEstablishment{seller}\\
+    \uppercase{\textbf{Declaration by agent B}}\\
+    I hereby declare, I have read and understood the Real Estate Brokers Code of Ethics. I have a current
+    signed Buyer's Agreement FORM B. I shall encourage my Buyer as named herein, to submit a reasonable
+    offer for the stated property and not contact Agent A's Seller nor confer with their client under no
+    circumstances unless the Agent A has delayed our proposal on the prescribed FORM with a reasonable
+    reply within 24 hours.
+\end{minipage}
+
+\end{document}

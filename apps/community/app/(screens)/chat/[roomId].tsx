@@ -324,7 +324,7 @@ export default function RoomScreen() {
         })),
         enabled: !!roomId && typeof roomId === "string"
     }) as {
-        data: Pick<Room, "avatar" | "id" | "isGroup" | "title"> & {
+        data: Pick<Room, "avatar" | "id" | "type" | "title"> & {
             members: {
                 directus_users_id: Pick<User, "avatar" | "first_name" | "last_name" | "id">;
             }[];
@@ -338,7 +338,7 @@ export default function RoomScreen() {
         const receiver = room.members.find(
             (m) => m.directus_users_id.id !== user?.id,
         )?.directus_users_id;
-        const [roomName, roomAvatar] = room.isGroup
+        const [roomName, roomAvatar] = room.type === "group"
             ? [room.title!, buildAssetUrl(room.avatar)]
             : [
                 `${receiver!.first_name} ${receiver!.last_name}`,

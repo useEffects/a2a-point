@@ -46,5 +46,47 @@ export const tailwindColorDefinitions = {
     },
     subtext: {
         DEFAULT: "hsl(var(--subtext))",
-    }
+    },
+    rosewater: {
+        DEFAULT: "hsl(var(--rosewater))",
+    },
+    flamingo: {
+        DEFAULT: "hsl(var(--flamingo))",
+    },
+    pink: {
+        DEFAULT: "hsl(var(--pink))",
+    },
+    mauve: {
+        DEFAULT: "hsl(var(--mauve))",
+    },
+    red: {
+        DEFAULT: "hsl(var(--red))",
+    },
+    maroon: {
+        DEFAULT: "hsl(var(--maroon))",
+    },
+    peach: {
+        DEFAULT: "hsl(var(--peach))",
+    },
+    yellow: {
+        DEFAULT: "hsl(var(--yellow))",
+    },
+    green: {
+        DEFAULT: "hsl(var(--green))",
+    },
+    teal: {
+        DEFAULT: "hsl(var(--teal))",
+    },
+    sky: {
+        DEFAULT: "hsl(var(--sky))",
+    },
+    sapphire: {
+        DEFAULT: "hsl(var(--sapphire))",
+    },
+    blue: {
+        DEFAULT: "hsl(var(--blue))",
+    },
+    lavender: {
+        DEFAULT: "hsl(var(--lavender))",
+    },
 }

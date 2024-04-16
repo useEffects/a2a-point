@@ -9,28 +9,44 @@ import { Feather, Ionicons } from '@expo/vector-icons';
 import { ListingCardMetrics } from "./full"
 import { useIsFocused } from "@react-navigation/native"
 
-export const OpenDetailsButton = ({id, size = "default"}: {id: string, size?: "default" | "sm" | "lg" | "icon" | null | undefined}) => <Button onPress={() => router.push(`/${id}`)} size={size} variant={"ghost"} className="flex flex-row gap-2 items-center">
+export const OpenDetailsButton = ({ id, size = "sm" }: { id: string, size?: "default" | "sm" | "lg" | "icon" | null | undefined }) => <Button onPress={() => router.push(`/${id}`)} size={size} variant={"ghost"} className="flex flex-row gap-2 items-center">
     <Text>Details</Text>
     <Feather name="external-link" className="!text-foreground !text-base" />
 </Button>
 
 export type SmallListingCardProps = Pick<Listing, "id" | "title" | "price" | "address" | "type"> & { user_created: Pick<User, "id" | "avatar"> }
 
-export const SmallListingCard = (item: SmallListingCardProps) => {
+export const RenderMetrics = ({ listingId }: { listingId: string }) => {
     const [metrics, setMetrics] = useState<ListingCardMetrics | null>(null)
     const isFocused = useIsFocused()
 
     useEffect(() => {
         async function fetchMetrics() {
-            const metrics = await getListingMetrics(item.id)
+            const metrics = await getListingMetrics(listingId)
             setMetrics(metrics)
         }
         fetchMetrics()
     }, [isFocused])
 
+    return <View className="flex-row gap-4">
+        {metrics ? <>
+            <View className="flex-row gap-2">
+                <Ionicons name="eye" className="!text-foreground !text-base" />
+                <Text>{metrics.views}</Text>
+            </View>
+            <View className="flex-row gap-2">
+                <Ionicons name="bookmark" className="!text-foreground !text-base" />
+                <Text>{metrics.saves}</Text>
+            </View>
+        </> : <></>}
+    </View>
+
+}
+
+export const SmallListingCard = (item: SmallListingCardProps) => {
     return <View className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start">
         <Image source={{ uri: buildAssetUrl(item.user_created.avatar) }} className="w-8 h-8 rounded-full" />
-        <View className="flex-col gap-4">
+        <View className="flex-col gap-1">
             <View>
                 <Text className="text-lg font-medium w-[300px]">{item.title}</Text>
                 <Text className="text-subtext">{item.address}</Text>
@@ -40,20 +56,9 @@ export const SmallListingCard = (item: SmallListingCardProps) => {
                 </View>
             </View>
             <View className="flex-row justify-between items-center">
+                <RenderMetrics listingId={item.id} />
                 <OpenDetailsButton id={item.id} />
-                <View className="flex-row gap-4">
-                    {metrics ? <>
-                        <View className="flex-row gap-2">
-                            <Ionicons name="eye" className="!text-foreground !text-base" />
-                            <Text>{metrics.views}</Text>
-                        </View>
-                        <View className="flex-row gap-2">
-                            <Ionicons name="bookmark" className="!text-foreground !text-base" />
-                            <Text>{metrics.saves}</Text>
-                        </View>
-                    </> : <></>}
-                </View>
             </View>
         </View>
-    </View >
+    </View>
 }

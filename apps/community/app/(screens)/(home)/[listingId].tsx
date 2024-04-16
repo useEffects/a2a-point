@@ -1,9 +1,9 @@
 import { createItem, readItem, readItems } from "@directus/sdk";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalSearchParams, useNavigation } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ScrollView, View } from "react-native";
-import { RenderListings, bodies, commonFilters } from "~/components/listings-cards/body";
+import { CommonFilters, RenderListings, bodies } from "~/components/listings-cards/body/listings";
 import { FullListingCard, FullListingDetailed } from "~/components/listings-cards/molecules/full";
 import { SmallListingCardProps } from "~/components/listings-cards/molecules/small";
 import { Button } from "~/components/ui/button";
@@ -73,7 +73,7 @@ export default function ListingScreen() {
             <Text>View All</Text>
           </Button>
         </View>
-        <RenderListings<SmallListingCardProps> render={bodies.small} filter={commonFilters.filterFeatured} flatListProps={{ horizontal: true }} />
+        <RenderListings<SmallListingCardProps> render={bodies.small} filterMethod={CommonFilters.Featured} flatListProps={{ horizontal: true }} />
       </View>
     </ScrollView>
   );

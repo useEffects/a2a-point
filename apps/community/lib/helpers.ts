@@ -74,7 +74,7 @@ export const deleteBookmark = async (listingId: string, savedId: string) => {
     queryFn: async () => await rest.request(deleteItems("listings_directus_users", [savedId]))
   })
   queryClient.setQueryData(savesCountKey(listingId), ([prev]: UserCount[]
-  ) => { return { count: { directus_users_id: (Number(prev.count.directus_users_id) - 1).toString() } } })
+  ) => { return [{ count: { directus_users_id: (Number(prev.count.directus_users_id) - 1).toString() } }] })
 }
 
 export const addBookmark = async (listingId: string, userId: string) => {
@@ -87,7 +87,7 @@ export const addBookmark = async (listingId: string, userId: string) => {
     }))
   })
   queryClient.setQueryData(savesCountKey(listingId), ([prev]: UserCount[]
-  ) => ({ count: { directus_users_id: (Number(prev.count.directus_users_id) + 1).toString() } }))
+  ) => ([{ count: { directus_users_id: (Number(prev.count.directus_users_id) + 1).toString() } }]))
   return res
 }
 
@@ -100,7 +100,7 @@ export const getDMRoomId = async (
     queryFn: async () => await rest.request(readItems("rooms", {
       filter: {
         type: {
-          _eq: "Group"
+          _eq: "dm"
         },
         _or: [
           {
@@ -152,7 +152,7 @@ export const getDMRoomId = async (
     const room = await queryClient.fetchQuery({
       queryKey: ["Create Room"],
       queryFn: async () => await rest.request(createItem("rooms", {
-        type: "Group",
+        type: "group",
         members: [
           {
             directus_users_id: userId1

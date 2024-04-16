@@ -116,12 +116,11 @@ export type User = {
 export type Room = {
     date_created: string;
     id: string;
-    isGroup: boolean;
+    type: "group" | "dm";
     members: string[];
-    messages: string[];
     title: string | null;
     user_created: string;
-    avatar: string;
+    avatar: string | null;
 };
 
 export type Message = {

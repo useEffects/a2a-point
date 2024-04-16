@@ -12,6 +12,7 @@ import { Amenity, Listing, ListingAmenity, User } from "~/types";
 import { Button } from "../../ui/button";
 import { Hr } from "../../ui/hr";
 import { Text } from "../../ui/text";
+import { useListingMetrics } from "~/hooks/listing-metrics";
 
 export const ListingIconTile = ({
     icon,
@@ -50,55 +51,17 @@ const Amenities = (props: DetailedAmenity) => {
 export type ListingCardMetrics = { views: string | null, saves: string | null }
 
 export const FullListingCard = (props: FullListingDetailed) => {
-    const [metrics, setMetrics] = useState<ListingCardMetrics | null>(null)
-    const [savedId, setSavedId] = useState("")
-    const { rest } = directusStore()
+    const { views, saves, addBookmark, deleteBookmark, bookmarkId } = useListingMetrics(props.id)
     const { user } = userStore()
 
     const handleSave = async () => {
-        if (savedId) {
-            await deleteBookmark(props.id, savedId)
-            setSavedId("")
-            setMetrics(p => p ? { ...p, saves: (Number(p.saves) - 1).toString() } : { saves: "0", views: null })
-        } else {
-            const res = await addBookmark(props.id, user.id)
-            setMetrics(p => p ? { ...p, saves: (Number(p.saves) + 1).toString() } : { saves: "1", views: null })
-            setSavedId(res.id)
-        }
+        bookmarkId ? await deleteBookmark(props.id, bookmarkId) : await addBookmark(props.id)
     }
 
     const handleChat = async () => {
         const roomId = await getDMRoomId([props.user_created.id, user.id])
         router.navigate(`/chat/${roomId}`)
     }
-
-    useEffect(() => {
-        async function fetchListingMetrics() {
-            const res = await getListingMetrics(props.id)
-            setMetrics(res)
-        }
-        async function checkIfSaved() {
-            const res = await queryClient.fetchQuery({
-                queryKey: ["check-saved", props.id],
-                queryFn: async () => await rest.request(readItems("listings_directus_users", {
-                    filter: {
-                        listings_id: {
-                            _eq: props.id
-                        },
-                        directus_users_id: {
-                            _eq: user.id
-                        }
-                    }
-                }))
-            })
-            if (res.length) {
-                const [item] = res
-                setSavedId(item.id)
-            }
-        }
-        checkIfSaved()
-        fetchListingMetrics()
-    }, [])
 
     return <View className="flex-col gap-4 p-2">
         <View className="flex-col gap-2">
@@ -185,19 +148,19 @@ export const FullListingCard = (props: FullListingDetailed) => {
             </View>
         </View>
         <Hr />
-        {metrics && <View className="flex-row gap-4 justify-around">
+        {(views !== null && saves !== null && views !== undefined && saves !== undefined) ? <View className="flex-row gap-4 justify-around">
             <View className="flex-col gap-2 items-center">
                 <Ionicons name="eye" className="!text-foreground" size={18} />
-                <Text className="text-sm text-subtext">{metrics.views} Views</Text>
+                <Text className="text-sm text-subtext">{views} Views</Text>
             </View>
             <Pressable onPress={handleSave} className="flex-col gap-2 items-center">
-                <Ionicons name={savedId ? "bookmark" : "bookmark-outline"} className="!text-foreground" size={18} />
-                <Text className="text-sm text-subtext">{metrics.saves} Saves</Text>
+                <Ionicons name={bookmarkId ? "bookmark" : "bookmark-outline"} className="!text-foreground" size={18} />
+                <Text className="text-sm text-subtext">{saves} Saves</Text>
             </Pressable>
             <Pressable onPress={() => Linking.openURL(`${directusUrl}/admin/content/listings/${props.id}`)} className="flex-col gap-2 items-center">
                 <Feather name="external-link" className="!text-foreground" size={18} />
                 <Text className="text-sm text-subtext">Dashboard</Text>
             </Pressable>
-        </View>}
+        </View> : <></>}
     </View>
 }
