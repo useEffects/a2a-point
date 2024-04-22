@@ -1,5 +1,5 @@
 import { SearchBar } from "@rneui/themed";
-import { useGlobalSearchParams, useNavigation } from "expo-router";
+import { useGlobalSearchParams } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { useDebounce } from "use-debounce";
@@ -16,7 +16,7 @@ export default function SearchScreen() {
     const [searchText, setSearchText] = useState("")
     const [debouncedSearchText] = useDebounce(searchText, 500)
 
-    return <View className="flex-col gap-4">
+    return <View className="pb-4">
         <SearchBar
             placeholder="Search"
             containerStyle={searchBarContainerStyle}
@@ -26,13 +26,11 @@ export default function SearchScreen() {
             onChangeText={setSearchText}
             cursorColor={colors.primary}
         />
-        <View className="px-4 pb-4">
-            <RenderListings<MediumListingCardProps>
-                render={bodies.medium}
-                filterMethod={(filterKey && typeof id === "string") ? (commonFilters[CommonFilters[filterKey]])(id as string) : undefined}
-                flatListProps={{ ItemSeparatorComponent: () => <Hr className="my-4" /> }}
-                searchText={debouncedSearchText}
-            />
-        </View>
-    </View>
+        <RenderListings<MediumListingCardProps>
+            render={bodies.medium}
+            filterMethod={(filterKey) ? (commonFilters[CommonFilters[filterKey]])(id as string) : undefined}
+            flatListProps={{ ItemSeparatorComponent: () => <Hr className="" /> }}
+            searchText={debouncedSearchText}
+        />
+    </View >
 }

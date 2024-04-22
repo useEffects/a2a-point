@@ -152,7 +152,7 @@ export const getDMRoomId = async (
     const room = await queryClient.fetchQuery({
       queryKey: ["Create Room"],
       queryFn: async () => await rest.request(createItem("rooms", {
-        type: "group",
+        type: "dm",
         members: [
           {
             directus_users_id: userId1
@@ -211,3 +211,5 @@ export const getNewFileUrl = async (asset: Asset<withUri>) => {
   await FileSystem.copyAsync({ from: asset.uri, to: newUri })
   return newUri
 }
+
+export const shortTime = (date_created: string) => (new Date(date_created)).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })

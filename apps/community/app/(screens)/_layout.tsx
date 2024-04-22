@@ -40,7 +40,7 @@ const _navigationItem: NavigationItem[] = [
         name: "(home)",
         title: "Home",
         icon: (color, size) => (
-            <MaterialIcons name="explore" size={size} color={color} />
+            <MaterialIcons name="trending-up" size={size} color={color} />
         ),
     },
     {

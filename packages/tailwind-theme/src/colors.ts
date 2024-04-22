@@ -43,11 +43,11 @@ export const theme = {
 
     },
     "dark": {
-        "background": "#191724",
+        "background": "#0a0a0a",
         "foreground": "#e0def4",
-        "card": "#1f1d2e",
+        "card": "#0f0d0b",
         "card-foreground": "#e0def4",
-        "popover": "#26233a",
+        "popover": "#1a0d00",
         "popover-foreground": "#e0def4",
         "primary": "#FF7F00",
         "primary-foreground": "#191724",

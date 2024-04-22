@@ -32,7 +32,7 @@ const LocationCard = ({ item }: { item: Pick<Room, "id" | "title" | "avatar"> })
     return <View className="flex-col gap-4 items-center">
         <Button onPress={() => router.navigate({ pathname: "/discover", params: { id: item.id, filter: CommonFilters.GroupId } })} size={"icon"} className="relative h-16 w-16 rounded-full" variant={"ghost"}>
             <Image source={{ uri: buildAssetUrl(item.avatar!) }} className="w-16 h-16 rounded-full" />
-            <View className="absolute bg-card flex-row justify-center items-center rounded-full w-8 h-8 left-auto -right-2 top-auto -bottom-2">
+            <View className="absolute bg-background flex-row justify-center items-center rounded-full w-8 h-8 left-auto -right-2 top-auto -bottom-2 border border-solid border-border">
                 <Text className="!text-xs !text-foreground">{count}</Text>
             </View>
         </Button>

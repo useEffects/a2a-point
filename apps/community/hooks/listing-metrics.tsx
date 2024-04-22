@@ -1,8 +1,9 @@
-import { aggregate, createItem, deleteItems, readItems } from "@directus/sdk"
+import { aggregate, createItem, createNotification, deleteItems, readItems } from "@directus/sdk"
 import { useQuery } from "@tanstack/react-query"
 import directusStore from "~/store/directus"
 import { queryClient } from ".."
 import userStore from "~/store/user"
+import { User } from "~/types"
 
 const viewsCountKey = (listingId: string) => ["views-count", listingId]
 const savesCountKey = (listingId: string) => ["saves-count", listingId]
@@ -71,7 +72,7 @@ export const useListingMetrics = (listingId: string) => {
         queryClient.setQueryData(checkSavesKey(listingId), [])
     }
 
-    const addBookmark = async (listingId: string) => {
+    const addBookmark = async (listingId: string, recipient: Pick<User, "email" | "id">) => {
         const res = await queryClient.fetchQuery({
             queryKey: ["save-listing", listingId],
             queryFn: async () => await rest.request(createItem("listings_directus_users", {
@@ -79,9 +80,20 @@ export const useListingMetrics = (listingId: string) => {
                 directus_users_id: user.id
             }))
         })
-        queryClient.setQueryData(savesCountKey(listingId), ([prev]: UserCount[]
+        await queryClient.fetchQuery({
+            queryKey: ["Send Notification for bookmark", listingId, recipient.email, recipient.id],
+            queryFn: async () => await rest.request(createNotification({
+                collection: "listings",
+                item: listingId,
+                message: `You have a new bookmark on your listing from ${recipient.email}`,
+                recipient: recipient.id,
+                sender: user.id,
+                subject: "New Bookmark Received!",
+            }))
+        })
+        await queryClient.setQueryData(savesCountKey(listingId), ([prev]: UserCount[]
         ) => ([{ count: { directus_users_id: (Number(prev.count.directus_users_id) + 1) } }]))
-        queryClient.setQueryData(checkSavesKey(listingId), [{ id: res.id }])
+        await queryClient.setQueryData(checkSavesKey(listingId), [{ id: res.id }])
         return res
     }
 

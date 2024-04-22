@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useGlobalSearchParams, useNavigation } from "expo-router";
 import { useEffect } from "react";
 import { ScrollView, View } from "react-native";
-import { CommonFilters, RenderListings, bodies } from "~/components/listings-cards/body/listings";
+import { CommonFilters, RenderListings, bodies, commonFilters } from "~/components/listings-cards/body/listings";
 import { FullListingCard, FullListingDetailed } from "~/components/listings-cards/molecules/full";
 import { SmallListingCardProps } from "~/components/listings-cards/molecules/small";
 import { Button } from "~/components/ui/button";
@@ -12,6 +12,7 @@ import { Text } from "~/components/ui/text";
 import { queryClient } from "~/index";
 import directusStore from "~/store/directus";
 import userStore from "~/store/user";
+import { CardsHeader } from ".";
 
 export default function ListingScreen() {
   const { listingId } = useGlobalSearchParams()
@@ -63,17 +64,12 @@ export default function ListingScreen() {
   }, [listing])
 
   return !isLoading && listing && (
-    <ScrollView className="flex-col" contentContainerClassName="items-center">
+    <ScrollView className="flex-col" contentContainerClassName="items-center gap-4 py-4">
       <View className="web:max-w-lg">
         {Object.keys(listing).length && <FullListingCard {...listing} />}
         <Hr />
-        <View className="flex-row justify-between items-center">
-          <Text>Browse Featured Listings</Text>
-          <Button variant={"ghost"} size={"sm"}>
-            <Text>View All</Text>
-          </Button>
-        </View>
-        <RenderListings<SmallListingCardProps> render={bodies.small} filterMethod={CommonFilters.Featured} flatListProps={{ horizontal: true }} />
+        <CardsHeader label="Featured" route={{ pathname: "/discover", params: { filter: CommonFilters.Featured } }} />
+        <RenderListings<SmallListingCardProps> render={bodies.small} filterMethod={commonFilters[CommonFilters.Featured]()} flatListProps={{ horizontal: true }} />
       </View>
     </ScrollView>
   );

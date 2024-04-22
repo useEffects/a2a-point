@@ -48,11 +48,11 @@
 		--lavender: 231 97% 72%;
 }
 	.dark:root {
-		--background: 249 22% 12%;
+		--background: 0 0% 4%;
 		--foreground: 245 50% 91%;
-		--card: 247 23% 15%;
+		--card: 30 15% 5%;
 		--card-foreground: 245 50% 91%;
-		--popover: 248 25% 18%;
+		--popover: 30 100% 5%;
 		--popover-foreground: 245 50% 91%;
 		--primary: 30 100% 50%;
 		--primary-foreground: 249 22% 12%;

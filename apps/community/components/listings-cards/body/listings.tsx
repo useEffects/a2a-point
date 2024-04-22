@@ -7,6 +7,8 @@ import userStore from "~/store/user"
 import { ExtraSmallListingCard, ExtraSmallListingCardProps } from "../molecules/extra-small"
 import { MediumListingCard, MediumListingCardProps } from "../molecules/medium"
 import { SmallListingCard, SmallListingCardProps } from "../molecules/small"
+import { AdvertisementCard, AdvertisementCardProps } from "./advertisements"
+import shuffle from "shuffle-array"
 
 type ListCardProps = SmallListingCardProps | ExtraSmallListingCardProps | MediumListingCardProps
 
@@ -19,7 +21,12 @@ export enum CommonFilters {
     Featured = 'featured',
     ViewedByMe = 'viewed-by-me',
     SavedByMe = 'saved-by-me',
-    GroupId = 'groupId'
+    GroupId = 'groupId',
+    Listing = "listing",
+    Enquiry = "enquiry",
+    Sale = "sale",
+    Buy = "buy",
+    Rent = "rent",
 }
 
 export const commonFilters = {
@@ -48,6 +55,31 @@ export const commonFilters = {
                 _eq: groupId
             }
         }
+    }),
+    [CommonFilters.Listing]: () => ({
+        type: {
+            _eq: "listing"
+        }
+    }),
+    [CommonFilters.Enquiry]: () => ({
+        type: {
+            _eq: "enquiry"
+        }
+    }),
+    [CommonFilters.Sale]: () => ({
+        deal_type: {
+            _eq: "sell"
+        }
+    }),
+    [CommonFilters.Buy]: () => ({
+        deal_type: {
+            _eq: "buy"
+        }
+    }),
+    [CommonFilters.Rent]: () => ({
+        deal_type: {
+            _eq: "rent"
+        }
     })
 };
 
@@ -66,27 +98,59 @@ export const bodies = {
     }
 }
 
-export const RenderListings = <R extends ListCardProps>({ data, render, filterMethod, flatListProps, limit, searchText }: { data?: R[], render: RenderType<R>, filterMethod?: ReturnType<typeof commonFilters[CommonFilters]>, searchText?: string, flatListProps?: Omit<FlatListProps<R>, "data" | "renderItem">, limit?: number }) => {
+type ConfirmedAdvertisementCardProps = AdvertisementCardProps & { isAdvertisement: true }
+
+export const RenderListings = <R extends ListCardProps>({ data, render, filterMethod, flatListProps, limit, searchText }: { data?: R[], render: RenderType<R>, filterMethod?: ReturnType<typeof commonFilters[CommonFilters]>, searchText?: string, flatListProps?: Omit<FlatListProps<ConfirmedAdvertisementCardProps | R>, "data" | "renderItem">, limit?: number }) => {
+
+    const isAdvertisementCard = (item: ConfirmedAdvertisementCardProps | R): item is ConfirmedAdvertisementCardProps => {
+        return (item as ConfirmedAdvertisementCardProps).isAdvertisement !== undefined;
+    }
 
     const { rest } = directusStore()
     const isFocused = useIsFocused()
 
-    const { data: res, isLoading } = useQuery({
-        queryKey: ["Fetching Listings with fields: ", ...render.fields, filterMethod, searchText, isFocused],
+    const _limit = 5
+
+    const { data: listingsRes, isLoading: isListingsResLoading } = useQuery({
+        queryKey: ["Fetching Listings with fields: ", ...render.fields, JSON.stringify(filterMethod), searchText, isFocused],
         queryFn: async () => await rest.request(readItems("listings", {
             fields: render.fields,
-            limit: limit ?? 5,
+            limit: _limit ?? 5,
             sort: ["-date_created"],
             search: searchText ?? "",
-            filter: filterMethod ? filterMethod : {}
+            filter: filterMethod ? filterMethod : {},
         })),
+        initialData: [],
     }) as { data: Array<R>, isLoading: boolean }
 
-    return !isLoading &&
+    const { data: adsRes, isLoading: isAdsResLoading } = useQuery({
+        queryKey: ["Fetch Ads"],
+        queryFn: async () => await rest.request(readItems("advertisements", {
+            fields: ["id", "caption", "title", "photo", "date_created", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "user_created.email"],
+            filter: {
+                isActive: {
+                    _eq: true
+                }
+            },
+            sort: ["-date_created"],
+            limit: Math.ceil(_limit / 5)
+        })).then(res => res.map(r => ({ ...r, isAdvertisement: true }))),
+        initialData: [],
+        enabled: render === bodies.medium
+    }) as { data: ConfirmedAdvertisementCardProps[], isLoading: boolean }
+
+    const _data = data ?? listingsRes
+    const items = (render === bodies.medium && !searchText) ? shuffle([..._data, ...adsRes]) : _data
+
+    return (!isListingsResLoading && !isAdsResLoading) &&
         <FlatList
             {...flatListProps}
-            data={data ?? res}
-            renderItem={({ item }) => <render.renderMethod {...item} />}
+            data={items}
+            renderItem={({ item }) => {
+                if (isAdvertisementCard(item)) {
+                    return <AdvertisementCard {...item} />
+                } else return <render.renderMethod {...item} />
+            }}
             ItemSeparatorComponent={flatListProps?.ItemSeparatorComponent ?? (() => <View className="w-4 h-4" />)}
         />
 }

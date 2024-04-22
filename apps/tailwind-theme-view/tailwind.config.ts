@@ -1,5 +1,5 @@
 import type { Config } from "tailwindcss"
-import { colors } from "tailwind-theme/src/tailwind-config-colors"
+import { tailwindColorDefinitions } from "tailwind-theme/src/tailwind-config-colors"
 
 const config = {
   darkMode: ["class"],
@@ -20,7 +20,7 @@ const config = {
     },
     extend: {
       colors: {
-        ...colors,
+        ...tailwindColorDefinitions,
         borderRadius: {
           lg: "var(--radius)",
           md: "calc(var(--radius) - 2px)",

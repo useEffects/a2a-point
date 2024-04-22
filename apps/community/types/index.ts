@@ -131,3 +131,14 @@ export type Message = {
     room: string;
     user_created: string;
 };
+
+export type Advertisement = {
+    id: string;
+    sort?: any;
+    user_created: string;
+    date_created: string;
+    title: string;
+    photo: string;
+    caption: string;
+    isActive: boolean;
+}

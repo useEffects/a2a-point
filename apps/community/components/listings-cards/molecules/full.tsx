@@ -55,7 +55,7 @@ export const FullListingCard = (props: FullListingDetailed) => {
     const { user } = userStore()
 
     const handleSave = async () => {
-        bookmarkId ? await deleteBookmark(props.id, bookmarkId) : await addBookmark(props.id)
+        bookmarkId ? await deleteBookmark(props.id, bookmarkId) : await addBookmark(props.id, { email: props.user_created.email, id: props.user_created.id })
     }
 
     const handleChat = async () => {

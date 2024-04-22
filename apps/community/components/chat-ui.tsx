@@ -14,6 +14,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Input } from "./ui/input"
 import { Text } from "./ui/text"
 import * as FileSystem from "expo-file-system"
+import { shortTime } from '~/lib/helpers'
 
 export type withId = { id: string }
 export type withUri = { uri: string }
@@ -61,7 +62,7 @@ export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserI
                 </Text>
             </View>
             <View className={cn("flex-row gap-1 items-center", infoPositioning)}>
-                <Text className={cn("text-xs font-light", textColor)}>{(new Date(props.date_created)).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</Text>
+                <Text className={cn("text-xs font-light", textColor)}>{shortTime(props.date_created)}</Text>
                 <Feather name={props.sent ? "check" : "clock"} className={cn(textColor)} />
             </View>
         </View>

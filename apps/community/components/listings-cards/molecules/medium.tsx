@@ -11,15 +11,19 @@ import userStore from "~/store/user"
 
 export type MediumListingCardProps = Pick<Listing, "id" | "title" | "price" | "address" | "type" | "deal_type" | "description"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email"> }
 
+export const UserProfileCard = (item: { user_created: Pick<User, "first_name" | "last_name" | "email" | "avatar"> }) => {
+    return <View className="flex-row gap-2 items-center">
+        <Image source={{ uri: buildAssetUrl(item.user_created.avatar) }} className="w-6 h-6 rounded-full" />
+        <Text className="text-sm">{item.user_created.first_name} {item.user_created.last_name}</Text>
+        <Text className="text-sm text-subtext">{item.user_created.email}</Text>
+    </View>
+}
+
 export const MediumListingCard = (item: MediumListingCardProps) => {
     const { user } = userStore()
 
-    return <View className="w-full flex-col gap-2">
-        <View className="flex-row gap-2 items-center">
-            <Image source={{ uri: buildAssetUrl(item.user_created.avatar) }} className="w-6 h-6 rounded-full" />
-            <Text className="text-sm">{item.user_created.first_name} {item.user_created.last_name}</Text>
-            <Text className="text-sm text-subtext">{item.user_created.email}</Text>
-        </View>
+    return <View className="w-full flex-col gap-2 px-2 my-4">
+        <UserProfileCard user_created={item.user_created} />
         <Text className="text-lg text-primary">{item.title}</Text>
         <View className="flex-col gap-1 bg-card rounded-2xl p-4 mt-2">
             <Text className="text-subtext">{item.address}</Text>

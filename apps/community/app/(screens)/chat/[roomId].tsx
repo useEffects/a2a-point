@@ -63,6 +63,7 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
     const [openDropdown, setOpenDropdown] = useState(false)
     const [toUpdateForSent, setToUpdateForSent] = useState<{ id: string }[]>([])
     const [currentMessage, setCurrentMessage] = useState<CurrentMessage>({ text: "" })
+    const [notificationSentAlready, setNotificationSentAlready] = useState([])
 
     function handleUpdateReadReceipt(props: { data: ChatMessage<withId>, type: string }) {
         const { data, type } = props
