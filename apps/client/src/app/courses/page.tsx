@@ -1,43 +1,32 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import image4 from "@/assets/image4.png"
-import person from "@/assets/person.png"
-import roadmap from "@/assets/roadmap.png"
+import { directusUrl } from "@/lib/constants";
+import { Course } from "@/lib/types";
+import StartButton from "@/components/courses/start-button";
 
+export default async function Courses() {
+    const fields = ["id", "title", "description", "cover_image"].join(",")
+    const { data: courses } = await fetch(`${directusUrl}/items/courses/?fields=${fields}`).then(res => res.json()) as { data: Course[] }
+    const a2apointCourse = courses.find(course => course.title === "A2APoint Course")
+    const rest = courses.filter(course => course.title !== "A2APoint Course")
 
-export default  function Courses() {
-    return <div className="container flex flex-col gap-8 m-4">
-
-        <div className="flex w-full justify-center m-4">
-            <div className="flex flex-col gap-8 w-1/2">
-                <p className="text-6xl font-bold w-[60%]">Real Estate and Agent Certification Courses</p>
-                <Button className="w-[40%]">Start now</Button>
-                <div className="flex m-4">
-                    <img src={person.src} className="flex justify-left"></img>
-                </div>
+    return <div className="container mx-auto flex flex-col gap-4">
+        <div className="flex gap-4">
+            <div className="w-1/2 h-full">
+                <img src={`${directusUrl}/assets/${a2apointCourse?.cover_image}`} className="rounded" alt="" />
             </div>
-            <div className="flex ">
-                <img src={image4.src} className=" w-full object-contain"></img>
+            <div className="w-1/2 p-4 flex flex-col gap-8 items-end">
+                <p className="text-2xl"> {a2apointCourse?.title} </p>
+                <p className="max-w-md text-right"> {a2apointCourse?.description} </p>
+                <StartButton courseId={a2apointCourse?.id!} />
             </div>
-
         </div>
-
-        <div className="flex justify-center m-8">
-            <p  className="text-4xl font-bold " >Perks of Certification from A2A</p>
+        <div className="grid gap-4 grid-cols-3">
+            {rest.map(course => <div key={course.id} className="flex flex-col gap-4">
+                <img src={`${directusUrl}/assets/${course.cover_image}`} className="rounded" alt="" />
+                <p className="text-2xl"> {course.title} </p>
+                <p className=""> {course.description} </p>
+                <StartButton courseId={course.id} />
+            </div>)}
         </div>
-        <img src={roadmap.src} className="m-8"></img>
-        <div className="flex flex-col items-center gap-8 ">
-            <p className="text-4xl">Stay in the loop</p>
-            <p className="container max-w-xl">Subscribe to our newsletter to receive the latest updates on the A2A and stay informed about Certification trends. Don’t miss out the magic!</p>
-            <div className="flex gap-1">
-                <Input type="email" name="email" required placeholder="name@gmail.com"></Input>
-                <Button>Subscribe</Button>
+    </div >
 
-            </div>
-
-        </div>
-
-
-
-    </div>
 }

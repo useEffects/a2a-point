@@ -7,6 +7,7 @@ import { SessionProvider } from "@/components/session-provider";
 import { View } from "@/components/view";
 import { ColorProvider } from "@/context/color";
 import HeroBg from "@/assets/svg/hero-bg";
+import { AuthTokenProvider } from "@/context/authToken";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (<html lang="en" suppressHydrationWarning>
@@ -18,14 +19,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         enableSystem
         disableTransitionOnChange
       >
-        <ColorProvider>
-          {/* <SessionProvider> */}
-          <View>
-            {children}
-            <Toaster duration={3} />
-          </View>
-          {/* </SessionProvider> */}
-        </ColorProvider>
+        <AuthTokenProvider>
+          <ColorProvider>
+            <View>
+              {children}
+              <Toaster duration={3} />
+            </View>
+          </ColorProvider>
+        </AuthTokenProvider>
       </ThemeProvider>
     </body>
   </html>);

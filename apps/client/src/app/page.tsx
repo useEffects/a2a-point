@@ -46,8 +46,8 @@ export default function Home() {
         <Button variant={"outline"} size={"lg"}> See Testimonials </Button>
       </div>
     </div>
-    <GridBackground className="w-1/2 h-[calc(100vh-12rem)] p-4">
-      <div className="flex w-full h-full">
+    {/* <GridBackground className="w-1/2 h-[calc(100vh-12rem)] max-h-[900px] p-4"> */}
+      {/* <div className="flex w-full h-full">
         <div className="w-full h-full flex flex-col relative">
           <div className="flex-grow absolute z-10 flex flex-col gap-4 left-auto -right-4">
             {heroSideCardProps.map((props, index) => <HeroSideCard key={index} {...props} />)}
@@ -59,7 +59,7 @@ export default function Home() {
         <div className="h-2/3 aspect-[2/3] rounded-full bg-primary shadow-lg">
           <img src={hero.src} className="object-fill h-full w-full rounded-full" alt="" />
         </div>
-      </div>
-    </GridBackground>
+      </div> */}
+    {/* </GridBackground> */}
   </div>
 }
