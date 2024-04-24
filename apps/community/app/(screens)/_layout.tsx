@@ -19,11 +19,11 @@ interface NavigationItem {
     icon: (color: string, size: number) => JSX.Element;
 }
 
-const _disabledNavigationItems: string[] = []
+const _disabledNavigationItems: string[] = ["chat/[roomId]", "profile/[userId]", "(home)/[listingId]", "(home)/discover"]
 
 const _navigationItem: NavigationItem[] = [
     {
-        name: "chat",
+        name: "chat/index",
         title: "Chat",
         icon: (color, size) => (
             <MaterialIcons name="chat" size={size} color={color} />
@@ -37,7 +37,7 @@ const _navigationItem: NavigationItem[] = [
         ),
     },
     {
-        name: "(home)",
+        name: "(home)/index",
         title: "Home",
         icon: (color, size) => (
             <MaterialIcons name="trending-up" size={size} color={color} />
@@ -74,7 +74,7 @@ const WebNavigation = () => {
                     }}
                 />
             ))}
-            <Drawer.Screen key={_navigationItem.length} name="profile" options={{
+            <Drawer.Screen key={_navigationItem.length} name="(profile)/profile" options={{
                 title: "Profile",
                 drawerIcon: ({ focused }) => (
                     <Image
@@ -103,7 +103,7 @@ const MobileNavigation = () => {
                 key={navItem.name}
                 name={navItem.name}
                 options={{
-                    headerShown: !["chat", "(home)", "profile"].includes(navItem.name),
+                    headerShown: !["chat/index", "(home)/index", "profile/index"].includes(navItem.name),
                     headerTitle: navItem.title,
                     tabBarIcon: ({ focused, size }) =>
                         navItem.icon(
@@ -116,7 +116,7 @@ const MobileNavigation = () => {
     });
 
     navigationItems.push(
-        <Tabs.Screen key={_navigationItem.length} name="profile" options={{
+        <Tabs.Screen key={_navigationItem.length} name="profile/index" options={{
             headerShown: false,
             headerTitle: "Profile",
             headerRight: () => <ThemeToggle />,
@@ -148,7 +148,6 @@ const MobileNavigation = () => {
 
     return (
         <Tabs
-            initialRouteName="(home)"
             screenOptions={{
                 tabBarLabelStyle: { display: "none" },
                 headerTitle: "",
