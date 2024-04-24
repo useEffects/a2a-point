@@ -18,7 +18,7 @@ export default function StartButton({ courseId, className }: { courseId: string,
         router.push(`/courses/${courseId}`)
     }
 
-    return <div>
-        <Button className={className} onClick={handleClick}> Start Now </Button>
+    return <div className={className}>
+        <Button onClick={handleClick}> Start Now </Button>
     </div>
 }

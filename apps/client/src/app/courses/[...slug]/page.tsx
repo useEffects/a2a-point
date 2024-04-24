@@ -1,13 +1,12 @@
+import { getItem } from "@/app/api/directus/route"
 import { Separator } from "@/components/ui/separator"
-import { directusUrl, nextUrl } from "@/lib/constants"
+import { directusUrl } from "@/lib/constants"
 import { Course, CourseLesson } from "@/lib/types"
 import { cn } from "@/lib/utils"
-import { Divide } from "lucide-react"
 import Link from "next/link"
 import { redirect } from "next/navigation"
 
 const LessonsSidebar = ({ lessons, currentLessonId }: { lessons: CourseLesson[], currentLessonId: string }) => {
-    console.log(lessons)
     return <div className="w-full flex flex-col">
         {lessons.map((lesson, i) => <div key={i} className={cn("flex flex-col p-2", currentLessonId === lesson.id ? "border-l-[2px] border-primary" : "border-l-[1px]")}>
             <Link href={lesson.id} className={cn("text-sm text-primary", currentLessonId !== lesson.id && "text-subtext")}>
@@ -21,7 +20,8 @@ const LessonsSidebar = ({ lessons, currentLessonId }: { lessons: CourseLesson[],
 export default async function CourseStart({ params: { slug } }: { params: { slug: string[] } }) {
 
     const [courseId, lessonId] = slug
-    const { data: course } = await fetch(`${directusUrl}/items/courses/${courseId}/?fields=*.*.*`).then(res => res.json()) as { data: Course }
+    const fields = ["*.*.*"]
+    const course = await getItem("courses", courseId, { fields }) as Course
 
     if (!lessonId) {
         redirect(`/courses/${courseId}/${course.course_lessons[0].id}`)

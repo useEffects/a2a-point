@@ -14,10 +14,6 @@ export default function LoginScreen() {
     const params = useGlobalSearchParams();
     const { linkedURL } = useDeepLink()
     const { initialize } = directusStore()
-
-    useEffect(() => {
-        console.log(linkedURL)
-    }, [linkedURL])
     
     const handleLogin = async () => {
         const result = await WebBrowser.openAuthSessionAsync(`${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/expo-redirect?appUrl=${linkedURL}`, linkedURL);

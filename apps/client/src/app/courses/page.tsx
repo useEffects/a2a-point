@@ -1,10 +1,11 @@
 import { directusUrl } from "@/lib/constants";
 import { Course } from "@/lib/types";
-import StartButton from "@/components/courses/start-button";
+import { getItems } from "../api/directus/route";
+import StartButton from "@/components/client-components/course";
 
 export default async function Courses() {
-    const fields = ["id", "title", "description", "cover_image"].join(",")
-    const { data: courses } = await fetch(`${directusUrl}/items/courses/?fields=${fields}`).then(res => res.json()) as { data: Course[] }
+    const fields = ["id", "title", "description", "cover_image"]
+    const courses = await getItems("courses", { fields }) as Course[]
     const a2apointCourse = courses.find(course => course.title === "A2APoint Course")
     const rest = courses.filter(course => course.title !== "A2APoint Course")
 
@@ -20,13 +21,12 @@ export default async function Courses() {
             </div>
         </div>
         <div className="grid gap-4 grid-cols-3">
-            {rest.map(course => <div key={course.id} className="flex flex-col gap-4">
-                <img src={`${directusUrl}/assets/${course.cover_image}`} className="rounded" alt="" />
+            {rest.map(course => <div key={course.id} className="flex flex-col gap-4 h-full">
+                <img src={`${directusUrl}/assets/${course.cover_image}`} className="rounded w-full h-[200px] object-cover" alt="" />
                 <p className="text-2xl"> {course.title} </p>
                 <p className=""> {course.description} </p>
-                <StartButton courseId={course.id} />
+                <StartButton className="mt-auto mb-0" courseId={course.id} />
             </div>)}
         </div>
     </div >
-
 }

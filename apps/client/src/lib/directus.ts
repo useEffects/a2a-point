@@ -1,9 +1,5 @@
-import { createDirectus, rest, authentication } from '@directus/sdk';
+import { createDirectus, rest, staticToken } from "@directus/sdk";
+import { directusToken, directusUrl } from "./constants";
 
-const directus = createDirectus(process.env.NEXT_PUBLIC_DIRECTUS_URL!)
-    .with(authentication("json", {autoRefresh: true}))
-    .with(rest());
-
-await directus.login("admin@a2apoint.com", "admin");
-
-export default directus;
+export const directus = createDirectus(directusUrl)
+    .with(staticToken(directusToken!)).with(rest());
