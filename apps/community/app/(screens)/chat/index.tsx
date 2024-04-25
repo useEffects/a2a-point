@@ -8,6 +8,7 @@ import { FlatList } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDebounce } from "use-debounce";
 import { Button } from "~/components/ui/button";
+import { Separator } from "~/components/ui/separator";
 import { Text } from "~/components/ui/text";
 import { LargeScreenContext } from "~/context/large-screen";
 import { buildAssetUrl, searchBarContainerStyle, searchBarInputContainerStyle, shortString, timeAgo } from "~/lib/helpers";
@@ -50,11 +51,11 @@ const ChatListRow = (room: ChatListRowProp) => {
     }))
   }) as { data: Pick<Message, "content" | "date_created">[], isLoading: boolean };
 
-  const lastMessage = data?.length ? shortString(data[0].content, 40) || "Open chat to see attachment" : null;
+  const lastMessage = data?.length ? shortString(data[0].content, 100) || "Open chat to see attachment" : null;
 
   return (data && data.length > -1) ? (
     <Button variant={"ghost"}
-      style={{ height: 52, padding: 0, borderRadius: 0 }}
+      style={{ height: 72, padding: 0, borderRadius: 0 }}
       onPress={() => router.push(`/chat/${room.id}`)}
       className="flex-row gap-4 items-center w-full justify-start">
       <Image className="w-8 h-8 rounded-full" source={{ uri: roomAvatar }} />
@@ -113,6 +114,7 @@ export const ChatList = () => {
       data={rooms}
       renderItem={({ item }) => <ChatListRow {...item} />}
       keyExtractor={(item) => item.id.toString()}
+      ItemSeparatorComponent={() => <Separator />}
     />
 };
 

@@ -50,7 +50,7 @@ export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserI
     const containerStyle = renderRight ? "bg-primary text-primary-foreground flex-start" : "bg-secondary bg-secondary-foreground flex-end"
     const roundedStyle = renderRight ?
         cn("rounded-tl-2xl rounded-bl-2xl", props.isFirst ? "rounded-br-2xl" : "", props.isLast ? "rounded-tr-2xl" : "")
-        : cn("rounded-tr-full rounded-br-full", props.isLast ? "rounded-tl-full" : "", props.isFirst ? "rounded-bl-full" : "")
+        : cn("rounded-tr-2xl rounded-br-2xl", props.isLast ? "rounded-tl-2xl" : "", props.isFirst ? "rounded-bl-2xl" : "")
     const infoPositioning = renderRight ? "ml-auto mr-0" : "mr-auto ml-0"
     const textColor = renderRight ? "!text-primary-foreground" : "text-background"
 
@@ -175,7 +175,15 @@ export const ChatUi = (props: ChatUiProps) => {
                 inverted={true}
                 ref={listRef}
                 data={props.messages}
-                renderItem={({ item, index }: { item: ChatMessage<withId | withUri>, index: number }) => <ChatBubble {...({ ...item, currentUserId: props.currentUserId, goToId: props.goToId, isFirst: index === 0, isLast: index === props.messages.length - 1 })} />}
+                renderItem={({ item, index }: { item: ChatMessage<withId | withUri>, index: number }) => <ChatBubble
+                    {...
+                    ({
+                        ...item,
+                        currentUserId: props.currentUserId,
+                        goToId: props.goToId,
+                        isFirst: (index === 0 || props.messages[index - 1].user_created.id !== item.user_created.id),
+                        isLast: (index === props.messages.length - 1 || props.messages[index + 1].user_created.id !== item.user_created.id)
+                    })} />}
                 keyExtractor={(_, index) => index.toString() as string}
             />
         </View>
