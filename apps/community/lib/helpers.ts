@@ -6,6 +6,12 @@ import { queryClient } from "..";
 import { appName, directusUrl } from "./constants";
 import { Asset, withUri } from "~/components/chat-ui";
 import * as FileSystem from "expo-file-system";
+import TimeAgo from 'javascript-time-ago'
+import en from "javascript-time-ago/locale/en"
+
+TimeAgo.addLocale(en)
+
+export const timeAgo = new TimeAgo('ar-AE')
 
 export const buildAssetUrl = (id: string | null) => {
   if (null) {

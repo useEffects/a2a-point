@@ -142,3 +142,15 @@ export type Advertisement = {
     caption: string;
     isActive: boolean;
 }
+
+export type Notification = {
+    id: number | string;
+    timestamp: string;
+    status: "inbox" | "archived";
+    recipient: string;
+    sender: string;
+    subject: string;
+    message: string;
+    collection: string;
+    item: string;
+};

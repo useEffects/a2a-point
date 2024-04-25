@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query"
 import directusStore from "~/store/directus"
 import { queryClient } from ".."
 import userStore from "~/store/user"
-import { User } from "~/types"
+import { Listing, User } from "~/types"
+import { directusUrl } from "~/lib/constants"
 
 const viewsCountKey = (listingId: string) => ["views-count", listingId]
 const savesCountKey = (listingId: string) => ["saves-count", listingId]
@@ -72,7 +73,8 @@ export const useListingMetrics = (listingId: string) => {
         queryClient.setQueryData(checkSavesKey(listingId), [])
     }
 
-    const addBookmark = async (listingId: string, recipient: Pick<User, "email" | "id">) => {
+    const addBookmark = async (listing: Pick<Listing, "id" | "title">, recipient: Pick<User, "email" | "id">) => {
+        const { id: listingId, title } = listing
         const res = await queryClient.fetchQuery({
             queryKey: ["save-listing", listingId],
             queryFn: async () => await rest.request(createItem("listings_directus_users", {
@@ -89,6 +91,15 @@ export const useListingMetrics = (listingId: string) => {
                 recipient: recipient.id,
                 sender: user.id,
                 subject: "New Bookmark Received!",
+            }))
+        })
+        await queryClient.fetchQuery({
+            queryKey: ["Send notification for bookmark", listingId],
+            queryFn: async () => await rest.request(createNotification({
+                sender: user.id,
+                recipient: recipient.id,
+                subject: "New Bookmark Received!",
+                message: `Your listing ${title} has been bookmarked by ${user.first_name} ${user.last_name}\nView listing: ${directusUrl}/admin/content/listings/${listingId}\nChat with user: ${directusUrl}/admin/content/users/${user.id}`
             }))
         })
         await queryClient.setQueryData(savesCountKey(listingId), ([prev]: UserCount[]

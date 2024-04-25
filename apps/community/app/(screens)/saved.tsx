@@ -4,7 +4,7 @@ import { ExtraSmallListingCardProps } from "~/components/listings-cards/molecule
 import { Hr } from "~/components/ui/hr";
 
 export default function Saved() {
-  return <View className="p-4">
+  return <View className="p-4 max-w-xl mx-auto w-full">
     <RenderListings<ExtraSmallListingCardProps>
       filterMethod={commonFilters[CommonFilters.SavedByMe]()}
       render={bodies.extraSmall}

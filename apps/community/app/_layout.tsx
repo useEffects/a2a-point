@@ -5,12 +5,23 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Theme, ThemeProvider } from "@react-navigation/native";
 import { SplashScreen, Stack } from "expo-router";
 import * as React from "react";
-import { Platform, Text, View } from "react-native";
+import { Platform } from "react-native";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { PortalHost } from "~/components/primitives/portal";
 import { LargeScreenProvider } from "~/context/large-screen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-
+import {
+  useFonts,
+  Inter_100Thin,
+  Inter_200ExtraLight,
+  Inter_300Light,
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+  Inter_800ExtraBold,
+  Inter_900Black,
+} from '@expo-google-fonts/inter';
 export { ErrorBoundary } from "expo-router";
 
 SplashScreen.preventAutoHideAsync();
@@ -18,6 +29,17 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const { colorScheme, setColorScheme, colors } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
+  const [fontsLoaded] = useFonts({
+    Inter_100Thin,
+    Inter_200ExtraLight,
+    Inter_300Light,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+    Inter_800ExtraBold,
+    Inter_900Black,
+  });
 
   const theme: Theme = {
     dark: colorScheme === "dark",
@@ -45,11 +67,11 @@ export default function RootLayout() {
         document.documentElement.classList.add("bg-background");
       }
     })().finally(() => {
-      if (isColorSchemeLoaded) {
+      if (isColorSchemeLoaded && fontsLoaded) {
         SplashScreen.hideAsync();
       }
     });
-  }, [isColorSchemeLoaded]);
+  }, [isColorSchemeLoaded, fontsLoaded]);
 
   return (
     <ThemeProvider value={theme}>

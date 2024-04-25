@@ -69,7 +69,7 @@ export default function Home() {
     const insets = useSafeAreaInsets();
     return <ScrollView className="w-full">
         <View style={{ paddingTop: insets.top }} className="bg-card" />
-        <View className="container flex-col gap-4">
+        <View className="web:max-w-xl web:mx-auto flex-col gap-4">
             <View className="p-4 bg-card flex-col gap-6">
                 <CardsHeader label="Browse Categories" />
                 <View className="flex-row justify-between">

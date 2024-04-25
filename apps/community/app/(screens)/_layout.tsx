@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Tabs, router } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import { maybeCompleteAuthSession } from "expo-web-browser";
-import React, { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { View, Image, Platform } from "react-native";
 import { ThemeToggle } from "~/components/ThemeToggle";
 import { LargeScreenContext } from "~/context/large-screen";
@@ -30,10 +30,10 @@ const _navigationItem: NavigationItem[] = [
         ),
     },
     {
-        name: "community",
-        title: "Community",
+        name: "notifications",
+        title: "Notifications",
         icon: (color, size) => (
-            <MaterialIcons name="groups" size={size} color={color} />
+            <MaterialIcons name="notifications" size={size} color={color} />
         ),
     },
     {
@@ -56,12 +56,11 @@ const WebNavigation = () => {
     const { user } = userStore();
 
     return (
-
         <Drawer
+            initialRouteName="index"
             screenOptions={{
                 drawerType: "permanent",
                 headerLeft: () => <View />,
-                headerShown: false,
             }}
         >
             {_navigationItem.map((navItem) => (
@@ -74,7 +73,7 @@ const WebNavigation = () => {
                     }}
                 />
             ))}
-            <Drawer.Screen key={_navigationItem.length} name="(profile)/profile" options={{
+            <Drawer.Screen key={_navigationItem.length} name="profile/index" options={{
                 title: "Profile",
                 drawerIcon: ({ focused }) => (
                     <Image
@@ -88,6 +87,16 @@ const WebNavigation = () => {
                     />
                 ),
             }} />
+            {_disabledNavigationItems.map((navItem, i) => <Drawer.Screen
+                key={i + _navigationItem.length}
+                name={navItem}
+                options={{
+                    drawerItemStyle: {
+                        display: "none"
+                    }
+                }}
+            />)}
+
         </Drawer>
     );
 };
@@ -103,9 +112,9 @@ const MobileNavigation = () => {
                 key={navItem.name}
                 name={navItem.name}
                 options={{
-                    headerShown: !["chat/index", "(home)/index", "profile/index"].includes(navItem.name),
+                    headerShown: ![ "(home)/index", "profile/index"].includes(navItem.name),
                     headerTitle: navItem.title,
-                    tabBarIcon: ({ focused, size }) =>
+                    tabBarIcon: ({ focused, size }: { focused: boolean, size: number }) =>
                         navItem.icon(
                             focused ? colors.primary : colors.secondary,
                             size
@@ -117,10 +126,10 @@ const MobileNavigation = () => {
 
     navigationItems.push(
         <Tabs.Screen key={_navigationItem.length} name="profile/index" options={{
-            headerShown: false,
+            headerShown: true,
             headerTitle: "Profile",
             headerRight: () => <ThemeToggle />,
-            tabBarIcon: ({ focused }) => (
+            tabBarIcon: ({ focused }: { focused: boolean }) => (
                 <Image
                     className={cn(
                         "w-6 h-6 m-auto rounded-full border-solid border-[1px]",
@@ -161,15 +170,15 @@ const MobileNavigation = () => {
 export default function Layout() {
     const { rest, initialize } = directusStore();
     const isLargeScreen = useContext(LargeScreenContext);
-    const [isReady, setIsReady] = React.useState(false);
+    const [isReady, setIsReady] = useState(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (Platform.OS === "web") {
             maybeCompleteAuthSession();
         }
     }, [Platform]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         (async () => {
             const accessToken = await rest.getToken();
             if (!accessToken) {

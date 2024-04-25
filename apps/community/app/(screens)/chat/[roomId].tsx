@@ -1,4 +1,4 @@
-import { readItem, readItems, uploadFiles } from "@directus/sdk";
+import { createNotification, createNotifications, readItem, readItems, uploadFiles } from "@directus/sdk";
 import { Ionicons } from "@expo/vector-icons";
 import { SearchBar } from "@rneui/themed";
 import { useQuery } from "@tanstack/react-query";
@@ -20,8 +20,17 @@ import directusStore from "~/store/directus";
 import userStore from "~/store/user";
 import { File, Message, Room, User } from "~/types";
 import * as FileSystem from "expo-file-system";
+import { useIsFocused } from "@react-navigation/native";
 
 const FormData = global.FormData;
+
+type InitialDataType = Omit<Message, "assets"> & {
+    user_created: Pick<User, "avatar" | "id" | "first_name">
+} & {
+    assets: {
+        directus_files_id: Pick<File, "id" | "type" | "filename_download">
+    }[]
+}
 
 const ChatDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateAction<boolean>> }) => {
     return <DropdownMenu open={props.open} onOpenChange={props.setOpen}>
@@ -44,8 +53,7 @@ const ChatDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateActi
     </DropdownMenu>
 }
 
-const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvatar: string, roomName: string }) => {
-    const fetchInitialMessagesQueryKey = ["Fetch Messages", roomId]
+const ChatScreen = ({ roomId, roomAvatar, roomName, receiversId }: { roomId: string, roomAvatar: string, roomName: string, receiversId: string[] }) => {
 
     const { rest, token } = directusStore()
     const insets = useSafeAreaInsets()
@@ -63,25 +71,14 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
     const [openDropdown, setOpenDropdown] = useState(false)
     const [toUpdateForSent, setToUpdateForSent] = useState<{ id: string }[]>([])
     const [currentMessage, setCurrentMessage] = useState<CurrentMessage>({ text: "" })
-    const [notificationSentAlready, setNotificationSentAlready] = useState([])
+    const [notificationSentAlready, setNotificationSentAlready] = useState(false)
+    const focused = useIsFocused()
+    const fetchInitialMessagesQueryKey = ["Fetch Messages", roomId, focused]
 
-    function handleUpdateReadReceipt(props: { data: ChatMessage<withId>, type: string }) {
-        const { data, type } = props
-        if (type === "items" && data && data.id) {
-            queryClient.setQueryData(fetchInitialMessagesQueryKey, (prev: ChatMessage<withId>[]) => [...prev, data].sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime()))
+    function handleUpdateReadReceipt(data: InitialDataType) {
+        if (data && data.id) {
             setToUpdateForSent(p => [...p, { id: data.id }])
-            console.log(data)
         }
-    }
-
-    function subscribe() {
-        ws?.send(JSON.stringify({
-            type: "subscribe",
-            collection: "messages",
-            query: {
-                fields: ["*", "user_created.avatar", "user_created.id"]
-            }
-        }))
     }
 
     const { data: scrollToMessages, isLoading: isScrollToMessagesLoading } = useQuery({
@@ -104,16 +101,64 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
     function initializeWebSocket() {
         const ws = new WebSocket(`${directusWSUrl}?access_token=${token}`)
         ws.onopen = () => {
+            ws?.send(JSON.stringify({
+                type: "subscribe",
+                collection: "messages",
+                query: {
+                    fields: ["*", "user_created.avatar", "user_created.id"],
+                    filter: {
+                        room: {
+                            _eq: roomId
+                        }
+                    }
+                }
+            }))
             setReady(true)
             setWs(ws)
-            subscribe()
         }
         ws.addEventListener('open', function () {
         });
 
         ws.addEventListener('message', function (message) {
-            const data = JSON.parse(message.data)
-            handleUpdateReadReceipt(data)
+            const data = JSON.parse(message.data) as { data: InitialDataType | InitialDataType[], type: string }
+            if (data.type === "ping") {
+                ws.send(JSON.stringify({ type: "pong" }))
+            }
+            if (data.type === "subscription") {
+                let newData: InitialDataType[] = []
+                if (Array.isArray(data.data)) {
+                    newData = data.data
+                } else {
+                    newData = [data.data]
+                }
+                setMessages(p => [
+                    ...newData.map(d => ({
+                        content: d.content,
+                        date_created: d.date_created,
+                        id: d.id,
+                        room: roomId,
+                        sent: true,
+                        user_created: {
+                            avatar: d.user_created.avatar,
+                            id: d.user_created.id,
+                            first_name: d.user_created.first_name,
+                        },
+                        assets: d.assets?.map(asset => ({
+                            id: asset.directus_files_id.id,
+                            mimeType: asset.directus_files_id.type,
+                            name: asset.directus_files_id.filename_download
+                        }))
+                    })),
+                    ...p])
+            } else if (data.type === "items") {
+                if (Array.isArray(data.data)) {
+                    data.data.forEach(d => {
+                        handleUpdateReadReceipt(d)
+                    })
+                } else {
+                    handleUpdateReadReceipt(data.data)
+                }
+            }
         });
 
         ws.addEventListener('close', function () {
@@ -137,14 +182,7 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
         })),
         enabled: !!roomId
     }) as {
-        data: (Omit<Message, "assets"> & {
-            user_created: Pick<User, "avatar" | "id" | "first_name">
-        } & {
-            assets: {
-                directus_files_id: Pick<File, "id" | "type" | "filename_download">
-            }[]
-        }
-        )[], isLoading: boolean
+        data: InitialDataType[], isLoading: boolean
     }
 
     useEffect(() => {
@@ -299,6 +337,21 @@ const ChatScreen = ({ roomId, roomAvatar, roomName }: { roomId: string, roomAvat
                 fields: ["*", "user_created.avatar", "user_created.id", "user_created.first_name", "assets.directus_files_id.id", "assets.directus_files_id.type", "assets.directus_files_id.filename_download"]
             }
         }));
+
+        if (!notificationSentAlready) {
+            await queryClient.fetchQuery({
+                queryKey: ["Send notification", receiversId.join(",")],
+                queryFn: async () => await rest.request(createNotifications(receiversId.map(id => ({
+                    recipient: id,
+                    sender: user.id,
+                    subject: `New message from ${user.first_name} ${user.last_name}`,
+                    message: currentMessage.text || "Open app to view attachment",
+                    collection: "directus_users",
+                    item: user.id
+                }))))
+            })
+            setNotificationSentAlready(true)
+        }
     }
 
     return ready ? <ChatUi
@@ -316,7 +369,7 @@ export default function RoomScreen() {
     const { roomId } = useGlobalSearchParams();
     const { rest } = directusStore()
     const { user } = userStore()
-    const [roomDetails, setRoomDetails] = useState<{ roomName: string, roomAvatar: string } | undefined>()
+    const [roomDetails, setRoomDetails] = useState<{ roomName: string, roomAvatar: string, receiversId: string[] } | undefined>()
 
     const { data: room, isLoading } = useQuery({
         queryKey: ["Fetch Room by ID", roomId],
@@ -345,11 +398,11 @@ export default function RoomScreen() {
                 `${receiver!.first_name} ${receiver!.last_name}`,
                 buildAssetUrl(receiver!.avatar),
             ];
-        setRoomDetails({ roomName, roomAvatar });
+        setRoomDetails({ roomName, roomAvatar, receiversId: room.members.filter(m => m.directus_users_id.id !== user?.id).map(m => m.directus_users_id.id) });
     }, [navigation, room, isLoading]);
 
     return isLoading ||
         !room?.id || !roomDetails ? (
         <View />
-    ) : <ChatScreen roomId={roomId as string} roomName={roomDetails?.roomName} roomAvatar={roomDetails?.roomAvatar} />
+    ) : <ChatScreen roomId={roomId as string} roomName={roomDetails?.roomName} roomAvatar={roomDetails?.roomAvatar} receiversId={roomDetails.receiversId} />
 }

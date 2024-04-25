@@ -40,9 +40,9 @@ export const MediumListingCard = (item: MediumListingCardProps) => {
         <View className="flex-row justify-between items-center px-2">
             <RenderMetrics listingId={item.id} />
             <View className="mr-0 ml-auto flex-row">
-                <Button size="icon" variant="ghost" onPress={async () => router.navigate(`/chat/${await getDMRoomId([user.id, item.user_created.id])}`)}>
+                {user.id === item.user_created.id ? <></> : <Button size="icon" variant="ghost" onPress={async () => router.navigate(`/chat/${await getDMRoomId([user.id, item.user_created.id])}`)}>
                     <MaterialIcons size={18} name="chat" className="!text-foreground" />
-                </Button>
+                </Button>}
                 <Button size="icon" variant="ghost" onPress={() => router.navigate(`/profile/${item.user_created.id}`)}>
                     <MaterialIcons size={18} name="person" className="!text-foreground" />
                 </Button>

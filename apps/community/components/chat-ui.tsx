@@ -45,12 +45,14 @@ export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserI
     const additionalSpacing = renderRight ? isTextBig ? "mr-0" : "mr-2" : isTextBig ? "ml-0" : "ml-2"
     const textAlign = renderRight ? "text-left" : "text-right"
     const toHighlight = props.goToId === props.id
-    const flexDirection = hasAsset ? "flex-col" : isTextBig ? "flex-col" : "flex-row"
+    const flexDirection = hasAsset ? "flex-col" : isTextBig ? "flex-col" : renderRight ? "flex-row" : "flex-row-reverse"
     const marginDirection = renderRight ? "ml-auto mr-0" : "mr-auto ml-0"
     const containerStyle = renderRight ? "bg-primary text-primary-foreground flex-start" : "bg-secondary bg-secondary-foreground flex-end"
-    const roundedStyle = renderRight ? cn("rounded-tl-2xl rounded-bl-2xl", props.isFirst ? "rounded-br-2xl" : "", props.isLast ? "rounded-tr-2xl" : "") : cn("rounded-tr-full rounded-br-full", props.isLast ? "rounded-tl-full" : "")
+    const roundedStyle = renderRight ?
+        cn("rounded-tl-2xl rounded-bl-2xl", props.isFirst ? "rounded-br-2xl" : "", props.isLast ? "rounded-tr-2xl" : "")
+        : cn("rounded-tr-full rounded-br-full", props.isLast ? "rounded-tl-full" : "", props.isFirst ? "rounded-bl-full" : "")
     const infoPositioning = renderRight ? "ml-auto mr-0" : "mr-auto ml-0"
-    const textColor = renderRight ? "!text-primary-foreground" : "text-secondary-foreground"
+    const textColor = renderRight ? "!text-primary-foreground" : "text-background"
 
     return <Swipeable containerStyle={{ marginVertical: 1, backgroundColor: toHighlight ? colors.accent : undefined }}>
         <View className={cn("p-1 px-2 items-center max-w-[90%]", containerStyle, roundedStyle, flexDirection, marginDirection
@@ -63,7 +65,7 @@ export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserI
             </View>
             <View className={cn("flex-row gap-1 items-center", infoPositioning)}>
                 <Text className={cn("text-xs font-light", textColor)}>{shortTime(props.date_created)}</Text>
-                <Feather name={props.sent ? "check" : "clock"} className={cn(textColor)} />
+                {renderRight ? <Feather name={props.sent ? "check" : "clock"} className={cn(textColor)} /> : <></>}
             </View>
         </View>
     </Swipeable>
@@ -127,6 +129,7 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
     const [open, setOpen] = useState(false)
 
     const { currentMessage, currentMessageDispatcher, onSend } = props
+    const disabled = !(Boolean(currentMessage.text) || Boolean(currentMessage.assets))
 
     return <View className='flex-col mt-1'>
         {currentMessage.assets && currentMessage.assets.length ? <View className='border-solid border-0 border-l-4 border-primary bg-accent p-2 flex-row justify-between items-center'>
@@ -137,10 +140,18 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
         </View> : <></>}
         <View className="flex-row gap-2 native:h-16 h-14 w-full p-2 items-center bg-card">
             <FooterDropDownMenu open={open} setOpen={setOpen} currentMessageDispatcher={currentMessageDispatcher} />
-            <Input multiline={true} placeholder="Type ..." placeholderTextColor={colors.muted} value={currentMessage.text} onChangeText={(newVal) => currentMessageDispatcher(p => ({ ...p, text: newVal }))} selectionColor={colors.foreground} className="grow-1 flex-1 rounded-full" />
-            <Button variant={"outline"} disabled={!Boolean(currentMessage.text) && !Boolean(currentMessage.assets)} size={"icon"} className="rounded-full justify-center items-center border-primary" onPress={onSend}>
+            <Input
+                multiline={true}
+                placeholder="Type ..."
+                placeholderTextColor={colors.subtext}
+                value={currentMessage.text}
+                onChangeText={(newVal) => currentMessageDispatcher(p => ({ ...p, text: newVal }))}
+                selectionColor={colors.foreground}
+                className="grow-1 flex-1 rounded-full !text-foreground" />
+            {disabled ? <></> : <Button variant={"outline"} size={"icon"} className="rounded-full justify-center items-center border-primary" onPress={onSend}>
                 <FontAwesome name="send" size={16} className="!text-foreground" />
             </Button>
+            }
         </View>
     </View>
 }
@@ -158,8 +169,9 @@ export const ChatUi = (props: ChatUiProps) => {
     }, [props.goToId])
 
     return <View className="flex-1">
-        <View className="flex-1 grow-1 p-1">
+        <View className="flex-1 grow-1">
             <FlatList
+                contentContainerClassName='p-1 web:px-4'
                 inverted={true}
                 ref={listRef}
                 data={props.messages}

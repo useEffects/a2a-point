@@ -1,4 +1,3 @@
-import { createItem, deleteItems, readItems } from "@directus/sdk";
 import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { router } from "expo-router";
 import { ReactNode, useEffect, useState } from "react";
@@ -6,13 +5,14 @@ import { FlatList, Image, Linking, Pressable, View } from "react-native";
 import { queryClient } from "~/index";
 import { directusUrl } from "~/lib/constants";
 import { UserCount, addBookmark, buildAssetUrl, deleteBookmark, getDMRoomId, getListingMetrics, savesCountKey } from "~/lib/helpers";
-import directusStore from "~/store/directus";
 import userStore from "~/store/user";
 import { Amenity, Listing, ListingAmenity, User } from "~/types";
 import { Button } from "../../ui/button";
 import { Hr } from "../../ui/hr";
 import { Text } from "../../ui/text";
 import { useListingMetrics } from "~/hooks/listing-metrics";
+import directusStore from '~/store/directus';
+import { createNotification } from '@directus/sdk';
 
 export const ListingIconTile = ({
     icon,
@@ -55,7 +55,7 @@ export const FullListingCard = (props: FullListingDetailed) => {
     const { user } = userStore()
 
     const handleSave = async () => {
-        bookmarkId ? await deleteBookmark(props.id, bookmarkId) : await addBookmark(props.id, { email: props.user_created.email, id: props.user_created.id })
+        bookmarkId ? await deleteBookmark(props.id, bookmarkId) : await addBookmark({ id: props.id, title: props.title }, { email: props.user_created.email, id: props.user_created.id })
     }
 
     const handleChat = async () => {
@@ -88,34 +88,34 @@ export const FullListingCard = (props: FullListingDetailed) => {
             {props.tags.map((tag, index) => <Text className="text-sm bg-primary text-primary-foreground px-2 rounded" key={index}>{tag}</Text>)}
         </View>
         <View className="flex flex-row justify-between">
-            {props.bedrooms && (
+            {props.bedrooms ? (
                 <ListingIconTile
                     icon={<MaterialIcons name="bed" className="!text-base !text-foreground" />}
                     text="Beds"
                     value={props.bedrooms}
                 />
-            )}
-            {props.bathrooms && (
+            ) : <></>}
+            {props.bathrooms ? (
                 <ListingIconTile
                     icon={<MaterialIcons name="bathtub" className="!text-base !text-foreground" />}
                     text="Baths"
                     value={props.bathrooms}
                 />
-            )}
-            {props.garages && (
+            ) : <></>}
+            {props.garages ? (
                 <ListingIconTile
                     icon={<MaterialIcons name="garage" className="!text-base !text-foreground" />}
                     text="Garages"
                     value={props.garages}
                 />
-            )}
-            {props.floors && (
+            ) : <></>}
+            {props.floors ? (
                 <ListingIconTile
                     icon={<MaterialIcons name="stairs" className="!text-base !text-foreground" />}
                     text="Floors"
                     value={props.floors}
                 />
-            )}
+            ) : <></>}
         </View>
         {props.amenities && props.amenities.length ? <View className="flex-col gap-4">
             <Hr />
@@ -128,7 +128,7 @@ export const FullListingCard = (props: FullListingDetailed) => {
                 data={props.amenities}
                 renderItem={({ item }) => Amenities(item)}
             />
-        </View> : <View></View>}
+        </View> : <></>}
         <Hr />
         <View className="flex-row gap-4 items-center">
             <Text className="text-lg">Pro Member</Text>
@@ -142,7 +142,7 @@ export const FullListingCard = (props: FullListingDetailed) => {
                     <Text className="text-subtext">{props.user_created.email}</Text>
                 </View>
                 <View className="flex-row gap-2">
-                    <Button onPress={handleChat} size={"sm"} variant={"outline"}><Text className="!text-sm">Chat</Text></Button>
+                    {user.id === props.user_created.id ? <></> : <Button onPress={handleChat} size={"sm"} variant={"outline"}><Text className="!text-sm">Chat</Text></Button>}
                     <Button onPress={() => router.navigate(`/profile/${props.user_created.id}`)} size={"sm"} variant={"outline"}><Text className="!text-sm">Profile</Text></Button>
                 </View>
             </View>

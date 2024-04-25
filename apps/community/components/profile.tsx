@@ -7,7 +7,7 @@ import { User } from "~/types";
 
 export default function Profile({ user }: { user: User }) {
     return (
-        <View className="container flex-col gap-8 px-2 py-4">
+        <View className="web:max-w-xl web:mx-auto flex-col gap-8 px-2 py-4">
             <View className="flex-row gap-4 items-center">
                 <Image source={{ uri: buildAssetUrl(user.avatar) }} className="w-36 h-36 rounded-full" />
                 <View className="flex-col gap-1">
