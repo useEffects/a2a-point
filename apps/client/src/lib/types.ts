@@ -71,3 +71,14 @@ export type NewsCategory = {
         name: string;
     };
 }
+
+export type Feedback = {
+    id: number;
+    user_created: string;
+    date_created: string;
+    user_updated: string | null;
+    date_updated: string | null;
+    rating: number;
+    content: string;
+    agent: string;
+}

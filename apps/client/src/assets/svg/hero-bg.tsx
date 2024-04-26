@@ -5,7 +5,7 @@ import * as React from "react"
 import { SVGProps } from "react"
 const HeroBg = (props: SVGProps<SVGSVGElement>) => {
     const color = React.useContext(ColorContext)
-    return <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" {...props}>
+    return <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1600" {...props}>
         <defs>
             <filter
                 id="a"

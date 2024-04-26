@@ -4,29 +4,14 @@ import { ReactNode } from "react"
 import { usePathname } from 'next/navigation'
 import Link from "next/link"
 import { ToggleTheme } from "./toggle-theme"
-
-const navItems = [
-    {
-        label: "Home",
-        href: "/"
-    },
-    {
-        label: "Courses",
-        href: "/courses"
-    }, {
-        label: "Membership",
-        href: "/membership"
-    }, {
-        label: "News",
-        href: "/news"
-    }
-]
+import { Footer } from "./footer"
+import { navItems } from "@/lib/constants"
 
 export const View = ({ children }: { children: ReactNode }) => {
     const pathname = usePathname()
     console.log(pathname)
-    return <div className="w-full flex flex-col">
-        <div className="flex justify-between h-32 p-4 my-4 container mx-auto relative z-50 p-4">
+    return <div className="w-full flex flex-col gap-12">
+        <div className="flex justify-between h-32 my-4 container mx-auto relative z-50 p-4">
             <div className="flex flex-row gap-4 items-center h-full">
                 <div className="h-full p-1 rounded bg-foreground shadow">
                     <img src="/logo.svg" alt="" className="h-full object-contain" />
@@ -41,5 +26,6 @@ export const View = ({ children }: { children: ReactNode }) => {
             </div>
         </div>
         {children}
+        <Footer />
     </div>
 }
