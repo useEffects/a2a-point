@@ -11,6 +11,7 @@ import { GridBackground } from "@/components/dot-gradient";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Feedback } from "@/lib/types";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { NewsLetter } from "@/components/news-letter";
 
 const whyChooseUs = [
   {
@@ -129,8 +130,8 @@ export default async function Home() {
         </div>
       </div>
       <div className="w-1/2 h-[500px] relative z-20">
-        {/* <HeroImage className="w-full h-full" /> */}
-        <img src={HeroGirl.src} alt="hero-image" className="w-full h-full object-cover absolute top-0 bottom-0 right-0 left-0" />
+        <HeroImage className="w-full h-full" />
+        <img src={HeroGirl.src} alt="hero-image" className="w-full h-full object-contain absolute top-0 bottom-0 right-0 left-0" />
       </div>
     </div>
     <div className="flex flex-row gap-4 container">
@@ -207,5 +208,6 @@ export default async function Home() {
         </Accordion>
       </div>
     </div>
+    <NewsLetter />
   </div >
 }
