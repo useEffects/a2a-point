@@ -74,6 +74,7 @@ export const useListingMetrics = (listingId: string) => {
     }
 
     const addBookmark = async (listing: Pick<Listing, "id" | "title">, recipient: Pick<User, "email" | "id">) => {
+        const { token } = directusStore.getState()
         const { id: listingId, title } = listing
         const res = await queryClient.fetchQuery({
             queryKey: ["save-listing", listingId],
@@ -83,7 +84,7 @@ export const useListingMetrics = (listingId: string) => {
             }))
         })
         await queryClient.fetchQuery({
-            queryKey: ["Send Notification for bookmark", listingId, recipient.email, recipient.id],
+            queryKey: ["Send notification for bookmark", listingId],
             queryFn: async () => await rest.request(createNotification({
                 collection: "listings",
                 item: listingId,
@@ -91,15 +92,8 @@ export const useListingMetrics = (listingId: string) => {
                 recipient: recipient.id,
                 sender: user.id,
                 subject: "New Bookmark Received!",
-            }))
-        })
-        await queryClient.fetchQuery({
-            queryKey: ["Send notification for bookmark", listingId],
-            queryFn: async () => await rest.request(createNotification({
-                sender: user.id,
-                recipient: recipient.id,
-                subject: "New Bookmark Received!",
-                message: `Your listing ${title} has been bookmarked by ${user.first_name} ${user.last_name}\nView listing: ${directusUrl}/admin/content/listings/${listingId}\nChat with user: ${directusUrl}/admin/content/users/${user.id}`
+                type: "user",
+                related_user: user.id
             }))
         })
         await queryClient.setQueryData(savesCountKey(listingId), ([prev]: UserCount[]

@@ -2,9 +2,8 @@ import { Feather, FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import * as DocumentPicker from 'expo-document-picker'
 import * as ImagePicker from "expo-image-picker"
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
-import { FlatList, View } from "react-native"
+import { FlatList, Image, View } from "react-native"
 import Autolink from 'react-native-autolink'
-import { Swipeable } from "react-native-gesture-handler"
 import { useColorScheme } from "~/lib/useColorScheme"
 import { cn } from "~/lib/utils"
 import { Message, User } from "~/types"
@@ -14,13 +13,15 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Input } from "./ui/input"
 import { Text } from "./ui/text"
 import * as FileSystem from "expo-file-system"
-import { shortTime } from '~/lib/helpers'
+import { buildAssetUrl, shortTime } from '~/lib/helpers'
+import userStore from '~/store/user'
+import { router } from 'expo-router'
 
 export type withId = { id: string }
 export type withUri = { uri: string }
 export type Asset<T extends withId | withUri> = T & { mimeType: string, name: string }
 
-export type ChatMessage<T extends withId | withUri> = (Omit<Message, "user_created" | "assets"> & { user_created: Pick<User, "first_name" | "id" | "avatar"> } & { sent: boolean, assets?: Asset<T>[] })
+export type ChatMessage<T extends withId | withUri> = (Omit<Message, "user_created" | "assets"> & { user_created: Pick<User, "first_name" | "id" | "last_name" | "avatar"> } & { sent: boolean, assets?: Asset<T>[] })
 
 export type CurrentMessage = {
     text: string,
@@ -34,10 +35,11 @@ type ChatUiProps = {
     currentMessage: CurrentMessage,
     currentMessageDispatcher: Dispatch<SetStateAction<CurrentMessage>>,
     onSend: () => void,
+    isGroup?: boolean
 }
 
-export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserId: string } & { goToId?: string, isFirst: boolean, isLast: boolean }) => {
-    const { colors } = useColorScheme()
+export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserId: string } & { goToId?: string, isFirst: boolean, isLast: boolean, isGroup?: boolean }) => {
+    const { user } = userStore()
     const renderRight = props.user_created.id === props.currentUserId
     const hasAsset = props.assets && props.assets.length > 0
 
@@ -54,7 +56,17 @@ export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserI
     const infoPositioning = renderRight ? "ml-auto mr-0" : "mr-auto ml-0"
     const textColor = renderRight ? "!text-primary-foreground" : "text-background"
 
-    return <Swipeable containerStyle={{ marginVertical: 1, backgroundColor: toHighlight ? colors.accent : undefined }}>
+    return <View className={cn(toHighlight && "bg-accent", "mt-[1px]", props.isGroup && "flex-col gap-1")}>
+        {(props.isGroup && props.isLast && props.user_created.id !== user.id) ?
+            <View className='items-start'>
+                <Button variant={"link"} className='rounded-full !h-6 !px-0 items-start' onPress={() => router.push(`/profile/${props.user_created.id}`)}>
+                    <View className='flex-row gap-1 items-center max-w-1/2 !h-6'>
+                        <Image className='w-6 h-6 rounded-full' source={{ uri: buildAssetUrl(props.user_created.avatar) }} />
+                        <Text className='!text-xs !text-subtext'>{props.user_created.first_name} {props.user_created.last_name}</Text>
+                    </View>
+
+                </Button>
+            </View> : <></>}
         <View className={cn("p-1 px-2 items-center max-w-[90%]", containerStyle, roundedStyle, flexDirection, marginDirection
         )}>
             <View className='flex-col'>
@@ -68,7 +80,7 @@ export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserI
                 {renderRight ? <Feather name={props.sent ? "check" : "clock"} className={cn(textColor)} /> : <></>}
             </View>
         </View>
-    </Swipeable>
+    </View>
 }
 
 const FooterDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, currentMessageDispatcher: Dispatch<SetStateAction<CurrentMessage>> }) => {
@@ -176,14 +188,13 @@ export const ChatUi = (props: ChatUiProps) => {
                 ref={listRef}
                 data={props.messages}
                 renderItem={({ item, index }: { item: ChatMessage<withId | withUri>, index: number }) => <ChatBubble
-                    {...
-                    ({
-                        ...item,
-                        currentUserId: props.currentUserId,
-                        goToId: props.goToId,
-                        isFirst: (index === 0 || props.messages[index - 1].user_created.id !== item.user_created.id),
-                        isLast: (index === props.messages.length - 1 || props.messages[index + 1].user_created.id !== item.user_created.id)
-                    })} />}
+                    {...item}
+                    currentUserId={props.currentUserId}
+                    goToId={props.goToId}
+                    isFirst={(index === 0 || props.messages[index - 1].user_created.id !== item.user_created.id)}
+                    isLast={(index === props.messages.length - 1 || props.messages[index + 1].user_created.id !== item.user_created.id)}
+                    isGroup={props.isGroup}
+                />}
                 keyExtractor={(_, index) => index.toString() as string}
             />
         </View>

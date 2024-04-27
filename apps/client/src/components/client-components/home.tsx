@@ -14,7 +14,7 @@ export type Testimonial = Omit<Feedback, "agent"> & { user_created: { avatar: st
 export const VideoPlayer = (props: VideoProps) => {
     const colors = useContext(ColorContext)
 
-    return <Video {...props} primaryColor={colors.primary} secondaryColor={colors.background} accentColor={colors.card}>
+    return colors && <Video {...props} primaryColor={colors.primary} secondaryColor={colors.background} accentColor={colors.card}>
     </Video>
 }
 

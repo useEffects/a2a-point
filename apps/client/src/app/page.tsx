@@ -12,6 +12,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Feedback } from "@/lib/types";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { NewsLetter } from "@/components/news-letter";
+import { HalfWidthDiv } from "@/components/half-width-div";
 
 const whyChooseUs = [
   {
@@ -108,32 +109,36 @@ export default async function Home() {
     <div className="top-0 bottom-auto left-0 right-0 absolute z-10 w-screen h-screen opacity-15">
       <HeroBg className="w-full h-full" />
     </div>
-    <div className="flex justify-center gap-4 container">
-      <div className="flex flex-col item-center justify-evenly h-[500px] gap-12 w-1/2 relative z-20">
-        <div className="flex flex-col gap-4">
-          <p className="text-xl md:text-3xl font-bold text-subtext"> Elevate your Real Estate Game </p>
-          <p className="text-3xl md:text-7xl font-bold"> The <span className="text-primary"> One Stop </span> for All Agents </p>
-          <p className="text-subtext">In the dynamic world of real estate, efficiency, transparency, and seamless
-            collaboration are paramount. Introducing A2A POINT, a revolutionary portal
-            designed exclusively for real estate agents, redefining the landscape of property
-            transactions and deal management.</p>
-        </div>
-        <div className="flex gap-4">
-          <div className="flex flex-col gap-4 [&>*]:full w-1/2 [&>*]:rounded-full">
-            <Button variant={"outline"} size={"lg"}> Browse Plans </Button>
-            <Button variant={"outline"} size={"lg"}> See Testimonials </Button>
+    <HalfWidthDiv
+      child1={
+        <div className="flex flex-col item-center justify-evenly w-full mx-auto h-full pr-4">
+          <div className="flex flex-col gap-4">
+            <p className="text-xl md:text-3xl font-bold text-subtext"> Elevate your Real Estate Game </p>
+            <p className="text-3xl md:text-7xl font-bold"> The <span className="text-primary"> One Stop </span> for All Agents </p>
+            <p className="text-subtext">In the dynamic world of real estate, efficiency, transparency, and seamless
+              collaboration are paramount. Introducing A2A POINT, a revolutionary portal
+              designed exclusively for real estate agents, redefining the landscape of property
+              transactions and deal management.</p>
           </div>
-          <div className="flex flex-col gap-4 [&>*]:full w-1/2">
-            <Button size={"lg"}> Play Store </Button>
-            <Button size={"lg"}> App Store </Button>
+          <div className="flex gap-4">
+            <div className="flex flex-col gap-4 [&>*]:full w-1/2 [&>*]:rounded-full">
+              <Button variant={"outline"} size={"lg"}> Browse Plans </Button>
+              <Button variant={"outline"} size={"lg"}> See Testimonials </Button>
+            </div>
+            <div className="flex flex-col gap-4 [&>*]:full w-1/2">
+              <Button size={"lg"}> Play Store </Button>
+              <Button size={"lg"}> App Store </Button>
+            </div>
           </div>
         </div>
-      </div>
-      <div className="w-1/2 h-[500px] relative z-20">
-        <HeroImage className="w-full h-full" />
-        <img src={HeroGirl.src} alt="hero-image" className="w-full h-full object-contain absolute top-0 bottom-0 right-0 left-0" />
-      </div>
-    </div>
+      }
+      child2={
+        <div className="w-full relative">
+          <HeroImage className="w-full h-full" />
+          <img src={HeroGirl.src} alt="hero-image" className="w-full h-full object-contain absolute top-0 bottom-0 right-0 left-0" />
+        </div>
+      }
+    />
     <div className="flex flex-row gap-4 container">
       <div className="w-1/3 flex justify-center items-center">
         <p className="text-3xl md:text-5xl font-bold max-w-sm"> Why <span className="text-primary">choose us</span> </p>
@@ -145,36 +150,39 @@ export default async function Home() {
         </div>)}
       </div>
     </div>
-    <div className="flex relative w-full">
-      <div className="absolute top-0 left-0 bottom-auto right-auto w-1/2">
-        <VideoPlayer src={"https://videos.pexels.com/video-files/3254200/3254200-uhd_3840_2160_25fps.mp4"}></VideoPlayer>
-      </div>
-      <div className="w-1/2 mt-[calc(50vw*9/16)] absolute top-0 bottom-auto right-auto h-[300px] bg-card"></div>
-      <div className="w-full mt-[calc(50vw*9/16)] absolute top-0 bottom-auto right-auto h-[300px]">
-        <div className="container flex h-full">
-          <div className="w-1/2 p-4 flex flex-col h-full justify-evenly items-start">
-            <p className="text-3xl md:text-5xl font-bold"> We are <span className="text-primary"> bigger </span> than you think </p>
-            <p className="">Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam animi fugiat molestias laborum deleniti natus. Voluptatum omnis aliquid accusantium tempora.</p>
+    <div className="relative">
+      <HalfWidthDiv
+        direction="right"
+        child1={
+          <div className="w-full flex flex-col gap-8 justify-between items-center">
+            <div className="max-w-sm flex gap-12 w-full">
+              {stats.map((item, index) => <div key={index} className="flex flex-col items-end">
+                <div className="flex items-end">
+                  <p className="text-3xl md:text-7xl"> {item.count} </p>
+                  <p className="text-xl">+</p>
+                </div>
+                <p className="text-subtext">{item.title}</p>
+              </div>)}
+            </div>
+            <p className="max-w-sm">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nesciunt, numquam ea! Fugiat dolorum facilis consectetur dicta labore, quos vel atque?</p>
+            <TestimonialCarousel testimonials={testimonials} />
           </div>
-        </div>
-      </div>
-      <div className="flex w-full container  justify-end">
-        <div className="w-1/2 flex flex-col gap-8 justify-between h-full items-center">
-          <div className="max-w-sm flex gap-12 w-full">
-            {stats.map((item, index) => <div key={index} className="flex flex-col items-end">
-              <div className="flex items-end">
-                <p className="text-3xl md:text-7xl"> {item.count} </p>
-                <p className="text-xl">+</p>
+        }
+        child2={
+          <div className="h-[calc((50vw*9/16)+200px)]">
+            {/* <VideoPlayer src={"https://videos.pexels.com/video-files/3254200/3254200-uhd_3840_2160_25fps.mp4"}></VideoPlayer> */}
+            <div className="absolute left-0 right-0">
+              <div className="absolute h-[200px] left-0 right-auto w-1/2 bg-card"></div>
+              <div className="container">
+                <div className="w-1/2 h-[200px] relative z-10 flex flex-col justify-evenly py-4">
+                  <p className="text-3xl md:text-5xl font-bold"> We are <span className="text-primary">bigger</span> than you think </p>
+                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui, delectus.</p>
+                </div>
               </div>
-              <p className="text-subtext">{item.title}</p>
-            </div>)}
+            </div>
           </div>
-          <p className="max-w-sm">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nesciunt, numquam ea! Fugiat dolorum facilis consectetur dicta labore, quos vel atque?</p>
-          <TestimonialCarousel testimonials={testimonials} />
-          <div>
-          </div>
-        </div>
-      </div>
+        }
+      />
     </div>
     <div className="container flex">
       <div className="w-1/2 flex flex-col gap-12 justify-center flex-1">
@@ -209,5 +217,5 @@ export default async function Home() {
       </div>
     </div>
     <NewsLetter />
-  </div >
+  </div>
 }

@@ -2,7 +2,9 @@ import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-
+import Buildings from "@/components/buildings";
+import { NewsLetter } from "@/components/news-letter";
+import { cn } from "@/lib/utils";
 
 
 const items = [
@@ -26,45 +28,34 @@ const items = [
     }
 ]
 
+const isLast = (index: number) => index === items.length - 1
+
 export default function Membership() {
     return (
-        <div className="container flex">
-            <div className="flex flex-col gap-8 m-8">
-                <p className="text-4xl font-medium">
-                    <span className="text-orange-500">Plan </span> &amp; <span className="text-blue-900">Pricing</span>
-                </p>
-                <div className="flex gap-8 justify-between">
-                    <p className="w-1/2 font-medium">
-                        An industry-first, purely usage-based pricing model, that has no entry barrier, and makes it super easy to predict your observability bills.
-                    </p>
-                    <div className="flex">
-                        <Button className="bg-orange-500 ">Monthly</Button>
-                        <Button className="bg-white"><span className="text-black">Yearly</span></Button>
-                    </div>
+        <div className="container flex flex-col gap-40 relative">
+            <div className="flex flex-col gap-20">
+                <div className="flex flex-col gap-4">
+                    <p className="text-3xl md:text-5xl font-bold text-primary"> Plans and Pricing </p>
+                    <p> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates, dolore? </p>
                 </div>
-                <div className="container grid grid-cols-3 gap-8 m-4 rounded-lg w-full">
-                    {items.map((item, i) => (
-                        <div key={i} className={`flex flex-col p-4 rounded-lg  ${i < 2 ? 'bg-gray-200' : 'bg-orange-400'}`}>
-                            <div className="flex flex-col gap-4 w-2/3">
-                                <p><span className="text-4xl font-bold">{item.amount}</span> /month</p>
-                                <p className="text-2xl font-bold">{item.name}</p>
-
-                                <p>{item.about}</p>
-                                <div className="flex flex-col gap-2 p-2">
-                                    {item.info.map((infoItem, j) => (
-
-                                        <span key={j} className="flex items-center">
-                                            <FontAwesomeIcon icon={faCheck} className="mr-2 w-4 h-4" /> <span>{infoItem}</span>
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="flex justify-center mt-auto">
-                                <Button className=" text-white rounded-full px-16 py-3">Choose Plan</Button>
-                            </div>
+                <div className="flex justify-evenly items-stretch w-full">
+                    {items.map((item, key) => <div key={key} className={cn("flex flex-col gap-4 justify-between w-1/3 px-4 py-16 rounded-xl relative z-10 max-w-xs border", isLast(key) ? "bg-primary text-primary-foreground" : "bg-card")}>
+                        <p className={cn("text-3xl md:text-5xl font-bold", isLast(key) ? "text-primary-foreground" : "text-primary")}> {item.amount} </p>
+                        <p className="text-xl font-bold"> {item.name} </p>
+                        <p> {item.about} </p>
+                        <div className="flex flex-col gap-2">
+                            {item.info.map(info => <div key={info} className="flex gap-2">
+                                <FontAwesomeIcon icon={faCheck} />
+                                <p className="text-subtext"> {info} </p>
+                            </div>)}
                         </div>
-                    ))}
+                        <Button className="rounded-full" variant={isLast(key) ? "secondary" : "default"}> Choose Plan </Button>
+                    </div>)}
                 </div>
+            </div>
+            <NewsLetter />
+            <div className="absolute -top-0 bottom-auto left-auto -right-1/4 opacity-20">
+                <Buildings />
             </div>
         </div>
     );
