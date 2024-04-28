@@ -1,21 +1,21 @@
 import { Feather, FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import * as DocumentPicker from 'expo-document-picker'
+import * as FileSystem from "expo-file-system"
 import * as ImagePicker from "expo-image-picker"
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
-import { FlatList, FlatListProps, Image, View } from "react-native"
+import { router } from 'expo-router'
+import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from "react"
+import { FlatList, FlatListProps, Image, SectionList, SectionListProps, View } from "react-native"
 import Autolink from 'react-native-autolink'
+import { buildAssetUrl, shortTime } from '~/lib/helpers'
 import { useColorScheme } from "~/lib/useColorScheme"
 import { cn } from "~/lib/utils"
+import userStore from '~/store/user'
 import { Message, User } from "~/types"
 import { ImageGroup } from './image-group'
 import { Button } from "./ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { Input } from "./ui/input"
 import { Text } from "./ui/text"
-import * as FileSystem from "expo-file-system"
-import { buildAssetUrl, shortTime } from '~/lib/helpers'
-import userStore from '~/store/user'
-import { router } from 'expo-router'
 
 export type withId = { id: string }
 export type withUri = { uri: string }
@@ -36,7 +36,7 @@ type ChatUiProps = {
     currentMessageDispatcher: Dispatch<SetStateAction<CurrentMessage>>,
     onSend: () => void,
     isGroup?: boolean,
-    flatListProps?: Omit<FlatListProps<ChatMessage<withId | withUri>>, "data" | "renderItem">
+    listProps?: Omit<SectionListProps<ChatMessage<withId | withUri>>, "sections" | "renderItem">
 }
 
 export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserId: string } & { goToId?: string, isFirst: boolean, isLast: boolean, isGroup?: boolean }) => {
@@ -136,7 +136,6 @@ const FooterDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateAc
         </DropdownMenuContent>
     </DropdownMenu >
 }
-
 const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispatcher" | "onSend">) => {
     const { colors } = useColorScheme()
     const [open, setOpen] = useState(false)
@@ -169,35 +168,76 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
     </View>
 }
 
+function formatDate(date: Date) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to midnight
+
+    const diffInDays = Math.floor((date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    const dayOfWeekNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    if (diffInDays === 0) {
+        return 'Today';
+    } else if (diffInDays === -1) { // -1 means yesterday
+        return 'Yesterday';
+    } else if (diffInDays >= -6 && diffInDays < 0) { // -6 to 0 means within the last 6 days
+        return dayOfWeekNames[date.getDay()];
+    } else {
+        const day = date.getDate();
+        const month = date.toLocaleString('default', { month: 'short' });
+        const year = date.getFullYear();
+        return `${day} ${month} ${year}`;
+    }
+}
+
+const generateSections = (messages: ChatMessage<withId | withUri>[]) => {
+    const sectionMap = messages.reduce<{ [key: string]: { timeStamp: string, messages: ChatMessage<withId | withUri>[] } }>((acc, message) => {
+        const timeStamp = new Date(message.date_created)
+        const date = `${timeStamp.getFullYear()}-${timeStamp.getMonth()}-${timeStamp.getDate()}`
+        if (!acc[date]) {
+            acc[date] = {
+                timeStamp: message.date_created,
+                messages: []
+            }
+        }
+        acc[date].messages.push(message)
+        return acc
+    }, {})
+    return Object.keys(sectionMap).map(date => ({ title: formatDate(new Date(sectionMap[date].timeStamp)), data: sectionMap[date].messages }))
+}
+
+
 export const ChatUi = (props: ChatUiProps) => {
-    const listRef = useRef<FlatList>(null)
+    const listRef = useRef<SectionList>(null)
+    const sections = useMemo(() => generateSections(props.messages), [props.messages])
 
     useEffect(() => {
         if (props.goToId) {
-            const foundIndex = props.messages.findIndex(m => m.id === props.goToId)
-            if (foundIndex === -1) return
-            listRef.current?.scrollToIndex({ index: foundIndex, animated: true, viewPosition: 0.5 })
+            const foundItemIndex = props.messages.findIndex(m => m.id === props.goToId)
+            const foundSectionIndex = sections.findIndex(section => section.data.findIndex(m => m.id === props.goToId) !== -1)
+            if (foundItemIndex === -1 || foundSectionIndex === -1) return
+            listRef.current?.scrollToLocation({ itemIndex: foundItemIndex, sectionIndex: foundSectionIndex, animated: true, viewPosition: 0.5 })
         }
 
     }, [props.goToId])
 
     return <View className="flex-1">
         <View className="flex-1 grow-1">
-            <FlatList
+            <SectionList
                 contentContainerClassName='p-1 web:px-4'
                 inverted={true}
                 ref={listRef}
-                data={props.messages}
-                renderItem={({ item, index }: { item: ChatMessage<withId | withUri>, index: number }) => <ChatBubble
+                sections={sections}
+                renderItem={({ item, index, section }) => <ChatBubble
                     {...item}
                     currentUserId={props.currentUserId}
                     goToId={props.goToId}
-                    isFirst={(index === 0 || props.messages[index - 1].user_created.id !== item.user_created.id)}
-                    isLast={(index === props.messages.length - 1 || props.messages[index + 1].user_created.id !== item.user_created.id)}
+                    isFirst={(index === 0 || section.data[index - 1].user_created.id !== item.user_created.id)}
+                    isLast={(index === section.data.length - 1 || section.data[index + 1].user_created.id !== item.user_created.id)}
                     isGroup={props.isGroup}
                 />}
+                renderSectionFooter={({ section }) => <Text className='text-sm text-center text-subtext py-2'>{section.title}</Text>}
                 keyExtractor={(_, index) => index.toString() as string}
-                {...props.flatListProps}
+                {...props.listProps}
             />
         </View>
         <Footer currentMessage={props.currentMessage} currentMessageDispatcher={props.currentMessageDispatcher} onSend={props.onSend} />

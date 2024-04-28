@@ -1,28 +1,24 @@
-import { createNotification, createNotifications, readItem, readItems, uploadFiles } from "@directus/sdk";
+import { readItems } from "@directus/sdk";
 import { Ionicons } from "@expo/vector-icons";
 import { SearchBar } from "@rneui/themed";
 import { useQuery } from "@tanstack/react-query";
 import { randomUUID } from "expo-crypto";
 import { useGlobalSearchParams, useNavigation } from "expo-router";
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
-import { Image, Platform, View } from "react-native";
+import { Image, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDebounce } from "use-debounce";
-import { ChatMessage, ChatUi, CurrentMessage, withId, withUri } from "~/components/chat-ui";
+import { BackButton } from "~/components/back";
+import { ChatUi, CurrentMessage } from "~/components/chat-ui";
 import { Button } from "~/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Text } from "~/components/ui/text";
-import { queryClient } from "~/index";
-import { directusUrl, directusWSUrl, messagesFolderName } from "~/lib/constants";
-import { buildAssetUrl, getNewFileUrl, searchBarContainerStyle, searchBarInputContainerStyle, uriToBlob } from "~/lib/helpers";
+import { ChatsContext, RoomSubscribed } from "~/context/chats";
+import { buildAssetUrl, searchBarContainerStyle, searchBarInputContainerStyle } from "~/lib/helpers";
 import { useColorScheme } from "~/lib/useColorScheme";
 import directusStore from "~/store/directus";
 import userStore from "~/store/user";
-import { File, Message, Room, User } from "~/types";
-import * as FileSystem from "expo-file-system";
-import { useIsFocused } from "@react-navigation/native";
-import { ChatsContext, RoomSubscribed } from "~/context/chats";
-import { add, set } from "lodash";
+import { File, Message, User } from "~/types";
 
 type InitialDataType = Omit<Message, "assets"> & {
     user_created: Pick<User, "avatar" | "id" | "first_name" | "last_name">
@@ -53,7 +49,9 @@ const ChatDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateActi
     </DropdownMenu>
 }
 
-const ChatScreen = ({ roomId, roomAvatar, roomName, isGroup }: { roomId: string, roomAvatar: string, roomName: string, isGroup: boolean }) => {
+const ChatScreen = ({ roomDetails }: { roomDetails: { roomName: string, roomAvatar: string, roomId: string, isGroup: boolean } }) => {
+    const { roomName, roomAvatar, roomId, isGroup } = roomDetails
+
     const { messages, setMessage, loadMoreMessages } = useContext(ChatsContext)
 
     const { rest } = directusStore()
@@ -110,48 +108,65 @@ const ChatScreen = ({ roomId, roomAvatar, roomName, isGroup }: { roomId: string,
 
     useEffect(() => {
         navigator.setOptions({
-            header: () => <View className="pt-2 flex-col justify-center shadow bg-card" style={{ paddingTop: insets.top + 8 }}>
-                {searchBarVisible ? <View className="flex-row items-center pr-2">
-                    <SearchBar
-                        placeholder="Search"
-                        containerStyle={searchBarContainerStyle}
-                        inputContainerStyle={{ ...searchBarInputContainerStyle, borderColor: colors.border, height: 36 }}
-                        inputStyle={{ fontSize: 14 }}
-                        value={searchText}
-                        onChangeText={setSearchText}
-                        cursorColor={colors.primary}
-                        showLoading={isScrollToMessagesLoading}
-                        autoFocus={true}
-                    />
-                    {(scrollToMessages && scrollToMessages.length) ? <View className="flex-row gap-2 items-center px-1">
-                        <Text>{scrollToIndex + 1} / {scrollToMessages.length}</Text>
-                        <View className="flex-row">
-                            <Button disabled={scrollToIndex === scrollToMessages.length - 1} className="mx-0" onPress={() => (scrollToIndex < scrollToMessages.length - 1) && setScrollToIndex(p => p + 1)} variant={"ghost"} size={"icon"}>
-                                <Ionicons name={"chevron-up-outline"} size={18} className="!text-foreground" />
-                            </Button>
-                            <Button disabled={scrollToIndex === 0} className="mx-0" variant={"ghost"} size={"icon"} onPress={() => (scrollToIndex > 0) && setScrollToIndex(p => p - 1)}>
-                                <Ionicons name={"chevron-down-outline"} size={18} className="!text-foreground" />
-                            </Button>
-                        </View>
-                    </View> : <></>}
-                    <Button variant={"ghost"} size={"icon"} onPress={() => { setSearchBarVisible(false); setSearchText("") }}>
-                        <Ionicons name={"return-up-forward-outline"} size={18} className="!text-foreground" />
-                    </Button>
-                </View> : <View className="flex-row justify-between items-center mx-2 mb-4 pt-2">
-                    <View className="flex-row items-center gap-2">
-                        <Image source={{ uri: roomAvatar }} className="w-10 h-10 rounded-full" />
-                        <Text>{roomName}</Text>
-                    </View>
-                    <View className="flex-row items-center gap-2">
-                        <Button variant={"ghost"} size={"icon"} onPress={() => setSearchBarVisible(true)}>
-                            <Ionicons name={"search-outline"} size={18} className="!text-foreground" />
+            headerLeft: () => <BackButton />,
+            header: () => <View className="flex-row items-center shadow bg-card h-24" style={{ paddingTop: insets.top }}>
+                <BackButton />
+                <View className="flex-1">
+                    {searchBarVisible ? <View className="flex-row items-center pr-2">
+                        <SearchBar
+                            placeholder="Search"
+                            containerStyle={searchBarContainerStyle}
+                            inputContainerStyle={{ ...searchBarInputContainerStyle, borderColor: colors.border, height: 36 }}
+                            inputStyle={{ fontSize: 14 }}
+                            value={searchText}
+                            onChangeText={setSearchText}
+                            cursorColor={colors.primary}
+                            showLoading={isScrollToMessagesLoading}
+                            autoFocus={true}
+                        />
+                        {(scrollToMessages && scrollToMessages.length) ? <View className="flex-row gap-2 items-center px-1">
+                            <Text>{scrollToIndex + 1} / {scrollToMessages.length}</Text>
+                            <View className="flex-row">
+                                <Button disabled={scrollToIndex === scrollToMessages.length - 1} className="mx-0" onPress={() => (scrollToIndex < scrollToMessages.length - 1) && setScrollToIndex(p => p + 1)} variant={"ghost"} size={"icon"}>
+                                    <Ionicons name={"chevron-up-outline"} size={18} className="!text-foreground" />
+                                </Button>
+                                <Button disabled={scrollToIndex === 0} className="mx-0" variant={"ghost"} size={"icon"} onPress={() => (scrollToIndex > 0) && setScrollToIndex(p => p - 1)}>
+                                    <Ionicons name={"chevron-down-outline"} size={18} className="!text-foreground" />
+                                </Button>
+                            </View>
+                        </View> : <></>}
+                        <Button variant={"ghost"} size={"icon"} onPress={() => { setSearchBarVisible(false); setSearchText("") }}>
+                            <Ionicons name={"return-up-forward-outline"} size={18} className="!text-foreground" />
                         </Button>
-                        <ChatDropDownMenu open={openDropdown} setOpen={setOpenDropdown} />
-                    </View>
-                </View>}
+                    </View> : <View className="flex-row justify-between items-center mx-2">
+                        <View className="flex-row items-center gap-2">
+                            <Image source={{ uri: roomAvatar }} className="w-8 h-8 rounded-full" />
+                            <Text>{roomName}</Text>
+                        </View>
+                        <View className="flex-row items-center gap-2">
+                            <Button variant={"ghost"} size={"icon"} onPress={() => setSearchBarVisible(true)}>
+                                <Ionicons name={"search-outline"} size={18} className="!text-foreground" />
+                            </Button>
+                            <ChatDropDownMenu open={openDropdown} setOpen={setOpenDropdown} />
+                        </View>
+                    </View>}
+                </View>
             </View>
         })
+
+        return
     }, [searchBarVisible, searchText, scrollToMessages, scrollToIndex, openDropdown, roomId, roomAvatar, roomName])
+
+    useEffect(() => {
+        function removeHeader() {
+            navigator.addListener("blur", () => {
+                navigator.setOptions({
+                    header: () => null
+                })
+            })
+        }
+        return removeHeader
+    }, [navigator])
 
     return <ChatUi
         currentUserId={user?.id!}
@@ -161,10 +176,9 @@ const ChatScreen = ({ roomId, roomAvatar, roomName, isGroup }: { roomId: string,
         currentMessageDispatcher={setCurrentMessage}
         onSend={handleSend}
         isGroup={isGroup}
-        flatListProps={{
+        listProps={{
             onEndReachedThreshold: 0,
             onEndReached: handleEndReached,
-            ListFooterComponent: endReached ? <Text className="text-sm text-center text-subtext py-2">End reached</Text> : undefined
         }}
     />
 }
@@ -174,9 +188,12 @@ export default function RoomScreen() {
     const { user } = userStore()
     const { roomsSubscribed, addRoom } = useContext(ChatsContext)
     const [room, setRoom] = useState<RoomSubscribed | null | undefined>()
-    const [roomDetails, setRoomDetails] = useState<{ roomId: string, roomName: string, roomAvatar: string }>()
+    const [roomDetails, setRoomDetails] = useState<{ roomId: string, roomName: string, roomAvatar: string, isGroup: boolean }>()
 
     useEffect(() => {
+        if (!roomId) {
+            setRoomDetails(undefined)
+        }
         async function init() {
             const found = roomsSubscribed.find(r => r.id === roomId)
             if (found) {
@@ -200,7 +217,7 @@ export default function RoomScreen() {
                     `${receivers[0].directus_users_id.first_name} ${receivers[0].directus_users_id.last_name}`,
                     buildAssetUrl(receivers[0].directus_users_id.avatar),
                 ];
-            setRoomDetails({ roomId: roomId as string, roomName, roomAvatar })
+            setRoomDetails({ roomId: roomId as string, roomName, roomAvatar, isGroup: room?.type === "group" })
         }
     }, [roomId, room])
 
@@ -212,10 +229,7 @@ export default function RoomScreen() {
         return null
     }
 
-    return roomDetails ? <ChatScreen
-        roomId={roomDetails.roomId}
-        roomName={roomDetails.roomName}
-        roomAvatar={roomDetails.roomAvatar}
-        isGroup={room.type === "group"}
+    return (roomDetails && roomId) ? <ChatScreen
+        roomDetails={roomDetails}
     /> : <></>
 }

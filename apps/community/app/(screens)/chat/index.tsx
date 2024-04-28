@@ -38,8 +38,6 @@ const ContactListRow = (contact: ContactListRowProp) => {
 }
 
 const GroupListRow = (group: GroupListRowProp) => {
-  const { rest } = directusStore()
-  const { user } = userStore()
   const { addRoom } = useContext(ChatsContext)
 
   const handlePress = async () => {
