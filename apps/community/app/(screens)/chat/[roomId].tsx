@@ -54,7 +54,7 @@ const ChatDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateActi
 }
 
 const ChatScreen = ({ roomId, roomAvatar, roomName, isGroup }: { roomId: string, roomAvatar: string, roomName: string, isGroup: boolean }) => {
-    const { messages, setMessage } = useContext(ChatsContext)
+    const { messages, setMessage, loadMoreMessages } = useContext(ChatsContext)
 
     const { rest } = directusStore()
     const insets = useSafeAreaInsets()
@@ -67,6 +67,8 @@ const ChatScreen = ({ roomId, roomAvatar, roomName, isGroup }: { roomId: string,
     const { colors } = useColorScheme()
     const [openDropdown, setOpenDropdown] = useState(false)
     const [currentMessage, setCurrentMessage] = useState<CurrentMessage>({ text: "" })
+    const [offset, setOffset] = useState(1)
+    const [endReached, setEndReached] = useState(false)
 
     const { data: scrollToMessages, isLoading: isScrollToMessagesLoading } = useQuery({
         queryKey: ["Search Messages", debouncedSearchText, roomId],
@@ -97,6 +99,13 @@ const ChatScreen = ({ roomId, roomAvatar, roomName, isGroup }: { roomId: string,
             assets: currentMessage.assets?.length ? currentMessage.assets : undefined
         })
         setCurrentMessage({ text: "" })
+    }
+
+    const handleEndReached = async () => {
+        if (isScrollToMessagesLoading || endReached) return
+        const isAdded = await loadMoreMessages(offset, roomId)
+        setOffset(p => p + 1)
+        if (!isAdded) setEndReached(true)
     }
 
     useEffect(() => {
@@ -152,6 +161,11 @@ const ChatScreen = ({ roomId, roomAvatar, roomName, isGroup }: { roomId: string,
         currentMessageDispatcher={setCurrentMessage}
         onSend={handleSend}
         isGroup={isGroup}
+        flatListProps={{
+            onEndReachedThreshold: 0,
+            onEndReached: handleEndReached,
+            ListFooterComponent: endReached ? <Text className="text-sm text-center text-subtext py-2">End reached</Text> : undefined
+        }}
     />
 }
 

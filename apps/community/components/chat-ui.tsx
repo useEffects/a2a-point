@@ -2,7 +2,7 @@ import { Feather, FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import * as DocumentPicker from 'expo-document-picker'
 import * as ImagePicker from "expo-image-picker"
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
-import { FlatList, Image, View } from "react-native"
+import { FlatList, FlatListProps, Image, View } from "react-native"
 import Autolink from 'react-native-autolink'
 import { useColorScheme } from "~/lib/useColorScheme"
 import { cn } from "~/lib/utils"
@@ -35,7 +35,8 @@ type ChatUiProps = {
     currentMessage: CurrentMessage,
     currentMessageDispatcher: Dispatch<SetStateAction<CurrentMessage>>,
     onSend: () => void,
-    isGroup?: boolean
+    isGroup?: boolean,
+    flatListProps?: Omit<FlatListProps<ChatMessage<withId | withUri>>, "data" | "renderItem">
 }
 
 export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserId: string } & { goToId?: string, isFirst: boolean, isLast: boolean, isGroup?: boolean }) => {
@@ -196,6 +197,7 @@ export const ChatUi = (props: ChatUiProps) => {
                     isGroup={props.isGroup}
                 />}
                 keyExtractor={(_, index) => index.toString() as string}
+                {...props.flatListProps}
             />
         </View>
         <Footer currentMessage={props.currentMessage} currentMessageDispatcher={props.currentMessageDispatcher} onSend={props.onSend} />

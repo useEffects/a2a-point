@@ -14,6 +14,8 @@ export const chatFields = ["*", "user_created.avatar", "user_created.id", "user_
 
 export const roomSubscribedFields = ["*", "members.directus_users_id.avatar", "members.directus_users_id.first_name", "members.directus_users_id.last_name", "members.directus_users_id.id"]
 
+export const limit = 30
+
 export type MessageDetailed = Pick<Message, "id" | "room" | "content" | "date_created"> &
 { user_created: Pick<User, "id" | "first_name" | "avatar" | "last_name"> } &
 {
@@ -28,12 +30,14 @@ export const ChatsContext = createContext<{
     setMessage: (message: ChatMessage<withUri>) => void,
     addRoom: (roomId: string) => Promise<RoomSubscribed | null>,
     roomsSubscribed: RoomSubscribed[],
-    messages: ChatMessage<withId | withUri>[]
+    messages: ChatMessage<withId | withUri>[],
+    loadMoreMessages: (offset: number, roomId: string) => Promise<boolean>
 }>({
     setMessage: () => { },
     addRoom: () => Promise.resolve(null),
     roomsSubscribed: [],
-    messages: []
+    messages: [],
+    loadMoreMessages: () => Promise.resolve(false)
 })
 
 export const ChatsProvider = ({ children }: { children: ReactNode }) => {
@@ -91,7 +95,8 @@ export const ChatsProvider = ({ children }: { children: ReactNode }) => {
                         }
                     },
                     fields: chatFields,
-                    limit: 10,
+                    limit: limit,
+                    sort: ["-date_created"]
                 }))
             }) as MessageDetailed[] | undefined
             if (data) {
@@ -154,7 +159,28 @@ export const ChatsProvider = ({ children }: { children: ReactNode }) => {
         setMessage: (message: ChatMessage<withUri>) => setMessages(messages => [message, ...messages]),
         addRoom: (roomId: string) => _setRoomsSubscribed(setRoomsSubscribed, roomsSubscribed, roomId),
         roomsSubscribed: roomsSubscribed,
-        messages: messages
+        messages: messages,
+        loadMoreMessages: async (offset: number, roomId: string) => {
+            const data = await queryClient.fetchQuery({
+                queryKey: ["Fetching Messages For", roomId, offset],
+                queryFn: async () => await rest.request(readItems("messages", {
+                    filter: {
+                        room: {
+                            _eq: roomId
+                        }
+                    },
+                    fields: chatFields,
+                    limit: limit,
+                    offset: offset * limit,
+                    sort: ["-date_created"]
+                }))
+            }) as MessageDetailed[]
+            if (data.length) {
+                setMessages(messages => [...messages, ...data.map(message => transformMessage(message, true))])
+                return true
+            }
+            return false
+        }
     }}>
         {children}
     </ChatsContext.Provider>
