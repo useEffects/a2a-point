@@ -15,7 +15,7 @@ export const timeAgo = new TimeAgo('ar-AE')
 
 export const buildAssetUrl = (id: string | null) => {
   if (null) {
-    return "https://dev.a2apoint.com"
+    return "https://dev.a2apoint.com/logo.svg"
   }
   const { token } = directusStore.getState()
   return `${directusUrl}/assets/${id}?access_token=${token}`;
@@ -102,7 +102,7 @@ export const getDMRoomId = async (
 ) => {
   const { rest } = directusStore.getState()
   const rooms = await queryClient.fetchQuery({
-    queryKey: ["Fetch Room"],
+    queryKey: ["Fetch Room", userId1, userId2],
     queryFn: async () => await rest.request(readItems("rooms", {
       filter: {
         type: {

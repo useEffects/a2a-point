@@ -40,7 +40,6 @@ export default function ListingScreen() {
           listings_id: listingId,
           directus_users_id: user.id
         }))
-        console.log(res)
         queryClient.setQueryData(viewedByQueryKey, [res])
       }
     }

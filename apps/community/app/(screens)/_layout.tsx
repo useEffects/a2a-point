@@ -6,6 +6,7 @@ import { maybeCompleteAuthSession } from "expo-web-browser";
 import { useContext, useEffect, useState } from "react";
 import { View, Image, Platform } from "react-native";
 import { ThemeToggle } from "~/components/ThemeToggle";
+import { ChatsProvider } from "~/context/chats";
 import { LargeScreenContext } from "~/context/large-screen";
 import { buildAssetUrl } from "~/lib/helpers";
 import { useColorScheme } from "~/lib/useColorScheme";
@@ -112,7 +113,7 @@ const MobileNavigation = () => {
                 key={navItem.name}
                 name={navItem.name}
                 options={{
-                    headerShown: ![ "(home)/index", "profile/index"].includes(navItem.name),
+                    headerShown: !["(home)/index", "profile/index"].includes(navItem.name),
                     headerTitle: navItem.title,
                     tabBarIcon: ({ focused, size }: { focused: boolean, size: number }) =>
                         navItem.icon(
@@ -167,6 +168,12 @@ const MobileNavigation = () => {
     );
 };
 
+const Providers = ({ children }: { children: React.ReactNode }) => {
+    return <ChatsProvider>
+        {children}
+    </ChatsProvider>
+}
+
 export default function Layout() {
     const { rest, initialize } = directusStore();
     const isLargeScreen = useContext(LargeScreenContext);
@@ -193,9 +200,9 @@ export default function Layout() {
         })();
     }, [rest]);
 
-    return isReady ? (
-        isLargeScreen ? <WebNavigation /> : <MobileNavigation />
-    ) : (
+    return isReady ? <Providers>
+        {isLargeScreen ? <WebNavigation /> : <MobileNavigation />}
+    </Providers> : (
         <View />
     );
 }
