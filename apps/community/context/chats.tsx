@@ -22,8 +22,12 @@ export type MessageDetailed = Pick<Message, "id" | "room" | "content" | "date_cr
     assets: { directus_files_id: Pick<File, "id" | "type" | "filename_download"> }[]
 }
 
+export type Member = {
+    directus_users_id: Pick<User, "id" | "avatar" | "first_name" | "last_name">;
+}
+
 export type RoomSubscribed = Pick<Room, "avatar" | "id" | "type" | "title"> & {
-    members: { directus_users_id: Pick<User, "avatar" | "first_name" | "last_name" | "id"> }[];
+    members: Member[];
 };
 
 export const ChatsContext = createContext<{

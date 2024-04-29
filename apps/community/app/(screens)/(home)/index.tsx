@@ -1,6 +1,7 @@
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { IconProps } from "@expo/vector-icons/build/createIconSet";
-import { Href, HrefObject, router } from "expo-router";
+import { Href, HrefObject, router, useNavigation } from "expo-router";
+import { useEffect } from 'react';
 import { ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "~/components/listings-cards/body/listings";
@@ -8,8 +9,8 @@ import { LocationCards } from "~/components/listings-cards/body/locations";
 import { ExtraSmallListingCardProps } from "~/components/listings-cards/molecules/extra-small";
 import { MediumListingCardProps } from "~/components/listings-cards/molecules/medium";
 import { SmallListingCardProps } from "~/components/listings-cards/molecules/small";
+import { Separator } from '~/components/primitives/dropdown-menu';
 import { Button } from "~/components/ui/button";
-import { Hr } from "~/components/ui/hr";
 import { Text } from "~/components/ui/text";
 
 type CategoryTile = {
@@ -22,7 +23,7 @@ const categoryTiles: CategoryTile[] = [
     {
         icon: (props?: Omit<IconProps<string>, "name">) => <MaterialIcons name="workspace-premium" {...props} />,
         label: "Premium",
-        filterMethod: CommonFilters.Featured
+        filterMethod: CommonFilters.Premium
     }, {
         icon: (props?: Omit<IconProps<string>, "name">) => <MaterialIcons name="auto-graph" {...props} />,
         label: "Listing",
@@ -37,10 +38,6 @@ const categoryTiles: CategoryTile[] = [
         icon: (props?: Omit<IconProps<string>, "name">) => <MaterialIcons name="sell" {...props} />,
         label: "Sale",
         filterMethod: CommonFilters.Sale
-    }, {
-        icon: (props?: Omit<IconProps<string>, "name">) => <MaterialIcons name="house" {...props} />,
-        label: "Buy",
-        filterMethod: CommonFilters.Buy
     }, {
         icon: (props?: Omit<IconProps<string>, "name">) => <MaterialIcons name="savings" {...props} />,
         label: "Rent",
@@ -57,7 +54,7 @@ const CategoryTile = ({ icon, label, filterMethod }: CategoryTile) => {
     </View>
 }
 
-export const CardsHeader = ({ route, label }: { route?: HrefObject<any, any> | Href<string>, label?: string }) => <View className="flex flex-row items-center justify-between md:gap-12 md:justify-start">
+export const CardsHeader = ({ route, label }: { route?: HrefObject<any, any>, label?: string }) => <View className="flex flex-row items-center justify-between md:gap-12 md:justify-start">
     {label && <Text className="md:w-[200px] text-light text-subtext text-sm">{label}</Text>}
     {route && <Button onPress={() => router.navigate(route)} size={"sm"} variant={"ghost"} className="flex-row items-center">
         <Text className="!text-sm">View All</Text>
@@ -67,6 +64,7 @@ export const CardsHeader = ({ route, label }: { route?: HrefObject<any, any> | H
 
 export default function Home() {
     const insets = useSafeAreaInsets();
+
     return <ScrollView className="w-full">
         <View style={{ paddingTop: insets.top }} className="bg-card" />
         <View className="web:max-w-xl web:mx-auto flex-col gap-4">
@@ -88,14 +86,14 @@ export default function Home() {
                 <RenderListings<ExtraSmallListingCardProps> render={bodies.extraSmall} filterMethod={commonFilters[CommonFilters.ViewedByMe]()} flatListProps={{ scrollEnabled: false }} />
             </View>
             <View className="flex-col gap-4 p-4">
-                <CardsHeader label="Featured" route={{ pathname: "/discover", params: { filter: CommonFilters.Featured } }} />
-                <RenderListings<SmallListingCardProps> render={bodies.small} filterMethod={commonFilters[CommonFilters.Featured]()} flatListProps={{ horizontal: true }} />
+                <CardsHeader label="Premium" route={{ pathname: "/discover", params: { filter: CommonFilters.Premium } }} />
+                <RenderListings<SmallListingCardProps> render={bodies.small} filterMethod={commonFilters[CommonFilters.Premium]()} flatListProps={{ horizontal: true }} />
             </View>
             <View className="flex-col gap-4">
                 <View className='px-4'>
-                    <CardsHeader label="Latest" route="/discover" />
+                    <CardsHeader label="Latest" route={{ pathname: "/discover" }} />
                 </View>
-                <RenderListings<MediumListingCardProps> render={bodies.medium} flatListProps={{ scrollEnabled: false, ItemSeparatorComponent: () => <Hr className="" /> }} />
+                <RenderListings<MediumListingCardProps> render={bodies.medium} flatListProps={{ scrollEnabled: false, ItemSeparatorComponent: () => <Separator className="" /> }} />
             </View>
         </View>
     </ScrollView>

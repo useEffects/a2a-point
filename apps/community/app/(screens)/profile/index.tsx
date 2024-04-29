@@ -1,8 +1,11 @@
 import { useNavigation } from "expo-router";
 import { useEffect } from "react";
+import { View } from "react-native";
 import { ScrollView } from "react-native";
 import { ThemeToggle } from "~/components/ThemeToggle";
+import { Header } from "~/components/header";
 import Profile from "~/components/profile";
+import { Text } from "~/components/ui/text";
 import userStore from "~/store/user";
 
 export default function ProfileScreen() {
@@ -11,7 +14,12 @@ export default function ProfileScreen() {
 
   useEffect(() => {
     navigator.setOptions({
-      headerRight: () => <ThemeToggle />
+      header: () => <Header>
+        <View className="flex-row justify-between items-center flex-1">
+          <Text>Profile</Text>
+          <ThemeToggle />
+        </View>
+      </Header>
     })
   })
 

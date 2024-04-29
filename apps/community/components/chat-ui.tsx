@@ -50,7 +50,7 @@ export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserI
     const toHighlight = props.goToId === props.id
     const flexDirection = hasAsset ? "flex-col" : isTextBig ? "flex-col" : renderRight ? "flex-row" : "flex-row-reverse"
     const marginDirection = renderRight ? "ml-auto mr-0" : "mr-auto ml-0"
-    const containerStyle = renderRight ? "bg-primary text-primary-foreground flex-start" : "bg-secondary bg-secondary-foreground flex-end"
+    const containerStyle = renderRight ? "bg-primary flex-start" : "bg-secondary flex-end"
     const roundedStyle = renderRight ?
         cn("rounded-tl-2xl rounded-bl-2xl", props.isFirst ? "rounded-br-2xl" : "", props.isLast ? "rounded-tr-2xl" : "")
         : cn("rounded-tr-2xl rounded-br-2xl", props.isLast ? "rounded-tl-2xl" : "", props.isFirst ? "rounded-bl-2xl" : "")

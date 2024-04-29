@@ -16,7 +16,7 @@ export const theme = {
         "accent-foreground": "#212529",
         "destructive": "#D44F3D",
         "destructive-foreground": "#FAF9F8",
-        "info": "#C0EAF1",
+        "info": "#3271d9",
         "info-foreground": "#163F67",
         "success": "#286983",
         "success-foreground": "#FAF9F8",
@@ -26,8 +26,6 @@ export const theme = {
         "input": "#C9BCB5",
         "ring": "#E7E7E7",
         "subtext": "#4E4E4E",
-
-
     },
     "dark": {
         "background": "#0E0D0D",
@@ -46,7 +44,7 @@ export const theme = {
         "accent-foreground": "#FFFFFF",
         "destructive": "#E2766F",
         "destructive-foreground": "#0E0D0D",
-        "info": "#102F33",
+        "info": "#4287f5",
         "info-foreground": "#6BB2FA",
         "success": "#A2D37B",
         "success-foreground": "#0E0D0D",

@@ -97,7 +97,7 @@ const RenderNotifications = (notification: Notification) => {
   if (notification.collection === "listings") borderLeftColor = colors.success
 
 
-  return imgSrc ? <View style={{ borderLeftWidth: 6, borderLeftColor }} className={cn("gap-1 p-2 border-solid border-0", notification.collection === "directus_users" ? "flex-col" : "flex-row")
+  return imgSrc ? <View style={{ borderLeftWidth: 2, borderLeftColor }} className={cn("gap-1 p-2 border-solid border-0", notification.collection === "directus_users" ? "flex-col" : "flex-row")
   }>
     <View className="flex-row">
       <Image className="w-8 h-8 rounded-full" source={{ uri: imgSrc }} />

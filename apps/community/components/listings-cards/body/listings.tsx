@@ -2,13 +2,14 @@ import { readItems } from "@directus/sdk"
 import { useIsFocused } from "@react-navigation/native"
 import { useQuery } from "@tanstack/react-query"
 import { FlatList, FlatListProps, View } from "react-native"
+import shuffle from "shuffle-array"
 import directusStore from "~/store/directus"
 import userStore from "~/store/user"
 import { ExtraSmallListingCard, ExtraSmallListingCardProps } from "../molecules/extra-small"
 import { MediumListingCard, MediumListingCardProps } from "../molecules/medium"
 import { SmallListingCard, SmallListingCardProps } from "../molecules/small"
 import { AdvertisementCard, AdvertisementCardProps } from "./advertisements"
-import shuffle from "shuffle-array"
+import { useMemo } from "react"
 
 type ListCardProps = SmallListingCardProps | ExtraSmallListingCardProps | MediumListingCardProps
 
@@ -18,19 +19,31 @@ interface RenderType<T extends ListCardProps> {
 }
 
 export enum CommonFilters {
-    Featured = 'featured',
+    Premium = 'premium',
     ViewedByMe = 'viewed-by-me',
     SavedByMe = 'saved-by-me',
     GroupId = 'groupId',
     Listing = "listing",
     Enquiry = "enquiry",
     Sale = "sale",
-    Buy = "buy",
     Rent = "rent",
+    User = "user"
+}
+
+export const commonFilterTitles: { [K in CommonFilters]: ((label: string) => string) | string } = {
+    [CommonFilters.Premium]: "Premium",
+    [CommonFilters.ViewedByMe]: "Viewed by Me",
+    [CommonFilters.SavedByMe]: "Saved by Me",
+    [CommonFilters.GroupId]: "Group",
+    [CommonFilters.Listing]: "Listing",
+    [CommonFilters.Enquiry]: "Enquiry",
+    [CommonFilters.Sale]: "Sale",
+    [CommonFilters.Rent]: "Rent",
+    [CommonFilters.User]: (label: string) => label
 }
 
 export const commonFilters = {
-    [CommonFilters.Featured]: () => ({
+    [CommonFilters.Premium]: () => ({
         featured: {
             _eq: true
         }
@@ -71,14 +84,16 @@ export const commonFilters = {
             _eq: "sell"
         }
     }),
-    [CommonFilters.Buy]: () => ({
-        deal_type: {
-            _eq: "buy"
-        }
-    }),
     [CommonFilters.Rent]: () => ({
         deal_type: {
             _eq: "rent"
+        }
+    }),
+    [CommonFilters.User]: (userId: string) => ({
+        user_created: {
+            id: {
+                _eq: userId
+            }
         }
     })
 };
@@ -139,8 +154,10 @@ export const RenderListings = <R extends ListCardProps>({ data, render, filterMe
         enabled: render === bodies.medium
     }) as { data: ConfirmedAdvertisementCardProps[], isLoading: boolean }
 
-    const _data = data ?? listingsRes
-    const items = (render === bodies.medium && !searchText) ? shuffle([..._data, ...adsRes]) : _data
+    const items = useMemo(() => {
+        const _data = data ?? listingsRes
+        return (render === bodies.medium && !searchText) ? shuffle([..._data, ...adsRes]) : _data
+    }, [listingsRes, adsRes, data])
 
     return (!isListingsResLoading && !isAdsResLoading) &&
         <FlatList

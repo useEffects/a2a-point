@@ -1,11 +1,12 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Tabs, router } from "expo-router";
+import { Tabs, router, useNavigation } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import { maybeCompleteAuthSession } from "expo-web-browser";
 import { useContext, useEffect, useState } from "react";
 import { View, Image, Platform } from "react-native";
 import { ThemeToggle } from "~/components/ThemeToggle";
+import { headerHeight } from "~/components/header";
 import { ChatsProvider } from "~/context/chats";
 import { LargeScreenContext } from "~/context/large-screen";
 import { buildAssetUrl } from "~/lib/helpers";
@@ -158,9 +159,11 @@ const MobileNavigation = () => {
 
     return (
         <Tabs
+            initialRouteName="(home)/index"
+            backBehavior="history"
             screenOptions={{
                 tabBarLabelStyle: { display: "none" },
-                headerTitle: "",
+                header: () => <View className="w-full" style={{ height: headerHeight }} />
             }}
         >
             {navigationItems}

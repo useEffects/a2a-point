@@ -3,7 +3,7 @@ import "tailwind-theme/global.css"
 import "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Theme, ThemeProvider } from "@react-navigation/native";
-import { SplashScreen, Stack } from "expo-router";
+import { SplashScreen, Stack, useNavigation } from "expo-router";
 import * as React from "react";
 import { Platform } from "react-native";
 import { useColorScheme } from "~/lib/useColorScheme";
@@ -29,6 +29,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const { colorScheme, setColorScheme, colors } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
+  const navigation = useNavigation()
   const [fontsLoaded] = useFonts({
     Inter_100Thin,
     Inter_200ExtraLight,

@@ -8,11 +8,11 @@ import { UserCount, addBookmark, buildAssetUrl, deleteBookmark, getDMRoomId, get
 import userStore from "~/store/user";
 import { Amenity, Listing, ListingAmenity, User } from "~/types";
 import { Button } from "../../ui/button";
-import { Hr } from "../../ui/hr";
 import { Text } from "../../ui/text";
 import { useListingMetrics } from "~/hooks/listing-metrics";
 import directusStore from '~/store/directus';
 import { createNotification } from '@directus/sdk';
+import { Separator } from '~/components/ui/separator';
 
 export const ListingIconTile = ({
     icon,
@@ -118,7 +118,7 @@ export const FullListingCard = (props: FullListingDetailed) => {
             ) : <></>}
         </View>
         {props.amenities && props.amenities.length ? <View className="flex-col gap-4">
-            <Hr />
+            <Separator />
             <Text className="text-lg">Amenities</Text>
             <FlatList
                 scrollEnabled={false}
@@ -129,7 +129,7 @@ export const FullListingCard = (props: FullListingDetailed) => {
                 renderItem={({ item }) => Amenities(item)}
             />
         </View> : <></>}
-        <Hr />
+        <Separator />
         <View className="flex-row gap-4 items-center">
             <Text className="text-lg">Pro Member</Text>
             <Text>4.7</Text>
@@ -147,7 +147,7 @@ export const FullListingCard = (props: FullListingDetailed) => {
                 </View>
             </View>
         </View>
-        <Hr />
+        <Separator />
         {(views !== null && saves !== null && views !== undefined && saves !== undefined) ? <View className="flex-row gap-4 justify-around">
             <View className="flex-col gap-2 items-center">
                 <Ionicons name="eye" className="!text-foreground" size={18} />

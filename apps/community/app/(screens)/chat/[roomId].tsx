@@ -1,61 +1,103 @@
 import { readItems } from "@directus/sdk";
 import { Ionicons } from "@expo/vector-icons";
-import { SearchBar } from "@rneui/themed";
+import { BottomSheet, SearchBar } from "@rneui/themed";
 import { useQuery } from "@tanstack/react-query";
 import { randomUUID } from "expo-crypto";
-import { useGlobalSearchParams, useNavigation } from "expo-router";
+import { router, useGlobalSearchParams, useNavigation } from "expo-router";
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
-import { Image, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Image, ScrollView, View } from "react-native";
 import { useDebounce } from "use-debounce";
-import { BackButton } from "~/components/back";
+import { BackButton, Header } from "~/components/header";
 import { ChatUi, CurrentMessage } from "~/components/chat-ui";
 import { Button } from "~/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Text } from "~/components/ui/text";
-import { ChatsContext, RoomSubscribed } from "~/context/chats";
+import { ChatsContext, Member, RoomSubscribed } from "~/context/chats";
 import { buildAssetUrl, searchBarContainerStyle, searchBarInputContainerStyle } from "~/lib/helpers";
 import { useColorScheme } from "~/lib/useColorScheme";
 import directusStore from "~/store/directus";
 import userStore from "~/store/user";
-import { File, Message, User } from "~/types";
+import { CommonFilters } from "~/components/listings-cards/body/listings";
 
-type InitialDataType = Omit<Message, "assets"> & {
-    user_created: Pick<User, "avatar" | "id" | "first_name" | "last_name">
-} & {
-    assets: {
-        directus_files_id: Pick<File, "id" | "type" | "filename_download">
-    }[]
+const ChatDropDownMenu = (props: { members: Member[], isGroup: boolean, open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, roomId: string }) => {
+
+    const [bottomSheetVisible, setBottomSheetVisible] = useState(false)
+
+    const handleMembers = () => {
+        if (props.isGroup) {
+            setBottomSheetVisible(true)
+        } else {
+            router.push(`/profile/${props.members[0].directus_users_id.id}`)
+        }
+    }
+
+    const handleBrowseListings = () => {
+        if (props.isGroup) {
+            router.push({
+                pathname: "/discover",
+                params: {
+                    id: props.roomId,
+                    filter: CommonFilters.GroupId
+                }
+            })
+        } else {
+            router.push({
+                pathname: "/discover",
+                params: {
+                    id: props.members[0].directus_users_id.id,
+                    filter: CommonFilters.User
+                }
+            })
+        }
+    }
+
+    return <View>
+        <DropdownMenu open={props.open} onOpenChange={props.setOpen}>
+            <DropdownMenuTrigger asChild>
+                <Button variant={"ghost"} size={"icon"} onPress={() => props.setOpen(p => !p)}>
+                    <Ionicons name={props.open ? "close-outline" : "ellipsis-vertical-outline"} size={18} className="!text-foreground" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+                <DropdownMenuItem onPress={handleMembers}>
+                    {props.isGroup ? <Text className="!text-sm">See members</Text> :
+                        <Text className="!text-sm">See profile</Text>}
+                </DropdownMenuItem>
+                <DropdownMenuItem onPress={handleBrowseListings}>
+                    <Text className="!text-sm">Browse listings</Text>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                    <Text className="!text-sm">Mute notifications</Text>
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+        <BottomSheet isVisible={bottomSheetVisible} onBackdropPress={() => setBottomSheetVisible(false)}>
+            <View className="bg-card flex-col gap-4 py-4">
+                <View className="flex-row justify-between px-4">
+                    <Text>Members</Text>
+                    <Button onPress={() => setBottomSheetVisible(false)} variant={"destructive"} size={"icon"} className="w-6 h-6">
+                        <Ionicons name="close-outline" size={18} className="!text-destructive-foreground" />
+                    </Button>
+                </View>
+                <ScrollView className="flex-col gap-4">
+                    {props.members.map((member, index) => <Button onPress={() => router.push(`/profile/${member.directus_users_id.id}`)} variant={"ghost"} key={index} className="flex-row items-center justify-start gap-2 native:!px-4 px-4">
+                        <Image source={{ uri: buildAssetUrl(member.directus_users_id.avatar) }} className="w-8 h-8 rounded-full" />
+                        <Text>{member.directus_users_id.first_name} {member.directus_users_id.last_name}</Text>
+                    </Button>)}
+                </ScrollView>
+            </View>
+        </BottomSheet>
+    </View>
 }
 
-const ChatDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateAction<boolean>> }) => {
-    return <DropdownMenu open={props.open} onOpenChange={props.setOpen}>
-        <DropdownMenuTrigger asChild>
-            <Button variant={"ghost"} size={"icon"} onPress={() => props.setOpen(p => !p)}>
-                <Ionicons name={props.open ? "close-outline" : "ellipsis-vertical-outline"} size={18} className="!text-foreground" />
-            </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-            <DropdownMenuItem>
-                <Text className="!text-sm">See profile</Text>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-                <Text className="!text-sm">Browse listings</Text>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-                <Text className="!text-sm">Open in dashboard</Text>
-            </DropdownMenuItem>
-        </DropdownMenuContent>
-    </DropdownMenu>
-}
-
-const ChatScreen = ({ roomDetails }: { roomDetails: { roomName: string, roomAvatar: string, roomId: string, isGroup: boolean } }) => {
+const ChatScreen = ({ roomDetails, receivers }: {
+    roomDetails: { roomName: string, roomAvatar: string, roomId: string, isGroup: boolean }, receivers: Member[]
+}) => {
     const { roomName, roomAvatar, roomId, isGroup } = roomDetails
 
     const { messages, setMessage, loadMoreMessages } = useContext(ChatsContext)
 
     const { rest } = directusStore()
-    const insets = useSafeAreaInsets()
     const navigator = useNavigation()
     const { user } = userStore()
     const [searchBarVisible, setSearchBarVisible] = useState(false)
@@ -109,8 +151,7 @@ const ChatScreen = ({ roomDetails }: { roomDetails: { roomName: string, roomAvat
     useEffect(() => {
         navigator.setOptions({
             headerLeft: () => <BackButton />,
-            header: () => <View className="flex-row items-center shadow bg-card h-24" style={{ paddingTop: insets.top }}>
-                <BackButton />
+            header: () => <Header>
                 <View className="flex-1">
                     {searchBarVisible ? <View className="flex-row items-center pr-2">
                         <SearchBar
@@ -138,7 +179,7 @@ const ChatScreen = ({ roomDetails }: { roomDetails: { roomName: string, roomAvat
                         <Button variant={"ghost"} size={"icon"} onPress={() => { setSearchBarVisible(false); setSearchText("") }}>
                             <Ionicons name={"return-up-forward-outline"} size={18} className="!text-foreground" />
                         </Button>
-                    </View> : <View className="flex-row justify-between items-center mx-2">
+                    </View> : <View className="flex-row justify-between items-center">
                         <View className="flex-row items-center gap-2">
                             <Image source={{ uri: roomAvatar }} className="w-8 h-8 rounded-full" />
                             <Text>{roomName}</Text>
@@ -147,11 +188,11 @@ const ChatScreen = ({ roomDetails }: { roomDetails: { roomName: string, roomAvat
                             <Button variant={"ghost"} size={"icon"} onPress={() => setSearchBarVisible(true)}>
                                 <Ionicons name={"search-outline"} size={18} className="!text-foreground" />
                             </Button>
-                            <ChatDropDownMenu open={openDropdown} setOpen={setOpenDropdown} />
+                            <ChatDropDownMenu roomId={roomId} members={receivers} isGroup={isGroup} open={openDropdown} setOpen={setOpenDropdown} />
                         </View>
                     </View>}
                 </View>
-            </View>
+            </Header>
         })
 
         return
@@ -168,19 +209,22 @@ const ChatScreen = ({ roomDetails }: { roomDetails: { roomName: string, roomAvat
         return removeHeader
     }, [navigator])
 
-    return <ChatUi
-        currentUserId={user?.id!}
-        messages={messages.filter(m => m.room === roomId)}
-        goToId={scrollToMessages[scrollToIndex]?.id}
-        currentMessage={currentMessage}
-        currentMessageDispatcher={setCurrentMessage}
-        onSend={handleSend}
-        isGroup={isGroup}
-        listProps={{
-            onEndReachedThreshold: 0,
-            onEndReached: handleEndReached,
-        }}
-    />
+    return <View className="flex-col h-full">
+        <ChatUi
+            currentUserId={user?.id!}
+            messages={messages.filter(m => m.room === roomId)}
+            goToId={scrollToMessages[scrollToIndex]?.id}
+            currentMessage={currentMessage}
+            currentMessageDispatcher={setCurrentMessage}
+            onSend={handleSend}
+            isGroup={isGroup}
+            listProps={{
+                onEndReachedThreshold: 0,
+                onEndReached: handleEndReached,
+                className: "flex-1",
+            }}
+        />
+    </View>
 }
 
 export default function RoomScreen() {
@@ -189,6 +233,7 @@ export default function RoomScreen() {
     const { roomsSubscribed, addRoom } = useContext(ChatsContext)
     const [room, setRoom] = useState<RoomSubscribed | null | undefined>()
     const [roomDetails, setRoomDetails] = useState<{ roomId: string, roomName: string, roomAvatar: string, isGroup: boolean }>()
+    const [receivers, setReceivers] = useState<Member[] | undefined>()
 
     useEffect(() => {
         if (!roomId) {
@@ -207,18 +252,19 @@ export default function RoomScreen() {
     }, [roomId])
 
     useEffect(() => {
-        const receivers = room?.members.filter(
+        const _receivers = room?.members.filter(
             (m) => m.directus_users_id.id !== user?.id,
         );
-        if (roomId && receivers && receivers.length > 0) {
+        if (roomId && _receivers && _receivers.length > 0) {
             const [roomName, roomAvatar] = room?.type === "group"
                 ? [room?.title!, buildAssetUrl(room?.avatar)]
                 : [
-                    `${receivers[0].directus_users_id.first_name} ${receivers[0].directus_users_id.last_name}`,
-                    buildAssetUrl(receivers[0].directus_users_id.avatar),
+                    `${_receivers[0].directus_users_id.first_name} ${_receivers[0].directus_users_id.last_name}`,
+                    buildAssetUrl(_receivers[0].directus_users_id.avatar),
                 ];
             setRoomDetails({ roomId: roomId as string, roomName, roomAvatar, isGroup: room?.type === "group" })
         }
+        setReceivers(_receivers)
     }, [roomId, room])
 
     if (room === undefined) {
@@ -229,7 +275,8 @@ export default function RoomScreen() {
         return null
     }
 
-    return (roomDetails && roomId) ? <ChatScreen
+    return (roomDetails && receivers?.length) ? <ChatScreen
         roomDetails={roomDetails}
+        receivers={receivers}
     /> : <></>
 }

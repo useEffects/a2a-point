@@ -6,13 +6,14 @@ import { ScrollView, View } from "react-native";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "~/components/listings-cards/body/listings";
 import { FullListingCard, FullListingDetailed } from "~/components/listings-cards/molecules/full";
 import { SmallListingCardProps } from "~/components/listings-cards/molecules/small";
-import { Button } from "~/components/ui/button";
-import { Hr } from "~/components/ui/hr";
-import { Text } from "~/components/ui/text";
 import { queryClient } from "~/index";
 import directusStore from "~/store/directus";
 import userStore from "~/store/user";
 import { CardsHeader } from ".";
+import { Separator } from "~/components/ui/separator";
+import { Header } from "~/components/header";
+import { Text } from "~/components/ui/text";
+import { shortString } from "~/lib/helpers";
 
 export default function ListingScreen() {
   const { listingId } = useGlobalSearchParams()
@@ -56,8 +57,9 @@ export default function ListingScreen() {
   useEffect(() => {
     if (listing?.title) {
       navigator.setOptions({
-        headerShown: true,
-        headerTitle: listing.title
+        header: () => <Header>
+          <Text>{shortString(listing.title, 40)}</Text>
+        </Header>
       })
     }
   }, [listing])
@@ -66,9 +68,9 @@ export default function ListingScreen() {
     <ScrollView className="flex-col" contentContainerClassName="items-center gap-4 py-4">
       <View className="web:max-w-lg">
         {Object.keys(listing).length && <FullListingCard {...listing} />}
-        <Hr />
-        <CardsHeader label="Featured" route={{ pathname: "/discover", params: { filter: CommonFilters.Featured } }} />
-        <RenderListings<SmallListingCardProps> render={bodies.small} filterMethod={commonFilters[CommonFilters.Featured]()} flatListProps={{ horizontal: true }} />
+        <Separator />
+        <CardsHeader label="Featured" route={{ pathname: "/discover", params: { filter: CommonFilters.Premium } }} />
+        <RenderListings<SmallListingCardProps> render={bodies.small} filterMethod={commonFilters[CommonFilters.Premium]()} flatListProps={{ horizontal: true }} />
       </View>
     </ScrollView>
   );
