@@ -6,10 +6,11 @@ import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react
 import { FlatList, Image, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDebounce } from "use-debounce";
+import { headerHeight } from "~/components/header";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { Text } from "~/components/ui/text";
-import { ChatsContext, RoomSubscribed, roomSubscribedFields } from "~/context/chats";
+import { ChatsContext, RoomSubscribed } from "~/context/chats";
 import { directusUrl } from "~/lib/constants";
 import { buildAssetUrl, getDMRoomId, searchBarContainerStyle, searchBarInputContainerStyle, timeAgo } from "~/lib/helpers";
 import { useColorScheme } from "~/lib/useColorScheme";
@@ -103,7 +104,7 @@ const ChatListRow = (room: RoomSubscribed) => {
 const ChatSearchBar = ({ searchText, setSearchText }: { searchText: string, setSearchText: Dispatch<SetStateAction<string>> }) => {
   const { colors } = useColorScheme()
   const insets = useSafeAreaInsets()
-  return <View style={{ paddingTop: insets.top }}>
+  return <View style={{ paddingTop: insets.top, height: headerHeight }}>
     <SearchBar
       placeholder="Search"
       containerStyle={searchBarContainerStyle}

@@ -74,7 +74,6 @@ export const useListingMetrics = (listingId: string) => {
     }
 
     const addBookmark = async (listing: Pick<Listing, "id" | "title">, recipient: Pick<User, "email" | "id">) => {
-        const { token } = directusStore.getState()
         const { id: listingId, title } = listing
         const res = await queryClient.fetchQuery({
             queryKey: ["save-listing", listingId],
@@ -88,7 +87,7 @@ export const useListingMetrics = (listingId: string) => {
             queryFn: async () => await rest.request(createNotification({
                 collection: "listings",
                 item: listingId,
-                message: `You have a new bookmark on your listing from ${recipient.email}`,
+                message: `You have a new bookmark on your listing ${title} from ${user.email}`,
                 recipient: recipient.id,
                 sender: user.id,
                 subject: "New Bookmark Received!",

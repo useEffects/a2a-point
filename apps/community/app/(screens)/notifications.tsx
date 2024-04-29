@@ -1,12 +1,12 @@
 import { deleteNotification, readNotifications, updateNotification } from "@directus/sdk";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FlatList, Image, View } from "react-native";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { queryClient } from "~/index";
 import { directusUrl } from "~/lib/constants";
-import { buildAssetUrl, shortTime } from "~/lib/helpers";
+import { buildAssetUrl, getDMRoomId, shortTime } from "~/lib/helpers";
 import { cn } from "~/lib/utils";
 import directusStore from "~/store/directus";
 import { Notification } from "~/types";
@@ -14,54 +14,42 @@ import { Ionicons } from "@expo/vector-icons"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Separator } from "~/components/ui/separator";
 import { useColorScheme } from "~/lib/useColorScheme";
+import { useUserDetails } from "~/hooks/user-details";
+import { UserChip } from "~/components/user-chip";
+import { router, useNavigation } from "expo-router";
+import { Header } from "~/components/header";
 
+const fetchNotificationsQueryKey = ["Fetching Notifications"]
 
-const getImageLink = async (item: Notification) => {
-  const { token } = directusStore.getState()
-  if (item.collection === "directus_users") {
-    const data = await queryClient.fetchQuery({
-      queryKey: ["Fetch user avatar by id", item.id, item.item],
-      queryFn: async () => await fetch(`${directusUrl}/users/${item.item}/?fields=avatar`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }).then(res => res.json()).then(res => res.data.avatar)
-    })
-    return buildAssetUrl(data)
-  }
-  if (item.collection === "listings") {
-    const data = await queryClient.fetchQuery({
-      queryKey: ["Fetch listing image by id", item.id, item.item],
-      queryFn: async () => await fetch(`${directusUrl}/listings/${item.item}/?fields=images`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }).then(res => res.json()).then(res => res.data.images[0])
-    })
-    return buildAssetUrl(data)
-  }
-}
-
-const NotificationDropdown = ({ notification }: { notification: Notification }) => {
+const NotificationDropdown = (props: Notification & { setNotifications: Dispatch<SetStateAction<Notification[]>> }) => {
   const [open, setOpen] = useState(false)
   const { rest } = directusStore()
 
   const handleUpdate = async () => {
     await queryClient.fetchQuery({
-      queryKey: ["Update Notification", notification.id],
-      queryFn: async () => await rest.request(updateNotification(notification.id.toString(), {
+      queryKey: ["Update Notification", props.id],
+      queryFn: async () => await rest.request(updateNotification(props.id.toString(), {
         status: "archived"
       }))
     })
+    props.setNotifications(notifications => notifications.filter(n => n.id !== props.id))
+    queryClient.setQueryData(fetchNotificationsQueryKey, (notifications: Notification[]) => notifications.filter(n => n.id !== props.id))
     setOpen(false)
   }
 
   const handleDelete = async () => {
     await queryClient.fetchQuery({
-      queryKey: ["Delete Notification", notification.id],
-      queryFn: async () => await rest.request(deleteNotification(notification.id.toString()))
+      queryKey: ["Delete Notification", props.id],
+      queryFn: async () => await rest.request(deleteNotification(props.id.toString()))
     })
+    props.setNotifications(notifications => notifications.filter(n => n.id !== props.id))
+    queryClient.setQueryData(fetchNotificationsQueryKey, (notifications: Notification[]) => notifications.filter(n => n.id !== props.id))
     setOpen(false)
+  }
+
+  const handleChat = async () => {
+    const roomId = await getDMRoomId([props.sender, props.recipient])
+    router.push(`/chat/${roomId}`)
   }
 
   return <DropdownMenu open={open} onOpenChange={v => setOpen(v)}>
@@ -77,59 +65,73 @@ const NotificationDropdown = ({ notification }: { notification: Notification }) 
       <DropdownMenuItem>
         <Text onPress={handleDelete} className="!text-sm">Delete Notification</Text>
       </DropdownMenuItem>
-      <DropdownMenuItem>
+      <DropdownMenuItem onPress={handleChat}>
         <Text className="!text-sm">Go to Chat</Text>
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
 }
 
-const RenderNotifications = (notification: Notification) => {
-  const [imgSrc, setImgSrc] = useState<string>()
+const RenderNotifications = (props: Notification & { setNotifications: Dispatch<SetStateAction<Notification[]>> }) => {
   const { colors } = useColorScheme()
-
-  useEffect(() => {
-    getImageLink(notification).then(setImgSrc)
-  }, [])
+  const senderDetails = useUserDetails(props.sender)
 
   let borderLeftColor
-  if (notification.collection === "directus_users") borderLeftColor = colors.info
-  if (notification.collection === "listings") borderLeftColor = colors.success
+  if (props.collection === "directus_users") borderLeftColor = colors.info
+  if (props.collection === "listings") borderLeftColor = colors.success
 
-
-  return imgSrc ? <View style={{ borderLeftWidth: 2, borderLeftColor }} className={cn("gap-1 p-2 border-solid border-0", notification.collection === "directus_users" ? "flex-col" : "flex-row")
-  }>
-    <View className="flex-row">
-      <Image className="w-8 h-8 rounded-full" source={{ uri: imgSrc }} />
-      <View className="ml-auto mr-0 flex-row items-center gap-2">
-        <Text className="text-sm text-subtext">{shortTime(notification.timestamp)}</Text>
-        <NotificationDropdown notification={notification} />
+  return <View style={{ borderLeftWidth: 2, borderLeftColor }} className="gap-1 p-2 border-solid border-0 flex-col">
+    <View className="flex-row justify-between items-center">
+      {senderDetails ? <UserChip user={senderDetails} /> : <View />}
+      <View className="flex-row items-center gap-2">
+        <Text className="text-sm text-subtext">{shortTime(props.timestamp)}</Text>
+        <NotificationDropdown {...props} />
       </View>
     </View>
     <View className="flex-col">
-      <Text>{notification.subject}</Text>
-      <Text className="text-sm text-subtext">{notification.message}</Text>
+      <Text>{props.subject}</Text>
+      <Text className="text-sm text-subtext">{props.message}</Text>
     </View>
-  </View> : <></>
+  </View>
 }
 
-export default function Community() {
+export default function Notifications() {
   const { rest } = directusStore()
-  const { data: notifications, isLoading } = useQuery({
-    queryKey: ["Fetching Notifications"],
-    queryFn: async () => await rest.request(readNotifications({
-      filter: {
-        status: {
-          _eq: "inbox"
-        }
-      }
-    })),
-    initialData: []
-  }) as { data: Notification[], isLoading: boolean }
+  const [notifications, setNotifications] = useState<Notification[]>([])
+  const navigation = useNavigation()
 
-  return isLoading ? <></> : <FlatList
+  useEffect(() => {
+    async function fetchNotifications() {
+      const _notifications = await queryClient.fetchQuery({
+        queryKey: fetchNotificationsQueryKey,
+        queryFn: async () => await rest.request(readNotifications({
+          filter: {
+            status: {
+              _eq: "inbox"
+            }
+          }
+        })),
+        initialData: []
+      })
+      setNotifications(_notifications)
+    }
+    fetchNotifications()
+  }, [])
+
+  useEffect(() => {
+    navigation.setOptions({
+      header: () => <Header>
+        <View className="flex-row gap-1">
+          <Text>Notifications</Text>
+          {notifications.length ? <Text>{`(${notifications.length})`}</Text> : <></>}
+        </View>
+      </Header>
+    })
+  }, [notifications, navigation])
+
+  return <FlatList
     data={notifications}
-    renderItem={({ item }) => <RenderNotifications {...item} />}
+    renderItem={({ item }) => <RenderNotifications {...item} setNotifications={setNotifications} />}
     ItemSeparatorComponent={() => <Separator />}
   />
 }

@@ -2,11 +2,10 @@ import { Feather, FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import * as DocumentPicker from 'expo-document-picker'
 import * as FileSystem from "expo-file-system"
 import * as ImagePicker from "expo-image-picker"
-import { router } from 'expo-router'
 import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from "react"
-import { FlatList, FlatListProps, Image, SectionList, SectionListProps, View } from "react-native"
+import { SectionList, SectionListProps, View } from "react-native"
 import Autolink from 'react-native-autolink'
-import { buildAssetUrl, shortTime } from '~/lib/helpers'
+import { shortTime } from '~/lib/helpers'
 import { useColorScheme } from "~/lib/useColorScheme"
 import { cn } from "~/lib/utils"
 import userStore from '~/store/user'
@@ -16,6 +15,7 @@ import { Button } from "./ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { Input } from "./ui/input"
 import { Text } from "./ui/text"
+import { UserChip } from './user-chip'
 
 export type withId = { id: string }
 export type withUri = { uri: string }
@@ -41,6 +41,7 @@ type ChatUiProps = {
 
 export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserId: string } & { goToId?: string, isFirst: boolean, isLast: boolean, isGroup?: boolean }) => {
     const { user } = userStore()
+
     const renderRight = props.user_created.id === props.currentUserId
     const hasAsset = props.assets && props.assets.length > 0
 
@@ -60,13 +61,7 @@ export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserI
     return <View className={cn(toHighlight && "bg-accent", "mt-[1px]", props.isGroup && "flex-col gap-1")}>
         {(props.isGroup && props.isLast && props.user_created.id !== user.id) ?
             <View className='items-start'>
-                <Button variant={"link"} className='rounded-full !h-6 !px-0 items-start' onPress={() => router.push(`/profile/${props.user_created.id}`)}>
-                    <View className='flex-row gap-1 items-center max-w-1/2 !h-6'>
-                        <Image className='w-6 h-6 rounded-full' source={{ uri: buildAssetUrl(props.user_created.avatar) }} />
-                        <Text className='!text-xs !text-subtext'>{props.user_created.first_name} {props.user_created.last_name}</Text>
-                    </View>
-
-                </Button>
+                <UserChip user={props.user_created} />
             </View> : <></>}
         <View className={cn("p-1 px-2 items-center max-w-[90%]", containerStyle, roundedStyle, flexDirection, marginDirection
         )}>

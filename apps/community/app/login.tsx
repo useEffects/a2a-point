@@ -10,11 +10,11 @@ import directusStore from "~/store/directus";
 
 export default function LoginScreen() {
     const params = useGlobalSearchParams();
-    const { linkedURL } = useDeepLink()
     const { initialize } = directusStore()
+    const appURL = "a2apoint-community://"
 
     const handleLogin = async () => {
-        const result = await WebBrowser.openAuthSessionAsync(`${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/expo-redirect?appUrl=${linkedURL}`, linkedURL);
+        const result = await WebBrowser.openAuthSessionAsync(`${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/expo-redirect?appUrl=${appURL}`, appURL);
         if (result.type === "success") {
             const accessToken = result.url.split("access_token=")[1]
             if (accessToken) {
@@ -28,7 +28,7 @@ export default function LoginScreen() {
         }
     }
 
-    return linkedURL ? <View className="flex-row justify-center items-center h-full">
+    return appURL ? <View className="flex-row justify-center items-center h-full">
         <View className="max-w-md flex flex-col gap-4 justify-center items-center">
             <Text className="text-lg font-medium">Welcome to A2A Point Community App</Text>
             <Text className="text-muted-foreground">If you are a new user, visit <Text onPress={() => openUrl("https://a2apoint.com")}>here</Text></Text>
