@@ -30,6 +30,7 @@ export default function SearchScreen() {
     const [searchBarVisible, setSearchBarVisible] = useState(false)
 
     async function setHeaderTitleWithUserName() {
+        if (!id) return
         const { token } = directusStore.getState()
         const fields = ["id", "first_name", "last_name"]
         const { data: user } = await queryClient.fetchQuery({
@@ -44,6 +45,7 @@ export default function SearchScreen() {
     }
 
     async function setHeaderTitleWithGroupName() {
+        if (!id) return
         const { token } = directusStore.getState()
         const fields = ["id", "title"]
         const { data: group } = await queryClient.fetchQuery({

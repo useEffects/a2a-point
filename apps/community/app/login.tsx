@@ -3,7 +3,6 @@ import * as WebBrowser from "expo-web-browser";
 import { View } from "react-native";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
-import useDeepLink from "~/hooks/deep-link";
 import { directusUrl, portfolioUrl } from "~/lib/constants";
 import { openUrl } from "~/lib/helpers";
 import directusStore from "~/store/directus";

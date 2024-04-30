@@ -9,8 +9,8 @@ import { LocationCards } from "~/components/listings-cards/body/locations";
 import { ExtraSmallListingCardProps } from "~/components/listings-cards/molecules/extra-small";
 import { MediumListingCardProps } from "~/components/listings-cards/molecules/medium";
 import { SmallListingCardProps } from "~/components/listings-cards/molecules/small";
-import { Separator } from '~/components/primitives/dropdown-menu';
 import { Button } from "~/components/ui/button";
+import { Separator } from '~/components/ui/separator';
 import { Text } from "~/components/ui/text";
 
 type CategoryTile = {
@@ -81,9 +81,18 @@ export default function Home() {
             <View className="flex-col gap-4 p-4">
                 <LocationCards />
             </View>
-            <View className="flex-col gap-4 bg-card p-4 flex-1">
-                <CardsHeader route={{ pathname: "/discover", params: { filter: CommonFilters.ViewedByMe } }} label="Continue browsing" />
-                <RenderListings<ExtraSmallListingCardProps> render={bodies.extraSmall} filterMethod={commonFilters[CommonFilters.ViewedByMe]()} flatListProps={{ scrollEnabled: false }} />
+            <View className="flex-col bg-card flex-1">
+                <View className='p-4'>
+                    <CardsHeader route={{ pathname: "/discover", params: { filter: CommonFilters.ViewedByMe } }} label="Continue browsing" />
+                </View>
+                <RenderListings<ExtraSmallListingCardProps>
+                    render={bodies.extraSmall}
+                    filterMethod={commonFilters[CommonFilters.ViewedByMe]()}
+                    flatListProps={{
+                        scrollEnabled: false,
+                        ItemSeparatorComponent: () => <Separator className="w-full" />
+                    }}
+                />
             </View>
             <View className="flex-col gap-4 p-4">
                 <CardsHeader label="Premium" route={{ pathname: "/discover", params: { filter: CommonFilters.Premium } }} />

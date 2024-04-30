@@ -18,12 +18,12 @@ export default function Saved() {
     })
   }, [navigation])
 
-  return <View className="p-4 max-w-xl mx-auto w-full">
+  return <View className="max-w-xl mx-auto w-full">
     <RenderListings<ExtraSmallListingCardProps>
       filterMethod={commonFilters[CommonFilters.SavedByMe]()}
       render={bodies.extraSmall}
       flatListProps={{
-        ItemSeparatorComponent: () => <Separator className="my-4" />,
+        ItemSeparatorComponent: () => <Separator />,
       }}
     />
   </View>

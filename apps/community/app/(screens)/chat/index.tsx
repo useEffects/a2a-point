@@ -1,8 +1,8 @@
-import { createItem, readItems } from "@directus/sdk";
+import { readItems } from "@directus/sdk";
 import { SearchBar } from "@rneui/themed";
 import { useQuery } from "@tanstack/react-query";
 import { router, useNavigation } from "expo-router";
-import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect, useMemo, useState } from "react";
 import { FlatList, Image, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDebounce } from "use-debounce";
@@ -12,7 +12,7 @@ import { Separator } from "~/components/ui/separator";
 import { Text } from "~/components/ui/text";
 import { ChatsContext, RoomSubscribed } from "~/context/chats";
 import { directusUrl } from "~/lib/constants";
-import { buildAssetUrl, getDMRoomId, searchBarContainerStyle, searchBarInputContainerStyle, timeAgo } from "~/lib/helpers";
+import { buildAssetUrl, getDMRoomId, searchBarContainerStyle, searchBarInputContainerStyle, shortTime, timeAgo } from "~/lib/helpers";
 import { useColorScheme } from "~/lib/useColorScheme";
 import directusStore from "~/store/directus";
 import userStore from "~/store/user";
@@ -42,7 +42,7 @@ const GroupListRow = (group: GroupListRowProp) => {
   const { addRoom } = useContext(ChatsContext)
 
   const handlePress = async () => {
-    await addRoom(group.id)
+    console.log(group, group.id)
     router.push(`/chat/${group.id}`)
   }
 
@@ -123,7 +123,17 @@ export default function ChatScreen() {
   const [searchText, setSearchText] = useState("")
   const [debouncedSearchText] = useDebounce(searchText, 500)
 
-  const { roomsSubscribed } = useContext(ChatsContext)
+  const { roomsSubscribed, messages } = useContext(ChatsContext)
+
+  const filteredRoomsSubscribed = useMemo(() => {
+    
+    return roomsSubscribed.sort((a, b) => {
+      const lastMessageDateCreated = (room: RoomSubscribed) => messages
+        .filter((message) => message.room === room.id)
+        .sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime())[0].date_created
+      return new Date(lastMessageDateCreated(b)).getTime() - new Date(lastMessageDateCreated(a)).getTime()
+    })
+  }, [roomsSubscribed, messages])
 
   const { data: contacts } = useQuery({
     queryKey: ["Fetch Contacts", debouncedSearchText],
@@ -177,7 +187,7 @@ export default function ChatScreen() {
         </View> : <></>}
       </View> :
         <FlatList
-          data={roomsSubscribed}
+          data={filteredRoomsSubscribed}
           renderItem={({ item }) => <ChatListRow {...item} />}
           keyExtractor={(item) => item.id.toString()}
           ItemSeparatorComponent={() => <Separator />}

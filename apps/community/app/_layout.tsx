@@ -29,8 +29,8 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const { colorScheme, setColorScheme, colors } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
-  const navigation = useNavigation()
-  const [fontsLoaded] = useFonts({
+
+  const [fontsLoaded ] = useFonts({
     Inter_100Thin,
     Inter_200ExtraLight,
     Inter_300Light,
@@ -73,6 +73,10 @@ export default function RootLayout() {
       }
     });
   }, [isColorSchemeLoaded, fontsLoaded]);
+
+  if(!isColorSchemeLoaded || !fontsLoaded) {
+    return null
+  }
 
   return (
     <ThemeProvider value={theme}>

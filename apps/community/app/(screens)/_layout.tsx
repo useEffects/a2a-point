@@ -163,7 +163,8 @@ const MobileNavigation = () => {
             backBehavior="history"
             screenOptions={{
                 tabBarLabelStyle: { display: "none" },
-                header: () => <View className="w-full" style={{ height: headerHeight }} />
+                header: () => <View className="w-full" style={{ height: headerHeight }} />,
+                tabBarHideOnKeyboard: true
             }}
         >
             {navigationItems}

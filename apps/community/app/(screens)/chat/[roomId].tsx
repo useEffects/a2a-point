@@ -236,16 +236,17 @@ export default function RoomScreen() {
     const [receivers, setReceivers] = useState<Member[] | undefined>()
 
     useEffect(() => {
-        if (!roomId) {
-            setRoomDetails(undefined)
-        }
         async function init() {
-            const found = roomsSubscribed.find(r => r.id === roomId)
-            if (found) {
-                setRoom(found)
+            if (!roomId || typeof roomId !== "string") {
+                setRoomDetails(undefined)
             } else {
-                const _room = await addRoom(roomId as string)
-                setRoom(_room)
+                const found = roomsSubscribed.find(r => r.id === roomId)
+                if (found) {
+                    setRoom(found)
+                } else {
+                    const _room = await addRoom(roomId as string)
+                    setRoom(_room)
+                }
             }
         }
         init()

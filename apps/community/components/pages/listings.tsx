@@ -10,12 +10,12 @@ import { buildAssetUrl } from "~/lib/helpers";
 import directusStore from "~/store/directus";
 import userStore from "~/store/user";
 import { Listing, User } from "~/types";
-import { Hr } from "../ui/hr";
 import { Text } from "../ui/text";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { Button } from "../ui/button";
 import { SearchBar } from "@rneui/themed";
+import { Separator } from "../primitives/dropdown-menu";
 
 const getDMRoomId = async (
     [userId1, userId2]: [string, string],
@@ -137,7 +137,7 @@ const ListingCard = (props: ListingDetailed) => {
             <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center gap-2">
                     <MaterialIcons size={18} color={colors.foreground} name="location-pin" />
-                    <Text className="text-muted-foreground">{props.location}</Text>
+                    <Text className="text-muted-foreground">{props.address}</Text>
                 </View>
                 <View className="flex-row items-center gap-2">
                     <MaterialIcons size={18} color={colors.foreground} name="calendar-month" />
@@ -165,7 +165,7 @@ const ListingCard = (props: ListingDetailed) => {
                     AED {Number(props.price).toLocaleString()}
                 </Text>
                 <Text className="border-solid border-[1px] border-border rounded-full px-1 text-sm">
-                    {props.mode_of_payment}
+                    {props.mode_of_payments.join(", ")}
                 </Text>
                 <View className="flex flex-row gap-2 items-center border-solid border-[1px] border-border rounded-full px-2">
                     <Text className="text-muted-foreground text-sm font-light">
@@ -176,7 +176,7 @@ const ListingCard = (props: ListingDetailed) => {
                     </Text>
                 </View>
             </View>
-            <Hr />
+            <Separator />
             <Text className="text-xl font-extrabold">
                 {Number(props.carpet_area).toLocaleString()} sq ft
             </Text>
@@ -210,7 +210,7 @@ const ListingCard = (props: ListingDetailed) => {
                     />
                 )}
             </View>
-            <Hr />
+            <Separator />
             <View className="flex-row justify-between items-center">
                 {user?.id !== props.user_created.id ? (
                     <Button
