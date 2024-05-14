@@ -1,0 +1,13 @@
+import g from"postcss";var r={light:{background:"#eff1f5",foreground:"#4c4f69",card:"#e6e9ef","card-foreground":"#4c4f69",popover:"#dce0e8","popover-foreground":"#4c4f69",primary:"#FF7F00","primary-foreground":"eff1f5",secondary:"#bcc0cc","secondary-foreground":"#4c4f69",muted:"#acb0be","muted-foreground":"#64748B",accent:"#ccd0da","accent-foreground":"#4c4f69",destructive:"#b4637a","destructive-foreground":"#eff1f5",info:"#56949f","info-foreground":"#eff1f5",success:"#286983","success-foreground":"#eff1f5",warning:"#ea9d34","warning-foreground":"#eff1f5",border:"#acb0be",input:"#4c4f69",ring:"#bcc0cc",subtext:"#5c5f77"},dark:{background:"#191724",foreground:"#e0def4",card:"#1f1d2e","card-foreground":"#e0def4",popover:"#26233a","popover-foreground":"#e0def4",primary:"#FF7F00","primary-foreground":"#191724",secondary:"#403d52","secondary-foreground":"#e0def4",muted:"#21202e","muted-foreground":"#6e6a86",accent:"#524f67","accent-foreground":"#e0def4",destructive:"#eb6f92","destructive-foreground":"#191724",info:"#9ccfd8","info-foreground":"#191724",success:"#31748f","success-foreground":"#191724",warning:"#f6c177","warning-foreground":"#191724",border:"#21202e",input:"#e0def4",ring:"#403d52",subtext:"#908caa"}};import{writeFileSync as l}from"fs";import p from"color-convert";function m(){return{postcssPlugin:"generate-theme-css",OnceExit:o=>{let n=(d,s)=>{let a=Object.entries(d).map(([i,u])=>{let e=p.hex.hsl(u);return`		--${i}: ${e[0]} ${e[1]}% ${e[2]}%;`}).join(`
+`);return`${s} {
+${a}
+}`},c=n(r.light,":root"),t=n(r.dark,".dark:root"),f=`/*Auto Generated*/
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	${c}
+	${t}
+}`;l(`${process.cwd()}/global.css`,f),console.log("Global CSS file generated successfully.")}}}var b=g([m()]);b.process("",{from:void 0}).catch(o=>{console.error("Error generating global CSS:",o)});export{m as generateThemeCSS,r as theme};

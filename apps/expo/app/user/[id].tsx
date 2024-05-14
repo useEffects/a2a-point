@@ -1,5 +1,5 @@
-import { UserDetailScreen } from 'app/features/user/detail-screen'
+import { View } from "react-native";
 
 export default function UserDetail() {
-  return <UserDetailScreen />
+  return <View></View>
 }
