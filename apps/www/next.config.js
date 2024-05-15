@@ -1,4 +1,5 @@
 const { withExpo } = require('@expo/next-adapter')
+const withFonts= require("next-fonts")
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -20,4 +21,4 @@ const nextConfig = {
   ],
 }
 
-module.exports = withExpo(nextConfig)
+module.exports = withFonts(withExpo(nextConfig))
