@@ -1,7 +1,8 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { useContext, useEffect } from "react"
+import { Text } from "@/components/ui/text"
+import { useContext } from "react"
 import { AuthTokenContext } from "@/context/auth"
 import { login } from "@/lib/login"
 import { useRouter } from 'next/navigation'
@@ -19,6 +20,8 @@ export default function StartButton({ courseId, className }: { courseId: string,
     }
 
     return <div className={className}>
-        <Button onClick={handleClick}> Start Now </Button>
+        <Button onPress={handleClick}>
+            <Text>Start Now</Text>
+        </Button>
     </div>
 }

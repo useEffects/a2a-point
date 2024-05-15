@@ -1,15 +1,14 @@
-import { News } from "@/lib/types"
-import { getItems } from "../api/directus/route"
 import { ListNews, MyPagination } from "@/components/client-components/news"
 import { directus } from "@/lib/directus"
 import { aggregate, readItems } from "@directus/sdk"
 import { NewsLetter } from "@/components/news-letter"
+import { News as NewsType } from "@/lib/types"
 
 export default async function News({ searchParams: { page } }: { searchParams: { page: string } }) {
     const limit = 3
     const offset = (parseInt(page ?? "1") - 1) * limit
     const fields = ["*", "categories.id", "categories.news_categories_id.*"]
-    const news = await directus.request(readItems("news", { fields, limit, offset })) as News[]
+    const news = await directus.request(readItems("news", { fields, limit, offset })) as NewsType[]
     const [count] = await directus.request(aggregate("news", { aggregate: { count: "*" } })) as { count: number }[]
 
     const categories = await directus.request(readItems("news_categories")) as { id: number, name: string }[]

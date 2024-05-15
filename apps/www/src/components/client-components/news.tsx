@@ -2,11 +2,12 @@
 
 import { News } from "@/lib/types";
 import { useState } from "react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
 import { directusUrl } from "@/lib/constants";
 import { cn, shortDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { Separator } from "../ui/separator";
+import { Separator } from "@/components/ui/separator";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 const NewsCard = ({ news, isFirst }: { news: News, isFirst?: boolean }) => {
@@ -26,7 +27,9 @@ const NewsCard = ({ news, isFirst }: { news: News, isFirst?: boolean }) => {
             </div>
             <p className={cn(isFirst ? "text-xl font-semibold" : "text-lg")}> {news.title} </p>
             <p className="text-sm"> {news.description} </p>
-            <Button className="mt-auto mb-0" onClick={() => router.push(`/news/${news.id}`)}> Read More </Button>
+            <Button className="mt-auto mb-0" onPress={() => router.push(`/news/${news.id}`)}>
+                <Text>Read More</Text>
+            </Button>
         </div>
     </div>
 }
@@ -43,8 +46,10 @@ export function ListNews({ news, categories }: { news: News[], categories: { id:
             {categories.map((category, i) => <Button
                 variant={currentCategory === category.id ? "default" : "ghost"}
                 key={i}
-                onClick={() => setCurrentCategory(category.id)}>
-                {category.name}
+                onPress={() => setCurrentCategory(category.id)}>
+                <Text>
+                    {category.name}
+                </Text>
             </Button>)}
         </div>
         <Separator className="w-full my-12" />
