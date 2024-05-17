@@ -1,12 +1,12 @@
 "use client"
 
-import { ColorContext } from "@/context/color"
 import * as React from "react"
 import { SVGProps } from "react"
 import Color from "color"
+import { useColorScheme } from "app/hooks/color-scheme"
 
 const HeroImage = (props: SVGProps<SVGSVGElement>) => {
-    const colors = React.useContext(ColorContext)
+    const { colors } = useColorScheme()
     const [hasMounted, setHasMounted] = React.useState(false)
 
     React.useEffect(() => {

@@ -1,11 +1,13 @@
 "use client"
 
-import { ColorContext } from "@/context/color"
 import * as React from "react"
 import { SVGProps } from "react"
+import { useColorScheme } from "app/hooks/color-scheme"
+
 const HeroBg = (props: SVGProps<SVGSVGElement>) => {
-    const color = React.useContext(ColorContext)
-    return color ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1600" {...props}>
+    const { colors } = useColorScheme()
+
+    return colors ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1600" {...props}>
         <defs>
             <filter
                 id="a"
@@ -32,25 +34,25 @@ const HeroBg = (props: SVGProps<SVGSVGElement>) => {
             <ellipse
                 cx={539.922}
                 cy={391.478}
-                fill={color.accent}
+                fill={colors.accent}
                 rx={168}
                 ry={113.5}
             />
             <ellipse
                 cx={164.121}
                 cy={293.598}
-                fill={color.secondary}
+                fill={colors.secondary}
                 rx={168}
                 ry={113.5}
             />
             <ellipse
                 cx={249}
                 cy={321.05}
-                fill={color.primary}
+                fill={colors.primary}
                 rx={168}
                 ry={113.5}
             />
         </g>
-    </svg>: <></>
+    </svg> : <></>
 }
 export default HeroBg

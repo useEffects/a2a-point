@@ -1,3 +1,5 @@
+"use client"
+
 import * as AccordionPrimitive from 'app/components/primitives/accordion';
 import * as React from 'react';
 import { Platform } from 'react-native';
@@ -15,7 +17,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { cn } from 'app/lib/utils';
 import { TextClassContext } from 'app/components/ui/text';
-import { MaterialIcons } from '@expo/vector-icons';
+import { ChevronDown } from 'lucide-react-native';
 
 const Accordion = React.forwardRef<
     React.ElementRef<typeof AccordionPrimitive.Root>,
@@ -58,12 +60,12 @@ const AccordionTrigger = React.forwardRef<
     const { isExpanded } = AccordionPrimitive.useItemContext();
 
     const progress = useDerivedValue(() =>
-        isExpanded ? withTiming(1, { duration: 250 }) : withTiming(0, { duration: 200 })
-    );
+        isExpanded ? withTiming(1, { duration: 250 }) : withTiming(0, { duration: 200 }), []);
+
     const chevronStyle = useAnimatedStyle(() => ({
         transform: [{ rotate: `${progress.value * 180}deg` }],
         opacity: interpolate(progress.value, [0, 1], [1, 0.8], Extrapolation.CLAMP),
-    }));
+    }), []);
 
     return (
         <TextClassContext.Provider value='native:text-lg font-medium web:group-hover:underline'>
@@ -77,7 +79,7 @@ const AccordionTrigger = React.forwardRef<
                     >
                         <>{children}</>
                         <Animated.View style={chevronStyle}>
-                            <MaterialIcons name='arrow-downward' size={18} className='!text-foreground !shrink-0' />
+                            <ChevronDown size={18} className='!text-foreground !shrink-0' />
                         </Animated.View>
                     </Trigger>
                 </AccordionPrimitive.Trigger>

@@ -1,18 +1,18 @@
 "use client"
 
-import { ColorContext } from "@/context/color"
 import * as React from "react"
 import { SVGProps } from "react"
 import Color from "color"
+import { useColorScheme } from "app/hooks/color-scheme"
 
 const Buildings = (props: SVGProps<SVGSVGElement>) => {
-    const colors = React.useContext(ColorContext)
+    const { colors } = useColorScheme()
     const [hasMounted, setHasMounted] = React.useState(false);
 
     React.useEffect(() => {
-       if(colors) {
-        setHasMounted(true)
-       }
+        if (colors) {
+            setHasMounted(true)
+        }
     }, [colors])
 
     return hasMounted ? <svg
@@ -2829,6 +2829,6 @@ const Buildings = (props: SVGProps<SVGSVGElement>) => {
             fill={colors!.foreground}
             d="M832.582 474.473c-3.984 0-7.129-1.887-7.129-3.984 0-2.306 3.145-3.983 7.129-3.983 3.983 0 7.128 1.887 7.128 3.983.21 2.307-2.935 3.984-7.128 3.984Zm0-7.338c-3.565 0-6.5 1.467-6.5 3.354s2.935 3.355 6.5 3.355c3.564 0 6.499-1.468 6.499-3.355s-2.935-3.354-6.499-3.354Z"
         />
-    </svg>: <></>
+    </svg> : <></>
 }
 export default Buildings
