@@ -5,7 +5,6 @@ import { Asset, withId, withUri } from "./chat-ui";
 import { Feather } from "@expo/vector-icons"
 import { useState } from "react";
 import { BottomSheet } from "@rneui/base";
-import FullWidthImage from 'react-native-fullwidth-image'
 import { FlatList } from "react-native-gesture-handler";
 import { Button } from "./ui/button";
 
@@ -14,7 +13,7 @@ const imageMimeTypes: string[] = ["image/aces", "image/apng", "image/avci", "ima
 imageMimeTypes.push("image/jpeg")
 
 const ImageTile = ({ asset, full = false }: { asset: Asset<withId | withUri>, full?: boolean }) => {
-    return imageMimeTypes.includes(asset.mimeType) ? full ? <FullWidthImage source={{ uri: getUrl(asset) }} /> : <Image className="w-28 h-28 object-contain rounded" source={{ uri: getUrl(asset) }} /> : <View className="w-28 h-12 bg-card rounded-2xl flex-row gap-1 justify-center items-center">
+    return imageMimeTypes.includes(asset.mimeType) ? full ? <Image source={{ uri: getUrl(asset) }} /> : <Image className="w-28 h-28 object-contain rounded" source={{ uri: getUrl(asset) }} /> : <View className="w-28 h-12 bg-card rounded-2xl flex-row gap-1 justify-center items-center">
         <Feather size={18} className="!text-card-foreground" name="file" />
         <Text className="text-card-foreground text-xs">{shortString(asset.name)}</Text>
     </View>

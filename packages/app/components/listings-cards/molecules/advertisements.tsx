@@ -1,7 +1,7 @@
-import { Image, View } from "react-native";
+import { Image } from "react-native";
 import { Advertisement, User } from "app/lib/types";
 import { Text } from "app/components/ui/text";
-import FullWidthImage from "react-native-fullwidth-image";
+import { View } from "app/lib/styled"
 import { buildAssetUrl, getDMRoomId, shortTime } from "app/lib/helpers";
 import userStore from "app/store/user";
 import { UserChip } from "app/components/user-chip";
@@ -18,7 +18,7 @@ export const AdvertisementCard = (props: AdvertisementCardProps) => {
         </View>
         <Text className="text-lg">{props.title}</Text>
         <View className="">
-            <FullWidthImage source={{ uri: buildAssetUrl(props.photo) }} />
+            <Image source={{ uri: buildAssetUrl(props.photo) }} />
             {/* <View className="absolute top-auto right-4 left-auto bottom-4 flex-row gap-4">
                 <Button size="icon" className="bg-background" onPress={async () => router.navigate(`/chat/${await getDMRoomId([user.id, props.user_created.id])}`)}>
                     <MaterialIcons size={18} name="chat" className="!text-foreground" />

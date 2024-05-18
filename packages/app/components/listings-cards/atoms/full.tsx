@@ -1,17 +1,16 @@
-import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { useRouter } from "solito/router";
-import { ReactNode, useEffect, useState } from "react";
-import { FlatList, Image, Linking, Pressable, View } from "react-native";
+import { Separator } from 'app/components/ui/separator';
+import { useListingMetrics } from "app/hooks/listing-metrics";
 import { directusUrl } from "app/lib/constants";
-import { UserCount, addBookmark, buildAssetUrl, deleteBookmark, getDMRoomId, getListingMetrics, savesCountKey } from "app/lib/helpers";
-import userStore from "app/store/user";
+import { buildAssetUrl, getDMRoomId } from "app/lib/helpers";
 import { Amenity, Listing, ListingAmenity, User } from "app/lib/types";
+import userStore from "app/store/user";
+import { Bath, BedDouble, Bookmark, Building, CarFront, ExternalLink, Eye } from "lucide-react-native";
+import { ReactNode } from "react";
+import { FlatList, Image, Linking, Pressable } from "react-native";
+import { useRouter } from "solito/navigation";
 import { Button } from "../../ui/button";
 import { Text } from "../../ui/text";
-import { useListingMetrics } from "app/hooks/listing-metrics";
-import directusStore from 'app/store/directus';
-import { createNotification } from '@directus/sdk';
-import { Separator } from 'app/components/ui/separator';
+import { View } from "app/lib/styled";
 
 export const ListingIconTile = ({
     icon,
@@ -40,7 +39,7 @@ export type FullListingDetailed = Listing & { user_created: Pick<User, "id" | "a
 const Amenities = (props: DetailedAmenity) => {
     return <View className="p-4 rounded w-[45%] border border-solid border-border">
         <View className="gap-2 flex-row items-center">
-            <MaterialIcons name="signal-wifi-0-bar" size={24} className="!text-foreground !text-base" />
+            {/* <MaterialIcons name="signal-wifi-0-bar" size={24} className="!text-foreground !text-base" /> */}
             <Text className="text-sm">{props.amenities_id.label}</Text>
         </View>
         <Text>{props.additional_value}</Text>
@@ -90,28 +89,28 @@ export const FullListingCard = (props: FullListingDetailed) => {
         <View className="flex flex-row justify-between">
             {props.bedrooms ? (
                 <ListingIconTile
-                    icon={<MaterialIcons name="bed" className="!text-base !text-foreground" />}
+                    icon={<BedDouble className="!text-base !text-foreground" />}
                     text="Beds"
                     value={props.bedrooms}
                 />
             ) : <></>}
             {props.bathrooms ? (
                 <ListingIconTile
-                    icon={<MaterialIcons name="bathtub" className="!text-base !text-foreground" />}
+                    icon={<Bath className="!text-base !text-foreground" />}
                     text="Baths"
                     value={props.bathrooms}
                 />
             ) : <></>}
             {props.garages ? (
                 <ListingIconTile
-                    icon={<MaterialIcons name="garage" className="!text-base !text-foreground" />}
+                    icon={<CarFront className="!text-base !text-foreground" />}
                     text="Garages"
                     value={props.garages}
                 />
             ) : <></>}
             {props.floors ? (
                 <ListingIconTile
-                    icon={<MaterialIcons name="stairs" className="!text-base !text-foreground" />}
+                    icon={<Building className="!text-base !text-foreground" />}
                     text="Floors"
                     value={props.floors}
                 />
@@ -150,15 +149,15 @@ export const FullListingCard = (props: FullListingDetailed) => {
         <Separator />
         {(views !== null && saves !== null && views !== undefined && saves !== undefined) ? <View className="flex-row gap-4 justify-around">
             <View className="flex-col gap-2 items-center">
-                <Ionicons name="eye" className="!text-foreground" size={18} />
+                <Eye className="!text-foreground" size={18} />
                 <Text className="text-sm text-subtext">{views} Views</Text>
             </View>
             <Pressable onPress={handleSave} className="flex-col gap-2 items-center">
-                <Ionicons name={bookmarkId ? "bookmark" : "bookmark-outline"} className="!text-foreground" size={18} />
+                <Bookmark className="!text-foreground" size={18} />
                 <Text className="text-sm text-subtext">{saves} Saves</Text>
             </Pressable>
             <Pressable onPress={() => Linking.openURL(`${directusUrl}/admin/content/listings/${props.id}`)} className="flex-col gap-2 items-center">
-                <Feather name="external-link" className="!text-foreground" size={18} />
+                <ExternalLink className="!text-foreground" size={18} />
                 <Text className="text-sm text-subtext">Dashboard</Text>
             </Pressable>
         </View> : <></>}

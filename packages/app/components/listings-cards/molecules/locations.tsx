@@ -1,12 +1,12 @@
 import { readItems } from "@directus/sdk"
 import { useQuery } from "@tanstack/react-query"
-import { FlatList, Image, View } from "react-native"
-import { buildAssetUrl, shortString } from "app/lib/helpers"
-import directusStore from "app/store/directus"
-import { Room } from "app/lib/types"
-import { Text } from "app/components/ui/text"
 import { Button } from "app/components/ui/button"
-import { useRouter } from "solito/router"
+import { Text } from "app/components/ui/text"
+import { buildAssetUrl, shortString } from "app/lib/helpers"
+import { Room } from "app/lib/types"
+import directusStore from "app/store/directus"
+import { FlatList, Image, View } from "react-native"
+import { useRouter } from "solito/navigation"
 import { CommonFilters } from "./listings"
 
 const LocationCard = ({ item }: { item: Pick<Room, "id" | "title" | "avatar"> }) => {

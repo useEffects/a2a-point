@@ -29,6 +29,7 @@
     "shuffle-array": "^1.0.1",
     "solito": "4.0.1",
     "tailwind-merge": "^2.3.0",
+    "tailwind-theme": "*",
     "zustand": "^4.5.2"
   },
   "sideEffects": false

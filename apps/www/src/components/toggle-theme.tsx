@@ -1,11 +1,11 @@
 "use client"
 
 import { ToggleTheme as ToggleThemeUi } from "app/components/toggle-theme"
-import { useColorScheme } from "app/hooks/color-scheme"
+import { useColorScheme } from "@/hooks/color-scheme"
 import { useEffect, useState } from "react"
 
 export const ToggleTheme = () => {
-    const { isDarkColorScheme, toggleColorScheme, colorScheme } = useColorScheme()
+    const { isDarkColorScheme, toggleColorScheme } = useColorScheme()
     const [hasMounted, setHasMounted] = useState(false)
     useEffect(() => {
         setHasMounted(true)

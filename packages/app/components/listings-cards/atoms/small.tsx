@@ -1,20 +1,21 @@
-import { useRouter } from "solito/router"
-import { useEffect, useState } from "react"
-import { View, Image } from "react-native"
+import { Button } from "app/components/ui/button"
+import { Text } from "app/components/ui/text"
+import { useIsFocused } from "app/hooks/is-focused"
 import { buildAssetUrl, getListingMetrics } from "app/lib/helpers"
 import { Listing, User } from "app/lib/types"
-import { Text } from "app/components/ui/text"
-import { Button } from "app/components/ui/button"
-import { Feather, Ionicons } from '@expo/vector-icons';
+import { Bookmark, ExternalLink, Eye } from "lucide-react-native"
+import { useEffect, useState } from "react"
+import { Image } from "react-native"
+import { View } from "app/lib/styled"
+import { useRouter } from "solito/navigation"
 import { ListingCardMetrics } from "./full"
-import { useIsFocused } from "@react-navigation/native"
 
 export const OpenDetailsButton = ({ id, size = "sm" }: { id: string, size?: "default" | "sm" | "lg" | "icon" | null | undefined }) => {
     const router = useRouter()
 
     return <Button onPress={() => router.push(`/${id}`)} size={size} variant={"ghost"} className="flex flex-row gap-2 items-center">
         <Text>Details</Text>
-        <Feather name="external-link" className="!text-foreground !text-base" />
+        <ExternalLink className="!text-foreground !text-base" />
     </Button>
 }
 
@@ -32,14 +33,14 @@ export const RenderMetrics = ({ listingId }: { listingId: string }) => {
         fetchMetrics()
     }, [isFocused, listingId])
 
-    return <View className="flex-row gap-4">
+    return <View className="flex flex-row gap-4">
         {metrics ? <>
-            <View className="flex-row gap-2">
-                <Ionicons name="eye" className="!text-foreground !text-base" />
+            <View className="flex flex-row gap-2">
+                <Eye className="!text-foreground !text-base" />
                 <Text>{metrics.views}</Text>
             </View>
-            <View className="flex-row gap-2">
-                <Ionicons name="bookmark" className="!text-foreground !text-base" />
+            <View className="flex flex-row gap-2">
+                <Bookmark className="!text-foreground !text-base" />
                 <Text>{metrics.saves}</Text>
             </View>
         </> : <></>}
@@ -62,7 +63,6 @@ export const SmallListingCard = (item: SmallListingCardProps) => {
                 </View>
             </View>
             <RenderMetrics listingId={item.id} />
-
         </View>
     </Button>
 }

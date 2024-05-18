@@ -1,5 +1,5 @@
 import { readItems } from "@directus/sdk"
-import { useIsFocused } from "@react-navigation/native"
+import { useIsFocused } from "app/hooks/is-focused"
 import { useQuery } from "@tanstack/react-query"
 import { FlatList, FlatListProps, View } from "react-native"
 import shuffle from "shuffle-array"
@@ -157,7 +157,7 @@ export const RenderListings = <R extends ListCardProps>({ data, render, filterMe
     const items = useMemo(() => {
         const _data = data ?? listingsRes
         return (render === bodies.medium && !searchText) ? shuffle([..._data, ...adsRes]) : _data
-    }, [listingsRes, adsRes, data])
+    }, [data, listingsRes, render, searchText, adsRes])
 
     return (!isListingsResLoading && !isAdsResLoading) &&
         <FlatList

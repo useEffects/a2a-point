@@ -2,5 +2,6 @@
     "cSpell.words": [
         "lucide",
         "nativewind"
-    ]
+    ],
+    "typescript.tsdk": "node_modules/typescript/lib"
 }

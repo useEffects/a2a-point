@@ -1,16 +1,14 @@
 import { create } from "zustand";
 import { User } from "app/lib/types";
 
-type userStore = {
+type UserStore = {
     user: User,
     setUser: (user: User) => void
 }
 
-const userStore = create<userStore>((set, get) => ({
+const userStore = create<UserStore>((set, get) => ({
     user: {} as User,
-    setUser: (user: User) => set(state => ({
-        user
-    }))
-}))
+    setUser: (user: User) => set({ user })
+}));
 
 export default userStore

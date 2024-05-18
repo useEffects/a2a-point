@@ -2,7 +2,7 @@ import { aggregate, createItem, deleteItems, readItems } from "@directus/sdk";
 import { Alert, Linking, Platform } from "react-native";
 import { ListingCardMetrics } from "app/components/listings-cards/atoms/full";
 import directusStore from "app/store/directus";
-import { queryClient } from "..";
+import { queryClient } from "app/store/query";
 import { appName, directusUrl } from "./constants";
 import { Asset, withUri } from "app/components/chat-ui";
 import * as FileSystem from "expo-file-system";
@@ -68,8 +68,8 @@ export const getListingMetrics = async (listingId: string): Promise<ListingCardM
     }))
   })
   return {
-    views: viewsRes.count["directus_users_id"],
-    saves: savesRes.count["directus_users_id"],
+    views: viewsRes!.count["directus_users_id"],
+    saves: savesRes!.count["directus_users_id"],
   }
 }
 
@@ -80,7 +80,7 @@ export const deleteBookmark = async (listingId: string, savedId: string) => {
     queryFn: async () => await rest.request(deleteItems("listings_directus_users", [savedId]))
   })
   queryClient.setQueryData(savesCountKey(listingId), ([prev]: UserCount[]
-  ) => { return [{ count: { directus_users_id: (Number(prev.count.directus_users_id) - 1).toString() } }] })
+  ) => { return [{ count: { directus_users_id: (Number(prev!.count.directus_users_id) - 1).toString() } }] })
 }
 
 export const addBookmark = async (listingId: string, userId: string) => {
@@ -93,7 +93,7 @@ export const addBookmark = async (listingId: string, userId: string) => {
     }))
   })
   queryClient.setQueryData(savesCountKey(listingId), ([prev]: UserCount[]
-  ) => ([{ count: { directus_users_id: (Number(prev.count.directus_users_id) + 1).toString() } }]))
+  ) => ([{ count: { directus_users_id: (Number(prev!.count.directus_users_id) + 1).toString() } }]))
   return res
 }
 
@@ -173,7 +173,7 @@ export const getDMRoomId = async (
     })
     return room.id as string
   } else {
-    return rooms[0].id as string;
+    return rooms[0]!.id as string;
   }
 };
 

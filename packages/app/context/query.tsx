@@ -1,7 +1,7 @@
 import { QueryClientProviderProps, QueryClientProvider as TanstackQueryClientProvider } from "@tanstack/react-query"
-import { initializeQueryClient } from "app/store/query"
+import { queryStore } from "app/store/query"
 
 export const QueryClientProvider = (props: Omit<QueryClientProviderProps, "client">) => {
-    const queryClient = initializeQueryClient()
+    const queryClient = queryStore()
     return <TanstackQueryClientProvider {...props} client={queryClient} />
 }

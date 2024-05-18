@@ -1,6 +1,5 @@
 import { DirectusClient, RestClient, StaticTokenClient, WebSocketClient, createDirectus, realtime, rest, staticToken } from "@directus/sdk";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "solito/router";
 import { create } from "zustand";
 import { directusUrl } from "app/lib/constants";
 import userStore from "./user";
@@ -8,45 +7,47 @@ import userStore from "./user";
 export type MyDirectusClient = DirectusClient<any> & RestClient<any> & StaticTokenClient<any> & WebSocketClient<any>
 
 type DirectusStore = {
+    authenticated: boolean,
     token: string,
     rest: MyDirectusClient,
     initialize: (accessToken: string) => Promise<void>
 }
 
-const directusStore = create<DirectusStore>((set, get) => {
-    const router = useRouter()
-    if(!get().token) {
-        throw new Error("Store not initialized")
-    }
+const token = "OjNjXzAdIAH4msY6NfIzfUIn-NpPVFsQ"
 
-    return {
-        token: "",
-        rest: createDirectus(directusUrl).with(rest()) as MyDirectusClient,
-        initialize: async (accessToken: string) => {
-            try {
-                const response = await fetch(`${directusUrl}/users/me`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                });
-                if (response.status === 200) {
-                    const data = await response.json();
-                    userStore.getState().setUser(data.data)
-                } else {
-                    router.replace("/login");
-                }
-            } catch (error) {
-                console.error("An error occurred:", error);
-            }
-
-            set({
-                rest: createDirectus(directusUrl).with(rest()).with(staticToken(accessToken)) as MyDirectusClient,
-                // realtime: state.realtime.with(staticToken(accessToken)),
-                token: accessToken
-            })
-            await AsyncStorage.setItem("accessToken", accessToken)
+const directusStore = create<DirectusStore>((set, get) => ({
+    authenticated: false,
+    token: token,
+    rest: createDirectus(directusUrl).with(rest()).with(staticToken(token)) as MyDirectusClient,
+    initialize: async (accessToken: string) => {
+        if (!accessToken) {
+            throw new Error("Access token cannot be empty");
         }
-    };
-});
 
-export default directusStore;
+        try {
+            const response = await fetch(`${directusUrl}/users/me`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if (response.status === 200) {
+                const data = await response.json();
+                userStore.getState().setUser(data.data);
+            } else {
+                throw new Error("Failed to fetch user data");
+            }
+        } catch (error) {
+            console.error("An error occurred:", error);
+            throw error;  // rethrow the error to be handled by caller if needed
+        }
+
+        set({
+            rest: createDirectus(directusUrl).with(rest()).with(staticToken(accessToken)) as MyDirectusClient,
+            token: accessToken,
+            authenticated: true,
+        });
+        await AsyncStorage.setItem("accessToken", accessToken);
+    }
+}));
+
+export default directusStore

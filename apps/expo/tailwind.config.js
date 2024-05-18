@@ -1,14 +1,32 @@
-// @ts-check
+// const { tailwindColorDefinitions } = require("tailwind-theme/src/tailwind-config-colors")
 
-const { theme } = require('app/design/tailwind/theme')
-
-/**
- * @type {import('tailwindcss').Config}
- */
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./App.tsx', '../../packages/**/*.{js,jsx,ts,tsx}'],
-  theme: {
-    ...theme,
+  darkMode: 'class',
+  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
+  corePlugin: {
+    backgroundOpacity: true,
   },
-  plugins: [],
-}
+  theme: {
+    extend: {
+      // colors: {
+      //   ...tailwindColorDefinitions
+      // },
+      keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
+      },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+      },
+    },
+  },
+  plugins: [require('tailwindcss-animate')],
+};

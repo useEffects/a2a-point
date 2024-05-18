@@ -1,24 +1,25 @@
-import { router } from "
-import { View } from "react-native"
+import { UserChip } from "app/components/user-chip"
 import { getDMRoomId, shortString } from "app/lib/helpers"
 import { Listing, User } from "app/lib/types"
-import { Text } from "../../ui/text"
-import { Button } from "../../ui/button"
-import { MaterialIcons } from '@expo/vector-icons';
-import { RenderMetrics } from "./small"
 import userStore from "app/store/user"
-import { UserChip } from "app/components/user-chip"
+import { MessageCircleMore } from "lucide-react-native"
+import { View } from "app/lib/styled"
+import { useRouter } from "solito/navigation"
+import { Button } from "../../ui/button"
+import { Text } from "../../ui/text"
+import { RenderMetrics } from "./small"
 
 export type MediumListingCardProps = Pick<Listing, "id" | "title" | "price" | "address" | "type" | "deal_type" | "description"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email"> }
 
 export const MediumListingCard = (item: MediumListingCardProps) => {
     const { user } = userStore()
+    const router = useRouter()
 
-    return <View className="w-full flex-col gap-2 px-2 my-6">
+    return <View className="w-full flex-col gap-2 px-2 my-8">
         <View className="flex flex-row items-center justify-between">
             <UserChip user={item.user_created} />
             {user.id === item.user_created.id ? <></> : <Button size="none" variant="base" onPress={async () => router.push(`/chat/${await getDMRoomId([user.id, item.user_created.id])}`)}>
-                <MaterialIcons size={18} name="chat" className="!text-foreground" />
+                <MessageCircleMore className="!text-foreground" />
             </Button>}
         </View>
         <Button className="items-start" onPress={() => router.push(`/${item.id}`)} size={"none"} variant={"base"}>

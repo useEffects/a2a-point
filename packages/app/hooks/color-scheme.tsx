@@ -5,7 +5,7 @@ import { Platform } from "react-native";
 import { useMemo } from "react";
 
 export type ColorSchemeContextType = {
-  colorScheme: "dark" | "light" | null;
+  colorScheme: "dark" | "light";
   isDarkColorScheme: boolean;
   setColorScheme: (colorScheme: "dark" | "light") => void;
   toggleColorScheme: () => void;
@@ -15,23 +15,31 @@ export type ColorSchemeContextType = {
 
 export function useColorScheme(): ColorSchemeContextType {
   const nativeColorScheme = useNativewindColorScheme();
-  const webColorScheme = useTheme()
+  const webColorScheme = useTheme();
 
-  return Platform.OS === "web" ? useMemo(() => ({
-    colorScheme: webColorScheme.theme ?? "dark",
-    isDarkColorScheme: webColorScheme.theme === "dark",
-    setColorScheme: (themeMode: "light" | "dark") => webColorScheme.setTheme(themeMode),
-    toggleColorScheme: () => webColorScheme.setTheme(webColorScheme.theme === "light" ? "dark" : "light"),
-    colors: webColorScheme.theme === "light" ? theme.light : theme.dark,
-    palette: theme
-  } as ColorSchemeContextType), [webColorScheme]) 
+  const isWeb = Platform.OS === "web";
 
-  : {
-    colorScheme: nativeColorScheme.colorScheme ?? "dark",
-    isDarkColorScheme: nativeColorScheme.colorScheme === "dark",
-    setColorScheme: nativeColorScheme.setColorScheme,
-    toggleColorScheme: nativeColorScheme.toggleColorScheme,
-    colors: nativeColorScheme.colorScheme === "light" ? theme.light : theme.dark,
-    palette: theme
-  };
+  return useMemo(() => {
+    if (isWeb) {
+      const themeMode = webColorScheme.theme ?? "dark";
+      return {
+        colorScheme: themeMode === "light" ? "light" : "dark",
+        isDarkColorScheme: themeMode === "dark",
+        setColorScheme: (themeMode: "light" | "dark") => webColorScheme.setTheme(themeMode),
+        toggleColorScheme: () => webColorScheme.setTheme(themeMode === "light" ? "dark" : "light"),
+        colors: themeMode === "light" ? theme.light : theme.dark,
+        palette: theme
+      } as ColorSchemeContextType;
+    } else {
+      const themeMode = nativeColorScheme.colorScheme ?? "dark";
+      return {
+        colorScheme: themeMode === "light" ? "light" : "dark",
+        isDarkColorScheme: themeMode === "dark",
+        setColorScheme: nativeColorScheme.setColorScheme,
+        toggleColorScheme: nativeColorScheme.toggleColorScheme,
+        colors: themeMode === "light" ? theme.light : theme.dark,
+        palette: theme
+      } as ColorSchemeContextType;
+    }
+  }, [isWeb, nativeColorScheme, webColorScheme]);
 }

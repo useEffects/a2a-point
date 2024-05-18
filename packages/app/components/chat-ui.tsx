@@ -6,7 +6,7 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from "
 import { SectionList, SectionListProps, View } from "react-native"
 import Autolink from 'react-native-autolink'
 import { shortTime } from 'app/lib/helpers'
-import { useColorScheme } from "app/hooks"
+import { useColorScheme } from "app/hooks/color-scheme"
 import { cn } from "app/lib/utils"
 import userStore from 'app/store/user'
 import { Message, User } from "app/lib/types"
