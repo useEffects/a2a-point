@@ -4,7 +4,7 @@ import { tailwindColorDefinitions } from "tailwind-theme/src/tailwind-config-col
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
-  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
+  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', "../../packages/app/**/*.{ts,tsx}"],
   presets: [require('nativewind/preset')],
   corePlugin: {
     backgroundOpacity: true,
