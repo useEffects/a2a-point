@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TextInput } from 'app/lib/styled';
+import { TextInput } from 'react-native';
 
 import { cn } from 'app/lib/utils';
 

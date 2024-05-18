@@ -1,9 +1,8 @@
-import * as React from 'react';
-import { Platform, StyleProp, StyleSheet, ViewStyle } from 'react-native';
-import { View, Text } from "app/lib/styled";
-import { TextClassContext } from 'app/components/ui/text';
 import * as DropdownMenuPrimitive from 'app/components/primitives/dropdown-menu';
+import { TextClassContext } from 'app/components/ui/text';
 import { cn } from 'app/lib/utils';
+import * as React from 'react';
+import { Platform, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 
@@ -238,5 +237,6 @@ export {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 };
+

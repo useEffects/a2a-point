@@ -1,9 +1,11 @@
 "use client"
 
 import * as AccordionPrimitive from 'app/components/primitives/accordion';
+import { TextClassContext } from 'app/components/ui/text';
+import { cn } from 'app/lib/utils';
+import { ChevronDown } from 'lucide-react-native';
 import * as React from 'react';
-import { Platform } from 'react-native';
-import { Pressable, View } from 'app/lib/styled';
+import { Platform, Pressable, View } from 'react-native';
 import Animated, {
     Extrapolation,
     FadeIn,
@@ -15,9 +17,6 @@ import Animated, {
     useDerivedValue,
     withTiming,
 } from 'react-native-reanimated';
-import { cn } from 'app/lib/utils';
-import { TextClassContext } from 'app/components/ui/text';
-import { ChevronDown } from 'lucide-react-native';
 
 const Accordion = React.forwardRef<
     React.ElementRef<typeof AccordionPrimitive.Root>,

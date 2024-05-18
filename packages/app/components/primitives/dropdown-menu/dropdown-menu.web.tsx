@@ -1,7 +1,6 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as React from 'react';
-import { GestureResponderEvent } from 'react-native';
-import { Pressable, Text, View } from 'app/lib/styled';
+import { GestureResponderEvent, View, Text, Pressable } from 'react-native';
 import { useAugmentedRef } from 'app/components/primitives/hooks';
 import * as Slot from 'app/components/primitives/slot';
 import type {

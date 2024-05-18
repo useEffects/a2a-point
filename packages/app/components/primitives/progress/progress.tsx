@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { View } from 'app/lib/styled';
 import * as Slot from 'app/components/primitives/slot';
 import type { SlottableViewProps, ViewRef } from 'app/components/primitives/types';
 import type { ProgressRootProps } from './types';
+import { View } from 'react-native';
 
 // This project uses code from WorkOS/Radix Primitives.
 // The code is licensed under the MIT License.

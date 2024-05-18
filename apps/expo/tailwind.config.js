@@ -1,17 +1,22 @@
-// const { tailwindColorDefinitions } = require("tailwind-theme/src/tailwind-config-colors")
+import { hairlineWidth } from 'nativewind/theme'
+import { tailwindColorDefinitions } from "tailwind-theme/src/tailwind-config-colors"
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
+  presets: [require('nativewind/preset')],
   corePlugin: {
     backgroundOpacity: true,
   },
   theme: {
     extend: {
-      // colors: {
-      //   ...tailwindColorDefinitions
-      // },
+      colors: {
+        ...tailwindColorDefinitions
+      },
+      borderWidth: {
+        hairline: hairlineWidth(),
+      },
       keyframes: {
         'accordion-down': {
           from: { height: '0' },

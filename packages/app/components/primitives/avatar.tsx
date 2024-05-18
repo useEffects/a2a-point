@@ -4,8 +4,8 @@ import {
   ImageLoadEventData,
   NativeSyntheticEvent,
   Image as RNImage,
+  View
 } from 'react-native';
-import { View } from 'app/lib/styled';
 import * as Slot from 'app/components/primitives/slot';
 import type {
   ComponentPropsWithAsChild,

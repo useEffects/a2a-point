@@ -5,6 +5,7 @@ import {
   type GestureResponderEvent,
   type LayoutChangeEvent,
   type LayoutRectangle,
+  View, Text, Pressable
 } from 'react-native';
 import { useRelativePosition, type LayoutPosition } from 'app/components/primitives/hooks';
 import { Portal as RNPPortal } from 'app/components/primitives/portal';
@@ -31,7 +32,6 @@ import type {
   DropdownMenuSubProps,
   DropdownMenuSubTriggerProps,
 } from './types';
-import { View, Pressable, Text } from "app/lib/styled"
 
 interface IRootContext extends DropdownMenuRootProps {
   triggerPosition: LayoutPosition | null;

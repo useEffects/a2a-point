@@ -23,7 +23,7 @@ export function generateThemeCSS(): Plugin {
             const darkThemeCSS = generateThemeVariables(theme.dark, '.dark:root');
 
             // Construct the final CSS content
-            const cssContent = `/*Auto Generated*/\n\n@tailwind base;\n\n@layer base {\n\t${lightThemeCSS}\n\t${darkThemeCSS}\n}`;
+            const cssContent = `/*Auto Generated*/\n\n@tailwind base;@tailwind components;\n\n@tailwind utilities;\n\n@layer base {\n\t${lightThemeCSS}\n\t${darkThemeCSS}\n}`;
 
             // Write the generated CSS to a file
             writeFileSync(`${process.cwd()}/theme.css`, cssContent);

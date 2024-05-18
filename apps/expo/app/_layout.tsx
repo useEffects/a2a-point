@@ -1,4 +1,4 @@
-import "../theme.css"
+import "tailwind-theme/theme.css"
 import "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Theme, ThemeProvider } from "@react-navigation/native";

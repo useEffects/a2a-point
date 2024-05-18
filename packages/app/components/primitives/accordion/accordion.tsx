@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { type GestureResponderEvent } from 'react-native';
-import { View, Pressable } from "app/lib/styled"
+import { View, type GestureResponderEvent, Pressable } from 'react-native';
 import * as Slot from 'app/components/primitives/slot';
 import type {
   PressableRef,

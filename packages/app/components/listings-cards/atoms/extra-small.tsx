@@ -1,8 +1,8 @@
-import { View } from "app/lib/styled";
 import { Text } from "app/components/ui/text";
 import { Listing } from "app/lib/types";
 import { Button } from "app/components/ui/button";
 import { useRouter } from "solito/navigation";
+import { View } from "react-native";
 
 export type ExtraSmallListingCardProps = Pick<Listing, "id" | "title" | "type" | "price">
 

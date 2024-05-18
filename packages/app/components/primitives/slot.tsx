@@ -12,7 +12,7 @@ import {
   type ViewProps as RNViewProps,
   type StyleProp,
 } from 'react-native';
-import { Pressable as RNPressable, Text as RNText, View as RNView } from 'app/lib/styled';
+import { Pressable as RNPressable, Text as RNText, View as RNView } from 'react-native';
 
 const Pressable = React.forwardRef<React.ElementRef<typeof RNPressable>, RNPressableProps>(
   (props, forwardedRef) => {

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import * as Accordion from '@radix-ui/react-accordion';
 import { useAugmentedRef, useControllableState } from 'app/components/primitives/hooks';
 import * as Slot from 'app/components/primitives/slot';
@@ -8,8 +9,8 @@ import type {
   ViewRef,
 } from 'app/components/primitives/types';
 import * as React from 'react';
-import { Pressable, View } from 'app/lib/styled';
 import { AccordionContentProps, AccordionItemProps, AccordionRootProps } from './types';
+import { Pressable, View } from 'react-native';
 
 function useIsomorphicLayoutEffect(
   effect: React.EffectCallback,

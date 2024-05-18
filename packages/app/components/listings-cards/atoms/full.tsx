@@ -6,11 +6,10 @@ import { Amenity, Listing, ListingAmenity, User } from "app/lib/types";
 import userStore from "app/store/user";
 import { Bath, BedDouble, Bookmark, Building, CarFront, ExternalLink, Eye } from "lucide-react-native";
 import { ReactNode } from "react";
-import { FlatList, Image, Linking, Pressable } from "react-native";
+import { FlatList, Image, Linking, Pressable, View } from "react-native";
 import { useRouter } from "solito/navigation";
 import { Button } from "../../ui/button";
 import { Text } from "../../ui/text";
-import { View } from "app/lib/styled";
 
 export const ListingIconTile = ({
     icon,

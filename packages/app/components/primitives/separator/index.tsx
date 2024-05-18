@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { View } from 'app/lib/styled';
 import * as Slot from 'app/components/primitives/slot';
 import type { SlottableViewProps, ViewRef } from 'app/components/primitives/types';
 import type { SeparatorRootProps } from './types';
+import { View } from 'react-native';
 
 const Root = React.forwardRef<ViewRef, SlottableViewProps & SeparatorRootProps>(
   ({ asChild, decorative, orientation = 'horizontal', ...props }, ref) => {

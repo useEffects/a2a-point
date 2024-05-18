@@ -3,11 +3,11 @@ import { getDMRoomId, shortString } from "app/lib/helpers"
 import { Listing, User } from "app/lib/types"
 import userStore from "app/store/user"
 import { MessageCircleMore } from "lucide-react-native"
-import { View } from "app/lib/styled"
 import { useRouter } from "solito/navigation"
 import { Button } from "../../ui/button"
 import { Text } from "../../ui/text"
 import { RenderMetrics } from "./small"
+import { View } from "react-native"
 
 export type MediumListingCardProps = Pick<Listing, "id" | "title" | "price" | "address" | "type" | "deal_type" | "description"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email"> }
 

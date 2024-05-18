@@ -5,8 +5,8 @@ import {
   type GestureResponderEvent,
   type LayoutChangeEvent,
   type LayoutRectangle,
+  Pressable, View
 } from 'react-native';
-import { Pressable, View } from 'app/lib/styled';
 import {
   useControllableState,
   useRelativePosition,

@@ -1,7 +1,6 @@
-import { Image } from "react-native";
+import { Image, View } from "react-native";
 import { Advertisement, User } from "app/lib/types";
 import { Text } from "app/components/ui/text";
-import { View } from "app/lib/styled"
 import { buildAssetUrl, getDMRoomId, shortTime } from "app/lib/helpers";
 import userStore from "app/store/user";
 import { UserChip } from "app/components/user-chip";

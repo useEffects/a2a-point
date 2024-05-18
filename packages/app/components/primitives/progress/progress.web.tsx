@@ -1,9 +1,9 @@
 import * as Progress from '@radix-ui/react-progress';
 import * as React from 'react';
-import { View } from 'app/lib/styled';
 import * as Slot from 'app/components/primitives/slot';
 import type { SlottableViewProps, ViewRef } from 'app/components/primitives/types';
 import type { ProgressRootProps } from './types';
+import { View } from 'react-native';
 
 const ProgressContext = React.createContext<ProgressRootProps | null>(null);
 
