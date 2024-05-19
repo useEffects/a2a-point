@@ -1,10 +1,6 @@
 import { cn } from "app/lib/utils";
-import { MoonStar as LMoonStar, Sun as LSun } from "lucide-react-native";
-import { styled } from "nativewind";
+import { MoonStar, Sun } from "lucide-react-native";
 import { Pressable, View } from "react-native";
-
-const MoonStar = styled(LMoonStar)
-const Sun = styled(LSun)
 
 export function ToggleTheme({ onPress, isDark }: { onPress: () => void, isDark: boolean }) {
     return (

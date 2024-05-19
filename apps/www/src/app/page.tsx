@@ -25,10 +25,7 @@ export default async function Home() {
           <div className="flex flex-col gap-4">
             <p className="text-xl md:text-3xl font-bold text-subtext"> Elevate your Real Estate Game </p>
             <p className="text-3xl md:text-7xl font-bold"> The <span className="text-primary"> One Stop </span> for All Agents </p>
-            <p className="text-subtext">In the dynamic world of real estate, efficiency, transparency, and seamless
-              collaboration are paramount. Introducing A2A POINT, a revolutionary portal
-              designed exclusively for real estate agents, redefining the landscape of property
-              transactions and deal management.</p>
+            <p className="text-subtext">In the dynamic world of real estate, efficiency, transparency, and seamless collaboration are paramount. Introducing A2A POINT, a revolutionary portal designed exclusively for real estate agents, redefining the landscape of property transactions and deal management.</p>
           </div>
           <div className="flex gap-4">
             <div className="flex flex-col gap-4 [&>*]:full w-1/2 [&>*]:rounded-full">

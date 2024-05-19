@@ -8,6 +8,7 @@ import { useEffect, useState } from "react"
 import { Image, View } from "react-native"
 import { useRouter } from "solito/navigation"
 import { ListingCardMetrics } from "./full"
+import { useColorScheme } from "app/hooks/color-scheme"
 
 export const OpenDetailsButton = ({ id, size = "sm" }: { id: string, size?: "default" | "sm" | "lg" | "icon" | null | undefined }) => {
     const router = useRouter()
@@ -22,6 +23,7 @@ export type SmallListingCardProps = Pick<Listing, "id" | "title" | "price" | "ad
 
 export const RenderMetrics = ({ listingId }: { listingId: string }) => {
     const [metrics, setMetrics] = useState<ListingCardMetrics | null>(null)
+    const { colors } = useColorScheme()
     const isFocused = useIsFocused()
 
     useEffect(() => {
@@ -34,17 +36,16 @@ export const RenderMetrics = ({ listingId }: { listingId: string }) => {
 
     return <View className="flex flex-row gap-4">
         {metrics ? <>
-            <View className="flex flex-row gap-2">
-                <Eye className="!text-foreground !text-base" />
+            <View className="flex flex-row gap-2 items-center">
+                <Eye size={18} color={colors.foreground} />
                 <Text>{metrics.views}</Text>
             </View>
-            <View className="flex flex-row gap-2">
-                <Bookmark className="!text-foreground !text-base" />
+            <View className="flex flex-row gap-2 items-center">
+                <Bookmark size={18} color={colors.foreground} />
                 <Text>{metrics.saves}</Text>
             </View>
         </> : <></>}
     </View>
-
 }
 
 export const SmallListingCard = (item: SmallListingCardProps) => {

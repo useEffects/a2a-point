@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@directus/sdk": "^16.0.0",
-    "@expo/next-adapter": "5.0.2",
+    "@expo/next-adapter": "^6.0.0",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-brands-svg-icons": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",

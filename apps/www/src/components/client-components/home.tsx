@@ -1,6 +1,5 @@
 "use client"
 
-import { ColorContext } from "@/context/color"
 import { Feedback } from "@/lib/types"
 // import Video, { VideoProps } from "next-video"
 import { useContext, useState } from "react"

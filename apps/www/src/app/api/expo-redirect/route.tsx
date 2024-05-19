@@ -7,6 +7,7 @@ export async function GET(req: NextRequest) {
     if (appUrl && token) {
         const url = new URL(appUrl!)
         url.searchParams.append("access_token", token!)
+        console.log(url.toString())
         return new NextResponse(`
         <!DOCTYPE html>
         <html>

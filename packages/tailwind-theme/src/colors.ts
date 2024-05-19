@@ -7,7 +7,7 @@ export const theme = {
         "popover": "#F4E7E0",
         "popover-foreground": "#212529",
         "primary": "#FF7F00",
-        "primary-foreground": "FAF9F8",
+        "primary-foreground": "#FAF9F8",
         "secondary": "#4C4F69",
         "secondary-foreground": "#BCC0CC",
         "muted": "#FBFBFB",

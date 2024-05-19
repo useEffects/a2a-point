@@ -115,7 +115,7 @@ export const bodies = {
 
 type ConfirmedAdvertisementCardProps = AdvertisementCardProps & { isAdvertisement: true }
 
-export const RenderListings = <R extends ListCardProps>({ data, render, filterMethod, flatListProps, limit, searchText }: { data?: R[], render: RenderType<R>, filterMethod?: ReturnType<typeof commonFilters[CommonFilters]>, searchText?: string, flatListProps?: Omit<FlatListProps<ConfirmedAdvertisementCardProps | R>, "data" | "renderItem">, limit?: number }) => {
+export const RenderListings = <R extends ListCardProps>({ data, render, filterMethod, flatListProps, limit, searchText, noAds }: { data?: R[], render: RenderType<R>, filterMethod?: ReturnType<typeof commonFilters[CommonFilters]>, searchText?: string, noAds?: boolean, flatListProps?: Omit<FlatListProps<ConfirmedAdvertisementCardProps | R>, "data" | "renderItem">, limit?: number }) => {
 
     const isAdvertisementCard = (item: ConfirmedAdvertisementCardProps | R): item is ConfirmedAdvertisementCardProps => {
         return (item as ConfirmedAdvertisementCardProps).isAdvertisement !== undefined;
@@ -124,7 +124,7 @@ export const RenderListings = <R extends ListCardProps>({ data, render, filterMe
     const { rest } = directusStore()
     const isFocused = useIsFocused()
 
-    const _limit = 5
+    const _limit = limit ?? 5
 
     const { data: listingsRes, isLoading: isListingsResLoading } = useQuery({
         queryKey: ["Fetching Listings with fields: ", ...render.fields, JSON.stringify(filterMethod), searchText, isFocused],
@@ -151,7 +151,7 @@ export const RenderListings = <R extends ListCardProps>({ data, render, filterMe
             limit: Math.ceil(_limit / 5)
         })).then(res => res.map(r => ({ ...r, isAdvertisement: true }))),
         initialData: [],
-        enabled: render === bodies.medium
+        enabled: render === bodies.medium && !noAds
     }) as { data: ConfirmedAdvertisementCardProps[], isLoading: boolean }
 
     const items = useMemo(() => {
