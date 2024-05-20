@@ -1,11 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Theme, ThemeProvider, NavigationContainer, LinkingOptions, ParamListBase } from "@react-navigation/native";
+import { Theme, NavigationContainer, LinkingOptions } from "@react-navigation/native";
 import { PortalHost } from "app/components/primitives/portal";
 import { useColorScheme } from "app/hooks/color-scheme";
 import directusStore from "app/store/directus";
 import { SplashScreen } from "expo-router";
 import * as React from "react";
-import { Platform } from "react-native";
+import { Platform, StatusBar } from "react-native";
 import * as  Linking from "expo-linking"
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -56,17 +56,15 @@ export default function RootLayout() {
     return null
   }
 
-  console.log(Linking.createURL("/"))
-
   return (
-    <ThemeProvider value={theme}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <NavigationContainer independent linking={linking}>
-          {authenticated ? <ScreensLayout /> : <GuestLayout />}
-        </NavigationContainer>
-        <PortalHost />
-      </GestureHandlerRootView>
-    </ThemeProvider>
+
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer theme={theme} independent linking={linking}>
+        <StatusBar barStyle={colorScheme === "light" ? "dark-content" : "light-content"} backgroundColor={colors.card} />
+        {authenticated ? <ScreensLayout /> : <GuestLayout />}
+      </NavigationContainer>
+      <PortalHost />
+    </GestureHandlerRootView>
   );
 }
 

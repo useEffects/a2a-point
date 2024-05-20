@@ -1,9 +1,9 @@
 import { SafeAreaView } from "react-native-safe-area-context"
 
 export default function HomeScreen() {
-    return <SafeAreaView className="">
+    return <View className="">
         <Text>Hello World</Text>
-    </SafeAreaView>
+    </View>
 }
 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -13,6 +13,7 @@ import { Text } from 'app/components/ui/text';
 import { Button } from 'app/components/ui/button';
 import opacity from "hex-color-opacity";
 import { View } from 'react-native';
+import ProfileScreen from "./profile";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -33,7 +34,7 @@ export function ScreensLayout() {
     }
 
     return (
-        <Tab.Navigator backBehavior="history" tabBarPosition='bottom' screenOptions={{
+        <Tab.Navigator initialRouteName="(screens)/profile/index" backBehavior="history" tabBarPosition='bottom' screenOptions={{
             tabBarStyle: { width: "100%" },
             tabBarContentContainerStyle: { justifyContent: "space-between" },
             tabBarAndroidRipple: { color: "transparent" },
@@ -51,7 +52,7 @@ export function ScreensLayout() {
             <Tab.Screen name="(screens)/saved" component={HomeScreen} options={{
                 tabBarLabel: tabBarLabel(Bookmark, "Bookmarks"),
             }} />
-            <Tab.Screen name="(screens)/profile/index" component={HomeScreen} options={{
+            <Tab.Screen name="(screens)/profile/index" component={ProfileScreen} options={{
                 tabBarLabel: tabBarLabel(User, "Profile"),
             }} />
         </Tab.Navigator>

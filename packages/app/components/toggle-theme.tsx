@@ -1,8 +1,29 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useColorScheme } from "app/hooks/color-scheme";
 import { cn } from "app/lib/utils";
 import { MoonStar, Sun } from "lucide-react-native";
-import { Pressable, View } from "react-native";
+import { Platform, Pressable, View } from "react-native";
+import * as NavigationBar from 'expo-navigation-bar';
 
-export function ToggleTheme({ onPress, isDark }: { onPress: () => void, isDark: boolean }) {
+export function ToggleTheme() {
+    const { colors, isDarkColorScheme, toggleColorScheme, setColorScheme, palette } = useColorScheme()
+    async function setAndroidNavigationBar(theme: 'light' | 'dark') {
+        if (Platform.OS !== 'android') {
+            return;
+        }
+        await NavigationBar.setButtonStyleAsync(theme === 'dark' ? 'light' : 'dark');
+        await NavigationBar.setBackgroundColorAsync(palette[theme].card);
+    }
+
+    const nativeOnPress = () => {
+        const newTheme = isDarkColorScheme ? "light" : "dark";
+        setColorScheme(newTheme);
+        setAndroidNavigationBar(newTheme);
+        AsyncStorage.setItem("theme", newTheme);
+    }
+
+    const onPress = Platform.OS !== "web" ? nativeOnPress : toggleColorScheme
+
     return (
         <Pressable
             onPress={onPress}
@@ -13,13 +34,10 @@ export function ToggleTheme({ onPress, isDark }: { onPress: () => void, isDark: 
                         "aspect-square pt-0.5 justify-center items-start web:px-5",
                         pressed && "opacity-70",
                     )}>
-                    {isDark ? (
-                        <MoonStar
-                            className="text-foreground"
-                            size={23}
-                        />
+                    {isDarkColorScheme ? (
+                        <MoonStar color={colors.foreground} size={18} />
                     ) : (
-                        <Sun className="text-foreground" size={24} />
+                        <Sun color={colors.foreground} size={18} />
                     )}
                 </View>
             )}

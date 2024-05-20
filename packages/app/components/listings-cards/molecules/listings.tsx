@@ -9,7 +9,8 @@ import { ExtraSmallListingCard, ExtraSmallListingCardProps } from "../atoms/extr
 import { MediumListingCard, MediumListingCardProps } from "../atoms/medium"
 import { SmallListingCard, SmallListingCardProps } from "../atoms/small"
 import { AdvertisementCard, AdvertisementCardProps } from "./advertisements"
-import { useMemo } from "react"
+import { ComponentType, ReactNode, useMemo } from "react"
+import { Tabs } from 'react-native-collapsible-tab-view'
 
 type ListCardProps = SmallListingCardProps | ExtraSmallListingCardProps | MediumListingCardProps
 
@@ -115,7 +116,17 @@ export const bodies = {
 
 type ConfirmedAdvertisementCardProps = AdvertisementCardProps & { isAdvertisement: true }
 
-export const RenderListings = <R extends ListCardProps>({ data, render, filterMethod, flatListProps, limit, searchText, noAds }: { data?: R[], render: RenderType<R>, filterMethod?: ReturnType<typeof commonFilters[CommonFilters]>, searchText?: string, noAds?: boolean, flatListProps?: Omit<FlatListProps<ConfirmedAdvertisementCardProps | R>, "data" | "renderItem">, limit?: number }) => {
+export const RenderListings = <R extends ListCardProps>({ data, render, filterMethod, flatListProps, limit, searchText, noAds, flatListComponent }: {
+    data?: R[],
+    render: RenderType<R>,
+    filterMethod?: ReturnType<typeof commonFilters[CommonFilters]>,
+    searchText?: string,
+    noAds?: boolean,
+    flatListProps?: Omit<FlatListProps<ConfirmedAdvertisementCardProps | R>,
+        "data" | "renderItem">,
+    limit?: number,
+    flatListComponent?: ComponentType<FlatListProps<ConfirmedAdvertisementCardProps | R>>
+}) => {
 
     const isAdvertisementCard = (item: ConfirmedAdvertisementCardProps | R): item is ConfirmedAdvertisementCardProps => {
         return (item as ConfirmedAdvertisementCardProps).isAdvertisement !== undefined;
@@ -159,8 +170,10 @@ export const RenderListings = <R extends ListCardProps>({ data, render, filterMe
         return (render === bodies.medium && !searchText) ? shuffle([..._data, ...adsRes]) : _data
     }, [data, listingsRes, render, searchText, adsRes])
 
+    const FlatListComponent = flatListComponent ?? FlatList
+
     return (!isListingsResLoading && !isAdsResLoading) &&
-        <FlatList
+        <FlatListComponent
             {...flatListProps}
             data={items}
             renderItem={({ item }) => {

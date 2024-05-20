@@ -51,15 +51,15 @@ export const RenderMetrics = ({ listingId }: { listingId: string }) => {
 export const SmallListingCard = (item: SmallListingCardProps) => {
     const router = useRouter()
 
-    return <Button onPress={() => router.push(`/${item.id}`)} variant={"ghost"} size={"none"} className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start">
+    return <Button onPress={() => router.push(`/${item.id}`)} variant={"base"} size={"none"} className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start">
         <Image source={{ uri: buildAssetUrl(item.user_created.avatar) }} className="w-8 h-8 rounded-full" />
         <View className="flex-col gap-1">
             <View>
-                <Text className="text-lg font-medium w-[300px]">{item.title}</Text>
+                <Text className="text-lg font-bold w-[300px]">{item.title}</Text>
                 <Text className="!text-subtext">{item.address}</Text>
                 <View className="flex-row justify-between gap-4 items-center">
-                    <Text className="!text-subtext">AED {Number(item.price).toLocaleString()}</Text>
-                    <Text className="border-solid rounded-full border-foreground border px-2 my-1">{item.type}</Text>
+                    <Text className="!text-success">AED {Number(item.price).toLocaleString()}</Text>
+                    <Text className="border-solid text-info rounded-full border-info border px-2 my-1">{item.type}</Text>
                 </View>
             </View>
             <RenderMetrics listingId={item.id} />
