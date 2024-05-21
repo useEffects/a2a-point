@@ -11,6 +11,8 @@ import { View } from "react-native"
 import { useColorScheme } from "app/hooks/color-scheme"
 import directusStore from "app/store/directus"
 import { useNavigation } from "@react-navigation/native"
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from "app/lib/misc/navigation"
 
 export type MediumListingCardProps = Pick<Listing, "id" | "title" | "price" | "address" | "type" | "deal_type" | "description"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email"> }
 
@@ -26,7 +28,7 @@ export const MediumListingCard = (item: MediumListingCardProps) => {
     const { user } = userStore()
     const { authenticated } = directusStore()
     const router = useRouter()
-    const navigation = useNavigation()
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
 
     return <View className="w-full flex-col gap-2 px-2 my-8">
         <View className="flex flex-row items-center justify-between">
@@ -35,11 +37,8 @@ export const MediumListingCard = (item: MediumListingCardProps) => {
                 <MessageCircleMore className="!text-foreground" />
             </Button> : <LockedChatButton />}
         </View>
-        <Button className="items-start" onPress={() => router.replace(`/listings/${item.id}`, {
-            experimental: {
-                isNestedNavigator: true,
-                nativeBehavior: "stack-replace"
-            },
+        <Button className="items-start" onPress={() => navigation.navigate("listing-detailed", {
+            id: item.id
         })} size={"none"} variant={"base"}>
             <Text className="text-lg text-primary">{item.title}</Text>
             <View className="flex-col gap-1 bg-card rounded-2xl p-4 mt-2 w-full">

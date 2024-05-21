@@ -1,16 +1,16 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Theme, LinkingOptions } from "@react-navigation/native";
+import { Theme, ThemeProvider } from "@react-navigation/native";
 import { PortalHost } from "app/components/primitives/portal";
 import { useColorScheme } from "app/hooks/color-scheme";
 import directusStore from "app/store/directus";
 import { SplashScreen } from "expo-router";
 import * as React from "react";
 import { Platform, StatusBar } from "react-native";
-import * as  Linking from "expo-linking"
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "tailwind-theme/theme.css";
-import { ScreensLayout } from "./screens";
+import AppLayout from "./screens";
+import { setAndroidNavigationBarTheme } from "app/components/toggle-theme";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -37,6 +37,7 @@ export default function RootLayout() {
       if (!theme) {
         await AsyncStorage.setItem("theme", colorScheme);
       } else {
+        setAndroidNavigationBarTheme(theme === "dark" ? "dark" : "light");
         setColorScheme(theme === "dark" ? "dark" : "light");
       }
       setIsColorSchemeLoaded(true)
@@ -56,12 +57,13 @@ export default function RootLayout() {
   }
 
   return (
-
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <StatusBar barStyle={colorScheme === "light" ? "dark-content" : "light-content"} backgroundColor={colors.card} />
-      <ScreensLayout />
-      <PortalHost />
-    </GestureHandlerRootView>
+    <ThemeProvider value={theme}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <StatusBar barStyle={colorScheme === "light" ? "dark-content" : "light-content"} backgroundColor={colors.card} />
+        <AppLayout />
+        <PortalHost />
+      </GestureHandlerRootView>
+    </ThemeProvider>
   );
 }
 
