@@ -10,6 +10,7 @@ import { RenderMetrics } from "./small"
 import { View } from "react-native"
 import { useColorScheme } from "app/hooks/color-scheme"
 import directusStore from "app/store/directus"
+import { useNavigation } from "@react-navigation/native"
 
 export type MediumListingCardProps = Pick<Listing, "id" | "title" | "price" | "address" | "type" | "deal_type" | "description"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email"> }
 
@@ -25,6 +26,7 @@ export const MediumListingCard = (item: MediumListingCardProps) => {
     const { user } = userStore()
     const { authenticated } = directusStore()
     const router = useRouter()
+    const navigation = useNavigation()
 
     return <View className="w-full flex-col gap-2 px-2 my-8">
         <View className="flex flex-row items-center justify-between">
@@ -37,7 +39,7 @@ export const MediumListingCard = (item: MediumListingCardProps) => {
             experimental: {
                 isNestedNavigator: true,
                 nativeBehavior: "stack-replace"
-            }
+            },
         })} size={"none"} variant={"base"}>
             <Text className="text-lg text-primary">{item.title}</Text>
             <View className="flex-col gap-1 bg-card rounded-2xl p-4 mt-2 w-full">

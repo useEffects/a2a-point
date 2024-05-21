@@ -4,25 +4,25 @@ import { buildAssetUrl, shortTime } from "app/lib/helpers";
 import { getListingsCountForUser } from "app/lib/misc/get-counts";
 import { User } from "app/lib/types";
 import { Info, LogOut, MessageCircle, Rows2 } from "lucide-react-native";
-import { use, useEffect, useState } from "react";
-import { Image, Linking, ScrollView, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import { useEffect, useState } from "react";
+import { Image, Linking, NativeScrollEvent, NativeSyntheticEvent, ScrollView, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import { Link } from "solito/link";
-import { Header, headerHeight } from "./header";
+import { Header } from "./header";
 import { ExtraSmallListingCardProps } from "./listings-cards/atoms/extra-small";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "./listings-cards/molecules/listings";
 import { ToggleTheme } from "./toggle-theme";
 import { Button } from "./ui/button";
 import { TabView, SceneMap, NavigationState, SceneRendererProps } from 'react-native-tab-view';
 import { cn } from "app/lib/utils";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Collapsible from 'react-native-collapsible';
+import { directusUrl } from "app/lib/constants";
 
 export default function Profile({ user }: { user: User }) {
     const [index, setIndex] = useState(0)
     const { colors } = useColorScheme()
     const [listingsCount, setListingsCount] = useState<number | null>(0)
     const { width, height } = useWindowDimensions()
-    const insets = useSafeAreaInsets()
-    const ratio = 2
+    const [collapsed, setCollapsed] = useState(false)
 
     useEffect(() => {
         getListingsCountForUser(user.id).then(setListingsCount)
@@ -33,9 +33,10 @@ export default function Profile({ user }: { user: User }) {
         const onPress = (i: number) => {
             props.jumpTo(tabTitles[i]!)
         }
-        return <View style={{ height: height / ratio }} className="flex-col justify-between">
+        const buttonWidth = width / 2 - 14 - 8
+        return <>
             <Header>
-                <View className="flex-row gap-4 justify-between flex-1 items-center">
+                <View className="flex-row gap-8 justify-between flex-1 items-center">
                     <Text className="text-lg">Profile</Text>
                     <View className="flex-row gap-4 items-center">
                         <Button variant="base" size="none">
@@ -45,70 +46,88 @@ export default function Profile({ user }: { user: User }) {
                     </View>
                 </View>
             </Header>
-            <View className="flex-col gap-4 items-center">
-                <Image source={{ uri: buildAssetUrl(user.avatar) }} className="w-24 h-24 rounded-full" />
-                <View className="flex-col items-center">
-                    <Text className="text-primary font-bold">{user.first_name} {user.last_name}</Text>
-                    <Link href={`mailto:${user.email}`}>
-                        <Text className="text-info underline">{user.email}</Text>
-                    </Link>
-                    <Text>{user.location}</Text>
-                    <Text className="text-subtext">{user.title}</Text>
+            <Collapsible duration={500} collapsed={collapsed}>
+                <View className="flex-col gap-8 my-8">
+                    <View className="flex-col gap-4 items-center">
+                        <Image source={{ uri: buildAssetUrl(user.avatar) }} className="w-24 h-24 rounded-full" />
+                        <View className="flex-col items-center">
+                            <Text className="text-primary font-bold">{user.first_name} {user.last_name}</Text>
+                            <Link href={`mailto:${user.email}`}>
+                                <Text className="text-info underline">{user.email}</Text>
+                            </Link>
+                            <Text>{user.location}</Text>
+                            <Text className="text-subtext">{user.title}</Text>
+                        </View>
+                    </View>
+                    <View className="flex-row w-full justify-evenly">
+                        <View className="flex-col items-center">
+                            <Text>{listingsCount}</Text>
+                            <Text>Listings</Text>
+                        </View>
+                        <View className="flex-col items-center">
+                            <Text>4.5</Text>
+                            <Text>Rating</Text>
+                        </View>
+                        <View className="flex-col items-center">
+                            <Text>{shortTime(user.last_access)}</Text>
+                            <Text>Last Seen</Text>
+                        </View>
+                    </View>
+                    <View className="flex-row w-full justify-between px-4">
+                        <Button onPress={() => Linking.openURL(`${directusUrl}/admin/users/${user.id}`)} size="none" style={{ width: buttonWidth }} className="py-1">
+                            <Text>Open in dashboard</Text>
+                        </Button>
+                        <Button size="none" style={{ width: buttonWidth }} className="py-1">
+                            <Text>Your activity</Text>
+                        </Button>
+                    </View>
                 </View>
-            </View>
-            <View className="flex-row w-full justify-evenly">
-                <View className="flex-col items-center">
-                    <Text>{listingsCount}</Text>
-                    <Text>Listings</Text>
-                </View>
-                <View className="flex-col items-center">
-                    <Text>4.5</Text>
-                    <Text>Rating</Text>
-                </View>
-                <View className="flex-col items-center">
-                    <Text>{shortTime(user.last_access)}</Text>
-                    <Text>Last Seen</Text>
-                </View>
-            </View>
-            <View className="flex-row w-full gap-4 px-4">
-                <Button size="none" className="w-1/2 py-1">
-                    <Text>Edit Profile</Text>
-                </Button>
-                <Button size="none" className="w-1/2 py-1">
-                    <Text>Your Activity</Text>
-                </Button>
-            </View>
+            </Collapsible>
             <View className="flex-row justify-between px-4">
-                {Array(3).fill(0).map((_, i) => <Button className={cn("w-1/3 border border-0 rounded-none border-primary", i === index && "border-b-[1px]")} key={i} variant={"base"} onPress={() => onPress(i)}>
+                {Array(3).fill(0).map((_, i) => <Button className={cn("w-1/3 border border-0 rounded-none border-primary", i === index && "border-b-[1px] h-12")} key={i} variant={"base"} onPress={() => onPress(i)}>
                     <TabIcons index={i} isActive={i === index} />
                 </Button>)}
             </View>
-        </View>
+        </>
     }
 
     const RenderScene = (props: SceneRendererProps & { route: any }) => {
+        const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+            const { nativeEvent } = e;
+            if (nativeEvent.contentOffset.y > 0) {
+                setCollapsed(true);
+            } else {
+                setCollapsed(false);
+            }
+        };
+
         const renderScene = SceneMap({
             info: () => <InfoTab user={user} />,
             listings: () => <ListingTab user={user} />,
             feedbacks: () => <View />,
-        })
-        return <ScrollView className="flex-1">
-            {renderScene(props)}
-        </ScrollView>
-    }
+        });
 
-    return (
-        <View className="web:max-w-xl web:mx-auto flex-col gap-4 flex-1">
-            <TabView
-                style={{ height: height + height / ratio - insets.top - headerHeight + 26 }}
-                renderTabBar={TabBar}
-                navigationState={{ index, routes: tabTitles.map(title => ({ key: title, title })) }}
-                renderScene={(props) => <RenderScene {...props} />}
-                onIndexChange={setIndex}
-                initialLayout={{ width }}
-            />
-        </View >
-    );
+        return (
+            <ScrollView
+                onScroll={onScroll}
+                onMomentumScrollEnd={onScroll}
+                onScrollEndDrag={onScroll}
+                scrollEventThrottle={16}
+                className="flex-1"
+            >
+                {renderScene(props)}
+            </ScrollView>
+        );
+    };
+
+    return <TabView
+        style={{ height }}
+        renderTabBar={TabBar}
+        navigationState={{ index, routes: tabTitles.map(title => ({ key: title, title })) }}
+        renderScene={(props) => <RenderScene {...props} />}
+        onIndexChange={setIndex}
+        initialLayout={{ width }}
+    />
 }
 
 const tabTitles = ["info", "listings", "feedbacks"];

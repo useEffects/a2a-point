@@ -1,20 +1,13 @@
-import { createStackNavigator } from '@react-navigation/stack';
-import { Text } from "app/components/ui/text";
-import { Linking, ScrollView, View } from 'react-native';
-import { RenderListings, bodies } from "app/components/listings-cards/molecules/listings";
-import { Button } from 'app/components/ui/button';
-import { MediumListingCardProps } from 'app/components/listings-cards/atoms/medium';
-import { Separator } from 'app/components/ui/separator';
-import GuestFullListingScreen from './listings';
-import { CompanyStats } from 'app/components/company-stats';
-import * as WebBrowser from "expo-web-browser";
-import { directusUrl, portfolioUrl } from 'app/lib/constants';
-import directusStore from 'app/store/directus';
+import directusStore from "app/store/directus"
 import { useRouter } from "solito/navigation"
+import * as WebBrowser from 'expo-web-browser';
+import { directusUrl, portfolioUrl } from "app/lib/constants";
+import { Linking, ScrollView, View } from "react-native";
+import { Text } from "app/components/ui/text";
+import { Button } from "app/components/ui/button";
+import { CompanyStats } from "app/components/company-stats";
 
-const Stack = createStackNavigator();
-
-const GuestScreen = () => {
+const LoginScreen = () => {
     const { initialize } = directusStore()
     const router = useRouter()
     const appURL = "a2apoint-community://"
@@ -46,25 +39,10 @@ const GuestScreen = () => {
                 <Text className='text-sm text-center'>Sign in to unlock the full mobile application</Text>
             </View>
         </View>
-        <RenderListings<MediumListingCardProps>
-            render={bodies.medium}
-            limit={2}
-            noAds={true}
-            flatListProps={{
-                scrollEnabled: false,
-                contentContainerClassName: "px-4",
-                ItemSeparatorComponent: () => <Separator />
-            }}
-        />
         <Text className='text-center pb-8 font-semibold'>Sign in to view all the listings and much more!</Text>
         <CompanyStats className='justify-evenly' />
         <View className='my-4' />
     </ScrollView>
 }
 
-export default function GuestLayout() {
-    return <Stack.Navigator initialRouteName='guest' screenOptions={{ header: () => null }}>
-        <Stack.Screen name="guest/listings" component={GuestFullListingScreen} />
-        <Stack.Screen options={{ presentation: "modal" }} name="guest" component={GuestScreen} />
-    </Stack.Navigator>
-}
+export default LoginScreen

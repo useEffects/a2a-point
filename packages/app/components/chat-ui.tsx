@@ -213,7 +213,7 @@ export const ChatUi = (props: ChatUiProps) => {
             listRef.current?.scrollToLocation({ itemIndex: foundItemIndex, sectionIndex: foundSectionIndex, animated: true, viewPosition: 0.5 })
         }
 
-    }, [props.goToId])
+    }, [props.goToId, props.messages, sections])
 
     return <View className="flex-1">
         <View className="flex-1 grow-1">

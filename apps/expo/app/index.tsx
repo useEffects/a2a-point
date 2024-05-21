@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Theme, NavigationContainer, LinkingOptions } from "@react-navigation/native";
+import { Theme, LinkingOptions } from "@react-navigation/native";
 import { PortalHost } from "app/components/primitives/portal";
 import { useColorScheme } from "app/hooks/color-scheme";
 import directusStore from "app/store/directus";
@@ -10,8 +10,7 @@ import * as  Linking from "expo-linking"
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "tailwind-theme/theme.css";
-import { ScreensLayout } from "./(screens)";
-import GuestLayout from "./guest";
+import { ScreensLayout } from "./screens";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -59,35 +58,11 @@ export default function RootLayout() {
   return (
 
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer theme={theme} independent linking={linking}>
-        <StatusBar barStyle={colorScheme === "light" ? "dark-content" : "light-content"} backgroundColor={colors.card} />
-        {authenticated ? <ScreensLayout /> : <GuestLayout />}
-      </NavigationContainer>
+      <StatusBar barStyle={colorScheme === "light" ? "dark-content" : "light-content"} backgroundColor={colors.card} />
+      <ScreensLayout />
       <PortalHost />
     </GestureHandlerRootView>
   );
-}
-
-const linking: LinkingOptions<any> = {
-  prefixes: ["https://a2apoint.com", "a2apoint-community://", Linking.createURL("/")],
-  config: {
-    screens: {
-      "(screens)": {
-        screens: {
-          "(screens)/index": "/",
-          "(screens)/chat/index": "/chat",
-          "(screens)/notifications": "/notifications",
-          "(screens)/saved": "/saved",
-          "(screens)/profile/index": "/profile",
-        }
-      }, "guest": {
-        screens: {
-          "guest": "/guest",
-          "guest/listings": "/listings/:id"
-        }
-      }
-    },
-  },
 }
 
 export { ErrorBoundary } from "expo-router";

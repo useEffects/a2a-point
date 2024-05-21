@@ -9,11 +9,21 @@ export const getListingsCountForUser = async (userId: string) => {
         },
         query: {
             filter: {
-               user_created: {
-                     _eq: userId
-               }
+                user_created: {
+                    _eq: userId
+                }
             }
         }
+    }))
+    return getListingsCount?.[0]!.count as unknown as number
+}
+
+export const getListingsCount = async () => {
+    const { rest } = directusStore.getState()
+    const getListingsCount = await rest.request(aggregate("listings", {
+        aggregate: {
+            count: ["*"]
+        },
     }))
     return getListingsCount?.[0]!.count as unknown as number
 }
