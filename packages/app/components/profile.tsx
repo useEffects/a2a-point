@@ -1,10 +1,10 @@
 import { Text } from "app/components/ui/text";
 import { useColorScheme } from "app/hooks/color-scheme";
-import { buildAssetUrl, shortTime } from "app/lib/helpers";
+import { buildAssetUrl, shortTime, timeAgo } from "app/lib/helpers";
 import { getListingsCountForUser } from "app/lib/misc/get-counts";
 import { User } from "app/lib/types";
-import { Info, LogOut, MessageCircle, Rows2 } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { ArrowUp, Info, LogOut, MessageCircle, Rows2, Shrink, Expand } from "lucide-react-native";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Image, Linking, NativeScrollEvent, NativeSyntheticEvent, ScrollView, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import { Link } from "solito/link";
 import { Header } from "./header";
@@ -16,6 +16,9 @@ import { TabView, SceneMap, NavigationState, SceneRendererProps } from 'react-na
 import { cn } from "app/lib/utils";
 import Collapsible from 'react-native-collapsible';
 import { directusUrl } from "app/lib/constants";
+import { MediumListingCardProps } from "./listings-cards/atoms/medium";
+import userStore from "app/store/user";
+import { GoToPostFeedbackButton } from "./utils";
 
 export default function Profile({ user }: { user: User }) {
     const [index, setIndex] = useState(0)
@@ -23,6 +26,8 @@ export default function Profile({ user }: { user: User }) {
     const [listingsCount, setListingsCount] = useState<number | null>(0)
     const { width, height } = useWindowDimensions()
     const [collapsed, setCollapsed] = useState(false)
+    const [big, setBig] = useState(false)
+    const { user: currentUser } = userStore()
 
     useEffect(() => {
         getListingsCountForUser(user.id).then(setListingsCount)
@@ -69,7 +74,7 @@ export default function Profile({ user }: { user: User }) {
                             <Text>Rating</Text>
                         </View>
                         <View className="flex-col items-center">
-                            <Text>{shortTime(user.last_access)}</Text>
+                            <Text>{timeAgo.format(new Date(user.last_access))}</Text>
                             <Text>Last Seen</Text>
                         </View>
                     </View>
@@ -77,9 +82,12 @@ export default function Profile({ user }: { user: User }) {
                         <Button onPress={() => Linking.openURL(`${directusUrl}/admin/users/${user.id}`)} size="none" style={{ width: buttonWidth }} className="py-1">
                             <Text>Open in dashboard</Text>
                         </Button>
-                        <Button size="none" style={{ width: buttonWidth }} className="py-1">
-                            <Text>Your activity</Text>
-                        </Button>
+                        {user.id !== currentUser.id ?
+                            <Button size="none" style={{ width: buttonWidth }} className="py-1">
+                                <Text>Your activity</Text>
+                            </Button> : <GoToPostFeedbackButton userId={user.id} size={"none"} className="py-1" style={{ width: buttonWidth }} variant={"default"}>
+                                <Text>Give feedback</Text>
+                            </GoToPostFeedbackButton>}
                     </View>
                 </View>
             </Collapsible>
@@ -92,6 +100,7 @@ export default function Profile({ user }: { user: User }) {
     }
 
     const RenderScene = (props: SceneRendererProps & { route: any }) => {
+
         const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
             const { nativeEvent } = e;
             if (nativeEvent.contentOffset.y > 0) {
@@ -103,7 +112,7 @@ export default function Profile({ user }: { user: User }) {
 
         const renderScene = SceneMap({
             info: () => <InfoTab user={user} />,
-            listings: () => <ListingTab user={user} />,
+            listings: () => <ListingTab user={user} big={big} setBig={setBig} />,
             feedbacks: () => <View />,
         });
 
@@ -119,15 +128,19 @@ export default function Profile({ user }: { user: User }) {
             </ScrollView>
         );
     };
-
-    return <TabView
-        style={{ height }}
-        renderTabBar={TabBar}
-        navigationState={{ index, routes: tabTitles.map(title => ({ key: title, title })) }}
-        renderScene={(props) => <RenderScene {...props} />}
-        onIndexChange={setIndex}
-        initialLayout={{ width }}
-    />
+    return <View className="relative flex-1">
+        <TabView
+            style={{ height }}
+            renderTabBar={TabBar}
+            navigationState={{ index, routes: tabTitles.map(title => ({ key: title, title })) }}
+            renderScene={(props) => <RenderScene {...props} />}
+            onIndexChange={setIndex}
+            initialLayout={{ width }}
+        />
+        {collapsed ? <Button onPress={() => setCollapsed(false)} className="absolute bottom-8 right-4 top-auto left-auto rounded-full" size={"icon"}>
+            <ArrowUp size={18} color={colors["primary-foreground"]} />
+        </Button> : <></>}
+    </View>
 }
 
 const tabTitles = ["info", "listings", "feedbacks"];
@@ -194,12 +207,30 @@ const InfoTab = ({ user }: { user: User }) => {
     </View>
 }
 
-const ListingTab = ({ user }: { user: User }) => {
-    return <RenderListings<ExtraSmallListingCardProps>
-        render={bodies.extraSmall}
-        filterMethod={commonFilters[CommonFilters.User](user.id)}
-        flatListProps={{
-            scrollEnabled: false,
-        }}
-    />
+const ListingTab = ({ user, big, setBig }: { user: User, big: boolean, setBig: Dispatch<SetStateAction<boolean>> }) => {
+    const { colors } = useColorScheme()
+
+    return <View className="p-4 flex-col gap-4 flex-1">
+        <View className="flex-row justify-between">
+            <Text className="text-subtext">Leads posted by the user</Text>
+            <Button variant={"base"} size={"none"} onPress={() => setBig(p => !p)}>
+                {big ? <Shrink size={18} color={colors.secondary} /> : <Expand size={18} color={colors.secondary} />}
+            </Button>
+        </View>
+        {big ? <RenderListings<MediumListingCardProps>
+            render={bodies.medium}
+            filterMethod={commonFilters[CommonFilters.User](user.id)}
+            noAds={true}
+            flatListProps={{
+                scrollEnabled: false,
+            }}
+        /> :
+            <RenderListings<ExtraSmallListingCardProps>
+                render={bodies.extraSmall}
+                filterMethod={commonFilters[CommonFilters.User](user.id)}
+                flatListProps={{
+                    scrollEnabled: false,
+                }}
+            />}
+    </View>
 }

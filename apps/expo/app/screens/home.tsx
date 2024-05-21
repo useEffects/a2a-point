@@ -16,33 +16,14 @@ import Collapsible from "react-native-collapsible"
 import { ListFilter, Award, Sparkles, CreditCard, Home } from "lucide-react-native"
 import { BottomSheet } from '@rneui/themed';
 import { CloseButton } from "app/components/utils"
-import opacity from "hex-color-opacity"
-
-const categoryTiles = [
-    {
-        Icon: (props: LucideProps) => <Award {...props} />,
-        title: "Premium",
-        filterMethod: CommonFilters.Premium
-    }, {
-        Icon: (props: LucideProps) => <Sparkles {...props} />,
-        title: "Listing",
-        filterMethod: CommonFilters.Listing
-    }, {
-        Icon: (props: LucideProps) => <CreditCard {...props} />,
-        title: "Enquiry",
-        filterMethod: CommonFilters.Enquiry
-    }, {
-        Icon: (props: LucideProps) => <Home {...props} />,
-        title: "Rent",
-        filterMethod: CommonFilters.Rent
-    }
-]
+import { useDebounce } from "use-debounce";
 
 export const HomeScreen = () => {
     const { user } = userStore()
     const [collapsed, setCollapsed] = useState(false)
     const { colors } = useColorScheme()
     const [searchText, setSearchText] = useState("")
+    const [debouncedSearchText] = useDebounce(searchText, 500)
     const [bottomSheetVisible, setBottomSheetVisible] = useState(false)
     const [filter, setFilter] = useState<CommonFilters | null>(null)
 
@@ -86,7 +67,8 @@ export const HomeScreen = () => {
                             <Text className="text-subtext">Browse popular locations</Text>
                             <LocationCards />
                         </View>
-                        <View className="mt-8">
+                        <Separator />
+                        <View className="">
                             <Text className="text-2xl font-medium">Let&apos;s search your next lead!</Text>
                         </View>
                     </View>
@@ -115,25 +97,26 @@ export const HomeScreen = () => {
                             ItemSeparatorComponent: () => <Separator />,
                         }}
                         filterMethod={filter ? commonFilters[filter]("") : undefined}
-                        searchText={searchText}
+                        searchText={debouncedSearchText}
                     />
                 </View>
             </View>
             <BottomSheet
                 isVisible={bottomSheetVisible}
                 onBackdropPress={() => setBottomSheetVisible(false)}
-                backdropStyle={{ backgroundColor: opacity(colors.card, 0.2) }}
+                backdropStyle={{ backgroundColor: "transparent" }}
+                containerStyle={{ backgroundColor: "transparent" }}
                 scrollViewProps={{
                     scrollEnabled: false,
                 }}
             >
                 <View className="p-8 flex-col gap-8 bg-card">
-                    <View className="flex-row justify-between items-center">
+                    <View className="flex-row gap-4 items-center">
+                        <CloseButton onPress={() => setBottomSheetVisible(false)} />
                         <View>
                             <Text className="text-lg">Filter leads</Text>
                             <Text className="text-subtext">Click again to disable the filter</Text>
                         </View>
-                        <CloseButton onPress={() => setBottomSheetVisible(false)} />
                     </View>
                     <View className="flex-row justify-between">
                         {categoryTiles.map((category, i) => <Button
@@ -158,3 +141,23 @@ export const HomeScreen = () => {
         </ScrollView>
     )
 }
+
+const categoryTiles = [
+    {
+        Icon: (props: LucideProps) => <Award {...props} />,
+        title: "Premium",
+        filterMethod: CommonFilters.Premium
+    }, {
+        Icon: (props: LucideProps) => <Sparkles {...props} />,
+        title: "Listing",
+        filterMethod: CommonFilters.Listing
+    }, {
+        Icon: (props: LucideProps) => <CreditCard {...props} />,
+        title: "Enquiry",
+        filterMethod: CommonFilters.Enquiry
+    }, {
+        Icon: (props: LucideProps) => <Home {...props} />,
+        title: "Rent",
+        filterMethod: CommonFilters.Rent
+    }
+]

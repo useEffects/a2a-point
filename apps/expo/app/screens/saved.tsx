@@ -1,8 +1,0 @@
-import { Text } from "app/components/ui/text";
-import { View } from "react-native";
-
-export default function SavedScreen () {
-    return <View className="">
-        <Text>Saved</Text>
-    </View>
-}

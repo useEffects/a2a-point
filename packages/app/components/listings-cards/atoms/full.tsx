@@ -11,6 +11,8 @@ import { useRouter } from "solito/navigation";
 import { Button } from "../../ui/button";
 import { Text } from "../../ui/text";
 
+export const FullListingCardFields = ["*", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "user_created.email", "amenities.additional_value", "amenities.amenities_id.*"]
+
 export const ListingIconTile = ({
     icon,
     text,

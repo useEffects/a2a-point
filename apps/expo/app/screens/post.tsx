@@ -1,8 +1,8 @@
 import { Text } from "app/components/ui/text";
 import { View } from "react-native";
 
-export default function ChatScreen() {
+export default function PostScreen () {
     return <View className="">
-        <Text>Chat</Text>
+        <Text>Saved</Text>
     </View>
 }

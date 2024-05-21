@@ -1,5 +1,5 @@
 import { createItem, createNotifications, readItems } from "@directus/sdk";
-import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useEffect, useState } from "react";
 import { Platform } from "react-native";
 import { Asset, ChatMessage, withId, withUri } from "app/components/chat-ui";
 import { directusWSUrl } from "app/lib/constants";

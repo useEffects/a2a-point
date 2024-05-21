@@ -11,6 +11,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "tailwind-theme/theme.css";
 import AppLayout from "./screens";
 import { setAndroidNavigationBarTheme } from "app/components/toggle-theme";
+import ChatsProvider from "app/components/providers/chats";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -60,7 +61,9 @@ export default function RootLayout() {
     <ThemeProvider value={theme}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <StatusBar barStyle={colorScheme === "light" ? "dark-content" : "light-content"} backgroundColor={colors.card} />
-        <AppLayout />
+        <ChatsProvider>
+          <AppLayout />
+        </ChatsProvider>
         <PortalHost />
       </GestureHandlerRootView>
     </ThemeProvider>

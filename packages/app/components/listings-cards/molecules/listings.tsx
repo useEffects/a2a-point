@@ -10,7 +10,6 @@ import { MediumListingCard, MediumListingCardProps } from "../atoms/medium"
 import { SmallListingCard, SmallListingCardProps } from "../atoms/small"
 import { AdvertisementCard, AdvertisementCardProps } from "./advertisements"
 import { ComponentType, ReactNode, useMemo } from "react"
-import { Tabs } from 'react-native-collapsible-tab-view'
 
 type ListCardProps = SmallListingCardProps | ExtraSmallListingCardProps | MediumListingCardProps
 

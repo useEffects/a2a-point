@@ -29,10 +29,11 @@ export default function SearchBar({ searchText, setSearchText, searchBarProps, c
         borderBottomWidth: 1,
         flexGrow: 1,
         borderColor: colors.foreground,
-        height: 40
+        height: 32
     }
     const inputStyle: StyleProp<TextStyle> = {
         color: colors.foreground,
+        fontSize: 16
     }
     const CancelIcon = (props: CancelIconProps) => {
         const _props = cancelIconProps || props
@@ -47,6 +48,7 @@ export default function SearchBar({ searchText, setSearchText, searchBarProps, c
 
     return <RNESearchBar
         value={searchText}
+        placeholder="Search ..."
         onChange={e => setSearchText(e.nativeEvent.text)}
         {...searchBarProps}
         searchIcon={<SearchIcon />}
@@ -56,6 +58,5 @@ export default function SearchBar({ searchText, setSearchText, searchBarProps, c
         containerStyle={Object.assign(containerStyle, searchBarProps?.containerStyle)}
         inputContainerStyle={Object.assign(inputContainerStyle, searchBarProps?.inputContainerStyle)}
         inputStyle={Object.assign(inputStyle, searchBarProps?.inputStyle)}
-        placeholder="Search ..."
     />;
 }

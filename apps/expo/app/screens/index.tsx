@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { View } from 'react-native';
+import { View, useWindowDimensions } from 'react-native';
 import { createMaterialTopTabNavigator, MaterialTopTabBar } from '@react-navigation/material-top-tabs';
 import { Bell, Lock, LogIn, LucideIcon, MessageCircleMore, Plus, TrendingUp, User } from "lucide-react-native";
 import { Text } from 'app/components/ui/text';
@@ -14,13 +14,14 @@ import LoginScreen from './login';
 import NotificationsScreen from './notifications';
 import ProfileScreen from "./profile";
 import { createStackNavigator } from '@react-navigation/stack';
-import FullListingScreen from './home/detailed';
-
-export function HomeScreen2() {
-    return <View className="">
-        <Text>Hello World</Text>
-    </View>
-}
+import FullListingScreen from './listing-detailed';
+import PostScreen from './post';
+import ChatScreen from './chat';
+import RoomDetailed from './room-detailed';
+import { cn } from 'app/lib/utils';
+import ProfileDetailed from './profile-detailed';
+import LocationListings from './location-listings';
+import PostFeedback from './post-feedback';
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createStackNavigator()
@@ -39,7 +40,7 @@ const useTabBarLabel = (Icon: LucideIcon, label: string, badgeCount?: number) =>
 
     const TabBarLabelComponent = ({ focused }: { focused: boolean }) => (
         <View className='flex-col items-center'>
-            <View style={{ backgroundColor: focused ? canNavigate ? opacity(colors.primary, 0.1) : opacity(colors.muted, 0.5) : "transparent" }} className='py-1 px-4 rounded-full relative w-16 mx-auto flex-row justify-center'>
+            <View style={{ backgroundColor: focused ? canNavigate ? opacity(colors.primary, 0.1) : opacity(colors.muted, 0.5) : "transparent" }} className={cn('py-1 px-4 rounded-full relative mx-auto flex-row justify-center', authenticated ? "w-16" : "w-4")}>
                 {badgeCount ?
                     <View className='absolute -top-1/3 right-0 w-12 flex-row justify-end'>
                         <Text className='text-xs py-[1px] px-1 bg-primary text-primary-foreground rounded-full'>{badgeCount}</Text>
@@ -65,11 +66,13 @@ const ScreensLayout = () => {
     const profileTabBarLabel = useTabBarLabel(User, "Profile");
     const loginTabBarLabel = useTabBarLabel(LogIn, "Login");
 
+    const { width } = useWindowDimensions()
+
     const tabScreens = useMemo(() => [
         <Tab.Screen
-            key="chat"
-            name="chat"
-            component={HomeScreen2}
+            key="chats"
+            name="chats"
+            component={ChatScreen}
             options={{
                 tabBarLabel: chatTabBarLabel,
             }}
@@ -93,7 +96,7 @@ const ScreensLayout = () => {
         <Tab.Screen
             key="saved"
             name="post"
-            component={HomeScreen2}
+            component={PostScreen}
             options={{
                 tabBarLabel: postTabBarLabel,
             }}
@@ -136,7 +139,7 @@ const ScreensLayout = () => {
 
     return finalTabScreens.length ? (
         <Tab.Navigator
-            initialRouteName="/"
+            initialRouteName="chats"
             backBehavior="history"
             tabBarPosition='bottom'
             tabBar={isKeyboardVisible ? () => null : MaterialTopTabBar}
@@ -144,7 +147,10 @@ const ScreensLayout = () => {
                 tabBarAndroidRipple: {
                     color: "transparent"
                 },
-                tabBarIndicator: () => null
+                tabBarIndicator: () => null,
+                tabBarContentContainerStyle: {
+                    justifyContent: "space-between",
+                }
             }}
         >
             {finalTabScreens.map(screen => screen)}
@@ -156,5 +162,9 @@ export default function AppLayout() {
     return <Stack.Navigator screenOptions={{ header: () => null }}>
         <Stack.Screen name="app" component={ScreensLayout} />
         <Stack.Screen name="listing-detailed" component={FullListingScreen} />
+        <Stack.Screen name="room-detailed" component={RoomDetailed} />
+        <Stack.Screen name="profile-detailed" component={ProfileDetailed} />
+        <Stack.Screen name="location-listings" component={LocationListings} />
+        <Stack.Screen name="post-feedback" component={PostFeedback} />
     </Stack.Navigator>
 };

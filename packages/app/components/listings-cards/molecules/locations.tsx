@@ -6,12 +6,11 @@ import { buildAssetUrl, shortString } from "app/lib/helpers"
 import { Room } from "app/lib/types"
 import directusStore from "app/store/directus"
 import { FlatList, Image, View } from "react-native"
-import { useRouter } from "solito/navigation"
 import { CommonFilters } from "./listings"
+import { GoToLocationListingsButton } from "app/components/utils"
 
 const LocationCard = ({ item }: { item: Pick<Room, "id" | "title" | "avatar"> }) => {
     const { rest } = directusStore()
-    const router = useRouter()
 
     const { data } = useQuery({
         queryKey: ["Fetch listings count for location", item.id],
@@ -32,12 +31,12 @@ const LocationCard = ({ item }: { item: Pick<Room, "id" | "title" | "avatar"> })
     const count = data && data.length ? data[0]!.count : 0
 
     return <View className="flex-col gap-4 items-center">
-        <Button onPress={() => router.push(`/discover?id=${item.id}&filter=${CommonFilters.GroupId}`)} size={"icon"} className="relative h-16 w-16 rounded-full" variant={"ghost"}>
+        <GoToLocationListingsButton className="relative h-16 w-16 rounded-full" roomId={item.id} >
             <Image source={{ uri: buildAssetUrl(item.avatar!) }} className="w-16 h-16 rounded-full" />
             <View className="absolute bg-card flex-row justify-center items-center rounded-full w-8 h-8 left-auto -right-2 top-auto -bottom-2">
                 <Text className="!text-xs !text-card-foreground">{count}</Text>
             </View>
-        </Button>
+        </GoToLocationListingsButton>
         <Text className="text-sm text-center">{shortString(item.title!, 10)}</Text>
     </View>
 }
