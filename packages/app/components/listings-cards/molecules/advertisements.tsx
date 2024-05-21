@@ -1,7 +1,7 @@
 import { Image, View } from "react-native";
 import { Advertisement, User } from "app/lib/types";
 import { Text } from "app/components/ui/text";
-import { buildAssetUrl, getDMRoomId, shortTime } from "app/lib/helpers";
+import { buildAssetUrl, getDMRoomId, shortTime, timeAgo } from "app/lib/helpers";
 import userStore from "app/store/user";
 import { UserChip } from "app/components/user-chip";
 
@@ -28,6 +28,6 @@ export const AdvertisementCard = (props: AdvertisementCardProps) => {
             </View> */}
         </View>
         <Text className="text-sm">{props.caption}</Text>
-        <Text className="text-xs text-subtext">{shortTime(props.date_created)}</Text>
+        <Text className="text-xs text-subtext">{timeAgo.format(new Date(props.date_created))}</Text>
     </View >
 }

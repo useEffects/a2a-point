@@ -29,7 +29,7 @@ export default function SearchBar({ searchText, setSearchText, searchBarProps, c
         borderBottomWidth: 1,
         flexGrow: 1,
         borderColor: colors.foreground,
-        height: 32
+        height: 40
     }
     const inputStyle: StyleProp<TextStyle> = {
         color: colors.foreground,

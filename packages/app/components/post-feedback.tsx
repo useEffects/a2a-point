@@ -8,18 +8,26 @@ import { Button } from "./ui/button";
 import { useColorScheme } from "app/hooks/color-scheme";
 import { useEffect, useState } from "react";
 import { Formik, FormikProps } from "formik";
-import { OutlinedTextField as TextField } from "react-native-material-textfield";
+import { TextField } from "./textfield";
+import { Text } from "./ui/text";
+import { UserChip } from "./user-chip";
+import { Image } from "react-native";
+import { buildAssetUrl } from "app/lib/helpers";
 
 const StarIcon = (props: StarIconProps) => {
     const { colors } = useColorScheme()
 
     if (props.type === "full") {
         return <Button variant={"base"} size={"none"}>
-            <Star {...props} />
+            <Star {...props} fill={colors.primary} color={colors.primary} />
+        </Button>
+    } else if (props.type === "half") {
+        return <Button variant={"base"} size={"none"}>
+            <StarHalf {...props} color={colors.primary} fill={colors.primary} />
         </Button>
     } else {
         return <Button variant={"base"} size={"none"}>
-            <StarHalf {...props} />
+            <Star {...props} color={colors.subtext} />
         </Button>
     }
 }
@@ -36,26 +44,15 @@ const initialFeedbackValues = {
 
 export function PostFeedback({ userId }: { userId: string }) {
     const user = useUserDetails(userId)
-    const [rating, setRating] = useState(initialFeedbackValues.rating)
-    const { colors } = useColorScheme()
-    const [color, setColor] = useState("")
-
-    useEffect(() => {
-        if (rating < 3) {
-            setColor(colors.destructive)
-        } else if (rating < 4) {
-            setColor(colors.info)
-        } else {
-            setColor(colors.success)
-        }
-    }, [rating, colors])
 
     const Form = (props: FormikProps<FeedbackValues>) => {
         return <View className="flex-col gap-4">
             <StarRating
-                rating={rating}
-                onChange={setRating}
-                StarIconComponent={StarIcon}
+                rating={props.values.rating}
+                onChange={(_rating: number) => {
+                    props.setFieldValue("rating", _rating)
+                }}
+                StarIconComponent={(props: StarIconProps) => <StarIcon {...props} size={18} />}
             />
             <TextField
                 value={props.values.feedback}
@@ -64,12 +61,15 @@ export function PostFeedback({ userId }: { userId: string }) {
                 error={props.errors.feedback}
                 label="Feedback"
                 multiline
-                title={props.errors.feedback}
             />
+            <Button className="!w-40" onPress={props.submitForm}>
+                <Text>Submit</Text>
+            </Button>
         </View>
     }
 
     return <View className="flex-1">
+        <Image source={{ uri: buildAssetUrl(user?.avatar) }} className="w-20 h-20 rounded-full my-4" />
         <Formik
             initialValues={initialFeedbackValues}
             validationSchema={FeedbackSchema}
@@ -83,7 +83,7 @@ export function PostFeedback({ userId }: { userId: string }) {
 
 const FeedbackSchema = Yup.object().shape({
     rating: Yup.number()
-        .min(1)
+        .min(0)
         .max(5)
         .required("Rating is required"),
     feedback: Yup.string()

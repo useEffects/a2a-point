@@ -67,15 +67,15 @@ export default function Profile({ user }: { user: User }) {
                     <View className="flex-row w-full justify-evenly">
                         <View className="flex-col items-center">
                             <Text>{listingsCount}</Text>
-                            <Text>Listings</Text>
+                            <Text className="text-subtext">Listings</Text>
                         </View>
                         <View className="flex-col items-center">
                             <Text>4.5</Text>
-                            <Text>Rating</Text>
+                            <Text className="text-subtext">Rating</Text>
                         </View>
                         <View className="flex-col items-center">
                             <Text>{timeAgo.format(new Date(user.last_access))}</Text>
-                            <Text>Last Seen</Text>
+                            <Text className="text-subtext">Last Seen</Text>
                         </View>
                     </View>
                     <View className="flex-row w-full justify-between px-4">

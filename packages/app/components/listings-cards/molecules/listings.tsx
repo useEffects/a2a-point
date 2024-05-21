@@ -166,8 +166,8 @@ export const RenderListings = <R extends ListCardProps>({ data, render, filterMe
 
     const items = useMemo(() => {
         const _data = data ?? listingsRes
-        return (render === bodies.medium && !searchText) ? shuffle([..._data, ...adsRes]) : _data
-    }, [data, listingsRes, render, searchText, adsRes])
+        return (render === bodies.medium && !searchText && !noAds) ? shuffle([..._data, ...adsRes]) : _data
+    }, [data, listingsRes, render, searchText, noAds, adsRes])
 
     const FlatListComponent = flatListComponent ?? FlatList
 
