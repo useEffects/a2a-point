@@ -1,18 +1,14 @@
-import { useUserDetails } from "app/hooks/user-details"
-import { View } from "react-native"
-import StarRating from "react-native-star-rating-widget"
-import * as Yup from 'yup';
-import { Star, StarHalf } from "lucide-react-native"
-import { StarIconProps } from "react-native-star-rating-widget";
-import { Button } from "./ui/button";
 import { useColorScheme } from "app/hooks/color-scheme";
-import { useEffect, useState } from "react";
-import { Formik, FormikProps } from "formik";
-import { TextField } from "./textfield";
-import { Text } from "./ui/text";
-import { UserChip } from "./user-chip";
-import { Image } from "react-native";
+import { useUserDetails } from "app/hooks/user-details";
 import { buildAssetUrl } from "app/lib/helpers";
+import { Formik, FormikProps } from "formik";
+import { Star, StarHalf } from "lucide-react-native";
+import { Image, View } from "react-native";
+import StarRating, { StarIconProps } from "react-native-star-rating-widget";
+import * as Yup from 'yup';
+import { FormInput } from "./formComponents";
+import { Button } from "./ui/button";
+import { Text } from "./ui/text";
 
 const StarIcon = (props: StarIconProps) => {
     const { colors } = useColorScheme()
@@ -46,7 +42,7 @@ export function PostFeedback({ userId }: { userId: string }) {
     const user = useUserDetails(userId)
 
     const Form = (props: FormikProps<FeedbackValues>) => {
-        return <View className="flex-col gap-4">
+        return <View className="flex-col gap-4 items-start flex-1 w-full">
             <StarRating
                 rating={props.values.rating}
                 onChange={(_rating: number) => {
@@ -54,15 +50,16 @@ export function PostFeedback({ userId }: { userId: string }) {
                 }}
                 StarIconComponent={(props: StarIconProps) => <StarIcon {...props} size={18} />}
             />
-            <TextField
+            <FormInput
                 value={props.values.feedback}
                 onChangeText={props.handleChange("feedback")}
                 onBlur={props.handleBlur("feedback")}
                 error={props.errors.feedback}
                 label="Feedback"
                 multiline
+                className="w-full"
             />
-            <Button className="!w-40" onPress={props.submitForm}>
+            <Button className="" onPress={props.submitForm}>
                 <Text>Submit</Text>
             </Button>
         </View>

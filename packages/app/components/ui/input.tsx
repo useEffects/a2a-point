@@ -2,11 +2,13 @@ import * as React from 'react';
 import { TextInput } from 'react-native';
 
 import { cn } from 'app/lib/utils';
+import { useColorScheme } from 'app/hooks/color-scheme';
 
 const Input = React.forwardRef<
     React.ElementRef<typeof TextInput>,
     React.ComponentPropsWithoutRef<typeof TextInput>
 >(({ className, ...props }, ref) => {
+    const { colors } = useColorScheme()
     return (
         <TextInput
             ref={ref}
@@ -15,6 +17,7 @@ const Input = React.forwardRef<
                 props.editable === false && 'opacity-50 web:cursor-not-allowed',
                 className
             )}
+            cursorColor={colors.primary}
             {...props}
         />
     );

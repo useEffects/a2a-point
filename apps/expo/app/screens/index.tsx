@@ -66,8 +66,6 @@ const ScreensLayout = () => {
     const profileTabBarLabel = useTabBarLabel(User, "Profile");
     const loginTabBarLabel = useTabBarLabel(LogIn, "Login");
 
-    const { width } = useWindowDimensions()
-
     const tabScreens = useMemo(() => [
         <Tab.Screen
             key="chats"
@@ -139,7 +137,7 @@ const ScreensLayout = () => {
 
     return finalTabScreens.length ? (
         <Tab.Navigator
-            initialRouteName="chats"
+            initialRouteName="post"
             backBehavior="history"
             tabBarPosition='bottom'
             tabBar={isKeyboardVisible ? () => null : MaterialTopTabBar}
