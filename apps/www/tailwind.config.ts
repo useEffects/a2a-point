@@ -5,17 +5,12 @@ import typography from "@tailwindcss/typography"
 import { tailwindColorDefinitions } from "tailwind-theme/src/tailwind-config-colors"
 
 const config = {
-  darkMode: ["class"],
+  darkMode: "class",
   important: "html",
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-    '../../packages/app/components/**/*.{ts,tsx}',
-    '../../packages/app/lib/**/*.{ts,tsx}'
+    '../../packages/app/**/*.{ts,tsx}',
   ],
-  prefix: "",
   theme: {
     container: {
       center: true,

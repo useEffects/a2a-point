@@ -1,3 +1,5 @@
+"use client"
+
 import { QueryClientProviderProps, QueryClientProvider as TanstackQueryClientProvider } from "@tanstack/react-query"
 import { queryStore } from "app/store/query"
 

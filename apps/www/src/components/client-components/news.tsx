@@ -1,14 +1,14 @@
 "use client"
 
-import { News } from "@/lib/types";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import { directusUrl } from "@/lib/constants";
-import { cn, shortDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { Separator } from "@/components/ui/separator";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { useState } from "react";
+import { Button } from "src/components/ui/button";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "src/components/ui/pagination";
+import { Separator } from "src/components/ui/separator";
+import { Text } from "src/components/ui/text";
+import { directusUrl } from "src/lib/constants";
+import { News } from "src/lib/types";
+import { cn, shortDate } from "src/lib/utils";
 
 const NewsCard = ({ news, isFirst }: { news: News, isFirst?: boolean }) => {
     const router = useRouter()

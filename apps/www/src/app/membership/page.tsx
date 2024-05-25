@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import Buildings from "@/assets/svg/buildings";
-import { NewsLetter } from "@/components/news-letter";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { cn } from "app/lib/utils";
+import Buildings from "src/assets/svg/buildings";
+import { NewsLetter } from "src/components/news-letter";
+import { Button } from "src/components/ui/button";
+import { Text } from "src/components/ui/text";
 
 export default function Membership() {
     return (

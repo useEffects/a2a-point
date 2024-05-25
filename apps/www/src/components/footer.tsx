@@ -1,8 +1,8 @@
-import Link from "next/link"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faFacebook, faInstagram, faLinkedin, faTwitter } from "@fortawesome/free-brands-svg-icons"
-import { Separator } from "@/components/ui/separator"
-import { Button } from "@/components/ui/button"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import Link from "next/link"
+import { Button } from "src/components/ui/button"
+import { Separator } from "src/components/ui/separator"
 
 export const navItems = [
     {

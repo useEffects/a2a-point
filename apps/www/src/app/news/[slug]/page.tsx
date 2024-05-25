@@ -1,7 +1,7 @@
-import { getItem } from "@/app/api/directus/route"
-import { directusUrl } from "@/lib/constants"
-import { News } from "@/lib/types"
 import { MDXRemote } from 'next-mdx-remote/rsc'
+import { getItem } from "src/app/api/directus/route"
+import { directusUrl } from "src/lib/constants"
+import { News } from "src/lib/types"
 
 export default async function NewsDetailed({ params: { slug } }: { params: { slug: string } }) {
     const fields = ["*", "categories.id", "categories.news_categories_id.*"]

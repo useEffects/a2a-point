@@ -7,12 +7,9 @@ import { useRouter } from "solito/navigation"
 import { Button } from "../../ui/button"
 import { Text } from "../../ui/text"
 import { RenderMetrics } from "./small"
-import { Platform, View } from "react-native"
+import { View } from "react-native"
 import { useColorScheme } from "app/hooks/color-scheme"
 import directusStore from "app/store/directus"
-import { useNavigation } from "@react-navigation/native"
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from "app/lib/misc/navigation"
 import { GoToFullListingButton } from "app/components/utils"
 
 export type MediumListingCardProps = Pick<Listing, "id" | "title" | "price" | "address" | "type" | "deal_type" | "description"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email"> }

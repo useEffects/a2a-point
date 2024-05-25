@@ -63,7 +63,6 @@ function Form1({ initialValues = form1InitialValues }: { initialValues?: Form1Va
     const typeOptions = Object.entries(typeLabels).map(([value, label]) => ({ value, label }))
 
     const Form = (props: FormikProps<Form1Values>) => {
-        console.log(props.values)
         return <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="flex-grow">
             <View className="flex-1 flex-col gap-4 px-4">
                 <FormInput
@@ -72,7 +71,7 @@ function Form1({ initialValues = form1InitialValues }: { initialValues?: Form1Va
                     onChangeText={props.handleChange("title")}
                     error={props.touched.title ? props.errors.title : ""}
                 />
-                <FormAutoSelect<RenderRoomTileProps>
+                <FormAutoSelect
                     currentItem={props.values.location as RenderRoomTileProps}
                     setCurrentItem={(item) => props.setFieldValue("location", item)}
                     label="Location"

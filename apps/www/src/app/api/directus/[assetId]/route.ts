@@ -1,4 +1,4 @@
-import { directusToken, directusUrl } from "@/lib/constants";
+import { directusToken, directusUrl } from "src/lib/constants";
 
 export async function GET(request: Request, { params: { assetId } }: { params: { assetId: string } }) {
     console.log(assetId)

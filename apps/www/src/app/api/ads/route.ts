@@ -1,5 +1,5 @@
-import { directus } from "@/lib/directus"
 import { readItems } from "@directus/sdk"
+import { directus } from "src/lib/directus"
 
 export const GET = async (req: Request) => {
     const searchParams = new URL(req.url).searchParams

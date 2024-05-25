@@ -1,18 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import HeroBg from "@/assets/svg/hero-bg";
-import HeroGirl from "@/assets/hero-girl.png"
-import HeroImage from "@/components/hero-image";
+import HeroGirl from "@/assets/hero-girl.png";
+import HeroImage from "src/components/hero-image";
+import { Button } from "src/components/ui/button";
+import { Text } from "src/components/ui/text";
 // import explainingVideo from "@/assets/explaining-video.mp4"
-import { Testimonial, TestimonialCarousel } from "@/components/client-components/home";
-import { directus } from "@/lib/directus";
+import phones from "@/assets/phones.png";
 import { aggregate, readItems } from "@directus/sdk";
-import phones from "@/assets/phones.png"
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { Feedback } from "@/lib/types";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "app/components/ui/accordion";
-import { HalfWidthDiv } from "@/components/half-width-div";
-import { NewsLetter } from "@/components/news-letter";
+import { Testimonial, TestimonialCarousel } from "src/components/client-components/home";
+import { HalfWidthDiv } from "src/components/half-width-div";
+import { NewsLetter } from "src/components/news-letter";
+import { directus } from "src/lib/directus";
 
 export default async function Home() {
   return <div className="flex flex-col gap-40 items-center relative">

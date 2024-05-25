@@ -1,11 +1,11 @@
 "use client"
 
-import { Feedback } from "@/lib/types"
+import { Feedback } from "src/lib/types"
 // import Video, { VideoProps } from "next-video"
-import { useContext, useState } from "react"
-import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel"
-import { Button } from "@/components/ui/button"
 import { MoveLeft, MoveRight } from "lucide-react"
+import { useState } from "react"
+import { Button } from "src/components/ui/button"
+import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "src/components/ui/carousel"
 
 export type Testimonial = Omit<Feedback, "agent"> & { user_created: { avatar: string, first_name: string, last_name: string, title: string } }
 

@@ -88,15 +88,15 @@ const autoCompleteFields = {
     "listings": ["id", "title", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name"]
 }
 
-type AdditionalAutoSelectFormProps<R extends AutoCompleteRenderItemProps> = {
+type AdditionalAutoSelectFormProps = {
     item: keyof typeof autoCompleteFields,
-    currentItem: R | null,
-    setCurrentItem: Dispatch<SetStateAction<R | undefined>>,
+    currentItem: AutoCompleteRenderItemProps | null,
+    setCurrentItem: Dispatch<SetStateAction<AutoCompleteRenderItemProps | undefined>>,
     filter: Record<string, any>,
-    initialValue?: R
+    initialValue?: AutoCompleteRenderItemProps
 }
 
-export const FormAutoSelect = <R extends RenderListingTileProps | RenderRoomTileProps>(props: TextInputProps & AdditionalFormInputProps & AdditionalAutoSelectFormProps<R>) => {
+export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps & AdditionalAutoSelectFormProps) => {
     const { colors } = useColorScheme()
     const { rest } = directusStore()
     const [searchText, setSearchText] = useState(props.initialValue?.title || "")
@@ -145,7 +145,7 @@ export const FormAutoSelect = <R extends RenderListingTileProps | RenderRoomTile
                 renderItem: ({ item }) => <Button
                     className="items-start"
                     onPress={() => {
-                        props.setCurrentItem(item as R)
+                        props.setCurrentItem(item)
                         setSearchText(item.title!)
                         setHideResults(true)
                     }}

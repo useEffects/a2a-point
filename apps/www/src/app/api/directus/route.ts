@@ -1,5 +1,5 @@
-import { directus } from "@/lib/directus";
 import { Query, createItem, readItem, readItems } from "@directus/sdk";
+import { directus } from "src/lib/directus";
 
 export const getItems = async (collection: string, query?: Query<any, any>) => {
     return await directus.request(readItems(collection, query));

@@ -1,9 +1,9 @@
-import { getItem } from "@/app/api/directus/route"
-import { Separator } from "@/components/ui/separator"
-import { Course, CourseLesson } from "@/lib/types"
-import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { redirect } from "next/navigation"
+import { getItem } from "src/app/api/directus/route"
+import { Separator } from "src/components/ui/separator"
+import { Course, CourseLesson } from "src/lib/types"
+import { cn } from "src/lib/utils"
 
 const LessonsSidebar = ({ lessons, currentLessonId }: { lessons: CourseLesson[], currentLessonId: string }) => {
     return <div className="w-full flex flex-col">

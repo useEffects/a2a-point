@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "es5",
     "lib": [
       "dom",
       "dom.iterable",
@@ -18,8 +18,12 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "jsxImportSource": "nativewind",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "src/*"
+      ]
     },
     "plugins": [
       {
@@ -32,8 +36,7 @@
     "app-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "video.d.ts"
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

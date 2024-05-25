@@ -1,6 +1,6 @@
-import { nextUrl } from "@/lib/constants";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { nextUrl } from "src/lib/constants";
 
 export async function GET(req: NextRequest) {
     const token = cookies().get("directus_session_token")?.value

@@ -1,10 +1,10 @@
+import "@/styles/global.css";
+import "@/styles/main.css";
 import { ReactNode } from "react";
-import "@/styles/global.css"
-import "@/styles/main.css"
-import "tailwind-theme/theme.css"
-import { ThemeProvider } from "@/components/providers/theme";
-import { View } from "@/components/view";
-import { QueryClientProvider } from "@/context/query";
+import { ThemeProvider } from "src/components/providers/theme";
+import { View } from "src/components/view";
+import { QueryClientProvider } from "src/context/query";
+import "tailwind-theme/theme.css";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (<html lang="en" suppressHydrationWarning>

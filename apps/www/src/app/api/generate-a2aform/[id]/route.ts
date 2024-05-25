@@ -1,8 +1,8 @@
-import { directus } from "@/lib/directus"
 import { readItem } from "@directus/sdk"
 import { PDFDocument } from 'pdf-lib'
-import { getFormData } from "@/lib/a2a-form"
-import { shortDate } from "@/lib/utils"
+import { getFormData } from "src/lib/a2a-form"
+import { directus } from "src/lib/directus"
+import { shortDate } from "src/lib/utils"
 
 const fields: string[] = [
     "establishmentNameBuyer",

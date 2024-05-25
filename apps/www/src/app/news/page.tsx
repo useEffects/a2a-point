@@ -1,8 +1,8 @@
-import { ListNews, MyPagination } from "@/components/client-components/news"
-import { directus } from "@/lib/directus"
 import { aggregate, readItems } from "@directus/sdk"
-import { NewsLetter } from "@/components/news-letter"
-import { News as NewsType } from "@/lib/types"
+import { ListNews, MyPagination } from "src/components/client-components/news"
+import { NewsLetter } from "src/components/news-letter"
+import { directus } from "src/lib/directus"
+import { News as NewsType } from "src/lib/types"
 
 export default async function News({ searchParams: { page } }: { searchParams: { page: string } }) {
     const limit = 3

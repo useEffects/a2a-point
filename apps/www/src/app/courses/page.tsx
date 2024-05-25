@@ -1,9 +1,9 @@
-import { directusUrl } from "@/lib/constants";
-import { Course } from "@/lib/types";
-import StartButton from "@/components/client-components/course";
-import { directus } from "@/lib/directus";
 import { readItems } from "@directus/sdk";
-import { NewsLetter } from "@/components/news-letter";
+import StartButton from "src/components/client-components/course";
+import { NewsLetter } from "src/components/news-letter";
+import { directusUrl } from "src/lib/constants";
+import { directus } from "src/lib/directus";
+import { Course } from "src/lib/types";
 
 export default async function Courses() {
     const fields = ["id", "title", "description", "cover_image"]

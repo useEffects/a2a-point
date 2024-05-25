@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button"
-import { Text } from "@/components/ui/text"
-import { Input } from "@/components/ui/input"
+import { Button } from "src/components/ui/button"
+import { Input } from "src/components/ui/input"
+import { Text } from "src/components/ui/text"
 
 export const NewsLetter = () => {
     return <div className="container flex justify-center items-center gap-4">

@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils"
 import { ReactNode } from "react"
+import { cn } from "src/lib/utils"
 
 export const HalfWidthDiv = ({ className, direction = "left", child1, child2 }: { className?: string, direction?: "left" | "right", child1: ReactNode, child2: ReactNode }) => {
     return <div className={cn("w-full grid items-center", className)}>

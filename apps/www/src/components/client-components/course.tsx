@@ -1,11 +1,11 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { Text } from "@/components/ui/text"
-import { useContext } from "react"
-import { AuthTokenContext } from "@/context/auth"
-import { login } from "@/lib/login"
 import { useRouter } from 'next/navigation'
+import { useContext } from "react"
+import { Button } from "src/components/ui/button"
+import { Text } from "src/components/ui/text"
+import { AuthTokenContext } from "src/context/auth"
+import { login } from "src/lib/login"
 
 export default function StartButton({ courseId, className }: { courseId: string, className?: string }) {
     const { token, setToken } = useContext(AuthTokenContext)
