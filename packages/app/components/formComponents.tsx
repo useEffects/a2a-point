@@ -1,15 +1,25 @@
 /* eslint-disable react/display-name */
 import { useColorScheme } from "app/hooks/color-scheme";
 import { cn } from "app/lib/utils";
-import { ComponentPropsWithoutRef, Dispatch, ReactNode, SetStateAction, forwardRef, useState } from "react";
-import { TextInput, TextInputProps, View } from "react-native";
+import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
+import { Image, TextInputProps, View } from "react-native";
 import { SelectRootProps } from "./primitives/select/types";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
 import { Text } from "./ui/text";
-import { set } from "fp-ts";
+import { Formik, FormikProps } from "formik";
+import AutoComplete from "react-native-autocomplete-input"
+import { useQuery } from "@tanstack/react-query";
+import directusStore from "app/store/directus";
+import { readItems } from "@directus/sdk";
+import { Listing, Room, User } from "app/lib/types";
+import { buildAssetUrl } from "app/lib/helpers";
+import { UserChip } from "./user-chip";
+import { useDebounce } from "use-debounce";
+import { Button } from "./ui/button";
+import { Separator } from "./ui/separator";
 
-type AdditionalFromInputProps = {
+type AdditionalFormInputProps = {
     error?: string,
     label?: string,
     maxLines?: number
@@ -17,7 +27,7 @@ type AdditionalFromInputProps = {
 
 export const initialInputHeight = 40
 
-export const FormInput = (props: TextInputProps & AdditionalFromInputProps) => {
+export const FormInput = (props: TextInputProps & AdditionalFormInputProps) => {
     const { error, label, maxLines = 4, ...rest } = props
     const [height, setHeight] = useState(initialInputHeight)
     const { colors } = useColorScheme()
@@ -35,6 +45,7 @@ export const FormInput = (props: TextInputProps & AdditionalFromInputProps) => {
             style={{ height, borderColor: error?.length ? colors.destructive : colors.border }}
             onContentSizeChange={e => handleSizeChange(e.nativeEvent.contentSize.height)}
             multiline
+            className="text-base"
         />
         {error ? <Text className="text-destructive text-xs">{error}</Text> : <></>}
     </View>
@@ -45,17 +56,19 @@ type AdditionalFormSelectProps = {
     error?: string,
     placeholder?: string,
     options: { value: string, label: string }[],
-    customSelectValue?: ReactNode
+    customSelectTrigger?: ReactNode,
+    asChild?: boolean,
 }
 
 export const FormSelect = (props: SelectRootProps & AdditionalFormSelectProps) => {
     const { error, label, placeholder, options, ...rest } = props
+
     return <View className="flex-col gap-2">
         <Text className={cn("text-sm", error?.length ? "text-destructive" : "text-subtext")}>{label}</Text>
-        <Select open>
+        <Select>
             <SelectTrigger className={cn(error ? "border-destructive" : "border-border")}>
-                {props.customSelectValue ? props.customSelectValue :
-                    <SelectValue className="text-foreground font-normal" placeholder={props.value?.value ?? ""} />}
+                <SelectValue className="text-foreground font-normal" placeholder={props.value?.label ?? ""}>
+                </SelectValue>
             </SelectTrigger>
             <SelectContent className="w-60" sideOffset={-40 + 8}>
                 <SelectGroup>
@@ -68,29 +81,100 @@ export const FormSelect = (props: SelectRootProps & AdditionalFormSelectProps) =
     </View>
 }
 
-type AdditionalAutoSelectFormProps = {
-    searchText: string,
-    setSearchText: Dispatch<SetStateAction<string>>,
-    open: boolean,
-    setOpen: Dispatch<SetStateAction<boolean>>,
+export type AutoCompleteRenderItemProps = RenderListingTileProps | RenderRoomTileProps
+
+const autoCompleteFields = {
+    "rooms": ["id", "title", "avatar"],
+    "listings": ["id", "title", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name"]
 }
 
-export const FormAutoSelect = (props: SelectRootProps & AdditionalFormSelectProps & AdditionalAutoSelectFormProps) => {
-    console.log(props.options)
-    return <>
-        <FormSelect
-            options={props.options}
-            label={props.label}
-            error={props.error}
-            // open={props.open}
-            // onOpenChange={props.setOpen}
-            customSelectValue={<Input
-                className="bg-card pl-0 border-0"
-                value={props.searchText}
-                onChangeText={props.setSearchText}
-                placeholder={props.placeholder}
-                style={{ borderColor: props.error ? "red" : undefined }}
+type AdditionalAutoSelectFormProps<R extends AutoCompleteRenderItemProps> = {
+    item: keyof typeof autoCompleteFields,
+    currentItem: R | null,
+    setCurrentItem: Dispatch<SetStateAction<R | undefined>>,
+    filter: Record<string, any>,
+    initialValue?: R
+}
+
+export const FormAutoSelect = <R extends RenderListingTileProps | RenderRoomTileProps>(props: TextInputProps & AdditionalFormInputProps & AdditionalAutoSelectFormProps<R>) => {
+    const { colors } = useColorScheme()
+    const { rest } = directusStore()
+    const [searchText, setSearchText] = useState(props.initialValue?.title || "")
+    const [debouncedSearchText] = useDebounce(searchText, 500)
+    const [hideResults, setHideResults] = useState(true)
+
+    const { data } = useQuery<AutoCompleteRenderItemProps[]>({
+        queryKey: ["Fetch AutoComplete Data", props.value, props.item, debouncedSearchText],
+        queryFn: async () => rest.request(readItems(props.item, {
+            filter: props.filter,
+            search: debouncedSearchText,
+            fields: autoCompleteFields[props.item],
+            limit: 5
+        })) as Promise<(AutoCompleteRenderItemProps)[]>,
+        initialData: [],
+    })
+
+    const handleChange = (val: string) => {
+        setSearchText(val)
+        setHideResults(false)
+    }
+
+    const isRenderRoomTile = (item: RenderRoomTileProps | RenderListingTileProps): item is RenderRoomTileProps => {
+        return props.item === "rooms"
+    }
+
+    const RenderItem = (item: RenderRoomTileProps | RenderListingTileProps) => {
+        return isRenderRoomTile(item) ? <RenderRoomTile {...item} currentId={props.currentItem?.id} /> : <RenderListingTile {...item} currentId={props.currentItem?.id} />
+    }
+
+    return <View className="">
+        <AutoComplete
+            data={data}
+            renderTextInput={() => <FormInput
+                value={searchText}
+                label={props.label}
+                onChangeText={handleChange}
+                onFocus={() => setHideResults(false)}
+                onBlur={() => setHideResults(true)}
             />}
+            hideResults={hideResults}
+            inputContainerStyle={{ borderWidth: 0 }}
+            containerStyle={{ borderWidth: 0 }}
+            flatListProps={{
+                scrollEnabled: false,
+                renderItem: ({ item }) => <Button
+                    className="items-start"
+                    onPress={() => {
+                        props.setCurrentItem(item as R)
+                        setSearchText(item.title!)
+                        setHideResults(true)
+                    }}
+                    variant={"base"}
+                    size={"none"}
+                >
+                    <RenderItem {...item} />
+                </Button>,
+                style: { borderWidth: 0, backgroundColor: colors.card, margin: 0, borderRadius: 8, padding: 8 },
+                ItemSeparatorComponent: () => <Separator className="my-2 px-4" />,
+                keyboardShouldPersistTaps: "handled"
+            }}
         />
-    </>
+    </View>
+}
+
+export type RenderRoomTileProps = Pick<Room, "id" | "avatar" | "title">
+export type RenderListingTileProps = Pick<Listing, "id" | "title"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name"> }
+
+const RenderRoomTile = (props: RenderRoomTileProps & { currentId: string | undefined }) => {
+    return <View className={cn("flex-row p-2 rounded gap-4 items-center", props.currentId === props.id && "bg-popover flex-1 w-full")}>
+        <Image source={{ uri: buildAssetUrl(props.avatar) }} className="w-6 h-6 rounded-full" />
+        <Text className="font-normal text-sm">{props.title}</Text>
+    </View>
+}
+
+const RenderListingTile = (props: RenderListingTileProps & { currentId: string | undefined }) => {
+    return <View className="flex-col p-2 gap-2">
+        <Text>{props.title}</Text>
+        <UserChip user={{ ...props.user_created }} />
+    </View>
 }

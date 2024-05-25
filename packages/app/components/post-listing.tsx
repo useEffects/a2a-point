@@ -2,40 +2,20 @@ import { cn } from "app/lib/utils";
 import { Formik, FormikProps } from "formik";
 import { Image, ScrollView, View } from "react-native";
 import * as Yup from "yup";
-import { FormAutoSelect, FormInput, FormSelect } from "./formComponents";
+import { AutoCompleteRenderItemProps, FormAutoSelect, FormInput, FormSelect, RenderRoomTileProps } from "./formComponents";
 import { Button } from "./ui/button";
 import { Text } from "./ui/text";
 import { NavigationState, Route, SceneMap, SceneRendererProps, TabView } from "react-native-tab-view";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
-import AutoComplete from "react-native-autocomplete-input";
 import directusStore from "app/store/directus";
 import { readItems } from "@directus/sdk";
 import { useQuery } from "@tanstack/react-query";
 import { Room } from "app/lib/types";
-import { as } from "fp-ts/lib/Option";
 import { useColorScheme } from "app/hooks/color-scheme";
-import { buildAssetUrl } from "app/lib/helpers";
-import { Input } from "./ui/input";
 
 function Form1({ initialValues = form1InitialValues }: { initialValues?: Form1Values }) {
     const { rest } = directusStore()
-    const [searchText, setSearchText] = useState("")
-    const [open, setOpen] = useState(false)
     const { colors } = useColorScheme()
-    const { data: rooms } = useQuery({
-        queryKey: ["fetching locations for post creation form", initialValues],
-        queryFn: async () => await rest.request(readItems("rooms", {
-            fields: ["id", "title", "avatar"],
-            filter: {
-                type: {
-                    _eq: "group"
-                }
-            },
-            search: searchText,
-            limit: 5
-        })),
-        initialData: []
-    }) as { data: Pick<Room, "id" | "title" | "avatar">[] }
 
     const dealTypeLabels = {
         rent: "Rent",
@@ -48,7 +28,7 @@ function Form1({ initialValues = form1InitialValues }: { initialValues?: Form1Va
         enquiry: "Enquiry"
     }
 
-    const Form1Schema = useMemo(() => Yup.object().shape({
+    const Form1Schema = Yup.object().shape({
         title: Yup.string().
             min(10)
             .max(50)
@@ -71,10 +51,10 @@ function Form1({ initialValues = form1InitialValues }: { initialValues?: Form1Va
             .oneOf(["listing", "enquiry"])
             .required("Type is required"),
         expectedBrokerFees: Yup.number().min(0).max(100).required("Expected broker fees is required"),
-        group: Yup.string()
-            .oneOf(rooms.map(r => r.id!), "Invalid location")
-            .required("Group is required"),
-    }), [rooms])
+        location: Yup.object().shape({
+            id: Yup.number().required("Location is required"),
+        })
+    })
 
     const onSubmit = (values: Form1Values) => {
         console.log(values)
@@ -83,14 +63,26 @@ function Form1({ initialValues = form1InitialValues }: { initialValues?: Form1Va
     const typeOptions = Object.entries(typeLabels).map(([value, label]) => ({ value, label }))
 
     const Form = (props: FormikProps<Form1Values>) => {
-
-        return <ScrollView contentContainerClassName="flex-grow">
-            <View className="flex-1 flex-col gap-4">
+        console.log(props.values)
+        return <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="flex-grow">
+            <View className="flex-1 flex-col gap-4 px-4">
                 <FormInput
                     label="Title"
                     value={props.values.title}
                     onChangeText={props.handleChange("title")}
                     error={props.touched.title ? props.errors.title : ""}
+                />
+                <FormAutoSelect<RenderRoomTileProps>
+                    currentItem={props.values.location as RenderRoomTileProps}
+                    setCurrentItem={(item) => props.setFieldValue("location", item)}
+                    label="Location"
+                    error={props.touched.location ? props.errors.location : ""}
+                    item="rooms"
+                    filter={{
+                        type: {
+                            _eq: "group"
+                        }
+                    }}
                 />
                 <FormInput
                     label="Description"
@@ -125,15 +117,6 @@ function Form1({ initialValues = form1InitialValues }: { initialValues?: Form1Va
                     value={{ label: typeLabels[props.values.type], value: props.values.type }} onValueChange={e => e?.value && props.setFieldValue("type", e.value)}
                     options={typeOptions}
                     error={props.touched.type ? props.errors.type : ""}
-                />
-                <FormAutoSelect
-                    label="Location"
-                    error={props.touched.group ? props.errors.group : ""}
-                    searchText={searchText}
-                    setSearchText={setSearchText}
-                    open={open}
-                    setOpen={setOpen}
-                    options={rooms.map(r => ({ value: r.id!, label: r.title! }))}
                 />
             </View>
         </ScrollView>
@@ -238,7 +221,7 @@ export default function PostListing() {
 
     const onSubmit = () => { }
 
-    return <View className="flex-1 w-full">
+    return <View className="flex-1 w-full flex-col gap-4">
         <TabView
             swipeEnabled={false}
             renderTabBar={() => null}
@@ -264,9 +247,9 @@ const form1InitialValues: Form1Values = {
     dealType: "buy",
     type: "listing",
     tags: [],
-    group: "",
     carpetArea: 0,
-    expectedBrokerFees: 0
+    expectedBrokerFees: 0,
+    location: null
 }
 
 const form2InitialValues: Form2Values = {
@@ -281,13 +264,13 @@ type Form1Values = {
     dealType: "rent" | "buy" | "sell";
     type: "listing" | "enquiry";
     tags: string[];
-    group: string;
     bathrooms?: number;
     bedrooms?: number;
     carpetArea?: number;
     floors?: number;
     garage?: number;
     expectedBrokerFees?: number;
+    location: AutoCompleteRenderItemProps | null
 }
 
 type Form2Values = {

@@ -446,6 +446,7 @@ export {
   Viewport,
   useItemContext,
   useRootContext,
+  IRootContext
 };
 
 export type { Option } from './types';

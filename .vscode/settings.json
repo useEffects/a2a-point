@@ -4,6 +4,7 @@
         "Formik",
         "lucide",
         "nativewind",
+        "Pressable",
         "solito"
     ],
     "typescript.tsdk": "node_modules/typescript/lib"

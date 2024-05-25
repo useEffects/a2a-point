@@ -59,6 +59,7 @@ View.displayName = 'SlotView';
 const Text = React.forwardRef<React.ElementRef<typeof RNText>, RNTextProps>(
   (props, forwardedRef) => {
     const { children, ...textSlotProps } = props;
+    console.log({children})
 
     if (!React.isValidElement(children)) {
       console.log('Slot.Text - Invalid asChild element', children);
