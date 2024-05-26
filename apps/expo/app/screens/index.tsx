@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { View, useWindowDimensions } from 'react-native';
-import { createMaterialTopTabNavigator, MaterialTopTabBar } from '@react-navigation/material-top-tabs';
+import { Pressable, View, useWindowDimensions } from 'react-native';
+import { createMaterialTopTabNavigator, MaterialTopTabBar, MaterialTopTabBarProps } from '@react-navigation/material-top-tabs';
 import { Bell, Lock, LogIn, LucideIcon, MessageCircleMore, Plus, TrendingUp, User } from "lucide-react-native";
 import { Text } from 'app/components/ui/text';
 import { useColorScheme } from 'app/hooks/color-scheme';
@@ -22,6 +22,7 @@ import { cn } from 'app/lib/utils';
 import ProfileDetailed from './profile-detailed';
 import LocationListings from './location-listings';
 import PostFeedback from './post-feedback';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createStackNavigator()
@@ -39,8 +40,8 @@ const useTabBarLabel = (Icon: LucideIcon, label: string, badgeCount?: number) =>
     const canNavigate = authenticated || canNavigateTabs.includes(label);
 
     const TabBarLabelComponent = ({ focused }: { focused: boolean }) => (
-        <View className='flex-col items-center'>
-            <View style={{ backgroundColor: focused ? canNavigate ? opacity(colors.primary, 0.1) : opacity(colors.muted, 0.5) : "transparent" }} className={cn('py-1 px-4 rounded-full relative mx-auto flex-row justify-center', authenticated ? "w-16" : "w-4")}>
+        <View className='flex-col items-center w-full'>
+            <View style={{ backgroundColor: focused ? canNavigate ? opacity(colors.primary, 0.1) : opacity(colors['muted-foreground'], 0.1) : "transparent" }} className={cn("w-full p-1 rounded-full relative mx-auto flex-row justify-center")}>
                 {badgeCount ?
                     <View className='absolute -top-1/3 right-0 w-12 flex-row justify-end'>
                         <Text className='text-xs py-[1px] px-1 bg-primary text-primary-foreground rounded-full'>{badgeCount}</Text>
@@ -56,7 +57,6 @@ const useTabBarLabel = (Icon: LucideIcon, label: string, badgeCount?: number) =>
 };
 
 const ScreensLayout = () => {
-    const { colors } = useColorScheme();
     const { authenticated } = directusStore();
 
     const chatTabBarLabel = useTabBarLabel(MessageCircleMore, "Chat");
@@ -140,7 +140,7 @@ const ScreensLayout = () => {
             initialRouteName="post"
             backBehavior="history"
             tabBarPosition='bottom'
-            tabBar={isKeyboardVisible ? () => null : MaterialTopTabBar}
+            tabBar={isKeyboardVisible ? () => null : CustomTabBar}
             screenOptions={{
                 tabBarAndroidRipple: {
                     color: "transparent"
@@ -148,7 +148,7 @@ const ScreensLayout = () => {
                 tabBarIndicator: () => null,
                 tabBarContentContainerStyle: {
                     justifyContent: "space-between",
-                }
+                },
             }}
         >
             {finalTabScreens.map(screen => screen)}
@@ -165,4 +165,54 @@ export default function AppLayout() {
         <Stack.Screen name="location-listings" component={LocationListings} />
         <Stack.Screen name="post-feedback" component={PostFeedback} />
     </Stack.Navigator>
+};
+
+const CustomTabBar: React.FC<MaterialTopTabBarProps> = ({ state, descriptors, navigation }) => {
+    const insets = useSafeAreaInsets();
+
+    return (
+        <View style={{ paddingBottom: insets.bottom }} className='flex-row items-center h-20 px-4 gap-1'>
+            {state.routes.map((route, index) => {
+                const { options } = descriptors[route.key]!;
+                const label =
+                    options.tabBarLabel !== undefined
+                        ? options.tabBarLabel
+                        : options.title !== undefined
+                            ? options.title
+                            : route.name;
+
+                const isFocused = state.index === index;
+
+                const onPress = () => {
+                    const event = navigation.emit({
+                        type: 'tabPress',
+                        target: route.key,
+                        canPreventDefault: true,
+                    });
+
+                    if (!isFocused && !event.defaultPrevented) {
+                        navigation.navigate(route.name);
+                    }
+                };
+
+                const onLongPress = () => {
+                    navigation.emit({
+                        type: 'tabLongPress',
+                        target: route.key,
+                    });
+                };
+
+                return (
+                    <Pressable
+                        key={index}
+                        onPress={onPress}
+                        onLongPress={onLongPress}
+                        className='flex-1'
+                    >
+                        {typeof label === "function" ? label({ focused: isFocused, children: '', color: '' }) : label}
+                    </Pressable>
+                );
+            })}
+        </View>
+    );
 };

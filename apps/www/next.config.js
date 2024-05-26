@@ -21,7 +21,7 @@ const nextConfig = {
     'react-native-gesture-handler',
     'react-native-css-interop',
     'react-native-vector-icons',
-    'react-native-ratings'
+    'react-native-ratings',
   ],
 }
 

@@ -2,15 +2,28 @@ import directusStore from "app/store/directus"
 import { useRouter } from "solito/navigation"
 import * as WebBrowser from 'expo-web-browser';
 import { directusUrl, portfolioUrl } from "app/lib/constants";
-import { Linking, ScrollView, View } from "react-native";
+import { Image, Linking, ScrollView, View } from "react-native";
 import { Text } from "app/components/ui/text";
 import { Button } from "app/components/ui/button";
 import { CompanyStats } from "app/components/company-stats";
+import Logo from "app/components/svg/logo";
+import Hero from "app/components/svg/hero";
+import HeroGirl from "app/assets/hero-girl.png"
+import useNavigation from "app/hooks/navigation";
+import { useEffect } from "react";
+import { Header } from "app/components/header";
 
 const LoginScreen = () => {
     const { initialize } = directusStore()
     const router = useRouter()
     const appURL = "a2apoint-community://"
+    const navigation = useNavigation()
+
+    useEffect(() => {
+        navigation.setOptions({
+            title: "Hello",
+        })
+    }, [navigation])
 
     const handleLogin = async () => {
         const result = await WebBrowser.openAuthSessionAsync(`${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/expo-redirect?appUrl=${appURL}`, appURL);
@@ -23,26 +36,33 @@ const LoginScreen = () => {
         }
     }
 
-    return <ScrollView className='py-4'>
-        <View className='bg-accent w-full flex-col items-center gap-4 px-4 py-12'>
-            <Text className='text-lg'>Welcome to <Text className='text-primary font-bold'>A2APoint</Text> </Text>
-            <View>
-                <Text>For more information, visit </Text>
-                <Button onPress={() => Linking.openURL("https://a2apoint.com")} size={"none"} variant={"link"}>
-                    <Text className='text-info text-sm underline'>https://a2apoint.com</Text>
+    return <ScrollView contentContainerClassName="flex-grow">
+        <Header>
+            <Text className="text-xl font-bold">Login</Text>
+        </Header>
+        <View className="flex-col justify-between flex-1 items-start px-4 py-8">
+            <View className="flex-col items-center w-full">
+                <Text className="text-2xl font-bold">Welcome to <Text className="text-2xl text-primary">A2APoint</Text></Text>
+                <Text>For more information visit</Text>
+                <Button onPress={() => Linking.openURL("https://a2apoint.com")} size={"none"} variant={"base"}>
+                    <Text className="text-info underline">https://a2apoint.com</Text>
                 </Button>
             </View>
-            <View className='flex-col gap-2'>
-                <Button onPress={handleLogin}>
-                    <Text>Sign in or Create an account (it&apos;s free) </Text>
-                </Button>
-                <Text className='text-sm text-center'>Sign in to unlock the full mobile application</Text>
+            <View className="flex-row justify-center w-full relative">
+                <Image alt="hero image" source={HeroGirl} style={{ width: 350, height: 350 }} className="absolute z-[10]" resizeMode="contain" />
+                <Hero width={350} height={350} />
+            </View>
+            <Button onPress={handleLogin} className="w-full">
+                <Text>Login or create account</Text>
+            </Button>
+            <View className="flex-col w-full items-center">
+                <View className="p-4 bg-card rounded-full">
+                    <Logo width={60} height={60} />
+                </View>
+                <Text className="text-sm text-subtext text-center">By continuing, you agree to our <Text className="text-sm text-info underline">Terms of Service</Text> and that you have read our <Text className="text-sm text-info underline">Privacy Policy</Text></Text>
             </View>
         </View>
-        <Text className='text-center pb-8 font-semibold'>Sign in to view all the listings and much more!</Text>
-        <CompanyStats className='justify-evenly' />
-        <View className='my-4' />
-    </ScrollView>
+    </ScrollView >
 }
 
 export default LoginScreen
