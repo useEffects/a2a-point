@@ -11,6 +11,7 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@rneui/base": "^4.0.0-rc.8",
+    "@tamagui/config": "^1.99.1",
     "@tanstack/react-query": "^5.36.2",
     "@types/react-native-material-textfield": "^0.16.10",
     "@types/shuffle-array": "^1.0.5",
@@ -39,6 +40,7 @@
     "tailwind-merge": "^2.3.0",
     "tailwind-theme": "*",
     "tailwindcss": "^3.4.3",
+    "tamagui": "^1.99.1",
     "yup": "^1.4.0",
     "zustand": "^4.5.2"
   },

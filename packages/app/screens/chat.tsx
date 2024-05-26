@@ -65,9 +65,6 @@ export default function ChatScreen() {
     }) as { data: GroupListRowProp[], isLoading: boolean }
 
     return <ScrollView className="flex-col gap-4">
-        <Header>
-            <Text className="text-xl font-bold">Chats</Text>
-        </Header>
         <View className="p-4 bg-card">
             <SearchBar
                 searchText={searchText}

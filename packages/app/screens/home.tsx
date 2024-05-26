@@ -4,20 +4,23 @@ import SearchBar from "app/components/searchbar";
 import { Button } from "app/components/ui/button";
 import { Separator } from "app/components/ui/separator";
 import { useColorScheme } from "app/hooks/color-scheme";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { useDebounce } from "use-debounce";
 import { Award, CreditCard, Home, ListFilter, LucideProps, Sparkles } from "lucide-react-native";
-import { BottomSheet } from '@rneui/themed';
+import BottomSheet from 'app/components/bottomsheet';
 import { CloseButton } from "app/components/utils";
 import { Text } from "app/components/ui/text";
+import { GoToLoginButton } from "./locked-screens";
+import directusStore from "app/store/directus";
 
-export default function HomeScreen() {
+export default function HomeScreenComponent() {
     const [searchText, setSearchText] = useState("")
     const [debouncedSearchText] = useDebounce(searchText, 500)
     const [bottomSheetVisible, setBottomSheetVisible] = useState(false)
     const [filter, setFilter] = useState<CommonFilters | null>(null)
     const { colors } = useColorScheme()
+    const { authenticated } = directusStore()
 
     return <View className="max-w-xl">
         <View className="flex-row items-center flex-1 justify-between gap-4 mb-12">
@@ -49,13 +52,9 @@ export default function HomeScreen() {
             searchText={debouncedSearchText}
         />
         <BottomSheet
-            isVisible={bottomSheetVisible}
+            open={bottomSheetVisible}
             onBackdropPress={() => setBottomSheetVisible(false)}
-            backdropStyle={{ backgroundColor: "transparent" }}
-            containerStyle={{ backgroundColor: "transparent" }}
-            scrollViewProps={{
-                scrollEnabled: false,
-            }}
+            setOpen={setBottomSheetVisible}
         >
             <View className="p-8 flex-col gap-8 bg-card">
                 <View className="flex-row gap-4 items-center">
@@ -85,6 +84,7 @@ export default function HomeScreen() {
                 </View>
             </View>
         </BottomSheet>
+        {!authenticated ? <LoginPopover /> : <></>}
     </View>
 }
 
@@ -107,3 +107,43 @@ const categoryTiles = [
         filterMethod: CommonFilters.Rent
     }
 ]
+
+export const LoginPopover = () => {
+    const [isOpen, setIsOpen] = useState(false)
+    const [canClose, setCanClose] = useState(false)
+    const { colors } = useColorScheme()
+
+    // useEffect(() => {
+    //     const isOpenTimeout = setInterval(() => {
+    //         setIsOpen(true)
+    //     }, 1000 * 60 * 1)
+    //     const canCloseTimeout = setTimeout(() => {
+    //         setCanClose(false)
+    //     }, 1000 * 60 * 5)
+    //     return () => {
+    //         clearInterval(isOpenTimeout)
+    //         clearTimeout(canCloseTimeout)
+    //     }
+    // }, [])
+
+    const handleClose = () => {
+        if (!canClose) return
+        setIsOpen(false)
+    }
+
+    return <BottomSheet open={isOpen} setOpen={setIsOpen} onBackdropPress={handleClose}>
+        <View className="p-4 bg-card flex-card gap-4">
+            <View className="flex-row justify-between">
+                <View className="flex-row gap-2">
+                    <Sparkles fill={colors.primary} className="text-primary" />
+                    <Text className="text-xl font-bold">Get Started</Text>
+                </View>
+                {canClose ? <CloseButton onPress={() => setIsOpen(false)} /> : <></>}
+            </View>
+            <View className="flex-col gap-4">
+                <Text>Login to unlock the full application</Text>
+                <GoToLoginButton additionalOnPress={() => setIsOpen(false)} />
+            </View>
+        </View>
+    </BottomSheet>
+}

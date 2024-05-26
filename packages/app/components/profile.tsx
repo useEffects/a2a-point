@@ -40,17 +40,6 @@ export default function Profile({ user }: { user: User }) {
         }
         const buttonWidth = width / 2 - 14 - 8
         return <>
-            <Header>
-                <View className="flex-row gap-8 justify-between flex-1 items-center">
-                    <Text className="text-lg">Profile</Text>
-                    <View className="flex-row gap-4 items-center">
-                        <Button variant="base" size="none">
-                            <LogOut size={18} color={colors.foreground} />
-                        </Button>
-                        <ToggleTheme />
-                    </View>
-                </View>
-            </Header>
             <Collapsible duration={500} collapsed={collapsed}>
                 <View className="flex-col gap-8 my-8">
                     <View className="flex-col gap-4 items-center">

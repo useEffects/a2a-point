@@ -6,7 +6,8 @@
         "nativewind",
         "Pressable",
         "Searchbar",
-        "solito"
+        "solito",
+        "tamagui"
     ],
     "typescript.tsdk": "node_modules/typescript/lib"
 }

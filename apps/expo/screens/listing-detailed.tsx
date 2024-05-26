@@ -8,9 +8,10 @@ import { Header } from "app/components/header"
 import { Text } from "app/components/ui/text"
 import { queryClient } from "app/store/query"
 import userStore from "app/store/user"
+import { LoginPopover } from "app/screens/home"
 
 export default function FullListingScreen() {
-    const { rest } = directusStore()
+    const { rest, authenticated } = directusStore()
     const { user } = userStore()
     const params = useParams<{ id: string }>()
     const [listing, setListing] = useState<FullListingDetailed | null>(null)
@@ -63,5 +64,6 @@ export default function FullListingScreen() {
         <View className="px-4">
             <FullListingCard {...listing} />
         </View>
+        {!authenticated ? <LoginPopover /> : <></>}
     </ScrollView> : <></>
 }

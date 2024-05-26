@@ -1,6 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Theme, ThemeProvider } from "@react-navigation/native";
 import { PortalHost } from "app/components/primitives/portal";
+import ChatsProvider from "app/components/providers/chats";
+import { setAndroidNavigationBarTheme } from "app/components/toggle-theme";
 import { useColorScheme } from "app/hooks/color-scheme";
 import directusStore from "app/store/directus";
 import { SplashScreen } from "expo-router";
@@ -9,9 +11,7 @@ import { Platform, StatusBar } from "react-native";
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "tailwind-theme/theme.css";
-import AppLayout from "./screens";
-import { setAndroidNavigationBarTheme } from "app/components/toggle-theme";
-import ChatsProvider from "app/components/providers/chats";
+import AppLayout from "../screens";
 
 SplashScreen.preventAutoHideAsync();
 

@@ -1,9 +1,9 @@
 import { Button, ButtonProps } from "../ui/button"
 import { useColorScheme } from "app/hooks/color-scheme"
 import { X } from "lucide-react-native"
-import { useNavigation } from "@react-navigation/native"
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from "app/lib/misc/navigation"
+import useNavigation from "app/hooks/navigation"
+import { useEffect } from "react"
+import { GestureResponderEvent } from "react-native"
 
 export const CloseButton = (props: ButtonProps) => {
     const { colors } = useColorScheme()
@@ -15,7 +15,7 @@ export const CloseButton = (props: ButtonProps) => {
 }
 
 export const GoToFullListingButton = (props: ButtonProps & { listingId: string }) => {
-    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
+    const navigation = useNavigation()
 
     const goToDetailScreen = () => {
         navigation.getState() && navigation.navigate("listing-detailed", {
@@ -27,7 +27,7 @@ export const GoToFullListingButton = (props: ButtonProps & { listingId: string }
 }
 
 export const GoToRoomButton = (props: ButtonProps & { roomId: string | Promise<string> }) => {
-    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
+    const navigation = useNavigation()
 
     const goToDetailScreen = async () => {
         const id = await props.roomId
@@ -40,7 +40,7 @@ export const GoToRoomButton = (props: ButtonProps & { roomId: string | Promise<s
 }
 
 export const GoToProfileButton = (props: ButtonProps & { userId: string }) => {
-    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
+    const navigation = useNavigation()
 
     const goToProfileDetailed = () => {
         navigation.getState() && navigation.navigate("profile-detailed", {
@@ -52,7 +52,7 @@ export const GoToProfileButton = (props: ButtonProps & { userId: string }) => {
 }
 
 export const GoToLocationListingsButton = (props: ButtonProps & { roomId: string }) => {
-    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
+    const navigation = useNavigation()
 
     const goToLocationDetailed = () => {
         navigation.getState() && navigation.navigate("location-listings", {
@@ -64,7 +64,7 @@ export const GoToLocationListingsButton = (props: ButtonProps & { roomId: string
 }
 
 export const GoToPostFeedbackButton = (props: ButtonProps & { userId: string }) => {
-    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
+    const navigation = useNavigation()
 
     const goToPostFeedback = () => {
         navigation.getState() && navigation.navigate("post-feedback", {
@@ -73,4 +73,20 @@ export const GoToPostFeedbackButton = (props: ButtonProps & { userId: string }) 
     }
 
     return <Button variant={"base"} size={"none"} onPress={goToPostFeedback} {...props} />
+}
+
+export type GoToLoginButtonProps = ButtonProps & { additionalOnPress?: () => void }
+export const GoToLoginButton = (props: GoToLoginButtonProps) => {
+    const navigation = useNavigation()
+
+    const goToLogin = () => {
+        navigation.getState() && navigation.navigate("login")
+    }
+
+    const handleOnPress = (e: GestureResponderEvent) => {
+        props.additionalOnPress && props.additionalOnPress()
+        goToLogin()
+    }
+
+    return <Button variant={"base"} size={"none"} onPress={handleOnPress} {...props} />
 }

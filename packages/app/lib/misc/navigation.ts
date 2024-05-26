@@ -16,3 +16,13 @@ export type RootStackParamList = {
         id: string
     }
 }
+
+export type TopTabParamList = {
+    "home": undefined,
+    "search": undefined,
+    "notifications": undefined,
+    "profile": undefined,
+    "login": undefined,
+    "chat": undefined,
+    "post": undefined
+}
