@@ -1,11 +1,13 @@
+"use client"
+
 import HeroGirl from "@/assets/hero-girl.png";
 import HeroImage from "src/components/hero-image";
-import { Button } from "src/components/ui/button";
-import { Text } from "src/components/ui/text";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
 // import explainingVideo from "@/assets/explaining-video.mp4"
 import phones from "@/assets/phones.png";
 import { aggregate, readItems } from "@directus/sdk";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "app/components/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Testimonial, TestimonialCarousel } from "src/components/client-components/home";
 import { HalfWidthDiv } from "src/components/half-width-div";
 import { NewsLetter } from "src/components/news-letter";
@@ -67,7 +69,7 @@ export default async function Home() {
         direction="right"
         child1={
           <div className="w-full flex flex-col gap-8 justify-between items-center">
-            <div className="max-w-sm flex gap-12 w-full">
+            {/* <div className="max-w-sm flex gap-12 w-full">
               {stats.map((item, index) => <div key={index} className="flex flex-col items-end">
                 <div className="flex items-end">
                   <p className="text-3xl md:text-7xl"> {item.count} </p>
@@ -77,7 +79,7 @@ export default async function Home() {
               </div>)}
             </div>
             <p className="max-w-sm">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nesciunt, numquam ea! Fugiat dolorum facilis consectetur dicta labore, quos vel atque?</p>
-            <TestimonialCarousel testimonials={testimonials} />
+            <TestimonialCarousel testimonials={testimonials} /> */}
           </div>
         }
         child2={
@@ -171,40 +173,40 @@ const steps = [
   }
 ]
 
-const getListingsCount = await directus.request(aggregate("listings", {
-  aggregate: {
-    count: ["*"]
-  }
-}))
-const getUsersCount = await directus.request(aggregate("directus_users", {
-  aggregate: {
-    count: ["*"]
-  }
-}))
+// const getListingsCount = await directus.request(aggregate("listings", {
+//   aggregate: {
+//     count: ["*"]
+//   }
+// }))
+// const getUsersCount = await directus.request(aggregate("directus_users", {
+//   aggregate: {
+//     count: ["*"]
+//   }
+// }))
 
-const listingsCount = getListingsCount?.[0].count as unknown as number
-const usersCount = getUsersCount?.[0].count as unknown as number
+// const listingsCount = getListingsCount?.[0].count as unknown as number
+// const usersCount = getUsersCount?.[0].count as unknown as number
 
-const stats = [
-  {
-    title: "Listings",
-    count: listingsCount
-  },
-  {
-    title: "Users",
-    count: usersCount
-  }
-]
+// const stats = [
+//   {
+//     title: "Listings",
+//     count: listingsCount
+//   },
+//   {
+//     title: "Users",
+//     count: usersCount
+//   }
+// ]
 
-const res = await directus.request(readItems("portfolio", {
-  fields: ["featured_testimonials.feedbacks_id.*", "featured_testimonials.feedbacks_id.user_created.avatar", "featured_testimonials.feedbacks_id.user_created.first_name", "featured_testimonials.feedbacks_id.user_created.last_name", "featured_testimonials.feedbacks_id.user_created.title"],
-})) as unknown as {
-  featured_testimonials: {
-    feedbacks_id: Testimonial
-  }[]
-}
+// const res = await directus.request(readItems("portfolio", {
+//   fields: ["featured_testimonials.feedbacks_id.*", "featured_testimonials.feedbacks_id.user_created.avatar", "featured_testimonials.feedbacks_id.user_created.first_name", "featured_testimonials.feedbacks_id.user_created.last_name", "featured_testimonials.feedbacks_id.user_created.title"],
+// })) as unknown as {
+//   featured_testimonials: {
+//     feedbacks_id: Testimonial
+//   }[]
+// }
 
-const testimonials = res.featured_testimonials.map(item => item.feedbacks_id)
+// const testimonials = res.featured_testimonials.map(item => item.feedbacks_id)
 
 const accordionItems = [
   {

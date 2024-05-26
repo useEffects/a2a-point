@@ -1,7 +1,7 @@
 import { aggregate, createItem, createNotification, deleteItems, readItems } from "@directus/sdk"
 import { useQuery } from "@tanstack/react-query"
 import directusStore from "app/store/directus"
-import { queryClient } from ".."
+import { queryClient } from "app/store/query"
 import userStore from "app/store/user"
 import { Listing, User } from "app/lib/types"
 
@@ -68,7 +68,7 @@ export const useListingMetrics = (listingId: string) => {
             queryFn: async () => await rest.request(deleteItems("listings_directus_users", [savedId]))
         })
         queryClient.setQueryData(savesCountKey(listingId), ([prev]: UserCount[]
-        ) => { return [{ count: { directus_users_id: (Number(prev.count.directus_users_id) - 1) } }] })
+        ) => { return [{ count: { directus_users_id: (Number(prev!.count.directus_users_id) - 1) } }] })
         queryClient.setQueryData(checkSavesKey(listingId), [])
     }
 
@@ -95,16 +95,16 @@ export const useListingMetrics = (listingId: string) => {
             }))
         })
         await queryClient.setQueryData(savesCountKey(listingId), ([prev]: UserCount[]
-        ) => ([{ count: { directus_users_id: (Number(prev.count.directus_users_id) + 1) } }]))
+        ) => ([{ count: { directus_users_id: (Number(prev!.count.directus_users_id) + 1) } }]))
         await queryClient.setQueryData(checkSavesKey(listingId), [{ id: res.id }])
         return res
     }
 
     return {
-        views: (viewsRes && viewsRes.length) ? viewsRes[0].count["directus_users_id"] : undefined,
-        saves: (savesRes && savesRes.length) ? savesRes[0].count["directus_users_id"] : undefined,
+        views: (viewsRes && viewsRes.length) ? viewsRes[0]!.count["directus_users_id"] : undefined,
+        saves: (savesRes && savesRes.length) ? savesRes[0]!.count["directus_users_id"] : undefined,
         deleteBookmark,
         addBookmark,
-        bookmarkId: (checkSavedRes && checkSavedRes.length) ? checkSavedRes[0].id : undefined
+        bookmarkId: (checkSavedRes && checkSavedRes.length) ? checkSavedRes[0]!.id : undefined
     }
 }

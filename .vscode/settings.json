@@ -5,6 +5,7 @@
         "lucide",
         "nativewind",
         "Pressable",
+        "Searchbar",
         "solito"
     ],
     "typescript.tsdk": "node_modules/typescript/lib"

@@ -19,7 +19,9 @@ export default function SearchBar({ searchText, setSearchText, searchBarProps, c
         flexGrow: 1,
         borderColor: "transparent",
         borderWidth: 0,
-        padding: 0
+        borderTopWidth: 0,
+        borderBottomWidth: 0,
+        padding: 0,
     }
     const inputContainerStyle: StyleProp<ViewStyle> = {
         backgroundColor: "transparent",
@@ -33,7 +35,10 @@ export default function SearchBar({ searchText, setSearchText, searchBarProps, c
     }
     const inputStyle: StyleProp<TextStyle> = {
         color: colors.foreground,
-        fontSize: 16
+        fontSize: 16,
+        borderWidth: 0,
+        //@ts-ignore
+        outlineStyle: "none"
     }
     const CancelIcon = (props: CancelIconProps) => {
         const _props = cancelIconProps || props
@@ -49,7 +54,7 @@ export default function SearchBar({ searchText, setSearchText, searchBarProps, c
     return <RNESearchBar
         value={searchText}
         placeholder="Search ..."
-        onChange={e => setSearchText(e.nativeEvent.text)}
+        onChangeText={setSearchText}
         {...searchBarProps}
         searchIcon={<SearchIcon />}
         clearIcon={<CancelIcon onPress={() => setSearchText("")} />}
@@ -57,6 +62,6 @@ export default function SearchBar({ searchText, setSearchText, searchBarProps, c
         placeholderTextColor={colors["muted-foreground"]}
         containerStyle={Object.assign(containerStyle, searchBarProps?.containerStyle)}
         inputContainerStyle={Object.assign(inputContainerStyle, searchBarProps?.inputContainerStyle)}
-        inputStyle={Object.assign(inputStyle, searchBarProps?.inputStyle)}
+        inputStyle={Object.assign(inputStyle!, searchBarProps?.inputStyle)}
     />;
 }

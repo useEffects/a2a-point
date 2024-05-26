@@ -1,5 +1,3 @@
-"use client"
-
 import * as AccordionPrimitive from 'app/components/primitives/accordion';
 import { TextClassContext } from 'app/components/ui/text';
 import { cn } from 'app/lib/utils';
