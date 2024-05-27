@@ -4,7 +4,7 @@ import { PortalHost } from "app/components/primitives/portal";
 import ChatsProvider from "app/components/providers/chats";
 import { setAndroidNavigationBarTheme } from "app/components/toggle-theme";
 import { useColorScheme } from "app/hooks/color-scheme";
-import directusStore from "app/store/directus";
+import directusStore, { reqNewTokens } from "app/store/directus";
 import { SplashScreen } from "expo-router";
 import * as React from "react";
 import { Platform, StatusBar } from "react-native";
@@ -69,9 +69,13 @@ export default function RootLayout() {
   React.useEffect(() => {
     async function initializeDirectus() {
       if (ready.directus) return
-      const accessToken = await AsyncStorage.getItem("accessToken");
       const refreshToken = await AsyncStorage.getItem("refreshToken");
-      accessToken && refreshToken && await initialize(accessToken, refreshToken)
+      if (refreshToken) {
+        const newTokens = await reqNewTokens(refreshToken)
+        if (newTokens) {
+          await initialize(newTokens.accessToken, newTokens.refreshToken)
+        }
+      }
       setReady(p => ({ ...p, directus: true }))
     }
     async function initializeApp() {
@@ -85,7 +89,6 @@ export default function RootLayout() {
       }
       setIsColorSchemeLoaded(true)
       if (Platform.OS === "web") {
-        // Adds the background color to the html element to prevent white background on overscroll.
         document.documentElement.classList.add("bg-background");
       }
       setReady(p => ({ ...p, colorScheme: true }))
@@ -105,8 +108,6 @@ export default function RootLayout() {
   if (!isColorSchemeLoaded || !ready.directus || !ready.fonts) {
     return null
   }
-
-  console.log("here")
 
   return (
     <ThemeProvider value={theme}>

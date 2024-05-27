@@ -15,7 +15,8 @@ export type RootStackParamList = {
     "post-feedback": {
         id: string,
         feedbackId?: string
-    }
+    },
+    "activity": undefined
 }
 
 export type TopTabParamList = {

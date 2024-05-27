@@ -24,6 +24,7 @@ import PostFeedback from './post-feedback';
 import ProfileScreen from "./profile";
 import ProfileDetailed from './profile-detailed';
 import RoomDetailed from './room-detailed';
+import ActivityScreen from './activity';
 
 const Tab = createMaterialTopTabNavigator<TopTabParamList>();
 const Stack = createStackNavigator()
@@ -165,6 +166,7 @@ export default function AppLayout() {
         <Stack.Screen name="profile-detailed" component={ProfileDetailed} />
         <Stack.Screen name="location-listings" component={LocationListings} />
         <Stack.Screen name="post-feedback" component={PostFeedback} />
+        <Stack.Screen name="activity" component={ActivityScreen} />
     </Stack.Navigator>
 };
 

@@ -60,8 +60,8 @@ export default function LocationListings() {
             <View className="p-4 flex-col gap-4">
                 <View className="flex-row justify-between">
                     <Text className="text-lg font-bold">{room.members.length} members</Text>
-                    <GoToRoomButton roomId={room.id} variant={"outline"} size={"sm"} className="flex-row border-info">
-                        <Text className="text-info">Open group chat</Text>
+                    <GoToRoomButton roomId={room.id} variant={"outline"} size={"sm"} className="flex-row">
+                        <Text>Open group chat</Text>
                         <ArrowUpRight size={16} color={colors.info} />
                     </GoToRoomButton>
                 </View>

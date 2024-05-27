@@ -52,6 +52,7 @@ export default function HomeScreenComponent({ setCollapsed }: { setCollapsed?: (
                 <ListFilter size={18} color={colors.info} />
             </Button>
         </View>
+        <Separator />
         <RenderListings<MediumListingCardProps>
             render={bodies.medium}
             flatListProps={{

@@ -23,7 +23,7 @@ import { ExtraSmallListingCardProps } from "../components/listings-cards/atoms/e
 import { MediumListingCardProps } from "../components/listings-cards/atoms/medium";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "../components/listings-cards/molecules/listings";
 import { Button } from "../components/ui/button";
-import { GoToPostFeedbackButton } from "../components/utils";
+import { GoToActivityButton, GoToPostFeedbackButton } from "../components/utils";
 
 export default function Profile({ user }: { user: User }) {
     const [index, setIndex] = useState(0)
@@ -73,13 +73,13 @@ export default function Profile({ user }: { user: User }) {
                         </View>
                     </View>
                     <View className="flex-row w-full justify-between px-4">
-                        <Button onPress={() => Linking.openURL(`${directusUrl}/admin/users/${user.id}`)} size="none" style={{ width: buttonWidth }} className="py-1">
+                        <Button onPress={() => Linking.openURL(`${directusUrl}/admin/users/${user.id}`)} size="sm" style={{ width: buttonWidth }}>
                             <Text>Open in dashboard</Text>
                         </Button>
-                        {user.id !== currentUser.id ?
-                            <Button size="none" style={{ width: buttonWidth }} className="py-1">
+                        {user.id === currentUser.id ?
+                            <GoToActivityButton variant={"default"} size="sm" style={{ width: buttonWidth }}>
                                 <Text>Your activity</Text>
-                            </Button> : <GoToPostFeedbackButton agentId={user.id} size={"none"} className="py-1" style={{ width: buttonWidth }} variant={"default"}>
+                            </GoToActivityButton> : <GoToPostFeedbackButton agentId={user.id} size={"sm"} style={{ width: buttonWidth }} variant={"default"}>
                                 <Text>Give feedback</Text>
                             </GoToPostFeedbackButton>}
                     </View>

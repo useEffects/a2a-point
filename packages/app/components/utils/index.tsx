@@ -17,7 +17,7 @@ export const GoToFullListingButton = (props: ButtonProps & { listingId: string }
     const navigation = useNavigation()
 
     const goToDetailScreen = () => {
-        navigation.getState() && navigation.navigate("listing-detailed", {
+        navigation.getState() && navigation.push("listing-detailed", {
             id: props.listingId
         })
     }
@@ -30,7 +30,7 @@ export const GoToRoomButton = (props: ButtonProps & { roomId: string | Promise<s
 
     const goToDetailScreen = async () => {
         const id = await props.roomId
-        navigation.getState() && navigation.navigate("room-detailed", {
+        navigation.getState() && navigation.push("room-detailed", {
             id
         })
     }
@@ -43,7 +43,7 @@ export const GoToProfileButton = (props: ButtonProps & { userId: string, additio
 
     const goToProfileDetailed = () => {
         props.additionalOnPress && props.additionalOnPress()
-        navigation.getState() && navigation.navigate("profile-detailed", {
+        navigation.getState() && navigation.push("profile-detailed", {
             id: props.userId
         })
     }
@@ -55,7 +55,7 @@ export const GoToLocationListingsButton = (props: ButtonProps & { roomId: string
     const navigation = useNavigation()
 
     const goToLocationDetailed = () => {
-        navigation.getState() && navigation.navigate("location-listings", {
+        navigation.getState() && navigation.push("location-listings", {
             id: props.roomId
         })
     }
@@ -67,7 +67,7 @@ export const GoToPostFeedbackButton = (props: ButtonProps & { agentId: string, f
     const navigation = useNavigation()
 
     const goToPostFeedback = () => {
-        navigation.getState() && navigation.navigate("post-feedback", {
+        navigation.getState() && navigation.push("post-feedback", {
             id: props.agentId,
             feedbackId: props.feedbackId?.toString()
         })
@@ -90,4 +90,14 @@ export const GoToLoginButton = (props: GoToLoginButtonProps) => {
     }
 
     return <Button variant={"base"} size={"none"} onPress={handleOnPress} {...props} />
+}
+
+export const GoToActivityButton = (props: ButtonProps) => {
+    const navigation = useNavigation()
+
+    const goToActivity = () => {
+        navigation.getState() && navigation.push("activity")
+    }
+
+    return <Button variant={"base"} size={"none"} onPress={goToActivity} {...props} />
 }

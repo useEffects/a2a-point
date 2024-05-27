@@ -45,6 +45,7 @@ const directusStore = create<DirectusStore>((set, get) => ({
                 userStore.getState().setUser(data.data);
             } else {
                 const error = await response.json();
+                console.log(error)
                 return resetDirectus()
             }
         } catch (error) {
@@ -52,43 +53,35 @@ const directusStore = create<DirectusStore>((set, get) => ({
             return resetDirectus()
         }
 
-        const newTokens = await reqNewTokens(refreshToken)
-        if (!newTokens) {
-            return resetDirectus()
-        }
 
-        if (!newTokens.accessToken || !newTokens.refreshToken) {
-            return resetDirectus()
-        } else {
-            const client = createDirectus(directusUrl)
-                .with(authentication())
-                .with(rest())
-                .with(staticToken(newTokens.accessToken!))
-            set({
-                rest: client as MyDirectusClient,
-                token: newTokens.accessToken!,
-                authenticated: true,
-                refreshToken: newTokens.refreshToken!
-            });
-            setInterval(async () => {
-                if (get().authenticated && get().refreshToken) {
-                    const newTokens = await reqNewTokens(get().refreshToken)
-                    if (!newTokens?.accessToken || !newTokens.refreshToken) {
-                        return resetDirectus()
-                    }
-                    set(p => ({
-                        ...p,
-                        token: newTokens.accessToken!,
-                        refreshToken: newTokens.refreshToken!
-                    }))
-                    get().rest.setToken(newTokens.accessToken!)
-                    await AsyncStorage.setItem("accessToken", newTokens.accessToken!);
-                    await AsyncStorage.setItem("refreshToken", newTokens.refreshToken!);
+        const client = createDirectus(directusUrl)
+            .with(authentication())
+            .with(rest())
+            .with(staticToken(accessToken!))
+        set({
+            rest: client as MyDirectusClient,
+            token: accessToken!,
+            authenticated: true,
+            refreshToken: refreshToken!
+        });
+        setInterval(async () => {
+            if (get().authenticated && get().refreshToken) {
+                const newTokens = await reqNewTokens(get().refreshToken)
+                if (!newTokens?.accessToken || !newTokens.refreshToken) {
+                    return resetDirectus()
                 }
-            }, 1000 * 60 * 10)
-            await AsyncStorage.setItem("accessToken", newTokens.accessToken!);
-            await AsyncStorage.setItem("refreshToken", newTokens.refreshToken!);
-        }
+                set(p => ({
+                    ...p,
+                    token: newTokens.accessToken!,
+                    refreshToken: newTokens.refreshToken!
+                }))
+                get().rest.setToken(newTokens.accessToken!)
+                await AsyncStorage.setItem("accessToken", newTokens.accessToken!);
+                await AsyncStorage.setItem("refreshToken", newTokens.refreshToken!);
+            }
+        }, 1000 * 60 * 10)
+        await AsyncStorage.setItem("accessToken", accessToken!);
+        await AsyncStorage.setItem("refreshToken", refreshToken!);
     },
     logout: async () => {
         await AsyncStorage.removeItem("accessToken");
@@ -97,7 +90,7 @@ const directusStore = create<DirectusStore>((set, get) => ({
     }
 }));
 
-const reqNewTokens = async (refreshToken: string) => {
+export const reqNewTokens = async (refreshToken: string) => {
     const res = await fetch(`${directusUrl}/auth/refresh`, {
         method: "POST",
         body: JSON.stringify({
