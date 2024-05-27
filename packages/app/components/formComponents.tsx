@@ -2,7 +2,7 @@
 import { useColorScheme } from "app/hooks/color-scheme";
 import { cn } from "app/lib/utils";
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
-import { Image, TextInputProps, View } from "react-native";
+import { DimensionValue, Image, TextInputProps, View } from "react-native";
 import { SelectRootProps } from "./primitives/select/types";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
@@ -22,14 +22,15 @@ import { Separator } from "./ui/separator";
 type AdditionalFormInputProps = {
     error?: string,
     label?: string,
-    maxLines?: number
+    maxLines?: number,
+    initialHeight?: DimensionValue
 }
 
 export const initialInputHeight = 40
 
 export const FormInput = (props: TextInputProps & AdditionalFormInputProps) => {
     const { error, label, maxLines = 4, ...rest } = props
-    const [height, setHeight] = useState(initialInputHeight)
+    const [height, setHeight] = useState<DimensionValue>(props.initialHeight ?? initialInputHeight)
     const { colors } = useColorScheme()
 
     const handleSizeChange = (newHeight: number) => {

@@ -14,13 +14,23 @@ import { Text } from "app/components/ui/text";
 import { GoToLoginButton } from "./locked-screens";
 import directusStore from "app/store/directus";
 
-export default function HomeScreenComponent() {
+export default function HomeScreenComponent({ setCollapsed }: { setCollapsed?: (collapsed: boolean) => void }) {
     const [searchText, setSearchText] = useState("")
     const [debouncedSearchText] = useDebounce(searchText, 500)
     const [bottomSheetVisible, setBottomSheetVisible] = useState(false)
     const [filter, setFilter] = useState<CommonFilters | null>(null)
     const { colors } = useColorScheme()
     const { authenticated } = directusStore()
+
+    useEffect(() => {
+        if (setCollapsed) {
+            if (searchText) {
+                setCollapsed(true)
+            } else {
+                setCollapsed(false)
+            }
+        }
+    }, [searchText, setCollapsed])
 
     return <View className="max-w-xl">
         <View className="flex-row items-center flex-1 justify-between gap-4 mb-12">

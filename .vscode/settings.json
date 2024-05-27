@@ -7,7 +7,8 @@
         "Pressable",
         "Searchbar",
         "solito",
-        "tamagui"
+        "tamagui",
+        "tanstack"
     ],
     "typescript.tsdk": "node_modules/typescript/lib"
 }

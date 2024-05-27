@@ -1,24 +1,29 @@
+import { readItems } from "@directus/sdk";
+import { useQuery } from "@tanstack/react-query";
+import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
+import { UserChip } from "app/components/user-chip";
 import { useColorScheme } from "app/hooks/color-scheme";
-import { buildAssetUrl, shortTime, timeAgo } from "app/lib/helpers";
-import { getListingsCountForUser } from "app/lib/misc/get-counts";
-import { User } from "app/lib/types";
-import { ArrowUp, Info, LogOut, MessageCircle, Rows2, Shrink, Expand } from "lucide-react-native";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Image, Linking, NativeScrollEvent, NativeSyntheticEvent, ScrollView, TouchableOpacity, View, useWindowDimensions } from "react-native";
-import { Link } from "solito/link";
-import { Header } from "./header";
-import { ExtraSmallListingCardProps } from "./listings-cards/atoms/extra-small";
-import { CommonFilters, RenderListings, bodies, commonFilters } from "./listings-cards/molecules/listings";
-import { ToggleTheme } from "./toggle-theme";
-import { Button } from "./ui/button";
-import { TabView, SceneMap, NavigationState, SceneRendererProps } from 'react-native-tab-view';
-import { cn } from "app/lib/utils";
-import Collapsible from 'react-native-collapsible';
 import { directusUrl } from "app/lib/constants";
-import { MediumListingCardProps } from "./listings-cards/atoms/medium";
+import { buildAssetUrl, timeAgo } from "app/lib/helpers";
+import { getListingsCountForUser } from "app/lib/misc/get-counts";
+import { Feedback, User } from "app/lib/types";
+import { cn } from "app/lib/utils";
+import { StarIcon } from "app/screens/post-feedback";
+import directusStore from "app/store/directus";
 import userStore from "app/store/user";
-import { GoToPostFeedbackButton } from "./utils";
+import { ArrowUp, Expand, Info, MessageCircle, Rows2, Shrink } from "lucide-react-native";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { FlatList, Image, Linking, NativeScrollEvent, NativeSyntheticEvent, ScrollView, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import Collapsible from 'react-native-collapsible';
+import StarRating from "react-native-star-rating-widget";
+import { NavigationState, SceneMap, SceneRendererProps, TabView } from 'react-native-tab-view';
+import { Link } from "solito/link";
+import { ExtraSmallListingCardProps } from "../components/listings-cards/atoms/extra-small";
+import { MediumListingCardProps } from "../components/listings-cards/atoms/medium";
+import { CommonFilters, RenderListings, bodies, commonFilters } from "../components/listings-cards/molecules/listings";
+import { Button } from "../components/ui/button";
+import { GoToPostFeedbackButton } from "../components/utils";
 
 export default function Profile({ user }: { user: User }) {
     const [index, setIndex] = useState(0)
@@ -74,7 +79,7 @@ export default function Profile({ user }: { user: User }) {
                         {user.id !== currentUser.id ?
                             <Button size="none" style={{ width: buttonWidth }} className="py-1">
                                 <Text>Your activity</Text>
-                            </Button> : <GoToPostFeedbackButton userId={user.id} size={"none"} className="py-1" style={{ width: buttonWidth }} variant={"default"}>
+                            </Button> : <GoToPostFeedbackButton agentId={user.id} size={"none"} className="py-1" style={{ width: buttonWidth }} variant={"default"}>
                                 <Text>Give feedback</Text>
                             </GoToPostFeedbackButton>}
                     </View>
@@ -102,7 +107,7 @@ export default function Profile({ user }: { user: User }) {
         const renderScene = SceneMap({
             info: () => <InfoTab user={user} />,
             listings: () => <ListingTab user={user} big={big} setBig={setBig} />,
-            feedbacks: () => <View />,
+            feedbacks: () => <ListingFeedbacks />,
         });
 
         return (
@@ -221,5 +226,43 @@ const ListingTab = ({ user, big, setBig }: { user: User, big: boolean, setBig: D
                     scrollEnabled: false,
                 }}
             />}
+    </View>
+}
+
+export type UserFeedbacksProps = Omit<Feedback, "user_created"> & { user_created: Pick<User, "id" | "first_name" | "last_name" | "avatar"> }
+
+const ListingFeedbacks = () => {
+    const { rest } = directusStore()
+    const { data } = useQuery<UserFeedbacksProps[]>({
+        queryKey: ["listing-feedbacks"],
+        queryFn: async () => await rest.request(readItems("feedbacks", {
+            fields: ["*", "user_created.id", "user_created.first_name", "user_created.last_name", "user_created.avatar"],
+        })) as UserFeedbacksProps[],
+        initialData: []
+    })
+    return <FlatList
+        contentContainerClassName="p-4"
+        data={data}
+        renderItem={({ item }) => <RenderFeedbackCard {...item} />}
+        scrollEnabled={false}
+        ItemSeparatorComponent={() => <Separator className="my-6" />}
+    />
+}
+
+const RenderFeedbackCard = (props: UserFeedbacksProps) => {
+    return <View className="flex-col gap-4">
+        <View className="flex-row items-center justify-between">
+            <UserChip user={props.user_created} />
+            <View className="flex-row items-center gap-4">
+                <GoToPostFeedbackButton agentId={props.agent} feedbackId={props.id} size={"sm"} variant={"outline"}>
+                    <Text>Edit</Text>
+                </GoToPostFeedbackButton>
+                <Button size={"sm"} variant={"outline"}>
+                    <Text>Delete</Text>
+                </Button>
+            </View>
+        </View>
+        <StarRating onChange={() => { }} StarIconComponent={props => <StarIcon {...props} size={18} />} rating={props.rating} />
+        <Text>{props.content}</Text>
     </View>
 }

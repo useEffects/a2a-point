@@ -8,6 +8,7 @@ import { Button } from "app/components/ui/button";
 import Logo from "app/components/svg/logo";
 import Hero from "app/components/svg/hero";
 import HeroGirl from "app/assets/hero-girl.png"
+import { Header } from "app/components/header";
 
 const LoginScreen = () => {
     const { initialize } = directusStore()
@@ -26,6 +27,9 @@ const LoginScreen = () => {
     }
 
     return <ScrollView contentContainerClassName="flex-grow">
+        <Header>
+            <Text className="text-xl font-bold">Login</Text>
+        </Header>
         <View className="flex-col justify-between flex-1 items-start px-4 py-8">
             <View className="flex-col items-center w-full">
                 <Text className="text-2xl font-bold">Welcome to <Text className="text-2xl text-primary">A2APoint</Text></Text>

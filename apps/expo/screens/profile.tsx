@@ -1,5 +1,5 @@
 import userStore from "app/store/user";
-import Profile from "app/components/profile";
+import Profile from "app/screens/profile";
 import directusStore from "app/store/directus";
 import { View } from "react-native";
 import { Header } from "app/components/header";

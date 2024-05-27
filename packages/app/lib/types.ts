@@ -1,3 +1,5 @@
+import { StringToBoolean } from "class-variance-authority/dist/types";
+
 export type File = {
     id: string;
     storage: string;
@@ -154,3 +156,12 @@ export type Notification = {
     collection: string;
     item: string;
 };
+
+export type Feedback = {
+    id: string;
+    date_created: string;
+    user_created: string;
+    rating: number;
+    content: string;
+    agent: string;
+}

@@ -13,7 +13,8 @@ export type RootStackParamList = {
         id: string,
     },
     "post-feedback": {
-        id: string
+        id: string,
+        feedbackId?: string
     }
 }
 

@@ -3,6 +3,7 @@
   "name": "app",
   "main": "index.ts",
   "dependencies": {
+    "@backpackapp-io/react-native-toast": "^0.10.0",
     "@expo/vector-icons": "^14.0.2",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-dropdown-menu": "^2.0.6",

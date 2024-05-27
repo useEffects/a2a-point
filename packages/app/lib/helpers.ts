@@ -219,3 +219,7 @@ export const getNewFileUrl = async (asset: Asset<withUri>) => {
 }
 
 export const shortTime = (date_created: string) => (new Date(date_created)).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+
+export const wordCount = (value: string | undefined) => {
+  return value ? value.trim().split(/\s+/).length : 0;
+};

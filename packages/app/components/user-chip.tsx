@@ -12,7 +12,7 @@ export const UserChip = ({ user, className }: { user: { id: string, avatar: stri
     const { colors } = useColorScheme()
     const router = useRouter()
 
-    return <Button className={cn("flex flex-row items-center gap-2 self-start", className)} onPress={() => router.push(`/profile/${user.id}`)} size={"none"} variant={"base"}>
+    return <Button className={cn("flex flex-row items-center gap-2", className)} onPress={() => router.push(`/profile/${user.id}`)} size={"none"} variant={"base"}>
         <View className="flex flex-row items-center gap-1">
             <Image source={{ uri: buildAssetUrl(user.avatar) }} className="w-6 h-6 rounded-full" />
             <Text className="!text-sm !text-subtext">{user.first_name} {user.last_name}</Text>

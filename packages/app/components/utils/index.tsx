@@ -1,9 +1,8 @@
-import { Button, ButtonProps } from "../ui/button"
 import { useColorScheme } from "app/hooks/color-scheme"
-import { X } from "lucide-react-native"
 import useNavigation from "app/hooks/navigation"
-import { useEffect } from "react"
+import { X } from "lucide-react-native"
 import { GestureResponderEvent } from "react-native"
+import { Button, ButtonProps } from "../ui/button"
 
 export const CloseButton = (props: ButtonProps) => {
     const { colors } = useColorScheme()
@@ -63,12 +62,13 @@ export const GoToLocationListingsButton = (props: ButtonProps & { roomId: string
     return <Button variant={"base"} size={"none"} onPress={goToLocationDetailed} {...props} />
 }
 
-export const GoToPostFeedbackButton = (props: ButtonProps & { userId: string }) => {
+export const GoToPostFeedbackButton = (props: ButtonProps & { agentId: string, feedbackId?: string }) => {
     const navigation = useNavigation()
 
     const goToPostFeedback = () => {
         navigation.getState() && navigation.navigate("post-feedback", {
-            id: props.userId
+            id: props.agentId,
+            feedbackId: props.feedbackId?.toString()
         })
     }
 

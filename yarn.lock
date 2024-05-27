@@ -1809,6 +1809,11 @@
     "@babel/helper-validator-identifier" "^7.24.6"
     to-fast-properties "^2.0.0"
 
+"@backpackapp-io/react-native-toast@^0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@backpackapp-io/react-native-toast/-/react-native-toast-0.10.0.tgz#08a765b7fecab46f430b246da148ee184c5dd963"
+  integrity sha512-kuFAkTu+HlCoIiTbHgKi0lXwpQzntrhzMy4LorJyXb8SdiPEMs9ZiCzHYUzsgIga4xjlY73wxlgwyo4QWa7JZA==
+
 "@directus/sdk@^16.0.0":
   version "16.0.1"
   resolved "https://registry.npmjs.org/@directus/sdk/-/sdk-16.0.1.tgz"
@@ -14059,6 +14064,11 @@ to-through@^3.0.0:
   integrity sha512-y8MN937s/HVhEoBU1SxfHC+wxCHkV1a9gW8eAdTadYh/bGyesZIVcbjI+mSpFbSVwQici/XjBjuUyri1dnXwBw==
   dependencies:
     streamx "^2.12.5"
+
+toastify-react-native@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/toastify-react-native/-/toastify-react-native-5.0.0.tgz#4154087f6de015046a289b07f808e016059f05b0"
+  integrity sha512-TmkoAb8bH6z0mUoUijm1Fm3BiUESosW3itSL6Wi12waJzzCU4sA2jipinyKTdTVNdpKrNQXYJFhLxk8Qt645sg==
 
 toidentifier@1.0.1:
   version "1.0.1"

@@ -1,27 +1,42 @@
-import { useEffect } from "react";
-import { useParams } from "solito/navigation";
-import useNavigation from "app/hooks/navigation";
 import { Header } from "app/components/header";
-import { Text } from "app/components/ui/text";
-import { PostFeedback as PostFeedbackComponent } from "app/components/post-feedback";
-import { View, ScrollView } from "react-native";
-import { useUserDetails } from "app/hooks/user-details";
 import { Separator } from "app/components/ui/separator";
+import { Text } from "app/components/ui/text";
+import useNavigation from "app/hooks/navigation";
+import { useUserDetails } from "app/hooks/user-details";
+import { PostFeedback as PostFeedbackComponent } from "app/screens/post-feedback";
+import { UserFeedbacksProps } from "app/screens/profile";
+import { useEffect } from "react";
+import { ScrollView, View } from "react-native";
+import { useParams } from "solito/navigation";
+import { useQuery } from "@tanstack/react-query";
+import directusStore from "app/store/directus";
+import { readItem, readItems } from "@directus/sdk";
+import { Feedback } from "app/lib/types";
 
 export default function PostFeedback() {
-    const params = useParams<{ id: string }>();
+    const params = useParams<{ id: string, feedbackId?: string }>();
     const navigation = useNavigation();
     const user = useUserDetails(params.id);
+    const { rest } = directusStore()
 
     useEffect(() => {
         navigation.setOptions({
             header: () => (
                 <Header>
-                    <Text className="text-xl font-bold">Give Feedback for {user?.first_name} {user?.last_name}</Text>
+                    {params.feedbackId ? <Text className="text-xl font-bold">Edit Feedback</Text> :
+                        <Text className="text-xl font-bold">Give Feedback</Text>}
                 </Header>
             )
         });
-    }, [navigation, user]);
+    }, [navigation, user, params]);
+
+    const { data: feedback } = useQuery<Feedback>({
+        queryKey: ["user-feedbacks1", params.feedbackId, "edit mode"],
+        queryFn: async () => await rest.request(readItem("feedbacks", params.feedbackId!, {
+            fields: ["*"]
+        })) as Feedback,
+        enabled: !!params.feedbackId
+    })
 
     const guidelines = [
         "Be Honest: Share your genuine experience to help others get a true sense of the agent.",
@@ -36,7 +51,7 @@ export default function PostFeedback() {
 
     return (
         <ScrollView className="p-4 flex-1 flex-col gap-8">
-            <PostFeedbackComponent userId={params.id} />
+            <PostFeedbackComponent userId={params.id} feedback={feedback} />
             <Separator className="my-8" />
             <Text className="text-lg font-medium my-4 mt-0">Share Your Experience</Text>
             <Text className="text-subtext">
