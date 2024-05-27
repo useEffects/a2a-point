@@ -138,7 +138,7 @@ const ScreensLayout = () => {
 
     return finalTabScreens.length ? (
         <Tab.Navigator
-            initialRouteName="post"
+            initialRouteName={authenticated ? "home" : "login"}
             backBehavior="history"
             tabBarPosition='bottom'
             tabBar={isKeyboardVisible ? () => null : CustomTabBar}

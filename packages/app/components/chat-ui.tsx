@@ -1,4 +1,3 @@
-import { Feather, FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import * as DocumentPicker from 'expo-document-picker'
 import * as FileSystem from "expo-file-system"
 import * as ImagePicker from "expo-image-picker"
@@ -16,6 +15,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Input } from "./ui/input"
 import { Text } from "./ui/text"
 import { UserChip } from './user-chip'
+import { WandSparkles, Paperclip, Camera, Image as ImageIcon, File as FileIcon, X, Send, Check, Clock } from 'app/components/icons'
+import BottomSheet from './bottomsheet'
+import { CloseButton } from './utils'
+import { FormAutoSelect, RenderListingTileProps } from './formComponents'
 
 export type withId = { id: string }
 export type withUri = { uri: string }
@@ -73,7 +76,7 @@ export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserI
             </View>
             <View className={cn("flex-row gap-1 items-center", infoPositioning)}>
                 <Text className={cn("text-xs font-light", textColor)}>{shortTime(props.date_created)}</Text>
-                {renderRight ? <Feather name={props.sent ? "check" : "clock"} className={cn(textColor)} /> : <></>}
+                {renderRight ? props.sent ? <Check size={12} className={textColor} /> : <Clock size={12} className={textColor} /> : <></>}
             </View>
         </View>
     </View>
@@ -105,26 +108,26 @@ const FooterDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateAc
 
     return <DropdownMenu open={props.open} onOpenChange={props.setOpen}>
         <DropdownMenuTrigger asChild>
-            <Button size={"icon"} variant={"ghost"} onPress={() => props.setOpen(p => !p)}>
-                <FontAwesome name="paperclip" size={16} className="!text-foreground" />
+            <Button size={"none"} variant={"base"} onPress={() => props.setOpen(p => !p)}>
+                <Paperclip size={18} className="!text-foreground" />
             </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent side="top">
             <DropdownMenuItem>
                 <View className="flex-row gap-2 items-center">
-                    <MaterialIcons name="camera-alt" size={16} className="!text-primary" />
+                    <Camera size={16} className="!text-primary" />
                     <Text className="!text-sm">Open Camera</Text>
                 </View>
             </DropdownMenuItem>
             <DropdownMenuItem onPress={() => handleAssetUpload("image")}>
                 <View className="flex-row gap-2 items-center">
-                    <MaterialIcons name="photo" size={16} className="!text-primary" />
+                    <ImageIcon size={16} className="!text-primary" />
                     <Text className="!text-sm">Upload Image</Text>
                 </View>
             </DropdownMenuItem>
             <DropdownMenuItem onPress={() => handleAssetUpload("document")}>
                 <View className="flex-row gap-2 items-center">
-                    <MaterialIcons name="file-upload" size={16} className="!text-primary" />
+                    <FileIcon size={16} className="!text-primary" />
                     <Text className="!text-sm">Upload Document</Text>
                 </View>
             </DropdownMenuItem>
@@ -134,6 +137,8 @@ const FooterDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateAc
 const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispatcher" | "onSend">) => {
     const { colors } = useColorScheme()
     const [open, setOpen] = useState(false)
+    const [openBottomSheet, setOpenBottomSheet] = useState(false)
+    const [currentListing, setCurrentListing] = useState<RenderListingTileProps | null>(null)
 
     const { currentMessage, currentMessageDispatcher, onSend } = props
     const disabled = !(Boolean(currentMessage.text) || Boolean(currentMessage.assets))
@@ -142,11 +147,14 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
         {currentMessage.assets && currentMessage.assets.length ? <View className='border-solid border-0 border-l-4 border-primary bg-accent p-2 flex-row justify-between items-center'>
             <Text>Selected {currentMessage.assets.length} {currentMessage.assets.length === 1 ? "asset" : "assets"}</Text>
             <Button onPress={() => currentMessageDispatcher(p => ({ text: p.text }))} size={"icon"} className='w-5 h-5 bg-destructive'>
-                <Feather name='x' size={12} className='text-destructive-foreground' />
+                <X size={12} className='text-destructive-foreground' />
             </Button>
         </View> : <></>}
-        <View className="flex-row gap-2 native:h-16 h-14 w-full p-2 items-center bg-card">
+        <View className="flex-row gap-4 native:h-16 h-14 w-full py-2 px-4 items-center bg-card">
             <FooterDropDownMenu open={open} setOpen={setOpen} currentMessageDispatcher={currentMessageDispatcher} />
+            <Button onPress={() => setOpenBottomSheet(true)} variant={"base"} size={"none"}>
+                <WandSparkles className='text-foreground' size={18} />
+            </Button>
             <Input
                 multiline={true}
                 placeholder="Type ..."
@@ -154,12 +162,32 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
                 value={currentMessage.text}
                 onChangeText={(newVal) => currentMessageDispatcher(p => ({ ...p, text: newVal }))}
                 selectionColor={colors.foreground}
-                className="grow-1 flex-1 rounded-full !text-foreground" />
+                className="flex-1 rounded-full !text-foreground" />
             {disabled ? <></> : <Button variant={"outline"} size={"icon"} className="rounded-full justify-center items-center border-primary" onPress={onSend}>
-                <FontAwesome name="send" size={16} className="!text-foreground" />
+                <Send size={16} className="!text-foreground" />
             </Button>
             }
         </View>
+        <BottomSheet open={openBottomSheet} onBackdropPress={() => setOpenBottomSheet(false)} setOpen={setOpenBottomSheet}>
+            <View className='p-4 bg-card flex-col gap-4'>
+                <View className='flex-row flex-1 justify-between'>
+                    <Text>Generate <Text className='text-primary'>Agent to Agent</Text> agreement form</Text>
+                    <CloseButton onPress={() => setOpenBottomSheet(false)} />
+                </View>
+                <FormAutoSelect
+                    currentItem={currentListing}
+                    setCurrentItem={item => setCurrentListing(item as RenderListingTileProps)}
+                    label=""
+                    error={""}
+                    item="listings"
+                    filter={{}}
+
+                />
+                <Button disabled={!Boolean(currentListing)} className=''>
+                    <Text>Generate</Text>
+                </Button>
+            </View>
+        </BottomSheet>
     </View>
 }
 
@@ -218,6 +246,7 @@ export const ChatUi = (props: ChatUiProps) => {
     return <View className="flex-1">
         <View className="flex-1 grow-1">
             <SectionList
+                keyboardShouldPersistTaps="handled"
                 contentContainerStyle={{ padding: 1 }}
                 inverted={true}
                 ref={listRef}
@@ -226,8 +255,8 @@ export const ChatUi = (props: ChatUiProps) => {
                     {...item}
                     currentUserId={props.currentUserId}
                     goToId={props.goToId}
-                    isFirst={(index === 0 || section.data[index - 1].user_created.id !== item.user_created.id)}
-                    isLast={(index === section.data.length - 1 || section.data[index + 1].user_created.id !== item.user_created.id)}
+                    isFirst={(index === 0 || section.data[index - 1]?.user_created.id !== item.user_created.id)}
+                    isLast={(index === section.data.length - 1 || section.data[index + 1]?.user_created.id !== item.user_created.id)}
                     isGroup={props.isGroup}
                 />}
                 renderSectionFooter={({ section }) => <Text className='text-sm text-center text-subtext py-2'>{section.title}</Text>}

@@ -40,7 +40,7 @@ export const FormInput = (props: TextInputProps & AdditionalFormInputProps) => {
     }
 
     return <View className="flex-col gap-2 w-full">
-        <Text className={cn("text-sm", error?.length ? "text-destructive" : "text-subtext")}>{label}</Text>
+        {props.label && <Text className={cn("text-sm", error?.length ? "text-destructive" : "text-subtext")}>{label}</Text>}
         <Input
             {...rest}
             style={{ height, borderColor: error?.length ? colors.destructive : colors.border }}
@@ -48,7 +48,7 @@ export const FormInput = (props: TextInputProps & AdditionalFormInputProps) => {
             multiline
             className="text-base"
         />
-        {error ? <Text className="text-destructive text-xs">{error}</Text> : <></>}
+        {error && <Text className="text-destructive text-xs">{error}</Text>}
     </View>
 }
 
@@ -92,7 +92,7 @@ const autoCompleteFields = {
 type AdditionalAutoSelectFormProps = {
     item: keyof typeof autoCompleteFields,
     currentItem: AutoCompleteRenderItemProps | null,
-    setCurrentItem: Dispatch<SetStateAction<AutoCompleteRenderItemProps | undefined>>,
+    setCurrentItem: (item: AutoCompleteRenderItemProps | null) => void,
     filter: Record<string, any>,
     initialValue?: AutoCompleteRenderItemProps
 }
@@ -116,6 +116,7 @@ export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps 
     })
 
     const handleChange = (val: string) => {
+        props.setCurrentItem(null)
         setSearchText(val)
         setHideResults(false)
     }
@@ -128,39 +129,37 @@ export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps 
         return isRenderRoomTile(item) ? <RenderRoomTile {...item} currentId={props.currentItem?.id} /> : <RenderListingTile {...item} currentId={props.currentItem?.id} />
     }
 
-    return <View className="">
-        <AutoComplete
-            data={data}
-            renderTextInput={() => <FormInput
-                value={searchText}
-                label={props.label}
-                onChangeText={handleChange}
-                onFocus={() => setHideResults(false)}
-                onBlur={() => setHideResults(true)}
-            />}
-            hideResults={hideResults}
-            inputContainerStyle={{ borderWidth: 0 }}
-            containerStyle={{ borderWidth: 0 }}
-            flatListProps={{
-                scrollEnabled: false,
-                renderItem: ({ item }) => <Button
-                    className="items-start"
-                    onPress={() => {
-                        props.setCurrentItem(item)
-                        setSearchText(item.title!)
-                        setHideResults(true)
-                    }}
-                    variant={"base"}
-                    size={"none"}
-                >
-                    <RenderItem {...item} />
-                </Button>,
-                style: { borderWidth: 0, backgroundColor: colors.card, margin: 0, borderRadius: 8, padding: 8 },
-                ItemSeparatorComponent: () => <Separator className="my-2 px-4" />,
-                keyboardShouldPersistTaps: "handled"
-            }}
-        />
-    </View>
+    return <AutoComplete
+        data={data}
+        renderTextInput={() => <FormInput
+            value={searchText}
+            label={props.label}
+            onChangeText={handleChange}
+            onFocus={() => setHideResults(false)}
+            onBlur={() => setHideResults(true)}
+        />}
+        hideResults={hideResults}
+        inputContainerStyle={{ borderWidth: 0 }}
+        containerStyle={{ borderWidth: 0 }}
+        flatListProps={{
+            scrollEnabled: false,
+            renderItem: ({ item }) => <Button
+                className="items-start"
+                onPress={() => {
+                    props.setCurrentItem(item)
+                    setSearchText(item.title!)
+                    setHideResults(true)
+                }}
+                variant={"base"}
+                size={"none"}
+            >
+                <RenderItem {...item} />
+            </Button>,
+            style: { borderWidth: 0, backgroundColor: colors.card, margin: 0, borderRadius: 8, padding: 8 },
+            ItemSeparatorComponent: () => <Separator className="my-2 px-4" />,
+            keyboardShouldPersistTaps: "handled"
+        }}
+    />
 }
 
 export type RenderRoomTileProps = Pick<Room, "id" | "avatar" | "title">
@@ -174,8 +173,8 @@ const RenderRoomTile = (props: RenderRoomTileProps & { currentId: string | undef
 }
 
 const RenderListingTile = (props: RenderListingTileProps & { currentId: string | undefined }) => {
-    return <View className="flex-col p-2 gap-2">
-        <Text>{props.title}</Text>
+    return <View className="flex-col p-2 gap-2 items-start">
+        <Text className="!font-normal !text-base">{props.title}</Text>
         <UserChip user={{ ...props.user_created }} />
     </View>
 }

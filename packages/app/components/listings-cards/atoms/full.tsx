@@ -132,7 +132,7 @@ export const FullListingCard = (props: FullListingDetailed) => {
         <Separator />
         <View className="flex-row gap-4 items-center">
             <Text className="text-lg">Pro Member</Text>
-            <Text>4.7</Text>
+            <Text>{props.user_created.computed_rating}</Text>
         </View>
         <View className="flex-row gap-4 items-center">
             <Image source={{ uri: buildAssetUrl(props.user_created.avatar) }} className="rounded w-28 h-28" />

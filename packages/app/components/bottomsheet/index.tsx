@@ -5,8 +5,11 @@ export default function BottomSheet(props: { open: boolean, setOpen: Dispatch<Se
     return <RNEBottomSheet
         isVisible={props.open}
         onBackdropPress={props.onBackdropPress}
-        backdropStyle={{backgroundColor: "transparent"}}
-        containerStyle={{backgroundColor: "transparent"}}
+        backdropStyle={{ backgroundColor: "transparent" }}
+        containerStyle={{ backgroundColor: "transparent" }}
+        scrollViewProps={{
+            keyboardShouldPersistTaps: "handled"
+        }}
     >
         {props.children}
     </ RNEBottomSheet>

@@ -1,4 +1,4 @@
-import { readItems } from "@directus/sdk";
+import { readItems, deleteItem } from "@directus/sdk";
 import { useQuery } from "@tanstack/react-query";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
@@ -16,7 +16,7 @@ import { ArrowUp, Expand, Info, MessageCircle, Rows2, Shrink } from "lucide-reac
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FlatList, Image, Linking, NativeScrollEvent, NativeSyntheticEvent, ScrollView, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import Collapsible from 'react-native-collapsible';
-import StarRating from "react-native-star-rating-widget";
+import StarRating, { StarIconProps } from "react-native-star-rating-widget";
 import { NavigationState, SceneMap, SceneRendererProps, TabView } from 'react-native-tab-view';
 import { Link } from "solito/link";
 import { ExtraSmallListingCardProps } from "../components/listings-cards/atoms/extra-small";
@@ -64,7 +64,7 @@ export default function Profile({ user }: { user: User }) {
                             <Text className="text-subtext">Listings</Text>
                         </View>
                         <View className="flex-col items-center">
-                            <Text>4.5</Text>
+                            <Text>{user.computed_rating ?? "-"}</Text>
                             <Text className="text-subtext">Rating</Text>
                         </View>
                         <View className="flex-col items-center">
@@ -107,7 +107,7 @@ export default function Profile({ user }: { user: User }) {
         const renderScene = SceneMap({
             info: () => <InfoTab user={user} />,
             listings: () => <ListingTab user={user} big={big} setBig={setBig} />,
-            feedbacks: () => <ListingFeedbacks />,
+            feedbacks: () => <ListingFeedbacks userId={user.id} />,
         });
 
         return (
@@ -231,16 +231,21 @@ const ListingTab = ({ user, big, setBig }: { user: User, big: boolean, setBig: D
 
 export type UserFeedbacksProps = Omit<Feedback, "user_created"> & { user_created: Pick<User, "id" | "first_name" | "last_name" | "avatar"> }
 
-const ListingFeedbacks = () => {
+const ListingFeedbacks = ({ userId }: { userId: string }) => {
     const { rest } = directusStore()
     const { data } = useQuery<UserFeedbacksProps[]>({
         queryKey: ["listing-feedbacks"],
         queryFn: async () => await rest.request(readItems("feedbacks", {
             fields: ["*", "user_created.id", "user_created.first_name", "user_created.last_name", "user_created.avatar"],
+            filter: {
+                agent: { _eq: userId }
+            }
         })) as UserFeedbacksProps[],
         initialData: []
     })
-    return <FlatList
+    return data?.length ? <View className="p-4">
+        <Text>No feedbacks received posted yet</Text>
+    </View> : <FlatList
         contentContainerClassName="p-4"
         data={data}
         renderItem={({ item }) => <RenderFeedbackCard {...item} />}
@@ -250,19 +255,27 @@ const ListingFeedbacks = () => {
 }
 
 const RenderFeedbackCard = (props: UserFeedbacksProps) => {
+    const { rest } = directusStore()
+    const { user } = userStore()
+
+    const handleDelete = async () => {
+        await rest.request(deleteItem("feedbacks", props.id))
+    }
+
     return <View className="flex-col gap-4">
         <View className="flex-row items-center justify-between">
             <UserChip user={props.user_created} />
-            <View className="flex-row items-center gap-4">
-                <GoToPostFeedbackButton agentId={props.agent} feedbackId={props.id} size={"sm"} variant={"outline"}>
-                    <Text>Edit</Text>
-                </GoToPostFeedbackButton>
-                <Button size={"sm"} variant={"outline"}>
-                    <Text>Delete</Text>
-                </Button>
-            </View>
+            {user.id === props.user_created.id ?
+                <View className="flex-row items-center gap-4">
+                    <GoToPostFeedbackButton agentId={props.agent} feedbackId={props.id} size={"sm"} variant={"outline"}>
+                        <Text>Edit</Text>
+                    </GoToPostFeedbackButton>
+                    <Button onPress={handleDelete} size={"sm"} variant={"outline"}>
+                        <Text>Delete</Text>
+                    </Button>
+                </View> : <></>}
         </View>
-        <StarRating onChange={() => { }} StarIconComponent={props => <StarIcon {...props} size={18} />} rating={props.rating} />
+        <StarRating onChange={() => { }} StarIconComponent={(props: StarIconProps) => <StarIcon {...props} size={18} />} rating={props.rating} />
         <Text>{props.content}</Text>
     </View>
 }

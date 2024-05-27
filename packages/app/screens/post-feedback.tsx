@@ -46,17 +46,18 @@ export function PostFeedback({ userId, feedback }: { userId: string, feedback?: 
     const handleSubmit = async (values: FeedbackValues) => {
         async function _handleSubmit() {
             if (feedback) {
-                await rest.request(updateItem("feedbacks", feedback.id, {
+                return await rest.request(updateItem("feedbacks", feedback.id, {
                     ...values
                 }))
             } else {
-                await rest.request(createItem("feedbacks", {
+                return await rest.request(createItem("feedbacks", {
                     ...values,
                     agent: userId
                 }))
             }
         }
-        _handleSubmit().then(() => {
+        _handleSubmit().then((res) => {
+            console.log(res)
             toast.success("Feedback submitted", {
                 styles: {
                     view: {
@@ -98,7 +99,6 @@ export function PostFeedback({ userId, feedback }: { userId: string, feedback?: 
             />
             <Button className="" onPress={() => {
                 props.submitForm()
-                props.resetForm()
             }}>
                 <Text>Submit</Text>
             </Button>

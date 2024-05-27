@@ -69,13 +69,6 @@ export default function ChatScreen() {
             <SearchBar
                 searchText={searchText}
                 setSearchText={setSearchText}
-                searchBarProps={{
-                    placeholder: "search contacts ...",
-                    inputContainerStyle: {
-                        backgroundColor: colors.background
-                    }
-                }}
-
             />
         </View>
         {(contacts?.length || groups?.length) ? <View className="w-full">
@@ -97,6 +90,7 @@ export default function ChatScreen() {
             </View> : <></>}
         </View> :
             <FlatList
+                inverted
                 data={filteredRoomsSubscribed}
                 renderItem={({ item }) => <ChatListRow {...item} />}
                 keyExtractor={(item) => item.id.toString()}

@@ -112,6 +112,7 @@ export type User = {
     theme_dark_overrides: any | null;
     social_media: SocialMedia[];
     work_experience: WorkExperience[];
+    computed_rating: number | null
 }
 
 
