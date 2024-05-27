@@ -12,13 +12,13 @@ import { LogOut } from "app/components/icons";
 
 export default function ProfileScreen() {
     const { user } = userStore()
-    const { authenticated } = directusStore()
+    const { authenticated, logout } = directusStore()
     return <View className="flex-1">
         <Header>
             <View className="flex-row gap-8 justify-between flex-1 items-center">
                 <Text className="text-xl font-bold">Profile</Text>
                 <View className="flex-row gap-4 items-center">
-                    {authenticated ? <Button variant="base" size="none">
+                    {authenticated ? <Button onPress={logout} variant="base" size="none">
                         <LogOut size={18} className="text-foreground" />
                     </Button> : <></>}
                     <ToggleTheme />

@@ -33,7 +33,12 @@ export default function RootLayout() {
   };
 
   React.useEffect(() => {
-    (async () => {
+    async function initializeDirectus() {
+      const accessToken = await AsyncStorage.getItem("accessToken");
+      const refreshToken = await AsyncStorage.getItem("refreshToken");
+      accessToken && refreshToken && await initialize(accessToken, refreshToken)
+    }
+    async function initializeApp() {
       const theme = await AsyncStorage.getItem("theme");
       if (!theme) {
         await AsyncStorage.setItem("theme", colorScheme);
@@ -46,20 +51,11 @@ export default function RootLayout() {
         // Adds the background color to the html element to prevent white background on overscroll.
         document.documentElement.classList.add("bg-background");
       }
-    })().finally(() => {
-      if (isColorSchemeLoaded) {
-        SplashScreen.hideAsync();
-      }
-    });
-  }, [isColorSchemeLoaded, colorScheme, setColorScheme]);
-
-  React.useEffect(() => {
-    async function initializeDirectus() {
-      const accessToken = await AsyncStorage.getItem("accessToken");
-      accessToken && await initialize(accessToken)
     }
-    initializeDirectus()
-  }, [initialize]);
+    const promises = Promise.all([initializeDirectus(), initializeApp()])
+    promises.then(() => SplashScreen.hideAsync())
+
+  }, []);
 
   if (!isColorSchemeLoaded) {
     return null

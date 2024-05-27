@@ -19,8 +19,9 @@ const LoginScreen = () => {
         const result = await WebBrowser.openAuthSessionAsync(`${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/expo-redirect?appUrl=${appURL}`, appURL);
         if (result.type === "success") {
             const accessToken = result.url.split("access_token=")[1]
-            if (accessToken) {
-                await initialize(accessToken)
+            const refreshToken = result.url.split("refresh_token=")[1]
+            if (accessToken && refreshToken) {
+                await initialize(accessToken, refreshToken)
                 router.replace("/")
             }
         }

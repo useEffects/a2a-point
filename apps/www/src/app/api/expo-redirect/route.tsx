@@ -1,3 +1,5 @@
+import { directusUrl } from "@/lib/constants";
+import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -5,9 +7,25 @@ export async function GET(req: NextRequest) {
     const token = cookies().get("directus_session_token")?.value
     const appUrl = req.nextUrl.searchParams.get("appUrl")
     if (appUrl && token) {
+        const decoded = jwtDecode<JWTTokenPayload>(token)
+        const { session } = decoded
+        const data = await fetch(`${directusUrl}/auth/refresh`, {
+            method: "POST",
+            body: JSON.stringify({
+                mode: "json",
+                refresh_token: session
+            }),
+            cache: "no-cache",
+            headers: {
+                "content-type": "application/json"
+            }
+        }).then(res => res.json())
+
+        const { access_token, refresh_token } = data.data
+
         const url = new URL(appUrl!)
-        url.searchParams.append("access_token", token!)
-        console.log(url.toString())
+        url.searchParams.append("access_token", access_token)
+        url.searchParams.append("refresh_token", refresh_token)
         return new NextResponse(`
         <!DOCTYPE html>
         <html>
@@ -23,4 +41,15 @@ export async function GET(req: NextRequest) {
             }
         })
     }
+}
+
+type JWTTokenPayload = {
+    id: string;
+    role: string;
+    app_access: number;
+    admin_access: number;
+    session: string;
+    iat: number;
+    exp: number;
+    iss: string;
 }
