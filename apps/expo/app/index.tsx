@@ -12,13 +12,47 @@ import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "tailwind-theme/theme.css";
 import AppLayout from "../screens";
+import {
+  useFonts,
+  OpenSans_300Light,
+  OpenSans_400Regular,
+  OpenSans_500Medium,
+  OpenSans_600SemiBold,
+  OpenSans_700Bold,
+  OpenSans_800ExtraBold,
+  OpenSans_300Light_Italic,
+  OpenSans_400Regular_Italic,
+  OpenSans_500Medium_Italic,
+  OpenSans_600SemiBold_Italic,
+  OpenSans_700Bold_Italic,
+  OpenSans_800ExtraBold_Italic,
+} from '@expo-google-fonts/open-sans';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const { colorScheme, setColorScheme, colors } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
-  const { initialize } = directusStore()
+  const { initialize, authenticated } = directusStore()
+  const [fontsLoaded] = useFonts({
+    OpenSans_300Light,
+    OpenSans_400Regular,
+    OpenSans_500Medium,
+    OpenSans_600SemiBold,
+    OpenSans_700Bold,
+    OpenSans_800ExtraBold,
+    OpenSans_300Light_Italic,
+    OpenSans_400Regular_Italic,
+    OpenSans_500Medium_Italic,
+    OpenSans_600SemiBold_Italic,
+    OpenSans_700Bold_Italic,
+    OpenSans_800ExtraBold_Italic,
+  });
+  const [ready, setReady] = React.useState({
+    directus: false,
+    colorScheme: false,
+    fonts: false
+  })
 
   const theme: Theme = {
     dark: colorScheme === "dark",
@@ -34,11 +68,14 @@ export default function RootLayout() {
 
   React.useEffect(() => {
     async function initializeDirectus() {
+      if (ready.directus) return
       const accessToken = await AsyncStorage.getItem("accessToken");
       const refreshToken = await AsyncStorage.getItem("refreshToken");
       accessToken && refreshToken && await initialize(accessToken, refreshToken)
+      setReady(p => ({ ...p, directus: true }))
     }
     async function initializeApp() {
+      if (ready.colorScheme) return
       const theme = await AsyncStorage.getItem("theme");
       if (!theme) {
         await AsyncStorage.setItem("theme", colorScheme);
@@ -51,15 +88,25 @@ export default function RootLayout() {
         // Adds the background color to the html element to prevent white background on overscroll.
         document.documentElement.classList.add("bg-background");
       }
+      setReady(p => ({ ...p, colorScheme: true }))
     }
-    const promises = Promise.all([initializeDirectus(), initializeApp()])
+    async function initializeFonts() {
+      if (ready.fonts) return
+      if (fontsLoaded) {
+        setReady(p => ({ ...p, fonts: true }))
+      }
+    }
+
+    const promises = Promise.all([initializeDirectus(), initializeApp(), initializeFonts()])
     promises.then(() => SplashScreen.hideAsync())
 
-  }, []);
+  }, [ready, colorScheme, colors, fontsLoaded, initialize, setColorScheme, authenticated]);
 
-  if (!isColorSchemeLoaded) {
+  if (!isColorSchemeLoaded || !ready.directus || !ready.fonts) {
     return null
   }
+
+  console.log("here")
 
   return (
     <ThemeProvider value={theme}>

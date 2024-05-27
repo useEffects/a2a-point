@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
         }).then(res => res.json())
 
         const { access_token, refresh_token } = data.data
+        console.log({ access_token, refresh_token })
 
         const url = new URL(appUrl!)
         url.searchParams.append("access_token", access_token)

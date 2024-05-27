@@ -9,6 +9,7 @@ import Logo from "app/components/svg/logo";
 import Hero from "app/components/svg/hero";
 import HeroGirl from "app/assets/hero-girl.png"
 import { Header } from "app/components/header";
+import { parse } from "search-params"
 
 const LoginScreen = () => {
     const { initialize } = directusStore()
@@ -18,10 +19,9 @@ const LoginScreen = () => {
     const handleLogin = async () => {
         const result = await WebBrowser.openAuthSessionAsync(`${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/expo-redirect?appUrl=${appURL}`, appURL);
         if (result.type === "success") {
-            const accessToken = result.url.split("access_token=")[1]
-            const refreshToken = result.url.split("refresh_token=")[1]
+            const { access_token: accessToken, refresh_token: refreshToken } = parse(result.url)
             if (accessToken && refreshToken) {
-                await initialize(accessToken, refreshToken)
+                await initialize(accessToken.toString(), refreshToken.toString())
                 router.replace("/")
             }
         }
