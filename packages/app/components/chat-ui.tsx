@@ -18,7 +18,11 @@ import { UserChip } from './user-chip'
 import { WandSparkles, Paperclip, Camera, Image as ImageIcon, File as FileIcon, X, Send, Check, Clock } from 'app/components/icons'
 import BottomSheet from './bottomsheet'
 import { CloseButton } from './utils'
-import { FormAutoSelect, RenderListingTileProps } from './formComponents'
+import { FormAutoSelect, FormInput, RenderListingTileProps } from './formComponents'
+import directusStore from 'app/store/directus'
+import { createItem } from "@directus/sdk"
+import * as Linking from "expo-linking"
+import { portfolioUrl } from 'app/lib/constants'
 
 export type withId = { id: string }
 export type withUri = { uri: string }
@@ -139,9 +143,20 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
     const [open, setOpen] = useState(false)
     const [openBottomSheet, setOpenBottomSheet] = useState(false)
     const [currentListing, setCurrentListing] = useState<RenderListingTileProps | null>(null)
+    const [name, setName] = useState("")
+    const { rest } = directusStore()
 
     const { currentMessage, currentMessageDispatcher, onSend } = props
     const disabled = !(Boolean(currentMessage.text) || Boolean(currentMessage.assets))
+
+    const handleFormGeneration = async () => {
+        const res = await rest.request(createItem("forms", {
+            name,
+            listing: currentListing?.id,
+            receiver: currentListing?.user_created.id
+        }))
+        await Linking.openURL(`${portfolioUrl}/api/generate-a2aform/${res.id}`)
+    }
 
     return <View className='flex-col mt-1'>
         {currentMessage.assets && currentMessage.assets.length ? <View className='border-solid border-0 border-l-4 border-primary bg-accent p-2 flex-row justify-between items-center'>
@@ -174,6 +189,11 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
                     <Text>Generate <Text className='text-primary'>Agent to Agent</Text> agreement form</Text>
                     <CloseButton onPress={() => setOpenBottomSheet(false)} />
                 </View>
+                <FormInput
+                    value={name}
+                    onChangeText={setName}
+                    label='Name of the form'
+                />
                 <FormAutoSelect
                     currentItem={currentListing}
                     setCurrentItem={item => setCurrentListing(item as RenderListingTileProps)}
@@ -183,7 +203,7 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
                     filter={{}}
 
                 />
-                <Button disabled={!Boolean(currentListing)} className=''>
+                <Button disabled={!Boolean(currentListing) || !Boolean(name)} onPress={handleFormGeneration}>
                     <Text>Generate</Text>
                 </Button>
             </View>

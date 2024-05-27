@@ -1,4 +1,4 @@
-import { aggregate, createItem, createNotification, deleteItems, readItems } from "@directus/sdk"
+import { aggregate, createItem, createNotification, deleteItem, readItems } from "@directus/sdk"
 import { useQuery } from "@tanstack/react-query"
 import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"
@@ -63,9 +63,10 @@ export const useListingMetrics = (listingId: string) => {
     })
 
     const deleteBookmark = async (listingId: string, savedId: string) => {
+        console.log(savedId)
         await queryClient.fetchQuery({
             queryKey: ["delete-listing", savedId],
-            queryFn: async () => await rest.request(deleteItems("listings_directus_users", [savedId]))
+            queryFn: async () => await rest.request(deleteItem("listings_directus_users", savedId))
         })
         queryClient.setQueryData(savesCountKey(listingId), ([prev]: UserCount[]
         ) => { return [{ count: { directus_users_id: (Number(prev!.count.directus_users_id) - 1) } }] })

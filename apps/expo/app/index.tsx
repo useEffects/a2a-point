@@ -18,7 +18,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const { colorScheme, setColorScheme, colors } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
-  const { authenticated } = directusStore()
+  const { initialize } = directusStore()
 
   const theme: Theme = {
     dark: colorScheme === "dark",
@@ -52,6 +52,14 @@ export default function RootLayout() {
       }
     });
   }, [isColorSchemeLoaded, colorScheme, setColorScheme]);
+
+  React.useEffect(() => {
+    async function initializeDirectus() {
+      const accessToken = await AsyncStorage.getItem("accessToken");
+      accessToken && await initialize(accessToken)
+    }
+    initializeDirectus()
+  }, [initialize]);
 
   if (!isColorSchemeLoaded) {
     return null

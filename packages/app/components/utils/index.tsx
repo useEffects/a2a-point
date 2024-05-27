@@ -38,10 +38,11 @@ export const GoToRoomButton = (props: ButtonProps & { roomId: string | Promise<s
     return <Button variant={"base"} size={"none"} onPress={goToDetailScreen} {...props} />
 }
 
-export const GoToProfileButton = (props: ButtonProps & { userId: string }) => {
+export const GoToProfileButton = (props: ButtonProps & { userId: string, additionalOnPress?: () => void }) => {
     const navigation = useNavigation()
 
     const goToProfileDetailed = () => {
+        props.additionalOnPress && props.additionalOnPress()
         navigation.getState() && navigation.navigate("profile-detailed", {
             id: props.userId
         })

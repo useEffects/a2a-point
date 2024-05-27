@@ -197,7 +197,7 @@ const ChatDropDownMenu = (props: { members: Member[], isGroup: boolean, open: bo
                     {props.isGroup ? <Button onPress={() => setBottomSheetVisible(true)}>
                         <Text className="!text-sm">See members</Text>
                     </Button> :
-                        <GoToProfileButton userId={props.members[0]!.directus_users_id.id}>
+                        <GoToProfileButton additionalOnPress={() => props.setOpen(false)} userId={props.members[0]!.directus_users_id.id}>
                             <Text className="!text-sm">See profile</Text>
                         </GoToProfileButton>}
                 </DropdownMenuItem>

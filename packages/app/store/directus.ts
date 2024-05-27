@@ -23,7 +23,6 @@ const directusStore = create<DirectusStore>((set, get) => ({
         if (!accessToken) {
             throw new Error("Access token cannot be empty");
         }
-
         try {
             const response = await fetch(`${directusUrl}/users/me`, {
                 headers: {
@@ -33,12 +32,9 @@ const directusStore = create<DirectusStore>((set, get) => ({
             if (response.status === 200) {
                 const data = await response.json();
                 userStore.getState().setUser(data.data);
-            } else {
-                throw new Error("Failed to fetch user data");
             }
         } catch (error) {
             console.error("An error occurred:", error);
-            throw error;  // rethrow the error to be handled by caller if needed
         }
 
         set({

@@ -4,12 +4,15 @@ import { directusUrl } from "app/lib/constants";
 import { buildAssetUrl, getDMRoomId } from "app/lib/helpers";
 import { Amenity, Listing, ListingAmenity, User } from "app/lib/types";
 import userStore from "app/store/user";
-import { Bath, BedDouble, Bookmark, Building, CarFront, ExternalLink, Eye } from "lucide-react-native";
+import { Bath, BedDouble, Bookmark, Building, CarFront, ExternalLink, Eye } from "app/components/icons";
 import { ReactNode } from "react";
-import { FlatList, Image, Linking, Pressable, View } from "react-native";
+import { FlatList, Image, Linking, View } from "react-native";
 import { useRouter } from "solito/navigation";
 import { Button } from "../../ui/button";
 import { Text } from "../../ui/text";
+import { useColorScheme } from 'app/hooks/color-scheme';
+import directusStore from 'app/store/directus';
+import { GoToProfileButton, GoToRoomButton } from 'app/components/utils';
 
 export const FullListingCardFields = ["*", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "user_created.email", "amenities.additional_value", "amenities.amenities_id.*"]
 
@@ -53,6 +56,8 @@ export const FullListingCard = (props: FullListingDetailed) => {
     const { views, saves, addBookmark, deleteBookmark, bookmarkId } = useListingMetrics(props.id)
     const { user } = userStore()
     const router = useRouter()
+    const { colors } = useColorScheme()
+    const { authenticated } = directusStore()
 
     const handleSave = async () => {
         bookmarkId ? await deleteBookmark(props.id, bookmarkId) : await addBookmark({ id: props.id, title: props.title }, { email: props.user_created.email, id: props.user_created.id })
@@ -142,8 +147,8 @@ export const FullListingCard = (props: FullListingDetailed) => {
                     <Text className="text-subtext">{props.user_created.email}</Text>
                 </View>
                 <View className="flex-row gap-2">
-                    {user.id === props.user_created.id ? <></> : <Button onPress={handleChat} size={"sm"} variant={"outline"}><Text className="!text-sm">Chat</Text></Button>}
-                    <Button onPress={() => router.push(`/profile/${props.user_created.id}`)} size={"sm"} variant={"outline"}><Text className="!text-sm">Profile</Text></Button>
+                    {user.id === props.user_created.id ? <></> : <GoToRoomButton disabled={!authenticated} roomId={getDMRoomId([props.user_created.id, user.id])} size={"sm"} variant={"outline"}><Text className="!text-sm">Chat</Text></GoToRoomButton>}
+                    <GoToProfileButton disabled={!authenticated} userId={props.user_created.id} size={"sm"} variant={"outline"}><Text className="!text-sm">Profile</Text></GoToProfileButton>
                 </View>
             </View>
         </View>
@@ -153,14 +158,14 @@ export const FullListingCard = (props: FullListingDetailed) => {
                 <Eye className="!text-foreground" size={18} />
                 <Text className="text-sm text-subtext">{views} Views</Text>
             </View>
-            <Pressable onPress={handleSave} className="flex-col gap-2 items-center">
-                <Bookmark className="!text-foreground" size={18} />
+            <Button disabled={!authenticated} variant={"base"} size={"none"} onPress={handleSave} className="flex-col gap-2 items-center">
+                <Bookmark fill={bookmarkId ? colors.foreground : "transparent"} className="!text-foreground" size={18} />
                 <Text className="text-sm text-subtext">{saves} Saves</Text>
-            </Pressable>
-            <Pressable onPress={() => Linking.openURL(`${directusUrl}/admin/content/listings/${props.id}`)} className="flex-col gap-2 items-center">
+            </Button >
+            <Button variant={"base"} size={"none"} onPress={() => Linking.openURL(`${directusUrl}/admin/content/listings/${props.id}`)} className="flex-col gap-2 items-center">
                 <ExternalLink className="!text-foreground" size={18} />
                 <Text className="text-sm text-subtext">Dashboard</Text>
-            </Pressable>
+            </Button >
         </View> : <></>}
     </View>
 }
