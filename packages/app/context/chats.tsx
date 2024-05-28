@@ -8,6 +8,7 @@ import userStore from "app/store/user";
 import { File, Message, Room, User } from "app/lib/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { queryClient, queryStore } from "app/store/query";
+import { field } from "fp-ts";
 
 const roomsSubscribedQueryKey = ["Subscribed Rooms"]
 
@@ -61,6 +62,7 @@ export const ChatsProvider = ({ children, rest, token }: { children: ReactNode, 
                 collection: "messages",
                 query: {
                     limit: 0,
+                    fields: chatFields
                 }
             }))
         }
