@@ -2,13 +2,13 @@ import { createItem, createNotifications, readItems } from "@directus/sdk";
 import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useEffect, useState } from "react";
 import { Platform } from "react-native";
 import { Asset, ChatMessage, withId, withUri } from "app/components/chat-ui";
-import { directusWSUrl } from "app/lib/constants";
+import { directusUrl, directusWSUrl, messagesFolderName } from "app/lib/constants";
 import directusStore, { MyDirectusClient } from "app/store/directus";
 import userStore from "app/store/user";
 import { File, Message, Room, User } from "app/lib/types";
 import { useQueryClient } from "@tanstack/react-query";
-import { queryClient, queryStore } from "app/store/query";
-import { field } from "fp-ts";
+import { queryClient } from "app/store/query";
+import * as FileSystem from "expo-file-system";
 
 const roomsSubscribedQueryKey = ["Subscribed Rooms"]
 
@@ -68,6 +68,7 @@ export const ChatsProvider = ({ children, rest, token }: { children: ReactNode, 
         }
         ws?.addEventListener("message", (message) => {
             const data = JSON.parse(message.data) as { event: string, type: string, data: MessageDetailed[] }
+            console.log(data)
             if (data.type === "subscription" && data.event === "create") {
                 data.data.forEach(message => {
                     if (message.user_created.id === user.id) {
@@ -120,22 +121,26 @@ export const ChatsProvider = ({ children, rest, token }: { children: ReactNode, 
             const unsentMessages = messages.filter(m => !m.sent) as ChatMessage<withUri>[]
             unsentMessages.forEach(async message => {
                 const fileIds = await Promise.all(message.assets?.map(asset => Platform.OS === "web" ? webFileUpload(asset) : nativeFileUpload(asset)) ?? [])
+                const payload = {
+                    id: message.id,
+                    content: message.content,
+                    room: {
+                        id: message.room
+                    },
+                    assets: fileIds.length ? fileIds.map(id => ({
+                        "directus_files_id": id,
+                    })) : undefined
+                }
                 ws?.send(JSON.stringify({
                     type: "items",
                     collection: "messages",
                     action: "create",
-                    data: {
-                        id: message.id,
-                        content: message.content,
-                        room: {
-                            id: message.room
-                        },
-                        assets: fileIds.length ? fileIds : undefined
-                    },
+                    data: payload,
                     query: {
                         fields: chatFields
                     }
                 }))
+                console.log("here")
             })
         }
         sendMessages()
@@ -209,7 +214,22 @@ function transformMessage(message: MessageDetailed, sent?: boolean): ChatMessage
 }
 
 async function nativeFileUpload(asset: Asset<withUri>): Promise<string> {
-    return Promise.resolve("")
+    const { token } = directusStore.getState()
+    const fileInfo = await FileSystem.getInfoAsync(asset.uri)
+    if (!fileInfo.exists) {
+        throw new Error("File does not exist")
+    }
+    const res = await FileSystem.uploadAsync(`${directusUrl}/files`, asset.uri, {
+        uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+        fieldName: "file",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        },
+        parameters: {
+            folder: messagesFolderName
+        }
+    })
+    return JSON.parse(res.body).data.id
 }
 
 async function webFileUpload(asset: Asset<withUri>): Promise<string> {
