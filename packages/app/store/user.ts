@@ -1,14 +1,16 @@
 import { create } from "zustand";
-import { User } from "app/lib/types";
+import { Company, User } from "app/lib/types";
+
+type FullUser = User & { company: Company }
 
 type UserStore = {
-    user: User,
-    setUser: (user: User) => void
+    user: FullUser,
+    setUser: (user: FullUser) => void
 }
 
 const userStore = create<UserStore>((set, get) => ({
-    user: {} as User,
-    setUser: (user: User) => set({ user })
+    user: {} as FullUser,
+    setUser: (user: FullUser) => set({ user })
 }));
 
 export default userStore

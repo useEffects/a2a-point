@@ -50,10 +50,11 @@ export type Listing = {
     type: string;
     deal_type: string;
     tags: string[];
-    bathrooms: number;
-    bedrooms: number;
-    garages: number;
-    floors: number;
+    bathrooms: number | null;
+    bedrooms: number | null;
+    garages: number | null;
+    floors: number | null;
+    location: string;
     price: number;
     carpet_area: number;
     expected_broker_fees: number;
@@ -112,7 +113,10 @@ export type User = {
     theme_dark_overrides: any | null;
     social_media: SocialMedia[];
     work_experience: WorkExperience[];
-    computed_rating: number | null
+    computed_rating: number | null;
+    BRN: string | null;
+    phone: string | null;
+    company: string | null;
 }
 
 
@@ -165,4 +169,23 @@ export type Feedback = {
     rating: number;
     content: string;
     agent: string;
+}
+
+export type Company = {
+    id: string;
+    user_created: string;
+    date_created: string;
+    user_updated: string | null;
+    date_updated: string | null;
+    title: string;
+    address: string;
+    phone: string;
+    fax: string;
+    email: string;
+    ORN: string;
+    DED_LISC: string;
+};
+
+export type FullUser = User & {
+    company: Company
 }

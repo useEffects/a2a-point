@@ -7,7 +7,7 @@ import { useColorScheme } from "app/hooks/color-scheme";
 import { directusUrl } from "app/lib/constants";
 import { buildAssetUrl, timeAgo } from "app/lib/helpers";
 import { getListingsCountForUser } from "app/lib/misc/get-counts";
-import { Feedback, User } from "app/lib/types";
+import { Feedback, FullUser, User } from "app/lib/types";
 import { cn } from "app/lib/utils";
 import { StarIcon } from "app/screens/post-feedback";
 import directusStore from "app/store/directus";
@@ -25,7 +25,7 @@ import { CommonFilters, RenderListings, bodies, commonFilters } from "../compone
 import { Button } from "../components/ui/button";
 import { GoToActivityButton, GoToPostFeedbackButton } from "../components/utils";
 
-export default function Profile({ user }: { user: User }) {
+export default function Profile({ user }: { user: FullUser }) {
     const [index, setIndex] = useState(0)
     const { colors } = useColorScheme()
     const [listingsCount, setListingsCount] = useState<number | null>(0)

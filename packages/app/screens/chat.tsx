@@ -135,7 +135,7 @@ const ChatListRow = (room: RoomSubscribed) => {
                 <Text className="!text-base">{roomName}</Text>
                 {lastMessage ? <Text className="!text-sm text-subtext">{timeAgo.format(new Date(lastMessage.date_created))}</Text> : <></>}
             </View>
-            {lastMessage ? <Text className="!text-sm text-subtext">{lastMessageContent}</Text> : <></>}
+            {lastMessage ? <Text className="!text-sm text-subtext !font-normal">{lastMessageContent}</Text> : <></>}
         </View>
     </GoToRoomButton>
 };

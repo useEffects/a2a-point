@@ -35,7 +35,8 @@ const directusStore = create<DirectusStore>((set, get) => ({
             return resetDirectus()
         }
         try {
-            const response = await fetch(`${directusUrl}/users/me`, {
+            const fields = ["*.*"].join(",")
+            const response = await fetch(`${directusUrl}/users/me?fields=${fields}`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },

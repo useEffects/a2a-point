@@ -68,7 +68,6 @@ export const ChatsProvider = ({ children, rest, token }: { children: ReactNode, 
         }
         ws?.addEventListener("message", (message) => {
             const data = JSON.parse(message.data) as { event: string, type: string, data: MessageDetailed[] }
-            console.log(data)
             if (data.type === "subscription" && data.event === "create") {
                 data.data.forEach(message => {
                     if (message.user_created.id === user.id) {
