@@ -244,7 +244,7 @@ const ListingFeedbacks = ({ userId }: { userId: string }) => {
         initialData: []
     })
     return data?.length ? <View className="p-4">
-        <Text>No feedbacks received posted yet</Text>
+        <Text>No feedbacks received yet</Text>
     </View> : <FlatList
         contentContainerClassName="p-4"
         data={data}

@@ -197,7 +197,7 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
                 <FormAutoSelect
                     currentItem={currentListing}
                     setCurrentItem={item => setCurrentListing(item as RenderListingTileProps)}
-                    label=""
+                    label="Location"
                     error={""}
                     item="listings"
                     filter={{}}
