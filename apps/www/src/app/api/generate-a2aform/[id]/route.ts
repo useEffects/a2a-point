@@ -1,16 +1,16 @@
 import { readItem } from "@directus/sdk"
-import { Listing, User } from "app/lib/types"
+import { FullUser, Listing, User } from "app/lib/types"
 import { PDFDocument, PDFForm } from 'pdf-lib'
 import { getFormData } from "src/lib/a2a-form"
 import { directus } from "src/lib/directus"
 
 export const GET = async (req: Request, { params: { id } }: { params: { id: string } }) => {
     const data = await directus.request(readItem("forms", id, {
-        fields: ["*.*"]
+        fields: ["*.*.*"]
     })) as {
         id: string,
-        user_created: User,
-        receiver: User,
+        user_created: FullUser,
+        receiver: FullUser,
         name: string,
         listing: Listing
     }
@@ -18,45 +18,47 @@ export const GET = async (req: Request, { params: { id } }: { params: { id: stri
     const formData = await getFormData();
     const pdfDoc = await PDFDocument.load(formData)
     const form = pdfDoc.getForm();
-    const fields = form.getFields()
-    fields.forEach(f => console.log(f.getName()))
 
     setField(form, "date", new Date().toLocaleDateString())
 
-    setField(form, "establishmentNameBuyer", null)
-    setField(form, "addressBuyer", null)
-    setField(form, "phoneBuyer", null)
-    setField(form, "faxBuyer", null)
-    setField(form, "emailBuyer", null)
-    setField(form, "ornBuyer", null)
-    setField(form, "dedBuyer", null)
+    if (agent.company) {
+        setField(form, "establishmentNameBuyer", agent.company.title)
+        setField(form, "addressBuyer", agent.company.address)
+        setField(form, "phoneBuyer", agent.company.phone)
+        setField(form, "faxBuyer", agent.company.fax)
+        setField(form, "emailBuyer", agent.company.email)
+        setField(form, "ornBuyer", agent.company.ORN)
+        setField(form, "dedBuyer", agent.company.DED_LISC)
+        setField(form, "agentPhoneBuyer", agent.company.phone)
+    }
     setField(form, "agentNameBuyer", agent.first_name + " " + agent.last_name)
-    setField(form, "agentBrnBuyer", null)
+    setField(form, "agentBrnBuyer", agent.BRN)
     setField(form, "agentIssuedOnBuyer", null)
-    setField(form, "agentPhoneBuyer", null)
     setField(form, "agentEmailBuyer", agent.email)
 
-    setField(form, "establishmentNameSeller", null)
-    setField(form, "addressSeller", null)
-    setField(form, "phoneSeller", null)
-    setField(form, "faxSeller", null)
-    setField(form, "emailSeller", null)
-    setField(form, "ornSeller", null)
-    setField(form, "dedSeller", null)
+    if (receiver.company) {
+        setField(form, "establishmentNameSeller", receiver.company.title)
+        setField(form, "addressSeller", receiver.company.address)
+        setField(form, "phoneSeller", receiver.company.phone)
+        setField(form, "faxSeller", receiver.company.fax)
+        setField(form, "emailSeller", receiver.company.email)
+        setField(form, "ornSeller", receiver.company.ORN)
+        setField(form, "dedSeller", receiver.company.DED_LISC)
+    }
     setField(form, "agentNameSeller", receiver.first_name + " " + receiver.last_name)
-    setField(form, "agentBrnSeller", null)
+    setField(form, "agentBrnSeller", receiver.BRN)
     setField(form, "agentIssuedOnSeller", null)
-    setField(form, "agentPhoneSeller", null)
+    setField(form, "agentPhoneSeller", receiver.phone)
     setField(form, "agentEmailSeller", receiver.email)
 
-    setField(form, "listingTitle", listing.title)
+    setField(form, "listingTitle", name)
     setField(form, "listingPrice", listing.price.toString())
     setField(form, "listingAddress", listing.address)
     setField(form, "listingDescription", listing.description)
-    setField(form, "listingBedrooms", listing.bedrooms.toString())
-    setField(form, "listingBathrooms", listing.bathrooms.toString())
-    setField(form, "listingGarage", listing.garages.toString())
-    setField(form, "listingFloors", listing.floors.toString())
+    setField(form, "listingBedrooms", listing.bedrooms?.toString())
+    setField(form, "listingBathrooms", listing.bathrooms?.toString())
+    setField(form, "listingGarage", listing.garages?.toString())
+    setField(form, "listingFloors", listing.floors?.toString())
 
     setField(form, "commissionSellerAgent", null)
     setField(form, "commissionBuyerAgent", null)
@@ -76,9 +78,10 @@ export const GET = async (req: Request, { params: { id } }: { params: { id: stri
     return response
 }
 
-const setField = (form: PDFForm, field: string, value: string | null) => {
+const setField = (form: PDFForm, field: string, value: string | null | undefined) => {
+    if (!value) return
     const textField = form.getTextField(field)
-    textField.setText(value ?? "N / A")
+    textField.setText(value)
     textField.enableReadOnly()
 }
 

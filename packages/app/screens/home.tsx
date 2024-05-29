@@ -121,21 +121,21 @@ const categoryTiles = [
 
 export const LoginPopover = () => {
     const [isOpen, setIsOpen] = useState(false)
-    const [canClose, setCanClose] = useState(false)
+    const [canClose, setCanClose] = useState(true)
     const { colors } = useColorScheme()
 
-    // useEffect(() => {
-    //     const isOpenTimeout = setInterval(() => {
-    //         setIsOpen(true)
-    //     }, 1000 * 60 * 1)
-    //     const canCloseTimeout = setTimeout(() => {
-    //         setCanClose(false)
-    //     }, 1000 * 60 * 5)
-    //     return () => {
-    //         clearInterval(isOpenTimeout)
-    //         clearTimeout(canCloseTimeout)
-    //     }
-    // }, [])
+    useEffect(() => {
+        const isOpenTimeout = setInterval(() => {
+            setIsOpen(true)
+        }, 1000 * 60 * 1)
+        const canCloseTimeout = setTimeout(() => {
+            setCanClose(false)
+        }, 1000 * 60 * 5)
+        return () => {
+            clearInterval(isOpenTimeout)
+            clearTimeout(canCloseTimeout)
+        }
+    }, [])
 
     const handleClose = () => {
         if (!canClose) return

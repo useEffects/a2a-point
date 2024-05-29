@@ -1,7 +1,6 @@
 import { directusToken, directusUrl } from "src/lib/constants";
 
 export async function GET(request: Request, { params: { assetId } }: { params: { assetId: string } }) {
-    console.log(assetId)
     try {
         const response = await fetch(`${directusUrl}/assets/${assetId}/?access_token=${directusToken}`);
 

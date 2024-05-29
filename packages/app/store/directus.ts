@@ -15,7 +15,7 @@ type DirectusStore = {
     logout: () => Promise<void>,
 }
 
-const token = "OjNjXzAdIAH4msY6NfIzfUIn-NpPVFsQ"
+export const token = "UvVy-J3BRQJaJw3YSg5egD2aK7ZkK8xk"
 const initialClient = createDirectus(directusUrl)
     .with(rest())
     .with(authentication())
@@ -35,7 +35,7 @@ const directusStore = create<DirectusStore>((set, get) => ({
             return resetDirectus()
         }
         try {
-            const fields = ["*.*"].join(",")
+            const fields = ["*", "company.*"].join(",")
             const response = await fetch(`${directusUrl}/users/me?fields=${fields}`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,

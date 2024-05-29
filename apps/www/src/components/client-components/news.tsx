@@ -62,7 +62,6 @@ export function ListNews({ news, categories }: { news: News[], categories: { id:
 }
 
 export function MyPagination({ totalPages, activePage, basePath }: { totalPages: number, activePage: number, basePath: string }) {
-    console.log(typeof activePage)
     return <Pagination>
         <PaginationContent>
             <PaginationItem>

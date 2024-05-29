@@ -289,7 +289,7 @@ export default function PostScreenComponent() {
     }
 
     const [navigationState, setNavigationState] = useState<NavigationState<Route>>({
-        index: 2,
+        index: 0,
         routes: [
             { key: "form1" },
             { key: "form2" },
@@ -368,29 +368,4 @@ type Form2Values = {
 
 type Form3Values = {
     featured: boolean
-}
-
-const DownButton = ({ navigationState, setNavigationState, onSubmit }: { navigationState: NavigationState<Route>, setNavigationState: Dispatch<SetStateAction<NavigationState<Route>>>, onSubmit: () => void }) => {
-    const goNext = () => setNavigationState(p => ({ ...p, index: p.index + 1 }))
-    const goBack = () => setNavigationState(p => ({ ...p, index: p.index - 1 }))
-
-    if (navigationState.index === navigationState.routes.length - 1) {
-        return <Button onPress={onSubmit}>
-            <Text>Submit</Text>
-        </Button>
-    }
-    else if (navigationState.index === 0) {
-        return <Button onPress={goNext}>
-            <Text>Next</Text>
-        </Button>
-    } else {
-        return <View className="flex-row gap-4">
-            <Button onPress={goBack} className="flex-1">
-                <Text>Back</Text>
-            </Button>
-            <Button onPress={goNext} className="flex-1">
-                <Text>Next</Text>
-            </Button>
-        </View>
-    }
 }

@@ -139,7 +139,6 @@ export const ChatsProvider = ({ children, rest, token }: { children: ReactNode, 
                         fields: chatFields
                     }
                 }))
-                console.log("here")
             })
         }
         sendMessages()

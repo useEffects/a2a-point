@@ -9,7 +9,7 @@ import { ExtraSmallListingCard, ExtraSmallListingCardProps } from "../atoms/extr
 import { MediumListingCard, MediumListingCardProps } from "../atoms/medium"
 import { SmallListingCard, SmallListingCardProps } from "../atoms/small"
 import { AdvertisementCard, AdvertisementCardProps } from "./advertisements"
-import { ComponentType, ReactNode, useMemo } from "react"
+import { ComponentType, useMemo } from "react"
 
 type ListCardProps = SmallListingCardProps | ExtraSmallListingCardProps | MediumListingCardProps
 
@@ -100,15 +100,15 @@ export const commonFilters = {
 
 export const bodies = {
     extraSmall: {
-        fields: ["id", "title", "price", "type"],
+        fields: ["id", "title", "price", "type", "date_created"],
         renderMethod: ExtraSmallListingCard
     },
     small: {
-        fields: ["id", "title", "price", "address", "type", "user_created.id", "user_created.avatar"],
+        fields: ["id", "title", "price", "address", "type", "user_created.id", "user_created.avatar", "date_created"],
         renderMethod: SmallListingCard
     },
     medium: {
-        fields: ["id", "title", "price", "address", "description", "type", "deal_type", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "user_created.email"],
+        fields: ["id", "title", "price", "address", "description", "type", "deal_type", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "user_created.email", "date_created"],
         renderMethod: MediumListingCard
     }
 }

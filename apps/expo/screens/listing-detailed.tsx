@@ -49,7 +49,7 @@ export default function FullListingScreen() {
                     }))
                 }
             } catch (error) {
-                console.log(error)
+                console.log("Error in full listing card", error)
             }
         }
         addViewCount()
@@ -58,7 +58,7 @@ export default function FullListingScreen() {
     return listing ? <ScrollView className="flex-col gap-4">
         <Header>
             <View>
-                <Text className="text-medium">{listing.title}</Text>
+                <Text className="font-medium">{listing.title}</Text>
             </View>
         </Header>
         <View className="px-4">

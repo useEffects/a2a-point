@@ -3,7 +3,6 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
 import { Button } from "app/components/ui/button";
 import { Text } from "app/components/ui/text";
-import { getDMRoomId, shortTime } from "app/lib/helpers";
 import directusStore from "app/store/directus";
 import { Notification } from "app/lib/types";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "app/components/ui/dropdown-menu";
@@ -11,9 +10,9 @@ import { Separator } from "app/components/ui/separator";
 import { useColorScheme } from "app/hooks/color-scheme";
 import { useUserDetails } from "app/hooks/user-details";
 import { UserChip } from "app/components/user-chip";
-import { router } from "expo-router";
 import { queryStore } from "app/store/query";
 import { EllipsisVertical } from "lucide-react-native";
+import { timeAgo } from "app/lib/helpers";
 
 const fetchNotificationsQueryKey = ["Fetching Notifications"]
 
@@ -74,7 +73,7 @@ const RenderNotifications = (props: Notification & { setNotifications: Dispatch<
         <View className="flex-row justify-between items-center">
             {senderDetails ? <UserChip user={senderDetails} /> : <View />}
             <View className="flex-row items-center gap-2">
-                <Text className="text-sm text-subtext">{shortTime(props.timestamp)}</Text>
+                <Text className="text-sm text-subtext">{timeAgo.format(new Date(props.timestamp))}</Text>
                 <NotificationDropdown {...props} />
             </View>
         </View>
@@ -112,7 +111,7 @@ export default function NotificationsList() {
         data={notifications}
         renderItem={({ item }) => <RenderNotifications {...item} setNotifications={setNotifications} />}
         ItemSeparatorComponent={() => <Separator />}
-    />: <View className="p-4 flex-row justify-center flex-1 items-center">
+    /> : <View className="p-4 flex-row justify-center flex-1 items-center">
         <Text>No notifications</Text>
     </View>
 }

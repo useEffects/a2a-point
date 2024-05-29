@@ -10,10 +10,12 @@ import { ArrowUpRight } from "lucide-react-native"
 import { useState } from "react"
 import { ScrollView, View } from "react-native"
 import Collapsible from "react-native-collapsible"
-import HomeScreenComponent from "app/screens/home"
+import HomeScreenComponent, { LoginPopover } from "app/screens/home"
+import directusStore from "app/store/directus"
 
 export const HomeScreen = () => {
     const [collapsed, setCollapsed] = useState(false)
+    const { authenticated } = directusStore()
     const { colors } = useColorScheme()
 
     return (
@@ -51,6 +53,7 @@ export const HomeScreen = () => {
                     </View>
                 </Collapsible>
                 <HomeScreenComponent setCollapsed={setCollapsed} />
+                {authenticated ? <></> : <LoginPopover />}
             </View>
         </ScrollView>
     )

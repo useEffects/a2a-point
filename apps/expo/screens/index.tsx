@@ -174,7 +174,7 @@ const CustomTabBar: React.FC<MaterialTopTabBarProps> = ({ state, descriptors, na
     const insets = useSafeAreaInsets();
 
     return (
-        <View style={{ paddingBottom: insets.bottom }} className='flex-row items-center h-20 px-4 bg-card'>
+        <View style={{ paddingBottom: insets.bottom }} className='flex-row items-center h-20 bg-card'>
             {state.routes.map((route, index) => {
                 const { options } = descriptors[route.key]!;
                 const label =

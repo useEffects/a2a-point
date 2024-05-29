@@ -63,7 +63,6 @@ export const useListingMetrics = (listingId: string) => {
     })
 
     const deleteBookmark = async (listingId: string, savedId: string) => {
-        console.log(savedId)
         await queryClient.fetchQuery({
             queryKey: ["delete-listing", savedId],
             queryFn: async () => await rest.request(deleteItem("listings_directus_users", savedId))
@@ -82,19 +81,21 @@ export const useListingMetrics = (listingId: string) => {
                 directus_users_id: user.id
             }))
         })
-        await queryClient.fetchQuery({
-            queryKey: ["Send notification for bookmark", listingId],
-            queryFn: async () => await rest.request(createNotification({
-                collection: "listings",
-                item: listingId,
-                message: `You have a new bookmark on your listing ${title} from ${user.email}`,
-                recipient: recipient.id,
-                sender: user.id,
-                subject: "New Bookmark Received!",
-                type: "user",
-                related_user: user.id
-            }))
-        })
+        if (user.id !== recipient.id) {
+            await queryClient.fetchQuery({
+                queryKey: ["Send notification for bookmark", listingId],
+                queryFn: async () => await rest.request(createNotification({
+                    collection: "listings",
+                    item: listingId,
+                    message: `You have a new bookmark on your listing ${title} from ${user.email}`,
+                    recipient: recipient.id,
+                    sender: user.id,
+                    subject: "New Bookmark Received!",
+                    type: "user",
+                    related_user: user.id
+                }))
+            })
+        }
         await queryClient.setQueryData(savesCountKey(listingId), ([prev]: UserCount[]
         ) => ([{ count: { directus_users_id: (Number(prev!.count.directus_users_id) + 1) } }]))
         await queryClient.setQueryData(checkSavesKey(listingId), [{ id: res.id }])
