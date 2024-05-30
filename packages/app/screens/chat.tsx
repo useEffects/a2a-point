@@ -5,7 +5,7 @@ import { Text } from "app/components/ui/text";
 import { useColorScheme } from "app/hooks/color-scheme";
 import userStore from "app/store/user";
 import { useMemo, useState } from "react";
-import { FlatList, Image, ScrollView, View } from "react-native";
+import { FlatList, Image, Platform, ScrollView, View } from "react-native";
 import { useDebounce } from "use-debounce";
 import { RoomSubscribed } from "app/context/chats"
 import { useChats } from "app/hooks/chats"
@@ -64,7 +64,7 @@ export default function ChatScreen() {
         initialData: []
     }) as { data: GroupListRowProp[], isLoading: boolean }
 
-    return <ScrollView className="flex-col gap-4">
+    return <View className="flex-col gap-4 h-full">
         <View className="p-4 bg-card">
             <SearchBar
                 searchText={searchText}
@@ -77,7 +77,6 @@ export default function ChatScreen() {
                 <FlatList
                     data={contacts}
                     renderItem={({ item }) => <ContactListRow {...item} />}
-                    scrollEnabled={false}
                 />
             </View> : <></>}
             {groups?.length ? <View>
@@ -85,19 +84,15 @@ export default function ChatScreen() {
                 <FlatList
                     data={groups}
                     renderItem={({ item }) => <GroupListRow {...item} />}
-                    scrollEnabled={false}
                 />
             </View> : <></>}
         </View> :
             <FlatList
-                inverted
                 data={filteredRoomsSubscribed}
                 renderItem={({ item }) => <ChatListRow {...item} />}
-                keyExtractor={(item) => item.id.toString()}
                 ItemSeparatorComponent={() => <Separator />}
-                scrollEnabled={false}
             />}
-    </ScrollView>
+    </View>
 }
 
 const ChatListRow = (room: RoomSubscribed) => {

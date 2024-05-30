@@ -1,4 +1,4 @@
-import { createItem, createNotifications, readItems } from "@directus/sdk";
+import { createItem, createNotifications, readItem, readItems } from "@directus/sdk";
 import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useEffect, useState } from "react";
 import { Platform } from "react-native";
 import { Asset, ChatMessage, withId, withUri } from "app/components/chat-ui";
@@ -65,6 +65,7 @@ export const ChatsProvider = ({ children, rest, token }: { children: ReactNode, 
                     fields: chatFields
                 }
             }))
+            console.log("WebSocket connection established")
         }
         ws?.addEventListener("message", (message) => {
             const data = JSON.parse(message.data) as { event: string, type: string, data: MessageDetailed[] }
@@ -109,10 +110,14 @@ export const ChatsProvider = ({ children, rest, token }: { children: ReactNode, 
                 setMessages(messages => [...data.map(message => transformMessage(message, true)), ...messages])
             }
         })
-
+        console.log("here")
         const _ws = initializeWebSocket()
         setWs(_ws)
-        return _ws.close
+        return () => {
+            if (typeof _ws?.close === "function") {
+                _ws.close()
+            }
+        }
     }, [roomsSubscribed])
 
     useEffect(() => {
@@ -254,7 +259,7 @@ async function _setRoomsSubscribed(setRoomsSubscribed: Dispatch<SetStateAction<R
         const { rest } = directusStore.getState()
         try {
             const createRoomRes = await queryClient.fetchQuery({
-                queryKey: ["Create Room", roomId],
+                queryKey: ["Add user to room", roomId],
                 queryFn: async () => await rest.request(createItem("rooms_directus_users", {
                     rooms_id: roomId,
                     directus_users_id: userStore.getState().user?.id
@@ -263,15 +268,11 @@ async function _setRoomsSubscribed(setRoomsSubscribed: Dispatch<SetStateAction<R
             if (!createRoomRes) return null
             const room = await queryClient.fetchQuery({
                 queryKey: ["Fetch Room", roomId],
-                queryFn: async () => await rest.request(readItems("rooms", {
-                    filter: {
-                        id: {
-                            _eq: roomId
-                        }
-                    },
+                queryFn: async () => await rest.request(readItem("rooms", roomId, {
                     fields: roomSubscribedFields
                 })),
             }) as RoomSubscribed
+            console.log({room})
             setRoomsSubscribed(rooms => [room, ...rooms])
             queryClient.setQueryData(roomsSubscribedQueryKey, (rooms: RoomSubscribed[]) => [room, ...rooms])
             return room

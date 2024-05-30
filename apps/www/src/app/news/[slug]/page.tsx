@@ -1,3 +1,5 @@
+"use client"
+
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { getItem } from "src/app/api/directus/route"
 import { directusUrl } from "src/lib/constants"

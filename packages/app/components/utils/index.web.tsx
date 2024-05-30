@@ -1,6 +1,7 @@
 import { Button, ButtonProps } from "../ui/button"
 import { useColorScheme } from "app/hooks/color-scheme"
 import { X } from "lucide-react-native"
+import { GestureResponderEvent } from "react-native"
 import { useRouter } from "solito/navigation"
 
 export const CloseButton = (props: ButtonProps) => {
@@ -16,7 +17,7 @@ export const GoToFullListingButton = (props: ButtonProps & { listingId: string }
     const router = useRouter()
 
     const goToDetailScreen = () => {
-        router.push(`/listing/${props.listingId}`)
+        router.push(`/listings/${props.listingId}`)
     }
 
     return <Button variant={"base"} size={"none"} onPress={goToDetailScreen} {...props} />
@@ -61,4 +62,30 @@ export const GoToPostFeedbackButton = (props: ButtonProps & { userId: string }) 
     }
 
     return <Button variant={"base"} size={"none"} onPress={goToPostFeedback} {...props} />
+}
+
+export type GoToLoginButtonProps = ButtonProps & { additionalOnPress?: () => void }
+export const GoToLoginButton = (props: GoToLoginButtonProps) => {
+    const router = useRouter()
+
+    const goToLogin = () => {
+        router.push("/membership")
+    }
+
+    const handleOnPress = (e: GestureResponderEvent) => {
+        props.additionalOnPress && props.additionalOnPress()
+        goToLogin()
+    }
+
+    return <Button variant={"base"} size={"none"} onPress={handleOnPress} {...props} />
+}
+
+export const GoToActivityButton = (props: ButtonProps) => {
+    const router = useRouter()
+
+    const goToActivity = () => {
+        router.push("/activity")
+    }
+
+    return <Button variant={"base"} size={"none"} onPress={goToActivity} {...props} />
 }

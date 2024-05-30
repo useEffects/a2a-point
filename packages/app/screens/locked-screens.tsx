@@ -18,7 +18,7 @@ type LockedScreenProps = {
 
 export default function LockedScreen(props: LockedScreenProps) {
     return <View className={cn("p-4 flex-col gap-4 flex-1", props.className)}>
-        <View className="flex-1 flex-col gap-12 my-12">
+        <View className="flex-1 flex-col gap-12 native:my-12 my-0">
             <View className="flex-col">
                 <Text className="text-xl text-center font-medium">{props.title}</Text>
                 <Button variant={"base"} size={"none"} className="flex-row" onPress={() => Linking.openURL(props.readMoreLink)}>

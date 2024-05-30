@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 export default function ChatsProvider({ children }: { children: ReactNode }) {
     const { authenticated, rest, token } = directusStore()
 
-    return authenticated ? <Provider token={token} rest={rest} >
+    return authenticated ? <Provider token={token} rest={rest}>
         {children}
     </Provider> : children
 

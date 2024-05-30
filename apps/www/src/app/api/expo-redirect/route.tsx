@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
     const token = cookies().get("directus_session_token")?.value
     const appUrl = req.nextUrl.searchParams.get("appUrl")
-    if (appUrl && token) {
+    if (token) {
         const decoded = jwtDecode<JWTTokenPayload>(token)
         const { session } = decoded
         const data = await fetch(`${directusUrl}/auth/refresh`, {
@@ -27,12 +27,15 @@ export async function GET(req: NextRequest) {
         const url = new URL(appUrl!)
         url.searchParams.append("access_token", access_token)
         url.searchParams.append("refresh_token", refresh_token)
+
         return new NextResponse(`
         <!DOCTYPE html>
         <html>
             <body>
             <script>
+                window.opener.postMessage({accessToken: "${access_token}", refreshToken: "${refresh_token}" }, "${url.origin}")
                 window.location.replace("${url.toString()}")
+                window.close()
             </script>
         </body>
         </html>

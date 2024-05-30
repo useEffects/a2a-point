@@ -1,4 +1,4 @@
-import { DirectusClient, RestClient, StaticTokenClient, WebSocketClient, createDirectus, realtime, rest, staticToken, AuthenticationClient, authentication, refresh } from "@directus/sdk";
+import { DirectusClient, RestClient, logout, WebSocketClient, createDirectus, rest, staticToken, AuthenticationClient, authentication, refresh } from "@directus/sdk";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { directusUrl } from "app/lib/constants";
@@ -54,7 +54,6 @@ const directusStore = create<DirectusStore>((set, get) => ({
             return resetDirectus()
         }
 
-
         const client = createDirectus(directusUrl)
             .with(authentication())
             .with(rest())
@@ -87,6 +86,18 @@ const directusStore = create<DirectusStore>((set, get) => ({
     logout: async () => {
         await AsyncStorage.removeItem("accessToken");
         await AsyncStorage.removeItem("refreshToken");
+        await fetch(`${directusUrl}/auth/logout`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${get().token}`,
+            },
+            body: JSON.stringify({
+                mode: "json",
+                refresh_token: get().refreshToken
+            })
+
+        })
         set({ ...reset })
     }
 }));

@@ -1,5 +1,5 @@
 import userStore from "app/store/user";
-import Profile from "app/screens/profile";
+import { ProfileScreen as ProfileScreenComponent } from "app/screens/profile";
 import directusStore from "app/store/directus";
 import { View } from "react-native";
 import { Header } from "app/components/header";
@@ -25,10 +25,6 @@ export default function ProfileScreen() {
                 </View>
             </View>
         </Header>
-        {authenticated ? <Profile user={user} /> : <LockedScreen
-            SVGComponent={<ProfileSVG width={300} height={300} />}
-            readMoreLink="https://a2apoint.com"
-            title="Showcase your profile on A2APoint, attract more clients and grow your business"
-        />}
+        <ProfileScreenComponent user={user} />
     </View>
 }

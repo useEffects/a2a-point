@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { getItem } from "src/app/api/directus/route"

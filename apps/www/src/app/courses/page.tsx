@@ -1,3 +1,5 @@
+"use client"
+
 import { readItems } from "@directus/sdk";
 import StartButton from "src/components/client-components/course";
 import { NewsLetter } from "src/components/news-letter";

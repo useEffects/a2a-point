@@ -4,7 +4,7 @@ import Link from "next/link"
 // import { useMediaQuery } from "@uidotdev/usehooks"
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "./ui/navigation-menu"
 import Logo from "app/components/svg/logo"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { Separator } from "./ui/separator"
 import { cn } from "@/lib/utils"
 import directusStore from "app/store/directus"
@@ -12,6 +12,8 @@ import { Button } from "./ui/button"
 import { Lock } from "lucide-react"
 import { GooglePlayButton, AppStoreButton } from "./misc-buttons"
 import { Text } from "./ui/text"
+import { ToggleTheme } from "./toggle-theme"
+import LoginButton from "./login-button"
 
 const navItems = [
     {
@@ -98,8 +100,9 @@ const navItems = [
 
 const WebNavbar = () => {
     const pathname = usePathname()
+    const router = useRouter()
     const { authenticated } = directusStore()
-    const canNavigate = (isLocked: boolean | undefined) => authenticated || isLocked
+    const canNavigate = (isLocked: boolean | undefined) => authenticated || !isLocked
 
     return <NavigationMenu className="">
         <NavigationMenuList>
@@ -112,8 +115,8 @@ const WebNavbar = () => {
                     <div className="flex-1 flex-col flex w-1/2">
                         {item.items.map((subItem, subIndex) => <NavigationMenuLink asChild key={subIndex}>
                             <>
-                                <Button variant={"base"} size={"none"} className={cn("p-4 items-start w-full rounded flex flex-row justify-start gap-4", subItem.href === pathname && "bg-card")} href={subItem.href} disabled={canNavigate(subItem.locked)}>
-                                    {canNavigate(subItem.locked) && <Lock className="w-6 h-6" />}
+                                <Button variant={"base"} size={"none"} className={cn("p-4 items-start w-full rounded flex flex-row justify-start gap-4", subItem.href === pathname && "bg-card")} onPress={() => router.push(subItem.href)} disabled={!canNavigate(subItem.locked)}>
+                                    {!canNavigate(subItem.locked) && <Lock className="w-6 h-6" />}
                                     <div className="flex flex-col items-start">
                                         <p className="text-lg">{subItem.title}</p>
                                         {subItem.description && <p className="text-subtext text-base">{subItem.description}</p>}
@@ -138,5 +141,10 @@ const MobileNavbar = () => {
 
 export const Navbar = () => {
     // const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
-    return false ? <MobileNavbar /> : <WebNavbar />
+    return false ? <MobileNavbar /> : <div className="flex gap-4 items-center container pt-12">
+        <ToggleTheme />
+        <Link href={"/"} className="text-primary font-bold">A2APoint</Link>
+        <WebNavbar />
+        <LoginButton />
+    </div>
 }

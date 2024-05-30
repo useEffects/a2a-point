@@ -1,7 +1,7 @@
 "use client"
 
 import HeroGirl from "@/assets/hero-girl.png";
-import HeroImage from "src/components/hero-image";
+import HeroImage from "app/components/svg/hero";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 // import explainingVideo from "@/assets/explaining-video.mp4"
@@ -12,6 +12,7 @@ import { Testimonial, TestimonialCarousel } from "src/components/client-componen
 import { HalfWidthDiv } from "src/components/half-width-div";
 import { NewsLetter } from "src/components/news-letter";
 import { directus } from "src/lib/directus";
+import { AppStoreButton, GooglePlayButton } from "@/components/misc-buttons";
 
 export default async function Home() {
   return <div className="flex flex-col gap-40 items-center relative">
@@ -35,13 +36,13 @@ export default async function Home() {
                 <Text>View Testimonials</Text>
               </Button>
             </div>
-            <div className="flex flex-col gap-4 [&>*]:full w-1/2">
-              <Button size={"lg"}>
-                <Text>Play Store</Text>
-              </Button>
-              <Button size={"lg"}>
-                <Text>App Store</Text>
-              </Button>
+            <div className="flex flex-col gap-4 [&>*]:full w-1/2 [&>*]:items-start">
+              <GooglePlayButton size={"lg"}>
+                <Text>Download on Google Play</Text>
+              </GooglePlayButton>
+              <AppStoreButton size={"lg"}>
+                <Text>Download on App Store</Text>
+              </AppStoreButton>
             </div>
           </div>
         </div>

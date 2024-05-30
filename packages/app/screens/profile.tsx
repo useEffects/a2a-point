@@ -24,8 +24,20 @@ import { MediumListingCardProps } from "../components/listings-cards/atoms/mediu
 import { CommonFilters, RenderListings, bodies, commonFilters } from "../components/listings-cards/molecules/listings";
 import { Button } from "../components/ui/button";
 import { GoToActivityButton, GoToPostFeedbackButton } from "../components/utils";
+import LockedScreen from "./locked-screens";
+import ProfileSVG from "app/components/svg/profile";
 
-export default function Profile({ user }: { user: FullUser }) {
+export const ProfileScreen = ({ user }: { user: FullUser }) => {
+    const { authenticated } = directusStore()
+
+    return authenticated ? <Profile user={user} /> : <LockedScreen
+        SVGComponent={<ProfileSVG width={300} height={300} />}
+        readMoreLink="https://a2apoint.com"
+        title="Showcase your profile on A2APoint, attract more clients and grow your business"
+    />
+}
+
+export function Profile({ user }: { user: FullUser }) {
     const [index, setIndex] = useState(0)
     const { colors } = useColorScheme()
     const [listingsCount, setListingsCount] = useState<number | null>(0)

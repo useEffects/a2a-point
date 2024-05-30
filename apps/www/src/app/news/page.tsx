@@ -1,3 +1,5 @@
+"use client"
+
 import { aggregate, readItems } from "@directus/sdk"
 import { ListNews, MyPagination } from "src/components/client-components/news"
 import { NewsLetter } from "src/components/news-letter"

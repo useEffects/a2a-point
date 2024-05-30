@@ -10,7 +10,7 @@ import { RenderMetrics } from "./small"
 import { View } from "react-native"
 import { useColorScheme } from "app/hooks/color-scheme"
 import directusStore from "app/store/directus"
-import { GoToFullListingButton } from "app/components/utils"
+import { GoToFullListingButton, GoToRoomButton } from "app/components/utils"
 
 export type MediumListingCardProps = Pick<Listing, "id" | "title" | "price" | "address" | "type" | "deal_type" | "description"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email"> }
 
@@ -25,14 +25,13 @@ export const LockedChatButton = () => {
 export const MediumListingCard = (item: MediumListingCardProps) => {
     const { user } = userStore()
     const { authenticated } = directusStore()
-    const router = useRouter()
 
     return <View className="w-full flex-col gap-2 px-2 my-8">
         <View className="flex flex-row items-center justify-between">
             <UserChip user={item.user_created} />
-            {authenticated ? user.id === item.user_created.id ? <></> : <Button size="none" variant="base" onPress={async () => router.push(`/chat/${await getDMRoomId([user.id, item.user_created.id])}`)}>
+            {authenticated ? user.id === item.user_created.id ? <></> : <GoToRoomButton roomId={getDMRoomId([user.id, item.user_created.id])}>
                 <MessageCircleMore className="!text-foreground" />
-            </Button> : <LockedChatButton />}
+            </GoToRoomButton> : <LockedChatButton />}
         </View>
         <GoToFullListingButton listingId={item.id} className="items-start" size={"none"} variant={"base"}>
             <Text className="text-lg text-primary">{item.title}</Text>

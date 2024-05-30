@@ -143,17 +143,19 @@ export const LoginPopover = () => {
     }
 
     return <BottomSheet open={isOpen} setOpen={setIsOpen} onBackdropPress={handleClose}>
-        <View className="p-4 bg-card flex-card gap-4">
-            <View className="flex-row justify-between">
-                <View className="flex-row gap-2">
-                    <Sparkles fill={colors.primary} className="text-primary" />
-                    <Text className="text-xl font-bold">Get Started</Text>
+        <View className="p-4 bg-card gap-4 flex flex-row justify-center">
+            <View className="md:w-[600px]">
+                <View className="flex-row justify-between w-full">
+                    <View className="flex-row gap-2">
+                        <Sparkles fill={colors.primary} className="text-primary" />
+                        <Text className="text-xl font-bold">Get Started</Text>
+                    </View>
+                    {canClose ? <CloseButton onPress={() => setIsOpen(false)} /> : <></>}
                 </View>
-                {canClose ? <CloseButton onPress={() => setIsOpen(false)} /> : <></>}
-            </View>
-            <View className="flex-col gap-4">
-                <Text>Login to unlock the full application</Text>
-                <GoToLoginButton additionalOnPress={() => setIsOpen(false)} />
+                <View className="flex-col gap-4">
+                    <Text>Login to unlock the full application</Text>
+                    <GoToLoginButton additionalOnPress={() => setIsOpen(false)} />
+                </View>
             </View>
         </View>
     </BottomSheet>

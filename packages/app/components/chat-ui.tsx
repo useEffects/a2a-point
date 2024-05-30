@@ -54,7 +54,6 @@ export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserI
 
     const isTextBig = props.content.length > 40
     const additionalSpacing = renderRight ? isTextBig ? "mr-0" : "mr-2" : isTextBig ? "ml-0" : "ml-2"
-    const textAlign = renderRight ? "text-left" : "text-right"
     const toHighlight = props.goToId === props.id
     const flexDirection = hasAsset ? "flex-col" : isTextBig ? "flex-col" : renderRight ? "flex-row" : "flex-row-reverse"
     const marginDirection = renderRight ? "ml-auto mr-0" : "mr-auto ml-0"
@@ -74,7 +73,7 @@ export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserI
         )}>
             <View className='flex-col'>
                 {props.assets && props.assets.length ? <ImageGroup assets={props.assets} /> : <></>}
-                <Text className={cn(additionalSpacing, textAlign, textColor)}>
+                <Text className={cn(additionalSpacing, textColor)}>
                     <Autolink text={props.content} email url phone="sms" />
                 </Text>
             </View>

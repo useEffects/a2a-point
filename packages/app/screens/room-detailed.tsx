@@ -8,7 +8,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { useParams } from "solito/navigation"
 import { useDebounce } from "use-debounce"
 import { useQuery } from "@tanstack/react-query"
-import { readItems } from "@directus/sdk"
+import { readItem, readItems } from "@directus/sdk"
 import { randomUUID } from "expo-crypto"
 import { Image, ScrollView, View } from "react-native"
 import { Header } from "app/components/header"
@@ -75,44 +75,41 @@ const ChatScreen = ({ roomDetails, receivers }: {
     }
 
     return <View className="flex-col h-full">
-        <Header>
-            <View className="flex-1">
-                {searchBarVisible ? <View className="flex-row items-center pr-2">
-                    <SearchBar
-                        searchText={searchText}
-                        setSearchText={setSearchText}
-                        searchBarProps={{
-                            showLoading: isScrollToMessagesLoading
-                        }}
-                    />
-                    {(scrollToMessages && scrollToMessages.length) ? <View className="flex-row gap-2 items-center px-1">
-                        <Text>{scrollToIndex + 1} / {scrollToMessages.length}</Text>
-                        <View className="flex-row">
-                            <Button disabled={scrollToIndex === scrollToMessages.length - 1} className="mx-0" onPress={() => (scrollToIndex < scrollToMessages.length - 1) && setScrollToIndex(p => p + 1)} variant={"ghost"} size={"icon"}>
-                                <ChevronUp size={18} className="!text-foreground" />
-                            </Button>
-                            <Button disabled={scrollToIndex === 0} className="mx-0" variant={"ghost"} size={"icon"} onPress={() => (scrollToIndex > 0) && setScrollToIndex(p => p - 1)}>
-                                <ChevronDown size={18} className="!text-foreground" />
-                            </Button>
-                        </View>
-                    </View> : <></>}
-                    <Button variant={"ghost"} size={"icon"} onPress={() => { setSearchBarVisible(false); setSearchText("") }}>
-                        <X size={18} className="!text-foreground" />
+        {searchBarVisible ? <View className="flex-row items-center pr-2">
+            <SearchBar
+                searchText={searchText}
+                setSearchText={setSearchText}
+                searchBarProps={{
+                    showLoading: isScrollToMessagesLoading
+                }}
+            />
+            {(scrollToMessages && scrollToMessages.length) ? <View className="flex-row gap-2 items-center px-1">
+                <Text>{scrollToIndex + 1} / {scrollToMessages.length}</Text>
+                <View className="flex-row">
+                    <Button disabled={scrollToIndex === scrollToMessages.length - 1} className="mx-0" onPress={() => (scrollToIndex < scrollToMessages.length - 1) && setScrollToIndex(p => p + 1)} variant={"ghost"} size={"icon"}>
+                        <ChevronUp size={18} className="!text-foreground" />
                     </Button>
-                </View> : <View className="flex-row justify-between items-center">
-                    <View className="flex-row items-center gap-2">
-                        <Image source={{ uri: roomAvatar }} className="w-8 h-8 rounded-full" />
-                        <Text>{roomName}</Text>
-                    </View>
-                    <View className="flex-row items-center gap-2">
-                        <Button variant={"ghost"} size={"icon"} onPress={() => setSearchBarVisible(true)}>
-                            <Search size={18} className="!text-foreground" />
-                        </Button>
-                        <ChatDropDownMenu roomId={roomId} members={receivers} isGroup={isGroup} open={openDropdown} setOpen={setOpenDropdown} />
-                    </View>
-                </View>}
+                    <Button disabled={scrollToIndex === 0} className="mx-0" variant={"ghost"} size={"icon"} onPress={() => (scrollToIndex > 0) && setScrollToIndex(p => p - 1)}>
+                        <ChevronDown size={18} className="!text-foreground" />
+                    </Button>
+                </View>
+            </View> : <></>}
+            <Button variant={"ghost"} size={"icon"} onPress={() => { setSearchBarVisible(false); setSearchText("") }}>
+                <X size={18} className="!text-foreground" />
+            </Button>
+        </View> : <View className="flex-row justify-between items-center">
+            <View className="flex-row items-center gap-2">
+                <Image source={{ uri: roomAvatar }} className="w-8 h-8 rounded-full" />
+                <Text>{roomName}</Text>
             </View>
-        </Header>
+            <View className="flex-row items-center gap-2">
+                <Button variant={"ghost"} size={"icon"} onPress={() => setSearchBarVisible(true)}>
+                    <Search size={18} className="!text-foreground" />
+                </Button>
+                <ChatDropDownMenu roomId={roomId} members={receivers} isGroup={isGroup} open={openDropdown} setOpen={setOpenDropdown} />
+            </View>
+        </View>
+        }
         <ChatUi
             currentUserId={user?.id!}
             messages={messages.filter(m => m.room === roomId)}
@@ -130,46 +127,54 @@ const ChatScreen = ({ roomDetails, receivers }: {
     </View>
 }
 
-export default function RoomDetailedComponent() {
-    const params = useParams<{ id: string }>()
+export default function RoomDetailedComponent({ roomId }: { roomId: string }) {
     const { user } = userStore()
     const { roomsSubscribed, addRoom } = useChats()
     const [room, setRoom] = useState<RoomSubscribed | null | undefined>()
     const [roomDetails, setRoomDetails] = useState<{ roomId: string, roomName: string, roomAvatar: string, isGroup: boolean }>()
     const [receivers, setReceivers] = useState<Member[] | undefined>()
+    const { rest } = directusStore()
 
     useEffect(() => {
         async function init() {
-            if (!params?.id) {
+            if (!roomId) {
                 setRoomDetails(undefined)
             } else {
-                const found = roomsSubscribed.find(r => r.id === params?.id)
+                const found = roomsSubscribed.find(r => r.id === roomId)
                 if (found) {
                     setRoom(found)
                 } else {
-                    const _room = await addRoom(params?.id)
-                    setRoom(_room)
+                    const checkRoom = await rest.request(readItem("rooms", roomId, {
+                        fields: ["id"]
+                    }))
+                    console.log({checkRoom})
+                    if (checkRoom && checkRoom.id) {
+                        const _room = await addRoom(roomId)
+                        setRoom(_room)
+                    } else {
+                        alert("Room not found")
+                    }
                 }
             }
         }
         init()
-    }, [addRoom, params?.id, roomsSubscribed])
+    }, [addRoom, roomId, roomsSubscribed])
 
     useEffect(() => {
         const _receivers = room?.members.filter(
             (m) => m.directus_users_id.id !== user?.id,
         );
-        if (params?.id && _receivers && _receivers.length > 0) {
+        if (roomId && _receivers && _receivers.length > 0) {
             const [roomName, roomAvatar] = room?.type === "group"
                 ? [room?.title!, buildAssetUrl(room?.avatar)]
                 : [
                     `${_receivers[0]!.directus_users_id.first_name} ${_receivers[0]!.directus_users_id.last_name}`,
                     buildAssetUrl(_receivers[0]!.directus_users_id.avatar),
                 ];
-            setRoomDetails({ roomId: params?.id as string, roomName, roomAvatar, isGroup: room?.type === "group" })
+            setRoomDetails({ roomId: roomId as string, roomName, roomAvatar, isGroup: room?.type === "group" })
         }
         setReceivers(_receivers)
-    }, [room, params?.id, user?.id])
+    }, [room, roomId, user?.id])
 
     if (room === undefined) {
         return null

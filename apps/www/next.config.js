@@ -22,6 +22,9 @@ const nextConfig = {
     'react-native-css-interop',
     'react-native-vector-icons',
     'react-native-ratings',
+    'react-native-tab-view',
+    'react-native-autocomplete-input',
+    'react-native-collapsible'
   ],
 }
 
