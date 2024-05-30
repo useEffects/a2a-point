@@ -46,5 +46,11 @@ export const tailwindColorDefinitions = {
     },
     subtext: {
         DEFAULT: "hsl(var(--subtext))",
+    },
+    light: {
+        DEFAULT: "hsl(var(--light))",
+    },
+    dark: {
+        DEFAULT: "hsl(var(--dark))",
     }
 }

@@ -20,6 +20,26 @@ export const navItems = [
     {
         label: "News",
         href: "/news"
+    },
+    {
+        label: "Listings",
+        href: "/listings",
+        trial: true
+    },
+    {
+        label: "Chat",
+        href: "/chat",
+        locked: true
+    },
+    {
+        label: "Post",
+        href: "/post",
+        locked: true
+    },
+    {
+        label: "Profile",
+        href: "/profile",
+        locked: true
     }
 ]
 

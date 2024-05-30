@@ -26,6 +26,8 @@ export const theme = {
         "input": "#C9BCB5",
         "ring": "#E7E7E7",
         "subtext": "#4E4E4E",
+        "light": "#FAF9F8",
+        "dark": "#4C4F69",
     },
     "dark": {
         "background": "#0E0D0D",
@@ -54,5 +56,7 @@ export const theme = {
         "input": "#514335",
         "ring": "#1F1D1C",
         "subtext": "#B4A590",
+        "light": "#FFFAF5",
+        "dark": "#0E0D0D"
     }
 }
