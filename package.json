@@ -25,7 +25,9 @@
   },
   "nohoist": [
     "**/expo-router",
-    "**/expo-router/**"
+    "**/expo-router/**",
+    "**/sharp",
+    "**/sharp/**"
   ],
   "packageManager": "yarn@1.22.19"
 }
