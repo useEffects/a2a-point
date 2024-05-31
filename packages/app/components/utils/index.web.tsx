@@ -48,7 +48,7 @@ export const GoToLocationListingsButton = (props: ButtonProps & { roomId: string
     const router = useRouter()
 
     const goToLocationDetailed = () => {
-        router.push(`/group/${props.roomId}`)
+        router.push(`/locations/${props.roomId}`)
     }
 
     return <Button variant={"base"} size={"none"} onPress={goToLocationDetailed} {...props} />

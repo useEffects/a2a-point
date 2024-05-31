@@ -15,7 +15,7 @@ type DirectusStore = {
     logout: () => Promise<void>,
 }
 
-export const token = "UvVy-J3BRQJaJw3YSg5egD2aK7ZkK8xk"
+export const token = "hid8CWlWk9AxvYqL3Oia4rNJCM9mArWt"
 const initialClient = createDirectus(directusUrl)
     .with(rest())
     .with(authentication())

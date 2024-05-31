@@ -1,4 +1,5 @@
 import { directusUrl } from "@/lib/constants";
+import { portfolioUrl } from "app/lib/constants";
 import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -28,12 +29,16 @@ export async function GET(req: NextRequest) {
         url.searchParams.append("access_token", access_token)
         url.searchParams.append("refresh_token", refresh_token)
 
+        const script = url.origin === new URL(portfolioUrl).origin ?
+            `window.opener.postMessage({ accessToken: "${access_token}", refreshToken: "${refresh_token}" }, window.location.origin); window.close();` :
+            `window.location.replace("${url.toString()}")`
+
         return new NextResponse(`
         <!DOCTYPE html>
         <html>
             <body>
             <script>
-                window.location.replace("${url.toString()}")
+                ${script}
             </script>
         </body>
         </html>

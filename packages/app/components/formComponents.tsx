@@ -128,38 +128,41 @@ export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps 
     const RenderItem = (item: RenderRoomTileProps | RenderListingTileProps) => {
         return isRenderRoomTile(item) ? <RenderRoomTile {...item} currentId={props.currentItem?.id} /> : <RenderListingTile {...item} currentId={props.currentItem?.id} />
     }
-
-    return <AutoComplete
-        data={data}
-        renderTextInput={() => <FormInput
-            value={searchText}
-            label={props.label}
-            onChangeText={handleChange}
-            onFocus={() => setHideResults(false)}
-            onBlur={() => setHideResults(true)}
-        />}
-        hideResults={hideResults}
-        inputContainerStyle={{ borderWidth: 0 }}
-        containerStyle={{ borderWidth: 0 }}
-        flatListProps={{
-            scrollEnabled: false,
-            renderItem: ({ item }) => <Button
-                className="items-start"
-                onPress={() => {
-                    props.setCurrentItem(item)
-                    setSearchText(item.title!)
-                    setHideResults(true)
+    return <View className="relative w-full" style={{ height: initialInputHeight + 32 }}>
+        <View style={{zIndex: 100, position: "absolute", elevation: 100, left: 0, right: 0, top: 0}}>
+            <AutoComplete
+                data={data}
+                renderTextInput={() => <FormInput
+                    value={searchText}
+                    label={props.label}
+                    onChangeText={handleChange}
+                    onFocus={() => setHideResults(false)}
+                    onBlur={() => setHideResults(true)}
+                />}
+                hideResults={hideResults}
+                inputContainerStyle={{ borderWidth: 0 }}
+                containerStyle={{ borderWidth: 0 }}
+                flatListProps={{
+                    scrollEnabled: false,
+                    renderItem: ({ item }) => <Button
+                        className="items-start"
+                        onPress={() => {
+                            props.setCurrentItem(item)
+                            setSearchText(item.title!)
+                            setHideResults(true)
+                        }}
+                        variant={"base"}
+                        size={"none"}
+                    >
+                        <RenderItem {...item} />
+                    </Button>,
+                    style: { borderWidth: 0, backgroundColor: colors.card, margin: 0, borderRadius: 8, padding: 8 },
+                    ItemSeparatorComponent: () => <Separator className="my-2 px-4" />,
+                    keyboardShouldPersistTaps: "handled"
                 }}
-                variant={"base"}
-                size={"none"}
-            >
-                <RenderItem {...item} />
-            </Button>,
-            style: { borderWidth: 0, backgroundColor: colors.card, margin: 0, borderRadius: 8, padding: 8 },
-            ItemSeparatorComponent: () => <Separator className="my-2 px-4" />,
-            keyboardShouldPersistTaps: "handled"
-        }}
-    />
+            />
+        </View>
+    </View>
 }
 
 export type RenderRoomTileProps = Pick<Room, "id" | "avatar" | "title">

@@ -23,6 +23,7 @@ import directusStore from 'app/store/directus'
 import { createItem } from "@directus/sdk"
 import * as Linking from "expo-linking"
 import { portfolioUrl } from 'app/lib/constants'
+import Collapsible from 'react-native-collapsible'
 
 export type withId = { id: string }
 export type withUri = { uri: string }
@@ -48,12 +49,13 @@ type ChatUiProps = {
 
 export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserId: string } & { goToId?: string, isFirst: boolean, isLast: boolean, isGroup?: boolean }) => {
     const { user } = userStore()
+    const { colors } = useColorScheme()
 
     const renderRight = props.user_created.id === props.currentUserId
     const hasAsset = props.assets && props.assets.length > 0
 
     const isTextBig = props.content.length > 40
-    const additionalSpacing = renderRight ? isTextBig ? "mr-0" : "mr-2" : isTextBig ? "ml-0" : "ml-2"
+    const additionalSpacing = renderRight ? isTextBig ? "mr-0 mb-1" : "mr-2" : isTextBig ? "ml-0 mb-1" : "ml-2"
     const toHighlight = props.goToId === props.id
     const flexDirection = hasAsset ? "flex-col" : isTextBig ? "flex-col" : renderRight ? "flex-row" : "flex-row-reverse"
     const marginDirection = renderRight ? "ml-auto mr-0" : "mr-auto ml-0"
@@ -64,18 +66,22 @@ export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserI
     const infoPositioning = renderRight ? "ml-auto mr-0" : "mr-auto ml-0"
     const textColor = renderRight ? "!text-primary-foreground" : "text-background"
 
-    return <View className={cn(toHighlight && "bg-accent", "mt-[1px]", props.isGroup && "flex-col gap-1")}>
+    return <View className={cn(toHighlight && "bg-accent", "mt-[1px]", props.isGroup && "flex-col gap-1", props.isFirst && "mb-2", props.isLast && "mt-2")}>
         {(props.isGroup && props.isLast && props.user_created.id !== user.id) ?
             <View className='items-start'>
                 <UserChip user={props.user_created} />
             </View> : <></>}
-        <View className={cn("p-1 px-2 items-center max-w-[90%]", containerStyle, roundedStyle, flexDirection, marginDirection
+        <View className={cn("py-2 px-4 items-center max-w-[90%] md:max-w-[50%]", containerStyle, roundedStyle, flexDirection, marginDirection
         )}>
             <View className='flex-col'>
                 {props.assets && props.assets.length ? <ImageGroup assets={props.assets} /> : <></>}
-                <Text className={cn(additionalSpacing, textColor)}>
-                    <Autolink text={props.content} email url phone="sms" />
-                </Text>
+                {props.content ? <Text className={cn(additionalSpacing, textColor)}>
+                    <Autolink linkProps={{
+                        style: {
+                            color: colors.info,
+                        }
+                    }} text={props.content} email url phone="sms" />
+                </Text> : <></>}
             </View>
             <View className={cn("flex-row gap-1 items-center", infoPositioning)}>
                 <Text className={cn("text-xs font-light", textColor)}>{shortTime(props.date_created)}</Text>
@@ -111,17 +117,11 @@ const FooterDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateAc
 
     return <DropdownMenu open={props.open} onOpenChange={props.setOpen}>
         <DropdownMenuTrigger asChild>
-            <Button size={"none"} variant={"base"} onPress={() => props.setOpen(p => !p)}>
+            <Button size={"icon"} variant={"ghost"} onPress={() => props.setOpen(p => !p)}>
                 <Paperclip size={18} className="!text-foreground" />
             </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent side="top">
-            <DropdownMenuItem>
-                <View className="flex-row gap-2 items-center">
-                    <Camera size={16} className="!text-primary" />
-                    <Text className="!text-sm">Open Camera</Text>
-                </View>
-            </DropdownMenuItem>
             <DropdownMenuItem onPress={() => handleAssetUpload("image")}>
                 <View className="flex-row gap-2 items-center">
                     <ImageIcon size={16} className="!text-primary" />
@@ -165,10 +165,12 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
             </Button>
         </View> : <></>}
         <View className="flex-row gap-4 native:h-16 h-14 w-full py-2 px-4 items-center bg-card">
-            <FooterDropDownMenu open={open} setOpen={setOpen} currentMessageDispatcher={currentMessageDispatcher} />
-            <Button onPress={() => setOpenBottomSheet(true)} variant={"base"} size={"none"}>
-                <WandSparkles className='text-foreground' size={18} />
-            </Button>
+            {disabled && <>
+                <FooterDropDownMenu open={open} setOpen={setOpen} currentMessageDispatcher={currentMessageDispatcher} />
+                <Button onPress={() => setOpenBottomSheet(true)} variant={"ghost"} size={"icon"}>
+                    <WandSparkles className='text-foreground' size={18} />
+                </Button>
+            </>}
             <Input
                 multiline={true}
                 placeholder="Type ..."
@@ -278,9 +280,11 @@ export const ChatUi = (props: ChatUiProps) => {
                     isLast={(index === section.data.length - 1 || section.data[index + 1]?.user_created.id !== item.user_created.id)}
                     isGroup={props.isGroup}
                 />}
-                renderSectionFooter={({ section }) => <Text className='text-sm text-center text-subtext py-2'>{section.title}</Text>}
+                renderSectionFooter={({ section }) => <Text className='text-sm text-center text-subtext py-4'>{section.title}</Text>}
                 keyExtractor={(_, index) => index.toString() as string}
                 {...props.listProps}
+                bounces={false}
+                overScrollMode='never'
             />
         </View>
         <Footer currentMessage={props.currentMessage} currentMessageDispatcher={props.currentMessageDispatcher} onSend={props.onSend} />

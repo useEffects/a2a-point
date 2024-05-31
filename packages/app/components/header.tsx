@@ -1,11 +1,11 @@
 import { useRouter } from "solito/navigation"
-import { useNavigation } from '@react-navigation/native';
 import { Button } from "./ui/button"
-import { DimensionValue, View } from "react-native";
+import { DimensionValue, Platform, View } from "react-native";
 import { ReactNode } from "react";
 import { MoveLeft } from "lucide-react-native"
 import { useColorScheme } from "app/hooks/color-scheme";
 import { cn } from "app/lib/utils";
+import useNavigation from "app/hooks/navigation";
 
 export const headerHeight = 48
 
@@ -21,7 +21,7 @@ export const BackButton = () => {
 
 export const Header = ({ children, height = headerHeight, className }: { children: ReactNode, height?: DimensionValue, className?: string }) => {
     return <View className={cn("flex-row items-center px-4 gap-2 bg-card", className)} style={{ height }}>
-        <BackButton />
+        {Platform.OS === "web" ? <></> : <BackButton />}
         {children}
     </View>
 }

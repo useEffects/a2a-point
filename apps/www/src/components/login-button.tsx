@@ -32,7 +32,7 @@ export default function LoginButton() {
     }, [initialize]);
 
     const handleLogin = () => {
-        const redirectUrl = `${portfolioUrl}/api/expo-redirect?appUrl=${portfolioUrl}${pathname}`;
+        const redirectUrl = `${portfolioUrl}/api/auth-redirect?appUrl=${portfolioUrl}${pathname}`;
         const popup = window.open(`${directusUrl}/auth/login/keycloak?redirect=${redirectUrl}`, "login", "width=400,height=600");
 
         const checkPopup = setInterval(() => {

@@ -74,42 +74,43 @@ const ChatScreen = ({ roomDetails, receivers }: {
         if (!isAdded) setEndReached(true)
     }
 
-    return <View className="flex-col h-full">
-        {searchBarVisible ? <View className="flex-row items-center pr-2">
-            <SearchBar
-                searchText={searchText}
-                setSearchText={setSearchText}
-                searchBarProps={{
-                    showLoading: isScrollToMessagesLoading
-                }}
-            />
-            {(scrollToMessages && scrollToMessages.length) ? <View className="flex-row gap-2 items-center px-1">
-                <Text>{scrollToIndex + 1} / {scrollToMessages.length}</Text>
-                <View className="flex-row">
-                    <Button disabled={scrollToIndex === scrollToMessages.length - 1} className="mx-0" onPress={() => (scrollToIndex < scrollToMessages.length - 1) && setScrollToIndex(p => p + 1)} variant={"ghost"} size={"icon"}>
-                        <ChevronUp size={18} className="!text-foreground" />
-                    </Button>
-                    <Button disabled={scrollToIndex === 0} className="mx-0" variant={"ghost"} size={"icon"} onPress={() => (scrollToIndex > 0) && setScrollToIndex(p => p - 1)}>
-                        <ChevronDown size={18} className="!text-foreground" />
-                    </Button>
-                </View>
-            </View> : <></>}
-            <Button variant={"ghost"} size={"icon"} onPress={() => { setSearchBarVisible(false); setSearchText("") }}>
-                <X size={18} className="!text-foreground" />
-            </Button>
-        </View> : <View className="flex-row justify-between items-center">
-            <View className="flex-row items-center gap-2">
-                <Image source={{ uri: roomAvatar }} className="w-8 h-8 rounded-full" />
-                <Text>{roomName}</Text>
-            </View>
-            <View className="flex-row items-center gap-2">
-                <Button variant={"ghost"} size={"icon"} onPress={() => setSearchBarVisible(true)}>
-                    <Search size={18} className="!text-foreground" />
+    return <View className="flex-col h-full w-full">
+        <Header className="w-full">
+            {searchBarVisible ? <View className="flex-row items-center justify-between flex-1 w-full pr-2">
+                <SearchBar
+                    searchText={searchText}
+                    setSearchText={setSearchText}
+                    searchBarProps={{
+                        showLoading: isScrollToMessagesLoading
+                    }}
+                />
+                {(scrollToMessages && scrollToMessages.length) ? <View className="flex-row gap-2 items-center px-1">
+                    <Text>{scrollToIndex + 1} / {scrollToMessages.length}</Text>
+                    <View className="flex-row">
+                        <Button disabled={scrollToIndex === scrollToMessages.length - 1} className="mx-0" onPress={() => (scrollToIndex < scrollToMessages.length - 1) && setScrollToIndex(p => p + 1)} variant={"ghost"} size={"icon"}>
+                            <ChevronUp size={18} className="!text-foreground" />
+                        </Button>
+                        <Button disabled={scrollToIndex === 0} className="mx-0" variant={"ghost"} size={"icon"} onPress={() => (scrollToIndex > 0) && setScrollToIndex(p => p - 1)}>
+                            <ChevronDown size={18} className="!text-foreground" />
+                        </Button>
+                    </View>
+                </View> : <></>}
+                <Button variant={"ghost"} size={"icon"} onPress={() => { setSearchBarVisible(false); setSearchText("") }}>
+                    <X size={18} className="!text-foreground" />
                 </Button>
-                <ChatDropDownMenu roomId={roomId} members={receivers} isGroup={isGroup} open={openDropdown} setOpen={setOpenDropdown} />
-            </View>
-        </View>
-        }
+            </View> : <View className="flex-row justify-between items-center flex-1">
+                <View className="flex-row items-center gap-2">
+                    <Image source={{ uri: roomAvatar }} className="w-8 h-8 rounded-full" />
+                    <Text>{roomName}</Text>
+                </View>
+                <View className="flex-row items-center gap-2">
+                    <Button variant={"ghost"} size={"icon"} onPress={() => setSearchBarVisible(true)}>
+                        <Search size={18} className="!text-foreground" />
+                    </Button>
+                    <ChatDropDownMenu roomId={roomId} members={receivers} isGroup={isGroup} open={openDropdown} setOpen={setOpenDropdown} />
+                </View>
+            </View>}
+        </Header>
         <ChatUi
             currentUserId={user?.id!}
             messages={messages.filter(m => m.room === roomId)}
@@ -147,7 +148,6 @@ export default function RoomDetailedComponent({ roomId }: { roomId: string }) {
                     const checkRoom = await rest.request(readItem("rooms", roomId, {
                         fields: ["id"]
                     }))
-                    console.log({checkRoom})
                     if (checkRoom && checkRoom.id) {
                         const _room = await addRoom(roomId)
                         setRoom(_room)
@@ -197,23 +197,40 @@ const ChatDropDownMenu = (props: { members: Member[], isGroup: boolean, open: bo
                     {props.open ? <X size={18} className="!text-foreground" /> : <EllipsisVertical size={18} className="!text-foreground" />}
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent sideOffset={-40 + 8}>
-                <DropdownMenuItem>
-                    {props.isGroup ? <Button onPress={() => setBottomSheetVisible(true)}>
+            <DropdownMenuContent sideOffset={-40}>
+                {props.isGroup ? (
+                    <Button
+                        onPress={() => setBottomSheetVisible(true)}
+                        className="!justify-start !w-full !items-start !flex !flex-row"
+                    >
                         <Text className="!text-sm">See members</Text>
-                    </Button> :
-                        <GoToProfileButton additionalOnPress={() => props.setOpen(false)} userId={props.members[0]!.directus_users_id.id}>
-                            <Text className="!text-sm">See profile</Text>
-                        </GoToProfileButton>}
-                </DropdownMenuItem>
-                {props.isGroup ? <DropdownMenuItem>
-                    <GoToLocationListingsButton roomId={props.roomId}>
-                        <Text className="!text-sm">Browse listings</Text>
+                    </Button>
+                ) : (
+                    <GoToProfileButton
+                        additionalOnPress={() => props.setOpen(false)}
+                        userId={props.members[0]!.directus_users_id.id}
+                        variant={"ghost"}
+                        size={"default"}
+                        className="!justify-start !w-full !items-start !flex !flex-row"
+                    >
+                        <Text className="!text-sm !text-left">See profile</Text>
+                    </GoToProfileButton>
+                )}
+                {props.isGroup && (
+                    <GoToLocationListingsButton
+                        roomId={props.roomId}
+                        variant={"base"}
+                        size={"none"}
+                        className="justify-start w-full"
+                    >
+                        <DropdownMenuItem className="w-full">
+                            <Text className="!text-sm">Browse listings</Text>
+                        </DropdownMenuItem>
                     </GoToLocationListingsButton>
-                </DropdownMenuItem> : <></>}
-                <DropdownMenuItem>
-                    <Text className="!text-sm">Mute notifications</Text>
-                </DropdownMenuItem>
+                )}
+                <Button variant={"ghost"} className="!justify-start !w-full !items-start flex flex-row">
+                    <Text className="!text-sm !text-left">Mute notifications</Text>
+                </Button>
             </DropdownMenuContent>
         </DropdownMenu>
         <BottomSheet isVisible={bottomSheetVisible} onBackdropPress={() => setBottomSheetVisible(false)}>

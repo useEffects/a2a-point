@@ -91,7 +91,7 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
                     />
                     <FormInput
                         label="Price"
-                        value={props.touched.price ? props.values.price.toString() : ""}
+                        value={props.values.price.toString()}
                         onChangeText={props.handleChange("price")}
                         error={props.touched.price ? props.errors.price : ""}
                         keyboardType={"number-pad"}

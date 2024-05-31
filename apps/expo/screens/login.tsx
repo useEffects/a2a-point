@@ -1,5 +1,4 @@
 import directusStore from "app/store/directus"
-import { useRouter } from "solito/navigation"
 import * as WebBrowser from 'expo-web-browser';
 import { directusUrl, portfolioUrl } from "app/lib/constants";
 import { Image, Linking, ScrollView, View } from "react-native";
@@ -11,17 +10,22 @@ import HeroGirl from "app/assets/hero-girl.png"
 import { Header } from "app/components/header";
 import { parse } from "search-params"
 import { useEffect } from "react";
+import useNavigation from "app/hooks/navigation";
 
 const LoginScreen = () => {
     const { initialize, authenticated } = directusStore()
-    const router = useRouter()
     const appURL = "a2apoint-community://"
+    const navigation = useNavigation()
 
     useEffect(() => {
-        if (authenticated) {
-            router.replace("/")
-        }
-    }, [authenticated, router])
+        const timer = setInterval(() => {
+            if (authenticated) {
+                navigation.navigate("home")
+                clearInterval(timer)
+            }
+        }, 1000)
+        return () => clearInterval(timer)
+    }, [authenticated, navigation])
 
     const handleLogin = async () => {
         const result = await WebBrowser.openAuthSessionAsync(`${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/auth-redirect?appUrl=${appURL}`, appURL);
@@ -30,7 +34,6 @@ const LoginScreen = () => {
             console.log({ accessToken, refreshToken })
             if (accessToken && refreshToken) {
                 await initialize(accessToken.toString(), refreshToken.toString())
-                router.replace("/")
             }
         }
     }

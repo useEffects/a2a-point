@@ -23,8 +23,8 @@ export default function ListingsLayout({ children }: { children: ReactNode }) {
                 <div className="flex flex-col gap-24">
                     <div className="flex flex-col gap-4">
                         <p className="text-2xl font-bold">Premium listings curated by <span className="text-primary">A2APoint</span></p>
-                        <RenderListings<ExtraSmallListingCardProps>
-                            render={bodies.extraSmall}
+                        <RenderListings<SmallListingCardProps>
+                            render={bodies.small}
                             filterMethod={commonFilters[CommonFilters.Premium]()}
                             flatListProps={{
                                 scrollEnabled: false,

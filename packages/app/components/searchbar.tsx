@@ -17,7 +17,7 @@ export default function SearchBar({ searchText, setSearchText, searchBarProps }:
         borderTopWidth: 0,
         borderBottomWidth: 0,
         padding: 0,
-        width: 1
+        // width: 1
     }
     const inputContainerStyle: StyleProp<ViewStyle> = {
         backgroundColor: "transparent",

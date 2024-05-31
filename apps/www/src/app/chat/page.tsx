@@ -6,6 +6,7 @@ import RoomDetailedComponent from "app/screens/room-detailed"
 import directusStore from "app/store/directus"
 import { Separator } from "app/components/ui/separator"
 import ChatsProvider from "app/components/providers/chats"
+import { useIsSmallDevice } from "@/hooks/is-small-device"
 
 function ChatScreen() {
     const { room } = useParams()
@@ -20,11 +21,11 @@ function ChatScreen() {
             {room.length === 2 ? <RoomDetailedComponent roomId={room[1]} /> : <div>
             </div>}
         </div>
-    </div>: <></>
+    </div> : <></>
 }
 
 export default function Page() {
-    return <div>
-        
+    const isSmallDevice = useIsSmallDevice()
+    return isSmallDevice ? <ChatScreenComponent /> : <div>
     </div>
 }

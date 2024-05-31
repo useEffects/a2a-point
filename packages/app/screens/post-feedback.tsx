@@ -14,6 +14,8 @@ import directusStore from "app/store/directus";
 import { createItem, updateItem } from "@directus/sdk";
 import useNavigation from "app/hooks/navigation";
 import { toast, ToastPosition, Toasts } from '@backpackapp-io/react-native-toast';
+import { useState } from "react";
+import { set } from "fp-ts";
 
 export const StarIcon = (props: StarIconProps) => {
     const { colors } = useColorScheme()
@@ -42,9 +44,11 @@ export function PostFeedback({ userId, feedback }: { userId: string, feedback?: 
     const user = useUserDetails(userId)
     const { rest } = directusStore()
     const { colors } = useColorScheme()
+    const [loading, setLoading] = useState(false)
 
     const handleSubmit = async (values: FeedbackValues) => {
         async function _handleSubmit() {
+            setLoading(true)
             if (feedback) {
                 return await rest.request(updateItem("feedbacks", feedback.id, {
                     ...values
@@ -56,8 +60,7 @@ export function PostFeedback({ userId, feedback }: { userId: string, feedback?: 
                 }))
             }
         }
-        _handleSubmit().then((res) => {
-            console.log(res)
+        _handleSubmit().then(() => {
             toast.success("Feedback submitted", {
                 styles: {
                     view: {
@@ -75,6 +78,7 @@ export function PostFeedback({ userId, feedback }: { userId: string, feedback?: 
                     }
                 }
             })
+            setLoading(false)
         })
     }
 
@@ -97,8 +101,9 @@ export function PostFeedback({ userId, feedback }: { userId: string, feedback?: 
                 multiline
                 className="w-full"
             />
-            <Button className="" onPress={() => {
+            <Button disabled={loading} className="" onPress={() => {
                 props.submitForm()
+                props.resetForm()
             }}>
                 <Text>Submit</Text>
             </Button>

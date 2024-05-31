@@ -9,6 +9,7 @@ import { Image, View } from "react-native"
 import { useRouter } from "solito/navigation"
 import { ListingCardMetrics } from "./full"
 import { useColorScheme } from "app/hooks/color-scheme"
+import { GoToFullListingButton } from "app/components/utils"
 
 export const OpenDetailsButton = ({ id, size = "sm" }: { id: string, size?: "default" | "sm" | "lg" | "icon" | null | undefined }) => {
     const router = useRouter()
@@ -51,7 +52,7 @@ export const RenderMetrics = ({ listingId }: { listingId: string }) => {
 export const SmallListingCard = (item: SmallListingCardProps) => {
     const router = useRouter()
 
-    return <Button onPress={() => router.push(`/${item.id}`)} variant={"base"} size={"none"} className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start">
+    return <GoToFullListingButton listingId={item.id} variant={"base"} size={"none"} className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start">
         <Image source={{ uri: buildAssetUrl(item.user_created.avatar) }} className="w-8 h-8 rounded-full" />
         <View className="flex-col gap-1">
             <View>
@@ -64,5 +65,5 @@ export const SmallListingCard = (item: SmallListingCardProps) => {
             </View>
             <RenderMetrics listingId={item.id} />
         </View>
-    </Button>
+    </GoToFullListingButton>
 }

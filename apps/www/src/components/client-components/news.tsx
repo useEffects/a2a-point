@@ -8,7 +8,8 @@ import { Separator } from "src/components/ui/separator";
 import { Text } from "src/components/ui/text";
 import { directusUrl } from "src/lib/constants";
 import { News } from "src/lib/types";
-import { cn, shortDate } from "src/lib/utils";
+import { cn } from "app/lib/utils";
+import { timeAgo } from "app/lib/helpers";
 
 const NewsCard = ({ news, isFirst }: { news: News, isFirst?: boolean }) => {
     const router = useRouter()
@@ -23,7 +24,7 @@ const NewsCard = ({ news, isFirst }: { news: News, isFirst?: boolean }) => {
                     </span>)}
                     <p className="text-sm"> {news.read_time} </p>
                 </div>
-                <p className="text-sm"> {shortDate(news.date_created)} </p>
+                <p className="text-sm"> {timeAgo.format(new Date(news.date_created))} </p>
             </div>
             <p className={cn(isFirst ? "text-xl font-semibold" : "text-lg")}> {news.title} </p>
             <p className="text-sm"> {news.description} </p>
@@ -36,10 +37,14 @@ const NewsCard = ({ news, isFirst }: { news: News, isFirst?: boolean }) => {
 
 export function ListNews({ news, categories }: { news: News[], categories: { id: number, name: string }[] }) {
     const [currentCategory, setCurrentCategory] = useState(0)
-    const filteredNews = currentCategory === 0 ? news : news.filter(n => n.categories?.find(c => c.id === currentCategory))
+    const filteredNews = currentCategory === 0 ? news : news.filter(n => n.categories?.find(c => c.news_categories_id.id === currentCategory))
 
-    const first = filteredNews[0]
-    const rest = filteredNews.slice(0)
+    if (!filteredNews.length) {
+        console.log(news, categories)
+        return null
+    }
+
+    const [first, ...rest] = filteredNews
 
     return <div className="flex flex-col gap-4 mt-4">
         <div className="flex justify-center gap-4">

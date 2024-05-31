@@ -148,10 +148,10 @@ const policyItems = [
 ]
 
 export const Footer = () => {
-    return <div className="bg-card py-24 relative z-[999]">
+    return <div className="bg-card py-12 relative z-[999]">
         <div className="flex flex-col gap-8 container p-4 items-center">
-            <div className="flex w-full">
-                {footerItems.map((item, index) => <div key={index} className="w-1/4 flex flex-col items-center gap-4">
+            <div className="flex flex-col gap-8 md:flex-row w-full items-start">
+                {footerItems.map((item, index) => <div key={index} className="w-full md:w-1/4 flex flex-col md:items-center gap-4">
                     <p className="font-medium text-primary"> {item.label} </p>
                     <div className="flex flex-col gap-2">
                         {item.links.map(({ label, href }, key) => <Link key={key} className="text-sm text-subtext hover:text-primary hover:underline" href={href}>

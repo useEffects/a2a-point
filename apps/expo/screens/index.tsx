@@ -118,7 +118,7 @@ const ScreensLayout = () => {
     }, []);
 
     return <Tab.Navigator
-        initialRouteName={authenticated ? "home" : "login"}
+        initialRouteName={"home"}
         backBehavior="history"
         tabBarPosition='bottom'
         tabBar={isKeyboardVisible ? () => null : CustomTabBar}

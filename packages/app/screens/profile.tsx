@@ -162,9 +162,9 @@ const InfoTab = ({ user }: { user: User }) => {
     return <View className="p-4 flex-col gap-4">
         {(user.description && user.tags && user.tags.length) ? <View className="flex flex-col gap-4">
             <Text className="text-xl font-bold">Bio</Text>
-            <Text>{user.description}</Text>
-            <View className="flex-row gap-2">
-                {user.tags.map((tag, index) => <Text className="rounded-full border border-solid border-foreground px-2" key={index}>{tag}</Text>)}
+            <Text className="text-sm">{user.description}</Text>
+            <View className="flex-row flex-wrap gap-2">
+                {user.tags.map((tag, index) => <Text className="rounded-full border border-solid border-foreground px-2 w-auto" key={index}>{tag}</Text>)}
             </View>
         </View> : <></>}
         {user.social_media ? <View className="flex-col gap-4">
@@ -172,7 +172,6 @@ const InfoTab = ({ user }: { user: User }) => {
             <View className="flex-row gap-4">
                 {user.social_media.map((item, i) =>
                     <View key={i} className="flex flex-row gap-2 items-center">
-                        {/* <Feather name={item.social_media.toLowerCase() as any} className="!text-foreground !text-xl" /> */}
                         <TouchableOpacity onPress={() => Linking.openURL(item.link)}>
                             <Text className="underline">{item.link}</Text>
                         </TouchableOpacity>
@@ -255,7 +254,8 @@ const ListingFeedbacks = ({ userId }: { userId: string }) => {
         })) as UserFeedbacksProps[],
         initialData: []
     })
-    return data?.length ? <View className="p-4">
+
+    return !data?.length ? <View className="p-4">
         <Text>No feedbacks received yet</Text>
     </View> : <FlatList
         contentContainerClassName="p-4"

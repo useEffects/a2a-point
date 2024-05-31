@@ -16,6 +16,7 @@ import directusStore from "app/store/directus";
 import { useQuery } from "@tanstack/react-query"
 import { directusUrl } from "app/lib/constants";
 import { readItems } from "@directus/sdk";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ChatScreen() {
     const { rest, token } = directusStore()
@@ -23,6 +24,7 @@ export default function ChatScreen() {
     const [searchText, setSearchText] = useState("")
     const [debouncedSearchText] = useDebounce(searchText, 500)
     const { roomsSubscribed, messages } = useChats()
+    const { bottom } = useSafeAreaInsets()
 
     const filteredRoomsSubscribed = useMemo(() => {
         return roomsSubscribed.sort((a, b) => {
@@ -33,7 +35,7 @@ export default function ChatScreen() {
             const bDate = lastMessageDateCreated(b)
             if (!aDate || !bDate) return 0
             else {
-                return new Date(aDate).getTime() - new Date(bDate).getTime()
+                return new Date(bDate).getTime() - new Date(aDate).getTime()
             }
         })
     }, [roomsSubscribed, messages])
@@ -64,7 +66,7 @@ export default function ChatScreen() {
         initialData: []
     }) as { data: GroupListRowProp[], isLoading: boolean }
 
-    return <View className="flex-col gap-4 h-full">
+    return <View className="flex-col h-full native:pb-14">
         <View className="p-4 bg-card">
             <SearchBar
                 searchText={searchText}
@@ -91,6 +93,8 @@ export default function ChatScreen() {
                 data={filteredRoomsSubscribed}
                 renderItem={({ item }) => <ChatListRow {...item} />}
                 ItemSeparatorComponent={() => <Separator />}
+                bounces={false}
+                overScrollMode="never"
             />}
     </View>
 }

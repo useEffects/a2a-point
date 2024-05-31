@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-// import { useMediaQuery } from "@uidotdev/usehooks"
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "./ui/navigation-menu"
 import Logo from "app/components/svg/logo"
 import { usePathname, useRouter } from "next/navigation"
@@ -11,9 +10,13 @@ import directusStore from "app/store/directus"
 import { Button } from "./ui/button"
 import { Lock } from "lucide-react"
 import { GooglePlayButton, AppStoreButton } from "./misc-buttons"
-import { Text } from "./ui/text"
 import { ToggleTheme } from "./toggle-theme"
 import LoginButton from "./login-button"
+import { useIsSmallDevice } from "@/hooks/is-small-device"
+import { useState } from "react"
+import { Menu } from "lucide-react"
+import BottomSheet from "app/components/bottomsheet"
+import { CloseButton } from "app/components/utils"
 
 const navItems = [
     {
@@ -87,10 +90,6 @@ const navItems = [
             }
         ],
         component: <div className="w-1/2 flex flex-col gap-4 justify-center bg-card p-4 rounded-xl">
-            {/* <Button className="w-full items-start" size={"lg"} variant={"outline"}>
-                <Text>Open dashboard</Text>
-            </Button>
-            <Separator className="w-full" /> */}
             <p className="text-lg font-bold">Install our mobile apps!</p>
             <GooglePlayButton size={"lg"} className="w-full items-start">Download on Google Play</GooglePlayButton>
             <AppStoreButton size={"lg"} className="w-full items-start">Download on App Store</AppStoreButton>
@@ -134,17 +133,34 @@ const WebNavbar = () => {
 }
 
 const MobileNavbar = () => {
-    return <div>
+    const [open, setOpen] = useState(false)
+    const pathname = usePathname()
+    const { authenticated } = directusStore()
 
-    </div>
+    const canNavigate = (isLocked: boolean | undefined) => authenticated || !isLocked
+
+    return open ? <BottomSheet open={open} setOpen={setOpen} onBackdropPress={() => setOpen(false)}>
+        <div className="p-4 flex flex-col gap-8 bg-popover items-start">
+            <CloseButton onPress={() => setOpen(false)} className="ml-auto mr-0" />
+            {navItems.map((item, index) => <div key={index}>
+                <p className="text-lg text-foreground font-bold">{item.title}</p>
+                {item.items.map((subItem, subIndex) => <div key={subIndex}>
+                    <Link className={cn(pathname === subItem.href ? "text-primary underline" : "text-subtext")} href={subItem.href}>{subItem.title}</Link>
+                </div>)}
+                {index !== navItems.length - 1 && <Separator className="w-full" />}
+            </div>)}
+        </div>
+    </BottomSheet> : <Menu onClick={() => setOpen(true)} />
 }
 
 export const Navbar = () => {
-    // const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
-    return false ? <MobileNavbar /> : <div className="flex gap-4 items-center container pt-12">
+    const isSmallDevice = useIsSmallDevice()
+    return <div className="flex gap-4 items-center md:container p-4 md:p-auto md:pt-12">
         <ToggleTheme />
         <Link href={"/"} className="text-primary font-bold">A2APoint</Link>
-        <WebNavbar />
-        <LoginButton />
+        <div className="ml-auto mr-0 md:m-auto flex items-center gap-4">
+            {isSmallDevice ? <MobileNavbar /> : <WebNavbar />}
+            <LoginButton />
+        </div>
     </div>
 }
