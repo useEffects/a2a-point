@@ -10,11 +10,12 @@ import { directusUrl } from "src/lib/constants";
 import { News } from "src/lib/types";
 import { cn } from "app/lib/utils";
 import { timeAgo } from "app/lib/helpers";
+import { useIsSmallDevice } from "@/hooks/is-small-device";
 
 const NewsCard = ({ news, isFirst }: { news: News, isFirst?: boolean }) => {
     const router = useRouter()
 
-    return <div className={cn("flex flex-col gap-4 p-4 h-full", isFirst ? "flex-row" : "max-w-sm")}>
+    return <div className={cn("flex flex-col gap-4 h-full", isFirst ? "flex-row" : "max-w-sm")}>
         <img src={`${directusUrl}/assets/${news.cover_image}`} className={cn("object-cover rounded", isFirst ? "w-1/2" : "w-full h-[200px]")} alt="" />
         <div className={cn("flex flex-col gap-4 items-start grow", isFirst ? "w-1/2 grow p-12" : "w-full")}>
             <div className="flex justify-between w-full">
@@ -38,6 +39,7 @@ const NewsCard = ({ news, isFirst }: { news: News, isFirst?: boolean }) => {
 export function ListNews({ news, categories }: { news: News[], categories: { id: number, name: string }[] }) {
     const [currentCategory, setCurrentCategory] = useState(0)
     const filteredNews = currentCategory === 0 ? news : news.filter(n => n.categories?.find(c => c.news_categories_id.id === currentCategory))
+    const isSmallDevice = useIsSmallDevice()
 
     if (!filteredNews.length) {
         console.log(news, categories)
@@ -57,11 +59,14 @@ export function ListNews({ news, categories }: { news: News[], categories: { id:
                 </Text>
             </Button>)}
         </div>
-        <Separator className="w-full my-12" />
-        <NewsCard news={first} isFirst />
-        <Separator className="w-full my-12" />
-        <div className="grid gap-4 grid-cols-3">
-            {rest.map((news, i) => <NewsCard key={i} news={news} />)}
+        <Separator className="w-full my-4 md:my-12" />
+        <NewsCard news={first} isFirst={!isSmallDevice} />
+        <Separator className="w-full my-4 md:my-12" />
+        <div className="flex flex-col gap-4">
+            <p className="text-xl font-medium">Latest</p>
+            <div className="grid gap-4 md:grid-cols-3">
+                {rest.map((news, i) => <NewsCard key={i} news={news} />)}
+            </div>
         </div>
     </div>
 }

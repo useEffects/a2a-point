@@ -40,7 +40,7 @@ export default function News() {
         }
     }, [categories])
 
-    return <div className="container mx-auto flex flex-col gap-40">
+    return <div className="container mx-auto flex flex-col gap-12 md:gap-40 p-4">
         <div className="flex flex-col gap-4 items-center">
             <p className="text-4xl font-semibold"> News and insights </p>
             <p className="max-w-lg">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Neque, minima. Voluptates suscipit iste quo aliquid repudiandae! Aliquam dicta quas in.</p>
