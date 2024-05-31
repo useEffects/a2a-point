@@ -11,24 +11,47 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Testimonial, TestimonialCarousel } from "src/components/client-components/home";
 import { HalfWidthDiv } from "src/components/half-width-div";
 import { NewsLetter } from "src/components/news-letter";
-import { directus } from "src/lib/directus";
 import { AppStoreButton, GooglePlayButton } from "@/components/misc-buttons";
+import { useEffect, useState } from "react";
+import directusStore from "app/store/directus";
+import { useQuery } from "@tanstack/react-query";
+import { CompanyStats } from "app/components/company-stats";
 
-export default async function Home() {
-  return <div className="flex flex-col gap-40 items-center relative">
-    {/* <div className="top-0 bottom-auto left-0 right-0 absolute z-10 w-screen h-screen opacity-15">
-      <HeroBg className="w-full h-full" />
-    </div> */}
+export default function Home() {
+
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
+  const { rest } = directusStore()
+
+  const { data: testimonialsRes } = useQuery({
+    queryKey: ["testimonials"],
+    queryFn: async () => await rest.request(readItems("portfolio", {
+      fields: ["featured_testimonials.feedbacks_id.*", "featured_testimonials.feedbacks_id.user_created.avatar", "featured_testimonials.feedbacks_id.user_created.first_name", "featured_testimonials.feedbacks_id.user_created.last_name", "featured_testimonials.feedbacks_id.user_created.title"],
+    })) as unknown as {
+      featured_testimonials: {
+        feedbacks_id: Testimonial
+      }[]
+    }
+  })
+
+  useEffect(() => {
+    if (testimonialsRes) {
+      const testimonials = testimonialsRes.featured_testimonials.map(item => item.feedbacks_id)
+      setTestimonials(testimonials)
+    }
+  }, [testimonialsRes])
+
+  return <div className="flex flex-col gap-12 md:gap-40 items-center relative">
     <HalfWidthDiv
+      className="px-4 md:p-auto flex-col-reverse gap-8"
       child1={
-        <div className="flex flex-col item-center justify-evenly w-full mx-auto h-full pr-4">
+        <div className="flex flex-col item-center justify-evenly w-full mx-auto h-full pr-4 gap-4 md:gap-12">
           <div className="flex flex-col gap-4">
             <p className="text-xl md:text-3xl font-bold text-subtext"> Elevate your Real Estate Game </p>
             <p className="text-3xl md:text-7xl font-bold"> The <span className="text-primary"> One Stop </span> for All Agents </p>
             <p className="text-subtext">In the dynamic world of real estate, efficiency, transparency, and seamless collaboration are paramount. Introducing A2A POINT, a revolutionary portal designed exclusively for real estate agents, redefining the landscape of property transactions and deal management.</p>
           </div>
-          <div className="flex gap-4">
-            <div className="flex flex-col gap-4 [&>*]:full w-1/2 [&>*]:rounded-full">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-col gap-4 [&>*]:full md:w-1/2 [&>*]:rounded-full">
               <Button variant={"outline"} size={"lg"}>
                 <Text>Browse Plans</Text>
               </Button>
@@ -36,7 +59,7 @@ export default async function Home() {
                 <Text>View Testimonials</Text>
               </Button>
             </div>
-            <div className="flex flex-col gap-4 [&>*]:full w-1/2 [&>*]:items-start">
+            <div className="flex flex-col gap-4 [&>*]:full md:w-1/2 [&>*]:items-start">
               <GooglePlayButton size={"lg"}>
                 <Text>Download on Google Play</Text>
               </GooglePlayButton>
@@ -54,11 +77,11 @@ export default async function Home() {
         </div>
       }
     />
-    <div className="flex flex-row gap-4 container">
-      <div className="w-1/3 flex justify-center items-center">
+    <div className="flex flex-col md:flex-row gap-4 md:container p-4 md:p-auto">
+      <div className="md:w-1/3 md:flex justify-center items-center">
         <p className="text-3xl md:text-5xl font-bold max-w-sm"> Why <span className="text-primary">choose us</span> </p>
       </div>
-      <div className="w-2/3 grid grid-cols-2 justify-center items-center gap-12 p-12">
+      <div className="md:w-2/3 md:grid grid-cols-2 justify-center items-center flex flex-col gap-4 md:gap-12 md:p-12">
         {whyChooseUs.map((item, index) => <div key={index} className="flex flex-col justify-center gap-2">
           <p className="text-xl text-primary"> {item.title} </p>
           <p className="text-subtext"> {item.content} </p>
@@ -68,30 +91,26 @@ export default async function Home() {
     <div className="relative">
       <HalfWidthDiv
         direction="right"
+        className="p-4 gap-12"
         child1={
-          <div className="w-full flex flex-col gap-8 justify-between items-center">
-            {/* <div className="max-w-sm flex gap-12 w-full">
-              {stats.map((item, index) => <div key={index} className="flex flex-col items-end">
-                <div className="flex items-end">
-                  <p className="text-3xl md:text-7xl"> {item.count} </p>
-                  <p className="text-xl">+</p>
-                </div>
-                <p className="text-subtext">{item.title}</p>
-              </div>)}
+          <div className="flex md:justify-end w-full">
+            <div className="w-full flex flex-col gap-4 md:gap-8 md:items-center md:max-w-sm">
+              <p className="text-3xl md:text-5xl font-bold">What they <span className="text-primary">talk</span> about us</p>
+              <TestimonialCarousel testimonials={testimonials} />
+              <CompanyStats className="justify-evenly" />
+              <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nesciunt, numquam ea! Fugiat dolorum facilis consectetur dicta labore, quos vel atque?</p>
             </div>
-            <p className="max-w-sm">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nesciunt, numquam ea! Fugiat dolorum facilis consectetur dicta labore, quos vel atque?</p>
-            <TestimonialCarousel testimonials={testimonials} /> */}
           </div>
         }
         child2={
-          <div className="h-[calc((50vw*9/16)+200px)]">
-            {/* <VideoPlayer src={"https://videos.pexels.com/video-files/3254200/3254200-uhd_3840_2160_25fps.mp4"}></VideoPlayer> */}
-            <div className="absolute left-0 right-0">
+          <div className="md:h-[calc((50vw*9/16)+200px)]">
+            <video controls className="w-full" src="https://videos.pexels.com/video-files/3254200/3254200-uhd_3840_2160_25fps.mp4" />
+            <div className="hidden md:block absolute left-0 right-0">
               <div className="absolute h-[200px] left-0 right-auto w-1/2 bg-card"></div>
               <div className="container">
                 <div className="w-1/2 h-[200px] relative z-10 flex flex-col justify-evenly py-4">
                   <p className="text-3xl md:text-5xl font-bold"> We are <span className="text-primary">bigger</span> than you think </p>
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui, delectus.</p>
+                  <p className="">Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui, delectus.</p>
                 </div>
               </div>
             </div>
@@ -99,8 +118,8 @@ export default async function Home() {
         }
       />
     </div>
-    <div className="container flex">
-      <div className="w-1/2 flex flex-col gap-12 justify-center flex-1">
+    <div className="container flex flex-col-reverse md:flex-row gap-8 p-4">
+      <div className="md:w-1/2 flex flex-col gap-4 md:gap-12 justify-center flex-1">
         <p className="text-3xl md:text-5xl font-bold">Sign up and access our app <span className="text-primary">It&apos;s free</span></p>
         <div className="flex flex-col gap-6">
           {steps.map((step, index) => <div className="flex flex-col gap-2" key={index}>
@@ -109,16 +128,16 @@ export default async function Home() {
           </div>)}
         </div>
       </div>
-      <div className="w-1/2 flex flex-col justify-center items-center flex-1">
+      <div className="md:w-1/2 flex flex-col justify-center items-center flex-1">
         <img src={phones.src} alt="" />
       </div>
     </div>
-    <div className="container flex">
-      <div className="w-1/2 flex flex-col gap-4 h-full">
+    <div className="container flex flex-col md:flex-row p-4">
+      <div className="md:w-1/2 flex flex-col gap-4 h-full">
         <p className="text-3xl md:text-5xl font-bold text-primary"> FAQ </p>
         <p className="text-subtext">Everyting you need to know about A2APoint</p>
       </div>
-      <div className="w-1/2">
+      <div className="md:w-1/2">
         <Accordion type="multiple">
           {accordionItems.map((item, index) => <AccordionItem key={index} value={index.toString()}>
             <AccordionTrigger>
@@ -173,41 +192,6 @@ const steps = [
     content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam animi fugiat molestias laborum deleniti natus. Voluptatum omnis aliquid accusantium tempora."
   }
 ]
-
-// const getListingsCount = await directus.request(aggregate("listings", {
-//   aggregate: {
-//     count: ["*"]
-//   }
-// }))
-// const getUsersCount = await directus.request(aggregate("directus_users", {
-//   aggregate: {
-//     count: ["*"]
-//   }
-// }))
-
-// const listingsCount = getListingsCount?.[0].count as unknown as number
-// const usersCount = getUsersCount?.[0].count as unknown as number
-
-// const stats = [
-//   {
-//     title: "Listings",
-//     count: listingsCount
-//   },
-//   {
-//     title: "Users",
-//     count: usersCount
-//   }
-// ]
-
-// const res = await directus.request(readItems("portfolio", {
-//   fields: ["featured_testimonials.feedbacks_id.*", "featured_testimonials.feedbacks_id.user_created.avatar", "featured_testimonials.feedbacks_id.user_created.first_name", "featured_testimonials.feedbacks_id.user_created.last_name", "featured_testimonials.feedbacks_id.user_created.title"],
-// })) as unknown as {
-//   featured_testimonials: {
-//     feedbacks_id: Testimonial
-//   }[]
-// }
-
-// const testimonials = res.featured_testimonials.map(item => item.feedbacks_id)
 
 const accordionItems = [
   {

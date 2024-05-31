@@ -23,7 +23,7 @@ export const TestimonialCarousel = ({ testimonials }: { testimonials: Testimonia
         <CarouselContent>
             {testimonials.map((testimonial, index) => <CarouselItem key={index}>
                 <div className="flex flex-col gap-8 bg-card rounded px-4 py-8">
-                    <div className="w-full flex justify-center gap-8 items-center">
+                    <div className="w-full flex justify-center gap-4 md:gap-8 items-center">
                         <Button variant={"outline"} onPress={() => api?.scrollPrev()} size={"icon"}>
                             <MoveLeft className="" />
                         </Button>

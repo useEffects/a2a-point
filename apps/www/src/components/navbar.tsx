@@ -155,7 +155,7 @@ const MobileNavbar = () => {
 
 export const Navbar = () => {
     const isSmallDevice = useIsSmallDevice()
-    return <div className="flex gap-4 items-center md:container p-4 md:p-auto md:pt-12">
+    return <div className="flex gap-4 items-center md:container p-4 md:p-auto md:pt-12 relative z-[9999]">
         <ToggleTheme />
         <Link href={"/"} className="text-primary font-bold">A2APoint</Link>
         <div className="ml-auto mr-0 md:m-auto flex items-center gap-4">
