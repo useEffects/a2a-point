@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "src/components/ui/button";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "src/components/ui/pagination";
 import { Separator } from "src/components/ui/separator";
@@ -36,10 +36,11 @@ const NewsCard = ({ news, isFirst }: { news: News, isFirst?: boolean }) => {
     </div>
 }
 
-export function ListNews({ news, categories }: { news: News[], categories: { id: number, name: string }[] }) {
+export function ListNews({ news, categories: _categories }: { news: News[], categories: { id: number, name: string }[] }) {
     const [currentCategory, setCurrentCategory] = useState(0)
     const filteredNews = currentCategory === 0 ? news : news.filter(n => n.categories?.find(c => c.news_categories_id.id === currentCategory))
     const isSmallDevice = useIsSmallDevice()
+    const [categories] = useState([{ id: 0, name: "View All" }, ..._categories])
 
     if (!filteredNews.length) {
         console.log(news, categories)

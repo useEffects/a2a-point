@@ -34,12 +34,6 @@ export default function News() {
         initialData: []
     })
 
-    useEffect(() => {
-        if (!categories.some(n => n.id === 0)) {
-            categories.unshift({ id: 0, name: "View All" })
-        }
-    }, [categories])
-
     return <div className="container mx-auto flex flex-col gap-12 md:gap-40 p-4">
         <div className="flex flex-col gap-4 items-center">
             <p className="text-4xl font-semibold"> News and insights </p>
