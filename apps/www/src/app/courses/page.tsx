@@ -36,18 +36,18 @@ export default function Courses() {
 
     const { featured_course: featuredCourse } = portfolio
 
-    return <div className="container mx-auto flex flex-col gap-40">
-        <div className="flex gap-4">
-            <div className="w-1/2 h-full">
+    return <div className="container mx-auto flex flex-col gap-12 md:gap-40 p-0">
+        <div className="flex gap-4 flex-col md:flex-row p-4">
+            <div className="md:w-1/2 h-full">
                 <img src={`${directusUrl}/assets/${featuredCourse?.cover_image}`} className="rounded" alt="" />
             </div>
-            <div className="w-1/2 p-4 flex flex-col gap-8 items-end">
-                <p className="text-2xl"> {featuredCourse?.title} </p>
-                <p className="max-w-md text-right"> {featuredCourse?.description} </p>
+            <div className="md:w-1/2 p-4 flex flex-col gap-4 md:gap-8 md:items-end">
+                <p className="text-2xl font-bold text-primary"> {featuredCourse?.title} </p>
+                <p className="max-w-md md:text-right"> {featuredCourse?.description} </p>
                 <StartButton courseId={featuredCourse?.id!} />
             </div>
         </div>
-        <div className="grid gap-4 grid-cols-3">
+        <div className="grid gap-8 md:gap-4 grid-cols-1 md:grid-cols-3 p-4">
             {courses.map(course => <div key={course.id} className="flex flex-col gap-4 h-full">
                 <img src={`${directusUrl}/assets/${course.cover_image}`} className="rounded w-full h-[200px] object-cover" alt="" />
                 <p className="text-2xl"> {course.title} </p>
