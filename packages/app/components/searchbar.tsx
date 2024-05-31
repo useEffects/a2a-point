@@ -7,12 +7,7 @@ import { X, Search } from "lucide-react-native"
 import { Button } from "./ui/button";
 import opacity from "hex-color-opacity";
 
-export type CancelIconProps = {
-    onPress: () => void,
-    className?: string,
-}
-
-export default function SearchBar({ searchText, setSearchText, searchBarProps, cancelIconProps }: { searchText: string, setSearchText: Dispatch<SetStateAction<string>>, searchBarProps?: SearchBarProps, cancelIconProps?: CancelIconProps }) {
+export default function SearchBar({ searchText, setSearchText, searchBarProps }: { searchText: string, setSearchText: Dispatch<SetStateAction<string>>, searchBarProps?: SearchBarProps }) {
     const { colors } = useColorScheme()
     const containerStyle: StyleProp<ViewStyle> = {
         backgroundColor: "transparent",
@@ -22,6 +17,7 @@ export default function SearchBar({ searchText, setSearchText, searchBarProps, c
         borderTopWidth: 0,
         borderBottomWidth: 0,
         padding: 0,
+        width: 1
     }
     const inputContainerStyle: StyleProp<ViewStyle> = {
         backgroundColor: "transparent",
@@ -40,10 +36,9 @@ export default function SearchBar({ searchText, setSearchText, searchBarProps, c
         //@ts-ignore
         outlineStyle: "none"
     }
-    const CancelIcon = (props: CancelIconProps) => {
-        const _props = cancelIconProps || props
-        return searchText ? <Button variant={"base"} size={"none"} style={{ backgroundColor: opacity(colors.foreground, 0.1) }} className="p-1 rounded-full">
-            <X size={14} color={colors.foreground} onPress={_props.onPress} />
+    const CancelIcon = () => {
+        return searchText ? <Button variant={"base"} size={"none"} style={{ backgroundColor: opacity(colors.foreground, 0.1) }} className="p-1 rounded-full" onPress={() => setSearchText("")}>
+            <X size={14} color={colors.foreground} />
         </Button> : <></>
     }
     const SearchIcon = () => {
@@ -57,7 +52,7 @@ export default function SearchBar({ searchText, setSearchText, searchBarProps, c
         onChangeText={setSearchText}
         {...searchBarProps}
         searchIcon={<SearchIcon />}
-        clearIcon={<CancelIcon onPress={() => setSearchText("")} />}
+        clearIcon={<CancelIcon />}
         selectionColor={colors.primary}
         placeholderTextColor={colors["muted-foreground"]}
         containerStyle={Object.assign(containerStyle, searchBarProps?.containerStyle)}

@@ -5,7 +5,7 @@ import { Button } from "app/components/ui/button";
 import { Separator } from "app/components/ui/separator";
 import { useColorScheme } from "app/hooks/color-scheme";
 import { useEffect, useState } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { useDebounce } from "use-debounce";
 import { Award, CreditCard, Home, ListFilter, LucideProps, Sparkles } from "lucide-react-native";
 import BottomSheet from 'app/components/bottomsheet';
@@ -13,8 +13,13 @@ import { CloseButton } from "app/components/utils";
 import { Text } from "app/components/ui/text";
 import { GoToLoginButton } from "./locked-screens";
 import directusStore from "app/store/directus";
+import { cn } from "app/lib/utils";
+import { SmallListingCardProps } from "app/components/listings-cards/atoms/small";
+import { LocationCards } from "app/components/listings-cards/molecules/locations";
+import Collapsible from "react-native-collapsible";
+import { ArrowUpRight } from "app/components/icons";
 
-export default function HomeScreenComponent({ setCollapsed }: { setCollapsed?: (collapsed: boolean) => void }) {
+export function HomeScreenListing({ setCollapsed, className }: { className?: string, setCollapsed?: (collapsed: boolean) => void }) {
     const [searchText, setSearchText] = useState("")
     const [debouncedSearchText] = useDebounce(searchText, 500)
     const [bottomSheetVisible, setBottomSheetVisible] = useState(false)
@@ -32,14 +37,11 @@ export default function HomeScreenComponent({ setCollapsed }: { setCollapsed?: (
         }
     }, [searchText, setCollapsed])
 
-    return <View className="max-w-xl">
-        <View className="flex-row items-center flex-1 justify-between gap-4 mb-12">
+    return <View className={cn(className)}>
+        <View className="flex-row items-center justify-between gap-4 mb-12 w-full">
             <SearchBar
                 searchText={searchText}
                 setSearchText={setSearchText}
-                cancelIconProps={{
-                    onPress: () => setSearchText("")
-                }}
             />
             <Button
                 onPress={() => setBottomSheetVisible(true)}
@@ -56,7 +58,7 @@ export default function HomeScreenComponent({ setCollapsed }: { setCollapsed?: (
         <RenderListings<MediumListingCardProps>
             render={bodies.medium}
             flatListProps={{
-                scrollEnabled: false,
+                scrollEnabled: Platform.OS === "web",
                 ItemSeparatorComponent: () => <Separator />,
             }}
             filterMethod={filter ? commonFilters[filter]("") : undefined}
@@ -124,18 +126,18 @@ export const LoginPopover = () => {
     const [canClose, setCanClose] = useState(true)
     const { colors } = useColorScheme()
 
-    useEffect(() => {
-        const isOpenTimeout = setInterval(() => {
-            setIsOpen(true)
-        }, 1000 * 60 * 1)
-        const canCloseTimeout = setTimeout(() => {
-            setCanClose(false)
-        }, 1000 * 60 * 5)
-        return () => {
-            clearInterval(isOpenTimeout)
-            clearTimeout(canCloseTimeout)
-        }
-    }, [])
+    // useEffect(() => {
+    //     const isOpenTimeout = setInterval(() => {
+    //         setIsOpen(true)
+    //     }, 1000 * 60 * 1)
+    //     const canCloseTimeout = setTimeout(() => {
+    //         setCanClose(false)
+    //     }, 1000 * 60 * 5)
+    //     return () => {
+    //         clearInterval(isOpenTimeout)
+    //         clearTimeout(canCloseTimeout)
+    //     }
+    // }, [])
 
     const handleClose = () => {
         if (!canClose) return
@@ -159,4 +161,39 @@ export const LoginPopover = () => {
             </View>
         </View>
     </BottomSheet>
+}
+
+export const HomeScreenComponent = () => {
+    const [collapsed, setCollapsed] = useState(false)
+    const { authenticated } = directusStore()
+    const { colors } = useColorScheme()
+
+    return (
+        <View className="p-4">
+            <Collapsible duration={500} collapsed={collapsed}>
+                <View className="flex-col gap-8 py-4">
+                    <Button variant={"base"} size={"none"} className="flex-row gap-1 items-center w-40 ml-auto mr-0">
+                        <Text className="text-right text-subtext">Premium listings curated by A2APoint</Text>
+                        <ArrowUpRight size={24} color={colors.info} />
+                    </Button>
+                    <RenderListings<SmallListingCardProps>
+                        render={bodies.small}
+                        flatListProps={{
+                            horizontal: true,
+                        }}
+                    />
+                    <View className="flex-col gap-2">
+                        <Text className="text-subtext">Browse popular locations</Text>
+                        <LocationCards />
+                    </View>
+                    <Separator />
+                    <View className="">
+                        <Text className="text-2xl font-medium">Let&apos;s search your next lead!</Text>
+                    </View>
+                </View>
+            </Collapsible>
+            <HomeScreenListing setCollapsed={setCollapsed} />
+            {authenticated ? <></> : <LoginPopover />}
+        </View>
+    )
 }

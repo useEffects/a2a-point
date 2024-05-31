@@ -1,22 +1,21 @@
 {
-	"name": "set-computed-fields",
-	"description": "Please enter a description for your extension",
+	"name": "@directus-labs/synthwave-theme",
+	"description": "A dark 80s-inspired retro-futurstic theme.",
 	"icon": "extension",
 	"version": "1.0.0",
 	"keywords": [
 		"directus",
 		"directus-extension",
-		"directus-extension-hook"
+		"directus-custom-theme"
 	],
 	"type": "module",
-	"files": [
-		"dist"
-	],
+	"files": ["dist"],
+	"license": "MIT",
 	"directus:extension": {
-		"type": "hook",
+		"type": "theme",
 		"path": "dist/index.js",
-		"source": "src/index.ts",
-		"host": "^10.10.0"
+		"source": "src/index.js",
+		"host": "^10.3.4"
 	},
 	"scripts": {
 		"build": "directus-extension build",
@@ -24,9 +23,7 @@
 		"link": "directus-extension link"
 	},
 	"devDependencies": {
-		"@directus/extensions-sdk": "11.0.5",
-		"@types/node": "^20.12.12",
-		"typescript": "^5.4.5"
-	},
-	"dependencies": {}
+		"@directus/extensions-sdk": "10.3.4",
+		"vue": "^3.4.21"
+	}
 }

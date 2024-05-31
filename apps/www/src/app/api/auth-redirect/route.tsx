@@ -33,9 +33,7 @@ export async function GET(req: NextRequest) {
         <html>
             <body>
             <script>
-                window.opener.postMessage({accessToken: "${access_token}", refreshToken: "${refresh_token}" }, "${url.origin}")
                 window.location.replace("${url.toString()}")
-                window.close()
             </script>
         </body>
         </html>

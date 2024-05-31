@@ -5,11 +5,12 @@ import { Text } from "app/components/ui/text"
 import { buildAssetUrl, shortString } from "app/lib/helpers"
 import { Room } from "app/lib/types"
 import directusStore from "app/store/directus"
-import { FlatList, Image, View } from "react-native"
-import { CommonFilters } from "./listings"
+import { FlatList, FlatListProps, Image, View } from "react-native"
 import { GoToLocationListingsButton } from "app/components/utils"
 
-const LocationCard = ({ item }: { item: Pick<Room, "id" | "title" | "avatar"> }) => {
+type LocationCardsProps = Pick<Room, "id" | "avatar" | "title">
+
+const LocationCard = ({ item }: { item: LocationCardsProps }) => {
     const { rest } = directusStore()
 
     const { data } = useQuery({
@@ -41,9 +42,9 @@ const LocationCard = ({ item }: { item: Pick<Room, "id" | "title" | "avatar"> })
     </View>
 }
 
-export const LocationCards = () => {
+export const LocationCards = ({ flatListProps }: { flatListProps?: Omit<FlatListProps<LocationCardsProps>, "data" | "renderItem"> }) => {
     const { rest } = directusStore()
-    const { data, isLoading } = useQuery({
+    const { data, isLoading } = useQuery<LocationCardsProps[]>({
         queryKey: ["Fetching Locations"],
         queryFn: async () => await rest.request(readItems("rooms", {
             fields: ["id", "title", "avatar"],
@@ -52,14 +53,13 @@ export const LocationCards = () => {
                     _eq: "group"
                 }
             }
-        })),
-    }) as {
-        data: Pick<Room, "id" | "title" | "avatar">[], isLoading: boolean
-    }
+        })) as LocationCardsProps[],
+    })
     return !isLoading && <FlatList
         horizontal={true}
         data={data}
         renderItem={({ item }) => <LocationCard item={item} />}
         ItemSeparatorComponent={() => <View className="w-4 h-4" />}
+        {...flatListProps}
     />
 }

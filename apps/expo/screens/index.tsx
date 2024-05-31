@@ -66,7 +66,6 @@ const ScreensLayout = () => {
     const listingsTabBarLabel = useTabBarLabel(TrendingUp, "Listings");
     const postTabBarLabel = useTabBarLabel(Plus, "Post");
     const profileTabBarLabel = useTabBarLabel(User, "Profile");
-    const loginTabBarLabel = useTabBarLabel(LogIn, "Login");
 
     const tabScreens = useMemo(() => [
         <Tab.Screen
@@ -118,44 +117,23 @@ const ScreensLayout = () => {
         getListingsCount().then(setListingsCount);
     }, []);
 
-    const finalTabScreens = useMemo(() => {
-        if (!authenticated) {
-            const position = 3;
-            return [
-                ...tabScreens.slice(0, position),
-                <Tab.Screen
-                    key="login"
-                    name="login"
-                    component={LoginScreen}
-                    options={{
-                        tabBarLabel: loginTabBarLabel,
-                    }}
-                />,
-                ...tabScreens.slice(position)
-            ];
-        }
-        return tabScreens;
-    }, [authenticated, tabScreens, loginTabBarLabel]);
-
-    return finalTabScreens.length ? (
-        <Tab.Navigator
-            initialRouteName={authenticated ? "home" : "login"}
-            backBehavior="history"
-            tabBarPosition='bottom'
-            tabBar={isKeyboardVisible ? () => null : CustomTabBar}
-            screenOptions={{
-                tabBarAndroidRipple: {
-                    color: "transparent"
-                },
-                tabBarIndicator: () => null,
-                tabBarContentContainerStyle: {
-                    justifyContent: "space-between",
-                },
-            }}
-        >
-            {finalTabScreens.map(screen => screen)}
-        </Tab.Navigator>
-    ) : null;
+    return <Tab.Navigator
+        initialRouteName={authenticated ? "home" : "login"}
+        backBehavior="history"
+        tabBarPosition='bottom'
+        tabBar={isKeyboardVisible ? () => null : CustomTabBar}
+        screenOptions={{
+            tabBarAndroidRipple: {
+                color: "transparent"
+            },
+            tabBarIndicator: () => null,
+            tabBarContentContainerStyle: {
+                justifyContent: "space-between",
+            },
+        }}
+    >
+        {tabScreens}
+    </Tab.Navigator>
 };
 
 export default function AppLayout() {
@@ -167,6 +145,7 @@ export default function AppLayout() {
         <Stack.Screen name="location-listings" component={LocationListings} />
         <Stack.Screen name="post-feedback" component={PostFeedback} />
         <Stack.Screen name="activity" component={ActivityScreen} />
+        <Stack.Screen name="login" component={LoginScreen} />
     </Stack.Navigator>
 };
 

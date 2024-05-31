@@ -2802,6 +2802,37 @@
     validate-npm-package-name "5.0.1"
     zod "3.23.8"
 
+"@directus/extensions-sdk@11.0.5":
+  version "11.0.5"
+  resolved "https://registry.yarnpkg.com/@directus/extensions-sdk/-/extensions-sdk-11.0.5.tgz#1171387120dceabc7833b9d20250312cbdefa37c"
+  integrity sha512-aDlDQe0y1YW7KOfMuHUwfljEyfiaM0kfSrRYtaEq3Sf570MteHcmhzjmKqQJDvPT5jfHb5v/J4P3NKEuldZc7Q==
+  dependencies:
+    "@directus/composables" "10.1.13"
+    "@directus/constants" "11.0.4"
+    "@directus/extensions" "1.0.5"
+    "@directus/themes" "0.3.8"
+    "@directus/types" "11.1.1"
+    "@directus/utils" "11.0.8"
+    "@rollup/plugin-commonjs" "25.0.7"
+    "@rollup/plugin-json" "6.1.0"
+    "@rollup/plugin-node-resolve" "15.2.3"
+    "@rollup/plugin-replace" "5.0.5"
+    "@rollup/plugin-terser" "0.4.4"
+    "@rollup/plugin-virtual" "3.0.2"
+    "@vitejs/plugin-vue" "4.6.2"
+    chalk "5.3.0"
+    commander "10.0.1"
+    esbuild "0.17.19"
+    execa "7.2.0"
+    fs-extra "11.2.0"
+    inquirer "9.2.20"
+    ora "6.3.1"
+    rollup "3.29.4"
+    rollup-plugin-esbuild "5.0.0"
+    rollup-plugin-styles "4.0.0"
+    vite "4.5.2"
+    vue "3.4.27"
+
 "@directus/extensions-sdk@11.0.6":
   version "11.0.6"
   resolved "https://registry.yarnpkg.com/@directus/extensions-sdk/-/extensions-sdk-11.0.6.tgz#3a749b918796b9bf71054a1232f568df1a3bc49d"
@@ -2832,6 +2863,20 @@
     rollup-plugin-styles "4.0.0"
     vite "4.5.2"
     vue "3.4.27"
+
+"@directus/extensions@1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@directus/extensions/-/extensions-1.0.5.tgz#4b1c44e3399c34789360e3caef614c3db3113648"
+  integrity sha512-kRdFm4odB3pVScc2ZIgk6M3LITqpBJ78MT8cqJ5N8zureOCNtZMZvWwrezfUcmx0sYV6oozWYnz7F1o1ptD06g==
+  dependencies:
+    "@directus/constants" "11.0.4"
+    "@directus/themes" "0.3.8"
+    "@directus/types" "11.1.1"
+    "@directus/utils" "11.0.8"
+    "@types/express" "4.17.21"
+    fs-extra "11.2.0"
+    lodash-es "4.17.21"
+    zod "3.23.8"
 
 "@directus/extensions@1.0.6":
   version "1.0.6"
@@ -2967,6 +3012,15 @@
     decamelize "6.0.0"
     flat "6.0.1"
     lodash-es "4.17.21"
+
+"@directus/types@11.1.1":
+  version "11.1.1"
+  resolved "https://registry.yarnpkg.com/@directus/types/-/types-11.1.1.tgz#f9602adac80542fe3ebe8163e49b780664108770"
+  integrity sha512-TdFfyFDB1H216f7i0xD2gjwxqZ2HLeamgElgkzVxv8UeF6XHFj87/ZvGNZbYqasg6Kna68GUTdqgPYze8aC9Rw==
+  dependencies:
+    "@directus/constants" "11.0.4"
+    "@directus/schema" "11.0.2"
+    "@types/geojson" "7946.0.14"
 
 "@directus/types@11.1.2":
   version "11.1.2"
@@ -4340,7 +4394,7 @@
     "@inquirer/type" "^1.3.2"
     chalk "^4.1.2"
 
-"@inquirer/figures@^1.0.0", "@inquirer/figures@^1.0.2":
+"@inquirer/figures@^1.0.0", "@inquirer/figures@^1.0.1", "@inquirer/figures@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@inquirer/figures/-/figures-1.0.2.tgz#a6af5e9f9969efb9ed3469130566315c36506b8a"
   integrity sha512-4F1MBwVr3c/m4bAUef6LgkvBfSjzwH+OfldgHqcuacWwSUetFebM2wi58WfG9uk1rR98U6GwLed4asLJbwdV5w==
@@ -13791,6 +13845,27 @@ inline-style-prefixer@^6.0.1:
     css-in-js-utils "^3.1.0"
     fast-loops "^1.1.3"
 
+inquirer@9.2.20:
+  version "9.2.20"
+  resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-9.2.20.tgz#e2b6fe09466f4dae039e6de31c68c5a47eac2e15"
+  integrity sha512-SFwJJPS+Ms75NV+wzFBHjirG4z3tzvis31h+9NyH1tqjIu2c7vCavlXILZ73q/nPYy8/aw4W+DNzLH5MjfYXiA==
+  dependencies:
+    "@inquirer/figures" "^1.0.1"
+    "@ljharb/through" "^2.3.13"
+    ansi-escapes "^4.3.2"
+    chalk "^5.3.0"
+    cli-cursor "^3.1.0"
+    cli-width "^4.1.0"
+    external-editor "^3.1.0"
+    lodash "^4.17.21"
+    mute-stream "1.0.0"
+    ora "^5.4.1"
+    run-async "^3.0.0"
+    rxjs "^7.8.1"
+    string-width "^4.2.3"
+    strip-ansi "^6.0.1"
+    wrap-ansi "^6.2.0"
+
 inquirer@9.2.22:
   version "9.2.22"
   resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-9.2.22.tgz#718cb4153f0d35176aab27d495f8e358d1e2008f"
@@ -21117,7 +21192,7 @@ typedarray@~0.0.5:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.7.tgz#799207136a37f3b3efb8c66c40010d032714dc73"
   integrity sha512-ueeb9YybpjhivjbHP2LdFDAjbS948fGEPj+ACAMs4xCMmh72OCOMQWBQKlaN4ZNQ04yfLSDLSx1tGRIoWimObQ==
 
-typescript@^5.0.4, typescript@^5.2.2:
+typescript@^5.0.4, typescript@^5.2.2, typescript@^5.4.5:
   version "5.4.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.5.tgz#42ccef2c571fdbd0f6718b1d1f5e6e5ef006f611"
   integrity sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==
@@ -21397,6 +21472,13 @@ use-sync-external-store@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz#7dbefd6ef3fe4e767a0cf5d7287aacfb5846928a"
   integrity sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==
+
+usehooks-ts@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/usehooks-ts/-/usehooks-ts-3.1.0.tgz#156119f36efc85f1b1952616c02580f140950eca"
+  integrity sha512-bBIa7yUyPhE1BCc0GmR96VU/15l/9gP1Ch5mYdLcFBaFGQsdmXkvjV0TtOqW1yUd6VjIwDunm+flSciCQXujiw==
+  dependencies:
+    lodash.debounce "^4.0.8"
 
 util-deprecate@^1.0.1, util-deprecate@^1.0.2, util-deprecate@~1.0.1:
   version "1.0.2"

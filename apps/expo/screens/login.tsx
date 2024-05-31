@@ -10,16 +10,24 @@ import Hero from "app/components/svg/hero";
 import HeroGirl from "app/assets/hero-girl.png"
 import { Header } from "app/components/header";
 import { parse } from "search-params"
+import { useEffect } from "react";
 
 const LoginScreen = () => {
-    const { initialize } = directusStore()
+    const { initialize, authenticated } = directusStore()
     const router = useRouter()
     const appURL = "a2apoint-community://"
 
+    useEffect(() => {
+        if (authenticated) {
+            router.replace("/")
+        }
+    }, [authenticated, router])
+
     const handleLogin = async () => {
-        const result = await WebBrowser.openAuthSessionAsync(`${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/expo-redirect?appUrl=${appURL}`, appURL);
+        const result = await WebBrowser.openAuthSessionAsync(`${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/auth-redirect?appUrl=${appURL}`, appURL);
         if (result.type === "success") {
             const { access_token: accessToken, refresh_token: refreshToken } = parse(result.url)
+            console.log({ accessToken, refreshToken })
             if (accessToken && refreshToken) {
                 await initialize(accessToken.toString(), refreshToken.toString())
                 router.replace("/")

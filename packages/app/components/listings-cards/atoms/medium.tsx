@@ -3,7 +3,6 @@ import { getDMRoomId, shortString } from "app/lib/helpers"
 import { Listing, User } from "app/lib/types"
 import userStore from "app/store/user"
 import { MessageCircleMore, Lock } from "lucide-react-native"
-import { useRouter } from "solito/navigation"
 import { Button } from "../../ui/button"
 import { Text } from "../../ui/text"
 import { RenderMetrics } from "./small"
@@ -27,7 +26,7 @@ export const MediumListingCard = (item: MediumListingCardProps) => {
     const { authenticated } = directusStore()
 
     return <View className="w-full flex-col gap-2 px-2 my-8">
-        <View className="flex flex-row items-center justify-between">
+        <View className="flex flex-wrap gap-4 flex-row items-center justify-between">
             <UserChip user={item.user_created} />
             {authenticated ? user.id === item.user_created.id ? <></> : <GoToRoomButton roomId={getDMRoomId([user.id, item.user_created.id])}>
                 <MessageCircleMore className="!text-foreground" />
