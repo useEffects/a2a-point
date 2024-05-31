@@ -1,25 +1,40 @@
 "use client"
 
 import { readItems } from "@directus/sdk";
+import directusStore from "app/store/directus";
 import StartButton from "src/components/client-components/course";
 import { NewsLetter } from "src/components/news-letter";
 import { directusUrl } from "src/lib/constants";
-import { directus } from "src/lib/directus";
 import { Course } from "src/lib/types";
+import { useQuery } from "@tanstack/react-query";
 
-export default async function Courses() {
+export default function Courses() {
     const fields = ["id", "title", "description", "cover_image"]
-    const { featured_course: featuredCourse } = await directus.request(readItems("portfolio", {
-        fields: fields.map(field => `featured_course.${field}`)
-    })) as unknown as { featured_course: Course }
-    const courses = await directus.request(readItems("courses", {
-        fields: fields,
-        filter: {
-            id: {
-                _neq: featuredCourse?.id
+    const { rest } = directusStore()
+
+    const { data: portfolio } = useQuery<{ featured_course: Course }>({
+        queryKey: ["featured-course", { fields }],
+        queryFn: async () => await rest.request(readItems("portfolio", {
+            fields: fields.map(field => `featured_course.${field}`)
+        })) as unknown as { featured_course: Course },
+    })
+
+    const { data: courses } = useQuery<Course[]>({
+        queryKey: ["courses", { fields }],
+        queryFn: async () => await rest.request(readItems("courses", {
+            fields,
+            filter: {
+                id: {
+                    _neq: portfolio?.featured_course.id
+                }
             }
-        }
-    }))
+        })) as Course[],
+        enabled: Boolean(portfolio)
+    })
+
+    if (!portfolio || !courses) return null
+
+    const { featured_course: featuredCourse } = portfolio
 
     return <div className="container mx-auto flex flex-col gap-40">
         <div className="flex gap-4">
