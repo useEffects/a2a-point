@@ -20,7 +20,7 @@ export default function NewsDetailed() {
 
     console.log({ news })
 
-    return news && <div className="max-w-xl mx-auto flex flex-col gap-12" >
+    return news && <div className="max-w-xl mx-4 md:mx-auto flex flex-col gap-4 md:gap-12" >
         <div className="flex flex-col gap-2">
             <p className="text-2xl"> {news.title} </p>
             <p className="text-subtext"> {news.description} </p>
