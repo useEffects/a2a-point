@@ -113,16 +113,16 @@ const WebNavbar = () => {
                     {item.component}
                     <div className="flex-1 flex-col flex w-1/2">
                         {item.items.map((subItem, subIndex) => <NavigationMenuLink asChild key={subIndex}>
-                            <>
+                            <div className="block select-none space-y-1 rounded-md leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
                                 <Button variant={"base"} size={"none"} className={cn("p-4 items-start w-full rounded flex flex-row justify-start gap-4", subItem.href === pathname && "bg-card")} onPress={() => router.push(subItem.href)} disabled={!canNavigate(subItem.locked)}>
                                     {!canNavigate(subItem.locked) && <Lock className="w-6 h-6" />}
-                                    <div className="flex flex-col items-start">
-                                        <p className="text-lg">{subItem.title}</p>
-                                        {subItem.description && <p className="text-subtext text-base">{subItem.description}</p>}
+                                    <div className="flex flex-col items-start gap-2">
+                                        <p className="font-medium">{subItem.title}</p>
+                                        {subItem.description && <p className="text-subtext">{subItem.description}</p>}
                                     </div>
                                 </Button>
                                 <Separator className="w-full" />
-                            </>
+                            </div>
                         </NavigationMenuLink>)}
                     </div>
                 </NavigationMenuContent>

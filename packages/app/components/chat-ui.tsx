@@ -172,7 +172,6 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
                 </Button>
             </>}
             <Input
-                multiline={true}
                 placeholder="Type ..."
                 placeholderTextColor={colors.subtext}
                 value={currentMessage.text}

@@ -94,7 +94,7 @@ export default function Home() {
         className="p-4 gap-12"
         child1={
           <div className="flex md:justify-end w-full">
-            <div className="w-full flex flex-col gap-4 md:gap-8 md:items-center md:max-w-sm">
+            <div className="w-full flex flex-col gap-8 md:items-center md:max-w-sm">
               <p className="text-3xl md:text-5xl font-bold">What they <span className="text-primary">talk</span> about us</p>
               <TestimonialCarousel testimonials={testimonials} />
               <CompanyStats className="justify-evenly" />

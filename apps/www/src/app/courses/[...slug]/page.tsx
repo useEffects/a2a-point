@@ -1,11 +1,14 @@
 "use client"
 
+import directusStore from "app/store/directus"
 import Link from "next/link"
-import { redirect } from "next/navigation"
-import { getItem } from "src/app/api/directus/route"
+import { redirect, useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 import { Separator } from "src/components/ui/separator"
 import { Course, CourseLesson } from "src/lib/types"
 import { cn } from "src/lib/utils"
+import { useQuery } from "@tanstack/react-query"
+import { readItem } from "@directus/sdk"
 
 const LessonsSidebar = ({ lessons, currentLessonId }: { lessons: CourseLesson[], currentLessonId: string }) => {
     return <div className="w-full flex flex-col">
@@ -18,18 +21,33 @@ const LessonsSidebar = ({ lessons, currentLessonId }: { lessons: CourseLesson[],
     </div>
 }
 
-export default async function CourseStart({ params: { slug } }: { params: { slug: string[] } }) {
+export default function CourseStart({ params: { slug } }: { params: { slug: string[] } }) {
 
     const [courseId, lessonId] = slug
     const fields = ["*.*.*"]
-    const course = await getItem("courses", courseId, { fields }) as Course
+    const { rest } = directusStore()
+    const [lesson, setLesson] = useState<CourseLesson>()
+    const router = useRouter()
 
-    if (!lessonId) {
-        redirect(`/courses/${courseId}/${course.course_lessons[0].id}`)
-    }
-    const lesson = course.course_lessons.find(lesson => lesson.id === lessonId)
+    const { data: course } = useQuery<Course>({
+        queryKey: ["courses", courseId],
+        queryFn: async () => await rest.request(readItem("courses", courseId, {
+            fields
+        })) as Course
+    })
 
-    return <div className="flex container mx-auto gap-4 p-4">
+    useEffect(() => {
+        if (course) {
+            if (!lessonId) {
+                router.push(`/courses/${courseId}/${course.course_lessons[0].id}`)
+            } else {
+                const lesson = course.course_lessons.find(lesson => lesson.id === lessonId)
+                setLesson(lesson)
+            }
+        }
+    }, [course, lesson])
+
+    return course && <div className="flex container mx-auto gap-4 p-4">
         <div className="w-1/4">
             <LessonsSidebar lessons={course.course_lessons} currentLessonId={lessonId} />
         </div>

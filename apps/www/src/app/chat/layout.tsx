@@ -11,7 +11,7 @@ export default function ChatLayout({ children }: { children: ReactNode }) {
     const isSmallDevice = useIsSmallDevice()
 
     return <ChatsProvider>
-        <div className="md:container flex h-screen mb-12">
+        <div className="md:container flex h-screen">
             {!isSmallDevice && <>
                 <div className="w-1/3 h-full">
                     <ChatScreenComponent />

@@ -12,7 +12,7 @@ export const View = ({ children }: { children: ReactNode }) => {
     const pathname = usePathname()
 
     return <div className={cn("flex flex-col", isSmallDevice ? "w-full" : "gap-12")}>
-        {!pathname.startsWith("/chat") && <Navbar />}
+        <Navbar />
         {children}
         {!pathname.startsWith("/chat") && <Footer />}
     </div>

@@ -3,12 +3,12 @@
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Text } from "@/components/ui/text"
-import { ExtraSmallListingCardProps } from "app/components/listings-cards/atoms/extra-small"
 import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/listings-cards/molecules/listings"
 import { ArrowUpRight } from "lucide-react"
 import { ReactNode } from "react"
 import { LocationCards } from "app/components/listings-cards/molecules/locations"
 import { useIsSmallDevice } from "@/hooks/is-small-device"
+import { SmallListingCardProps } from "app/components/listings-cards/atoms/small"
 
 export default function ListingsLayout({ children }: { children: ReactNode }) {
     const isSmallDevice = useIsSmallDevice()

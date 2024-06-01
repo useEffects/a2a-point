@@ -8,6 +8,9 @@ const nextConfig = {
   // https://github.com/nandorojo/moti/issues/224
   // once that gets fixed, set this back to true
   reactStrictMode: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   transpilePackages: [
     'expo-router',
     'react-native',

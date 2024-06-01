@@ -1,11 +1,12 @@
 import { readItem } from "@directus/sdk"
 import { FullUser, Listing, User } from "app/lib/types"
+import directusStore from "app/store/directus"
 import { PDFDocument, PDFForm } from 'pdf-lib'
 import { getFormData } from "src/lib/a2a-form"
-import { directus } from "src/lib/directus"
 
 export const GET = async (req: Request, { params: { id } }: { params: { id: string } }) => {
-    const data = await directus.request(readItem("forms", id, {
+    const { rest } = directusStore.getState()
+    const data = await rest.request(readItem("forms", id, {
         fields: ["*.*.*"]
     })) as {
         id: string,

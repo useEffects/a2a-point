@@ -134,7 +134,7 @@ export function Profile({ user }: { user: FullUser }) {
             </ScrollView>
         );
     };
-    return <View className="relative">
+    return <View className="relative flex-1">
         <TabView
             style={{ height }}
             renderTabBar={TabBar}

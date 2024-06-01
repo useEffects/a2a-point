@@ -19,7 +19,7 @@ export type Testimonial = Omit<Feedback, "agent"> & { user_created: { avatar: st
 export const TestimonialCarousel = ({ testimonials }: { testimonials: Testimonial[] }) => {
     const [api, setApi] = useState<CarouselApi>()
 
-    return <Carousel setApi={setApi} className="max-w-sm">
+    return <Carousel setApi={setApi} className="md:max-w-sm">
         <CarouselContent>
             {testimonials.map((testimonial, index) => <CarouselItem key={index}>
                 <div className="flex flex-col gap-8 bg-card rounded px-4 py-8">
