@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "src/components/ui/button";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "src/components/ui/pagination";
 import { Separator } from "src/components/ui/separator";
@@ -50,7 +50,7 @@ export function ListNews({ news, categories: _categories }: { news: News[], cate
     const [first, ...rest] = filteredNews
 
     return <div className="flex flex-col gap-4 mt-4">
-        <div className="flex justify-center gap-4">
+        <div className="flex justify-between md:justify-center gap-4">
             {categories.map((category, i) => <Button
                 variant={currentCategory === category.id ? "default" : "ghost"}
                 key={i}

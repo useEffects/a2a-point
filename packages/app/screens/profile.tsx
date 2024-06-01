@@ -14,7 +14,7 @@ import directusStore from "app/store/directus";
 import userStore from "app/store/user";
 import { ArrowUp, Expand, Info, MessageCircle, Rows2, Shrink } from "lucide-react-native";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { FlatList, Image, Linking, NativeScrollEvent, NativeSyntheticEvent, ScrollView, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import { DimensionValue, FlatList, Image, Linking, NativeScrollEvent, NativeSyntheticEvent, Platform, ScrollView, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import Collapsible from 'react-native-collapsible';
 import StarRating, { StarIconProps } from "react-native-star-rating-widget";
 import { NavigationState, SceneMap, SceneRendererProps, TabView } from 'react-native-tab-view';
@@ -55,7 +55,7 @@ export function Profile({ user }: { user: FullUser }) {
         const onPress = (i: number) => {
             props.jumpTo(tabTitles[i]!)
         }
-        const buttonWidth = width / 2 - 14 - 8
+        const buttonWidth = (Platform.OS === "web" ? "calc(50% - 0.5rem)" : width / 2 - 14 - 8) as DimensionValue
         return <>
             <Collapsible duration={500} collapsed={collapsed}>
                 <View className="flex-col gap-8 my-8">
@@ -134,7 +134,7 @@ export function Profile({ user }: { user: FullUser }) {
             </ScrollView>
         );
     };
-    return <View className="relative flex-1">
+    return <View className="relative">
         <TabView
             style={{ height }}
             renderTabBar={TabBar}
@@ -159,11 +159,11 @@ const TabIcons = ({ index, isActive }: { index: number, isActive: boolean }) => 
 }
 
 const InfoTab = ({ user }: { user: User }) => {
-    return <View className="p-4 flex-col gap-4">
-        {(user.description && user.tags && user.tags.length) ? <View className="flex flex-col gap-4">
+    return <View className="p-4 flex-col gap-4 w-full">
+        {(user.description && user.tags && user.tags.length) ? <View className="flex flex-col gap-4 w-full">
             <Text className="text-xl font-bold">Bio</Text>
             <Text className="text-sm">{user.description}</Text>
-            <View className="flex-row flex-wrap gap-2">
+            <View className="flex-row flex-wrap gap-2 w-full">
                 {user.tags.map((tag, index) => <Text className="rounded-full border border-solid border-foreground px-2 w-auto" key={index}>{tag}</Text>)}
             </View>
         </View> : <></>}
