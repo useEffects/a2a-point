@@ -6,6 +6,7 @@ import { MoveLeft, MoveRight } from "lucide-react"
 import { useState } from "react"
 import { Button } from "src/components/ui/button"
 import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "src/components/ui/carousel"
+import { buildAssetUrl } from "app/lib/helpers"
 
 export type Testimonial = Omit<Feedback, "agent"> & { user_created: { avatar: string, first_name: string, last_name: string, title: string } }
 
@@ -27,7 +28,7 @@ export const TestimonialCarousel = ({ testimonials }: { testimonials: Testimonia
                         <Button variant={"outline"} onPress={() => api?.scrollPrev()} size={"icon"}>
                             <MoveLeft className="" />
                         </Button>
-                        <img className="w-20 h-20 rounded-full" src={`/api/directus/${testimonial.user_created.avatar}`} alt="" />
+                        <img className="w-20 h-20 rounded-full" src={buildAssetUrl(testimonial.user_created.avatar)} alt="" />
                         <Button variant={"outline"} onPress={() => api?.scrollNext()} size={"icon"}>
                             <MoveRight />
                         </Button>
