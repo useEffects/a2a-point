@@ -158,8 +158,32 @@ const TabIcons = ({ index, isActive }: { index: number, isActive: boolean }) => 
     return <Icon style={{ marginVertical: 4 }} size={18} color={isActive ? colors.primary : colors.foreground} />
 }
 
-const InfoTab = ({ user }: { user: User }) => {
+const InfoTab = ({ user }: { user: FullUser }) => {
     return <View className="p-4 flex-col gap-4 w-full">
+        {user.company ? <View className="rounded p-4 bg-card border border-border gap-4">
+            <Text className="text-xl font-bold">Company</Text>
+            <WithLabel label="Title">
+                <Text>{user.company.title}</Text>
+            </WithLabel>
+            <WithLabel label="Address">
+                <Text>{user.company.address}</Text>
+            </WithLabel>
+            <WithLabel label="DED License">
+                <Text>{user.company.DED_LISC}</Text>
+            </WithLabel>
+            <WithLabel label="ORN">
+                <Text>{user.company.ORN}</Text>
+            </WithLabel>
+            <WithLabel label="Phone">
+                <Text>{user.company.phone}</Text>
+            </WithLabel>
+            <WithLabel label="Fax">
+                <Text>{user.company.fax}</Text>
+            </WithLabel>
+            <WithLabel label="Email">
+                <Text>{user.company.email}</Text>
+            </WithLabel>
+        </View> : <></>}
         {(user.description && user.tags && user.tags.length) ? <View className="flex flex-col gap-4 w-full">
             <Text className="text-xl font-bold">Bio</Text>
             <Text className="text-sm">{user.description}</Text>
@@ -289,5 +313,12 @@ const RenderFeedbackCard = (props: UserFeedbacksProps) => {
         </View>
         <StarRating onChange={() => { }} StarIconComponent={(props: StarIconProps) => <StarIcon {...props} size={18} />} rating={props.rating} />
         <Text>{props.content}</Text>
+    </View>
+}
+
+const WithLabel = ({ label, children, className = "" }: { label: string, children: React.ReactNode, className?: string }) => {
+    return <View className={cn("flex-col, gap-1", className)}>
+        <Text className="text-subtext text-sm">{label}</Text>
+        {children}
     </View>
 }

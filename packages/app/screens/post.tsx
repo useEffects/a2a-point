@@ -36,10 +36,6 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
         price: Yup.number()
             .min(0)
             .required("Price is required"),
-        address: Yup.string()
-            .min(10)
-            .max(100)
-            .required("Address is required"),
         dealType: Yup.string()
             .oneOf(["rent", "buy", "sell"])
             .required("Deal type is required"),
@@ -49,7 +45,7 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
         expectedBrokerFees: Yup.number().min(0).max(100).required("Expected broker fees is required"),
         location: Yup.object().shape({
             id: Yup.string().required("Location is required"),
-        })
+        }).nonNullable("Location is required")
     })
 
 
@@ -69,6 +65,7 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
                         value={props.values.title}
                         onChangeText={props.handleChange("title")}
                         error={props.touched.title ? props.errors.title : ""}
+                        onBlur={props.handleBlur("title")}
                     />
                     <FormAutoSelect
                         currentItem={props.values.location as RenderRoomTileProps}
@@ -81,6 +78,7 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
                                 _eq: "group"
                             }
                         }}
+                        onBlur={props.handleBlur("location")}
                     />
                     <FormInput
                         label="Description"
@@ -88,21 +86,16 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
                         onChangeText={props.handleChange("description")}
                         error={props.touched.description ? props.errors.description : ""}
                         maxLines={8}
+                        onBlur={props.handleBlur("description")}
                     />
                     <FormInput
                         label="Price"
-                        value={props.values.price.toString()}
+                        value={props.values.price?.toString()}
                         onChangeText={props.handleChange("price")}
                         error={props.touched.price ? props.errors.price : ""}
                         keyboardType={"number-pad"}
                         className="w-1/2"
-                    />
-                    <FormInput
-                        label="Address"
-                        value={props.values.address}
-                        onChangeText={props.handleChange("address")}
-                        error={props.touched.address ? props.errors.address : ""}
-                        maxLines={4}
+                        onBlur={props.handleBlur("price")}
                     />
                     <FormSelect
                         label="Deal Type"
@@ -153,7 +146,6 @@ function Form2({ formValues, setFormValues, setNavigationState }: { formValues: 
     }
 
     const Form = (props: FormikProps<Form2Values>) => {
-        console.log(props.errors)
         return <ScrollView contentContainerClassName="flex-grow">
             <View className={cn("flex-1 flex-col gap-4 justify-start")}>
                 <View className="flex-1 flex-col gap-2">
@@ -164,6 +156,7 @@ function Form2({ formValues, setFormValues, setNavigationState }: { formValues: 
                         onChangeText={props.handleChange("bathrooms")}
                         error={props.touched.bathrooms ? props.errors.bathrooms : ""}
                         keyboardType="number-pad"
+                        onBlur={props.handleBlur("bathrooms")}
                     />
                     <FormInput
                         label="bedrooms"
@@ -171,6 +164,7 @@ function Form2({ formValues, setFormValues, setNavigationState }: { formValues: 
                         onChangeText={props.handleChange("bedrooms")}
                         error={props.touched.bedrooms ? props.errors.bedrooms : ""}
                         keyboardType="number-pad"
+                        onBlur={props.handleBlur("bedrooms")}
                     />
                     <FormInput
                         label="garage"
@@ -178,6 +172,7 @@ function Form2({ formValues, setFormValues, setNavigationState }: { formValues: 
                         onChangeText={props.handleChange("garage")}
                         error={props.touched.garage ? props.errors.garage : ""}
                         keyboardType="number-pad"
+                        onBlur={props.handleBlur("garage")}
                     />
                     <FormInput
                         label="floors"
@@ -185,6 +180,7 @@ function Form2({ formValues, setFormValues, setNavigationState }: { formValues: 
                         onChangeText={props.handleChange("floors")}
                         error={props.touched.floors ? props.errors.floors : ""}
                         keyboardType="number-pad"
+                        onBlur={props.handleBlur("floors")}
                     />
                     <FormInput
                         label="carpet area"
@@ -192,6 +188,7 @@ function Form2({ formValues, setFormValues, setNavigationState }: { formValues: 
                         onChangeText={props.handleChange("carpetArea")}
                         error={props.touched.carpetArea ? props.errors.carpetArea : ""}
                         keyboardType="number-pad"
+                        onBlur={props.handleBlur("carpetArea")}
                     />
                 </View>
                 <View className="flex-row gap-4">
@@ -218,7 +215,7 @@ function Form2({ formValues, setFormValues, setNavigationState }: { formValues: 
 
 }
 
-function Form3({ formValues, setFormValues, handleSubmit }: { formValues: Form3Values, setFormValues: Dispatch<SetStateAction<Form3Values>>, handleSubmit: () => void }) {
+function Form3({ formValues, setFormValues, handleSubmit, loading }: { formValues: Form3Values, setFormValues: Dispatch<SetStateAction<Form3Values>>, handleSubmit: () => void, loading: boolean }) {
     const validationSchema = Yup.object().shape({
         featured: Yup.boolean().required("Option required"),
     })
@@ -239,10 +236,12 @@ function Form3({ formValues, setFormValues, handleSubmit }: { formValues: Form3V
                 </View>
                 <View className="flex-row gap-4 items-center">
                     <Text>Mark as premium</Text>
-                    <Switch checked={props.values.featured} onCheckedChange={(val) => props.setFieldValue("featured", val)} />
+                    <Switch checked={props.values.featured} onCheckedChange={(val) => {
+                        props.setFieldValue("featured", val)
+                    }} />
                 </View>
             </View>
-            <Button onPress={() => props.handleSubmit()}>
+            <Button disabled={loading} onPress={() => props.handleSubmit()}>
                 <Text>Create listing</Text>
             </Button>
         </ScrollView>
@@ -263,29 +262,31 @@ export default function PostScreenComponent() {
     const [form1Values, setForm1Values] = useState<Form1Values>(form1InitialValues)
     const [form2Values, setForm2Values] = useState<Form2Values>(form2InitialValues)
     const [form3Values, setForm3Values] = useState<Form3Values>(form3InitialValues)
+    const [loading, setLoading] = useState(false)
 
     const { rest } = directusStore()
 
     const handleSubmit = async () => {
+        setLoading(true)
         const payload: Partial<Listing> = {
             address: form1Values.address,
             bathrooms: form2Values.bathrooms ?? null,
             bedrooms: form2Values.bedrooms ?? null,
             floors: form2Values.floors ?? null,
             garages: form2Values.garage ?? null,
-            carpet_area: form2Values.carpetArea,
+            carpet_area: form2Values.carpetArea!,
             deal_type: form1Values.dealType,
             description: form1Values.description,
             expected_broker_fees: form1Values.expectedBrokerFees,
             featured: form3Values.featured,
-            location: form1Values.location?.id!,
-            price: form1Values.price,
+            group: form1Values.location?.id!,
+            price: form1Values.price!,
             title: form1Values.title,
             type: form1Values.type,
             tags: form1Values.tags
         }
         await rest.request(createItem("listings", payload))
-
+        setLoading(false)
     }
 
     const [navigationState, setNavigationState] = useState<NavigationState<Route>>({
@@ -318,6 +319,7 @@ export default function PostScreenComponent() {
                     formValues={form3Values}
                     setFormValues={setForm3Values}
                     handleSubmit={handleSubmit}
+                    loading={loading}
                 />
             })}
         />
@@ -327,7 +329,7 @@ export default function PostScreenComponent() {
 const form1InitialValues: Form1Values = {
     title: "",
     description: "",
-    price: 0,
+    price: null,
     address: "",
     dealType: "buy",
     type: "listing",
@@ -348,7 +350,7 @@ const form3InitialValues: Form3Values = {
 type Form1Values = {
     title: string;
     description: string;
-    price: number;
+    price: number | null;
     address: string;
     dealType: "rent" | "buy" | "sell";
     type: "listing" | "enquiry";
@@ -361,7 +363,7 @@ type Form2Values = {
     tags?: string[];
     bathrooms?: number;
     bedrooms?: number;
-    carpetArea: number;
+    carpetArea: number | null;
     floors?: number;
     garage?: number;
 }

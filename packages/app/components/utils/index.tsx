@@ -101,3 +101,13 @@ export const GoToActivityButton = (props: ButtonProps) => {
 
     return <Button variant={"base"} size={"none"} onPress={goToActivity} {...props} />
 }
+
+export const GoToNotificationsButton = (props: ButtonProps) => {
+    const navigation = useNavigation()
+
+    const goToNotifications = () => {
+        navigation.getState() && navigation.push("notifications")
+    }
+
+    return <Button variant={"base"} size={"none"} onPress={goToNotifications} {...props} />
+}

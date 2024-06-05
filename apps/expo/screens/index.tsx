@@ -8,7 +8,7 @@ import { TopTabParamList } from 'app/lib/misc/navigation';
 import { cn } from 'app/lib/utils';
 import directusStore from 'app/store/directus';
 import opacity from "hex-color-opacity";
-import { Bell, Lock, LogIn, LucideIcon, MessageCircleMore, Plus, TrendingUp, User } from "lucide-react-native";
+import { Construction, Lock, LucideIcon, MessageCircleMore, Plus, TrendingUp, User } from "lucide-react-native";
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -25,6 +25,7 @@ import ProfileScreen from "./profile";
 import ProfileDetailed from './profile-detailed';
 import RoomDetailed from './room-detailed';
 import ActivityScreen from './activity';
+import OffPlansScreen from './offplans';
 
 const Tab = createMaterialTopTabNavigator<TopTabParamList>();
 const Stack = createStackNavigator()
@@ -59,10 +60,9 @@ const useTabBarLabel = (Icon: LucideIcon, label: string, badgeCount?: number) =>
 };
 
 const ScreensLayout = () => {
-    const { authenticated } = directusStore();
 
     const chatTabBarLabel = useTabBarLabel(MessageCircleMore, "Chat");
-    const notificationsTabBarLabel = useTabBarLabel(Bell, "Notifications");
+    const notificationsTabBarLabel = useTabBarLabel(Construction, "Off Plans");
     const listingsTabBarLabel = useTabBarLabel(TrendingUp, "Listings");
     const postTabBarLabel = useTabBarLabel(Plus, "Post");
     const profileTabBarLabel = useTabBarLabel(User, "Profile");
@@ -77,9 +77,9 @@ const ScreensLayout = () => {
             }}
         />,
         <Tab.Screen
-            key="notifications"
-            name="notifications"
-            component={NotificationsScreen}
+            key="offPlans"
+            name="offPlans"
+            component={OffPlansScreen}
             options={{
                 tabBarLabel: notificationsTabBarLabel,
             }}
@@ -145,6 +145,7 @@ export default function AppLayout() {
         <Stack.Screen name="location-listings" component={LocationListings} />
         <Stack.Screen name="post-feedback" component={PostFeedback} />
         <Stack.Screen name="activity" component={ActivityScreen} />
+        <Stack.Screen name="notifications" component={NotificationsScreen} />
         <Stack.Screen name="login" component={LoginScreen} />
     </Stack.Navigator>
 };

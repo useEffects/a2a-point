@@ -54,7 +54,7 @@ export type Listing = {
     bedrooms: number | null;
     garages: number | null;
     floors: number | null;
-    location: string;
+    group: string;
     price: number;
     carpet_area: number;
     expected_broker_fees: number;

@@ -13,6 +13,7 @@ import { UserChip } from "app/components/user-chip";
 import { queryStore } from "app/store/query";
 import { EllipsisVertical } from "lucide-react-native";
 import { timeAgo } from "app/lib/helpers";
+import userStore from "app/store/user";
 
 const fetchNotificationsQueryKey = ["Fetching Notifications"]
 
@@ -50,7 +51,7 @@ const NotificationDropdown = (props: Notification & { setNotifications: Dispatch
                 <EllipsisVertical size={14} color={colors.foreground} />
             </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent insets={{ top: 40 }}>
             <DropdownMenuItem>
                 <Text onPress={handleUpdate} className="!text-sm">Mark as read</Text>
             </DropdownMenuItem>
@@ -86,6 +87,7 @@ const RenderNotifications = (props: Notification & { setNotifications: Dispatch<
 
 export default function NotificationsList() {
     const { rest } = directusStore()
+    const { user } = userStore()
     const [notifications, setNotifications] = useState<Notification[]>([])
     const queryClient = queryStore()
 
@@ -97,8 +99,12 @@ export default function NotificationsList() {
                     filter: {
                         status: {
                             _eq: "inbox"
+                        },
+                        recipient: {
+                            _eq: user.id
                         }
-                    }
+                    },
+                    sort: ["-timestamp"],
                 })),
                 initialData: []
             })

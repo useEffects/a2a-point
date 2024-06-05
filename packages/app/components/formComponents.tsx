@@ -128,8 +128,8 @@ export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps 
     const RenderItem = (item: RenderRoomTileProps | RenderListingTileProps) => {
         return isRenderRoomTile(item) ? <RenderRoomTile {...item} currentId={props.currentItem?.id} /> : <RenderListingTile {...item} currentId={props.currentItem?.id} />
     }
-    return <View className="relative w-full" style={{ height: initialInputHeight + 32 }}>
-        <View style={{zIndex: 100, position: "absolute", elevation: 100, left: 0, right: 0, top: 0}}>
+    return <View className="relative w-full" style={{ height: props.error ? initialInputHeight + 24 + 24 : initialInputHeight + 24 }}>
+        <View style={{ zIndex: 100, position: "absolute", elevation: 100, left: 0, right: 0, top: 0 }}>
             <AutoComplete
                 data={data}
                 renderTextInput={() => <FormInput

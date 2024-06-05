@@ -23,7 +23,7 @@ const LoginScreen = () => {
                 navigation.navigate("home")
                 clearInterval(timer)
             }
-        }, 1000)
+        }, 100)
         return () => clearInterval(timer)
     }, [authenticated, navigation])
 

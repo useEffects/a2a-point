@@ -23,7 +23,9 @@ import directusStore from 'app/store/directus'
 import { createItem } from "@directus/sdk"
 import * as Linking from "expo-linking"
 import { portfolioUrl } from 'app/lib/constants'
-import Collapsible from 'react-native-collapsible'
+import * as Yup from "yup"
+import { Formik, FormikProps } from 'formik'
+import { Separator } from 'app/components/ui/separator'
 
 export type withId = { id: string }
 export type withUri = { uri: string }
@@ -141,20 +143,81 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
     const { colors } = useColorScheme()
     const [open, setOpen] = useState(false)
     const [openBottomSheet, setOpenBottomSheet] = useState(false)
-    const [currentListing, setCurrentListing] = useState<RenderListingTileProps | null>(null)
-    const [name, setName] = useState("")
     const { rest } = directusStore()
 
     const { currentMessage, currentMessageDispatcher, onSend } = props
     const disabled = !(Boolean(currentMessage.text) || Boolean(currentMessage.assets))
 
-    const handleFormGeneration = async () => {
+    const handleFormGeneration = async (values: A2AFormType) => {
         const res = await rest.request(createItem("forms", {
-            name,
-            listing: currentListing?.id,
-            receiver: currentListing?.user_created.id
+            name: values.name,
+            listing: values.listing!.id,
+            commission_seller: values.commissionSeller,
+            commission_buyer: values.commissionBuyer,
+            client_name: values.clientName,
+            receiver: values.listing!.user_created.id
         }))
         await Linking.openURL(`${portfolioUrl}/api/generate-a2aform/${res.id}`)
+    }
+
+    type A2AFormType = {
+        name: string,
+        listing: RenderListingTileProps | null,
+        commissionSeller: number | null,
+        commissionBuyer: number | null,
+        clientName: string
+    }
+    const formSchema = Yup.object().shape({
+        name: Yup.string().required("Name is required"),
+        listing: Yup.object().shape({
+            id: Yup.string().required("Listing is required"),
+        }),
+        commissionSeller: Yup.number().required("Seller Commission is required"),
+        commissionBuyer: Yup.number().required("Buyer Commission is required"),
+        clientName: Yup.string().required("Client Name is required")
+    })
+
+    const Form = (props: FormikProps<A2AFormType>) => {
+        return <View className='flex-1 flex-col gap-4'>
+            <FormInput
+                value={props.values.name}
+                onChangeText={props.handleChange("name")}
+                label='Title of the listing'
+                error={props.touched.name ? props.errors.name : ""}
+            />
+            <FormAutoSelect
+                currentItem={props.values.listing}
+                setCurrentItem={item => props.setFieldValue("listing", item)}
+                label="Listing"
+                error={props.errors.listing}
+                item="listings"
+                filter={{}}
+            />
+            <FormInput
+                value={props.values.commissionSeller?.toString()}
+                onChangeText={props.handleChange("commissionSeller")}
+                label='Seller Commission'
+                error={props.touched.commissionSeller ? props.errors.commissionSeller : ""}
+                keyboardType='numeric'
+            />
+            <FormInput
+                value={props.values.commissionBuyer?.toString()}
+                onChangeText={props.handleChange("commissionBuyer")}
+                label='Buyer Commission'
+                error={props.touched.commissionBuyer ? props.errors.commissionBuyer : ""}
+                keyboardType='numeric'
+            />
+            <FormInput
+                value={props.values.clientName}
+                onChangeText={props.handleChange("clientName")}
+                label='Client Name'
+                error={props.touched.clientName ? props.errors.clientName : ""}
+            />
+            <Separator />
+            <Button disabled={!props.isValid} onPress={props.submitForm}>
+                <Text>Generate</Text>
+            </Button>
+        </View>
     }
 
     return <View className='flex-col mt-1'>
@@ -184,28 +247,24 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
             }
         </View>
         <BottomSheet open={openBottomSheet} onBackdropPress={() => setOpenBottomSheet(false)} setOpen={setOpenBottomSheet}>
-            <View className='p-4 bg-card flex-col gap-4'>
-                <View className='flex-row flex-1 justify-between'>
+            <View className='p-4 bg-card flex-col gap-8 h-screen'>
+                <View className='flex-row justify-between'>
                     <Text>Generate <Text className='text-primary'>Agent to Agent</Text> agreement form</Text>
                     <CloseButton onPress={() => setOpenBottomSheet(false)} />
                 </View>
-                <FormInput
-                    value={name}
-                    onChangeText={setName}
-                    label='Name of the form'
-                />
-                <FormAutoSelect
-                    currentItem={currentListing}
-                    setCurrentItem={item => setCurrentListing(item as RenderListingTileProps)}
-                    label="Location"
-                    error={""}
-                    item="listings"
-                    filter={{}}
-
-                />
-                <Button disabled={!Boolean(currentListing) || !Boolean(name)} onPress={handleFormGeneration}>
-                    <Text>Generate</Text>
-                </Button>
+                <Formik
+                    initialValues={{
+                        name: "",
+                        listing: null,
+                        commissionSeller: null,
+                        commissionBuyer: null,
+                        clientName: ""
+                    } as A2AFormType}
+                    validationSchema={formSchema}
+                    onSubmit={handleFormGeneration}
+                >
+                    {props => <Form {...props} />}
+                </Formik>
             </View>
         </BottomSheet>
     </View>

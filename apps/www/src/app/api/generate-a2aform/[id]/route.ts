@@ -1,5 +1,5 @@
 import { readItem } from "@directus/sdk"
-import { FullUser, Listing, User } from "app/lib/types"
+import { Company, FullUser, Listing, User } from "app/lib/types"
 import directusStore from "app/store/directus"
 import { PDFDocument, PDFForm } from 'pdf-lib'
 import { getFormData } from "src/lib/a2a-form"
@@ -10,12 +10,15 @@ export const GET = async (req: Request, { params: { id } }: { params: { id: stri
         fields: ["*.*.*"]
     })) as {
         id: string,
-        user_created: FullUser,
-        receiver: FullUser,
+        user_created: Omit<User, "company"> & { company: Company | null },
+        receiver: Omit<User, "company"> & { company: Company | null },
         name: string,
-        listing: Listing
+        listing: Listing,
+        commission_buyer: number,
+        commission_seller: number,
+        client_name: string
     }
-    const { user_created: agent, receiver, name, listing } = data
+    const { user_created: agent, receiver, name, listing, commission_buyer, commission_seller, client_name } = data
     const formData = await getFormData();
     const pdfDoc = await PDFDocument.load(formData)
     const form = pdfDoc.getForm();
@@ -61,9 +64,9 @@ export const GET = async (req: Request, { params: { id } }: { params: { id: stri
     setField(form, "listingGarage", listing.garages?.toString())
     setField(form, "listingFloors", listing.floors?.toString())
 
-    setField(form, "commissionSellerAgent", null)
-    setField(form, "commissionBuyerAgent", null)
-    setField(form, "commissionBuyerName", null)
+    setField(form, "commissionSellerAgent", commission_seller.toString())
+    setField(form, "commissionBuyerAgent", commission_buyer.toString())
+    setField(form, "commissionBuyerName", client_name)
 
     setField(form, "signatureAgentA", null)
     setField(form, "signatureAgentB", null)
