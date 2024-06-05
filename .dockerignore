@@ -80,6 +80,3 @@ build/**
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-
-# keywind
-apps/keycloak-theme/out

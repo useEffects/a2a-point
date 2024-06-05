@@ -223,3 +223,21 @@ export const shortTime = (date_created: string) => (new Date(date_created)).toLo
 export const wordCount = (value: string | undefined) => {
   return value ? value.trim().split(/\s+/).length : 0;
 };
+
+export const checkCollectionId = async (id: string, collection: string): Promise<boolean> => {
+  const { token } = directusStore.getState()
+  try {
+    const res = await fetch(`${directusUrl}/items/${collection}/${id}/?fields=${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then(res => res.json())
+    if (res.data && res.data.id) {
+      return true
+    }
+    return false
+  } catch (error) {
+    console.error(error)
+    return false
+  }
+}

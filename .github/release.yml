@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: aprilswind
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Extract version
+      id: extract_version
+      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: |
+          aprilswind/a2apoint:latest
+          aprilswind/a2apoint:${{ env.RELEASE_VERSION }}
+
+    - name: Post new release
+      run: |
+        curl -s --data '{"tag_name":"${{ env.RELEASE_VERSION }}","target_commitish":"main","name":"${{ env.RELEASE_VERSION }}","body":"Release of version ${{ env.RELEASE_VERSION }}","draft":false,"prerelease":false}' \
+        -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+        -H "Content-Type: application/json" \
+        https://api.github.com/repos/your-github-username/your-repository/releases

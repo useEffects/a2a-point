@@ -11,7 +11,8 @@
     "tailwind-theme": "*"
   },
   "scripts": {
-    "start": "directus start"
+    "start": "directus start",
+    "snapshot": "directus schema snapshot --yes ./snapshot.yaml"
   },
   "workspaces": {
     "nohoist": [

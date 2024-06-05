@@ -1,5 +1,10 @@
 <#macro kw>
-  <body class="bg-secondary-100 flex flex-col items-center justify-center min-h-screen sm:py-16">
-    <#nested>
+  <body class="w-screen p-4 min-w-screen bg-secondary-100 flex gap-4 items-center justify-around p-4 max-h-auto">
+    <div class="w-1/2 hidden md:block">
+      <img src="https://dev.a2apoint.com/keycloak/login-hero-image.png" alt="login-hero-image" class="w-full h-[calc(100vh-2rem)] object-contain" />
+    </div>
+    <div class="w-full md:w-1/2 max-w-sm flex items-center justify-center h-full py-12">
+      <#nested>
+    </div>
   </body>
 </#macro>
