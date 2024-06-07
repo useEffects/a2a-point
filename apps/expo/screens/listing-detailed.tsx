@@ -1,14 +1,14 @@
-import { ScrollView, View } from "react-native"
-import directusStore from "app/store/directus"
-import { useParams } from "solito/navigation"
 import { createItem, readItem, readItems } from "@directus/sdk"
-import { FullListingCard, FullListingCardFields, FullListingDetailed } from "app/components/listings-cards/atoms/full"
-import { useEffect, useState } from "react"
+import { FullListingCard, FullListingCardFields, FullListingDetailed } from "app/components/cards/atoms/full"
 import { Header } from "app/components/header"
 import { Text } from "app/components/ui/text"
+import { LoginPopover } from "app/screens/listings"
+import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"
 import userStore from "app/store/user"
-import { LoginPopover } from "app/screens/home"
+import { useEffect, useState } from "react"
+import { ScrollView, View } from "react-native"
+import { useParams } from "solito/navigation"
 
 export default function FullListingScreen() {
     const { rest, authenticated } = directusStore()
@@ -26,7 +26,7 @@ export default function FullListingScreen() {
     }, [params, rest])
 
     useEffect(() => {
-        if (!params.id || !listing) return
+        if (!params.id || !listing || !authenticated) return
         async function addViewCount() {
             try {
                 const viewedBy = await queryClient.fetchQuery({
@@ -53,17 +53,15 @@ export default function FullListingScreen() {
             }
         }
         addViewCount()
-    }, [params.id, rest, user.id, listing])
+    }, [params.id, rest, user.id, listing, authenticated])
 
-    return listing ? <ScrollView className="flex-col gap-4">
+    return listing ? <ScrollView className="flex-col" contentContainerClassName="gap-4">
         <Header>
             <View>
                 <Text className="font-medium">{listing.title}</Text>
             </View>
         </Header>
-        <View className="px-4">
-            <FullListingCard {...listing} />
-        </View>
+        <FullListingCard {...listing} />
         {!authenticated ? <LoginPopover /> : <></>}
     </ScrollView> : <></>
 }

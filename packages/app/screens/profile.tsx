@@ -1,5 +1,6 @@
-import { readItems, deleteItem } from "@directus/sdk";
+import { deleteItem, readItems } from "@directus/sdk";
 import { useQuery } from "@tanstack/react-query";
+import ProfileSVG from "app/components/svg/profile";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
 import { UserChip } from "app/components/user-chip";
@@ -19,13 +20,12 @@ import Collapsible from 'react-native-collapsible';
 import StarRating, { StarIconProps } from "react-native-star-rating-widget";
 import { NavigationState, SceneMap, SceneRendererProps, TabView } from 'react-native-tab-view';
 import { Link } from "solito/link";
-import { ExtraSmallListingCardProps } from "../components/listings-cards/atoms/extra-small";
-import { MediumListingCardProps } from "../components/listings-cards/atoms/medium";
-import { CommonFilters, RenderListings, bodies, commonFilters } from "../components/listings-cards/molecules/listings";
+import { ExtraSmallListingCardProps } from "../components/cards/atoms/extra-small";
+import { MediumListingCardProps } from "../components/cards/atoms/medium";
+import { CommonFilters, RenderListings, bodies, commonFilters } from "../components/cards/molecules/listings";
+import { GoToActivityButton, GoToPostFeedbackButton } from "../components/link-buttons";
 import { Button } from "../components/ui/button";
-import { GoToActivityButton, GoToPostFeedbackButton } from "../components/utils";
 import LockedScreen from "./locked-screens";
-import ProfileSVG from "app/components/svg/profile";
 
 export const ProfileScreen = ({ user }: { user: FullUser }) => {
     const { authenticated } = directusStore()

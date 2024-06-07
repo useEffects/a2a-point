@@ -1,13 +1,13 @@
-import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/listings-cards/molecules/listings";
-import { Button } from "app/components/ui/button";
+import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings";
 import { Bookmark, Eye } from "app/components/icons";
+import { Button } from "app/components/ui/button";
+import { Separator } from "app/components/ui/separator";
+import { Text } from "app/components/ui/text";
+import { cn } from "app/lib/utils";
+import { LucideIcon } from "lucide-react-native";
 import { useState } from "react";
 import { View } from "react-native";
 import { NavigationState, Route, SceneMap, SceneRendererProps, TabView } from "react-native-tab-view";
-import { Text } from "app/components/ui/text";
-import { LucideIcon } from "lucide-react-native";
-import { cn } from "app/lib/utils";
-import { Separator } from "app/components/ui/separator";
 
 export default function ActivityScreenComponent() {
     const [navigationState, setNavigationState] = useState<NavigationState<Route>>({

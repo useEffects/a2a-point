@@ -1,7 +1,7 @@
 import { Text } from "app/components/ui/text";
 import PostSVG from "app/components/svg/post";
 import { View } from "react-native";
-import { GoToLoginButtonProps, GoToLoginButton as LoginButton } from "app/components/utils";
+import { GoToLoginButtonProps, GoToLoginButton as LoginButton } from "app/components/link-buttons";
 import { cn } from "app/lib/utils";
 import { ArrowUpRight } from "app/components/icons";
 import { Button, ButtonProps } from "app/components/ui/button";

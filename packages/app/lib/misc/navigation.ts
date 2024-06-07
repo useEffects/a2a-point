@@ -17,15 +17,16 @@ export type RootStackParamList = {
         feedbackId?: string
     },
     "activity": undefined,
-    "notifications": undefined
+    "notifications": undefined,
+    "post": undefined
 }
 
 export type TopTabParamList = {
     "home": undefined,
+    "listings": undefined,
     "search": undefined,
     "offPlans": undefined,
     "profile": undefined,
     "login": undefined,
     "chat": undefined,
-    "post": undefined
 }

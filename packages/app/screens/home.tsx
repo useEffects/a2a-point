@@ -1,199 +1,121 @@
-import { MediumListingCardProps } from "app/components/listings-cards/atoms/medium";
-import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/listings-cards/molecules/listings";
-import SearchBar from "app/components/searchbar";
+import { readItems } from "@directus/sdk";
+import { useQuery } from "@tanstack/react-query";
+import { NewsCard } from "app/components/cards/atoms/news";
+import { PhotoListingProps } from "app/components/cards/atoms/photo";
+import { SmallListingCardProps } from "app/components/cards/atoms/small";
+import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings";
+import { ArrowUpRight, ExternalLink } from "app/components/icons";
+import { SmallLocationCards } from "app/components/cards/molecules/locations";
+import { SeparatorText } from "app/components/separator-text";
 import { Button } from "app/components/ui/button";
-import { Separator } from "app/components/ui/separator";
-import { useColorScheme } from "app/hooks/color-scheme";
-import { useEffect, useState } from "react";
-import { Platform, View } from "react-native";
-import { useDebounce } from "use-debounce";
-import { Award, CreditCard, Home, ListFilter, LucideProps, Sparkles } from "lucide-react-native";
-import BottomSheet from 'app/components/bottomsheet';
-import { CloseButton } from "app/components/utils";
 import { Text } from "app/components/ui/text";
-import { GoToLoginButton } from "./locked-screens";
+import { useColorScheme } from "app/hooks/color-scheme";
+import { directusUrl, portfolioUrl } from "app/lib/constants";
+import { News } from "app/lib/types";
 import directusStore from "app/store/directus";
-import { cn } from "app/lib/utils";
-import { SmallListingCardProps } from "app/components/listings-cards/atoms/small";
-import { LocationCards } from "app/components/listings-cards/molecules/locations";
-import Collapsible from "react-native-collapsible";
-import { ArrowUpRight } from "app/components/icons";
+import userStore from "app/store/user";
+import opacity from "hex-color-opacity";
+import { Dimensions, View } from "react-native";
+import Carousel from "react-native-reanimated-carousel";
+import { Link } from "solito/link";
+import { FlatList } from "app/components/utils/virtual-lists";
+import { SmallUsersCard, SmallUsersCardProps, smallUsersFields } from "app/components/cards/atoms/users";
 
-export function HomeScreenListing({ setCollapsed, className }: { className?: string, setCollapsed?: (collapsed: boolean) => void }) {
-    const [searchText, setSearchText] = useState("")
-    const [debouncedSearchText] = useDebounce(searchText, 500)
-    const [bottomSheetVisible, setBottomSheetVisible] = useState(false)
-    const [filter, setFilter] = useState<CommonFilters | null>(null)
+export default function HomeScreen() {
+    const { authenticated, token } = directusStore()
+    const { user } = userStore()
     const { colors } = useColorScheme()
-    const { authenticated } = directusStore()
+    const { rest } = directusStore()
 
-    useEffect(() => {
-        if (setCollapsed) {
-            if (searchText) {
-                setCollapsed(true)
-            } else {
-                setCollapsed(false)
+    const { data: news } = useQuery<News[]>({
+        queryKey: ["Fetch news"],
+        queryFn: async () => await rest.request(readItems("news", {
+            limit: 10,
+        })) as News[],
+        initialData: []
+    })
+
+    const { data: users } = useQuery<SmallUsersCardProps[]>({
+        queryKey: ["Fetch top agents"],
+        queryFn: async () => await fetch(`${directusUrl}/users/?fields=${smallUsersFields.join(",")}&sort=score&limit=5`, {
+            headers: {
+                Authorization: `Bearer ${token}`
             }
-        }
-    }, [searchText, setCollapsed])
+        }).then(res => res.json()).then(res => res.data) as SmallUsersCardProps[],
+        initialData: []
+    })
 
-    return <View className={cn(className)}>
-        <View className="flex-row items-center justify-between gap-4 mb-12 w-full">
-            <SearchBar
-                searchText={searchText}
-                setSearchText={setSearchText}
-            />
-            <Button
-                onPress={() => setBottomSheetVisible(true)}
-                variant={"base"}
-                size={"none"}
-                className="rounded-full border border-info relative"
-                style={{ height: 40, width: 40 }}
-            >
-                {filter ? <View className="w-2 h-2 rounded-full absolute bg-warning top-2 right-2"></View> : <></>}
-                <ListFilter size={18} color={colors.info} />
-            </Button>
-        </View>
-        <Separator />
-        <RenderListings<MediumListingCardProps>
-            render={bodies.medium}
+    return <View className="flex-1 flex-col gap-8">
+        <Text className="text-2xl font-bold text-wrap">{authenticated ? `Welcome back ${user.first_name} ${user.last_name}` : "The one stop for all agents"}</Text>
+        <RenderListings<PhotoListingProps>
+            render={bodies.photo}
+            filterMethod={commonFilters[CommonFilters.Photo]()}
             flatListProps={{
-                scrollEnabled: Platform.OS === "web",
-                ItemSeparatorComponent: () => <Separator />,
+                horizontal: true,
+                showsHorizontalScrollIndicator: false,
             }}
-            filterMethod={filter ? commonFilters[filter]("") : undefined}
-            searchText={debouncedSearchText}
         />
-        <BottomSheet
-            open={bottomSheetVisible}
-            onBackdropPress={() => setBottomSheetVisible(false)}
-            setOpen={setBottomSheetVisible}
-        >
-            <View className="p-8 flex-col gap-8 bg-card">
-                <View className="flex-row gap-4 items-center">
-                    <CloseButton onPress={() => setBottomSheetVisible(false)} />
-                    <View>
-                        <Text className="text-lg">Filter leads</Text>
-                        <Text className="text-subtext">Click again to disable the filter</Text>
-                    </View>
-                </View>
-                <View className="flex-row justify-between">
-                    {categoryTiles.map((category, i) => <Button
-                        onPress={() => {
-                            if (filter === category.filterMethod) {
-                                setFilter(null)
-                            } else {
-                                setFilter(category.filterMethod)
-                            }
-                            setBottomSheetVisible(false)
-                        }}
-                        variant={"base"}
-                        size={"none"}
-                        key={i}
-                        className="flex-col gap-1">
-                        <Text>{category.Icon({ size: 24, color: filter === category.filterMethod ? colors.primary : colors.foreground })}</Text>
-                        <Text className={filter === category.filterMethod ? "text-primary" : "text-foreground"}>{category.title}</Text>
-                    </Button>)}
-                </View>
-            </View>
-        </BottomSheet>
-        {!authenticated ? <LoginPopover /> : <></>}
-    </View>
+        <Button variant={"base"} size={"none"} className="flex-row gap-1 items-center w-40 ml-auto mr-0">
+            <Text className="text-right text-subtext">Premium listings curated by A2APoint</Text>
+            <ArrowUpRight size={24} className="text-info" />
+        </Button>
+        <RenderListings<SmallListingCardProps>
+            render={bodies.small}
+            flatListProps={{
+                horizontal: true,
+            }}
+        />
+        <SeparatorText hideLeft>
+            <Text className="font-medium">Browse popular locations</Text>
+        </SeparatorText>
+        <SmallLocationCards />
+        <SeparatorText hideLeft>
+            <Text className="font-medium">Top rated agents</Text>
+        </SeparatorText>
+        <FlatList
+            data={users}
+            renderItem={({ item }) => <SmallUsersCard {...item} />}
+            horizontal
+            ItemSeparatorComponent={() => <View className="w-4 h-4" />}
+        />
+        <SeparatorText hideLeft>
+            <Text className="font-medium">News and feeds</Text>
+        </SeparatorText>
+        <FlatList
+            data={news}
+            renderItem={({ item }) => <NewsCard news={item} />}
+            horizontal
+            ItemSeparatorComponent={() => <View className="w-4 h-4" />}
+        />
+        <SeparatorText hideLeft>
+            <Text className="font-medium">Quick links</Text>
+        </SeparatorText>
+        <View className="flex-row justify-between">
+            {externalLinks.map(({ label, href }, index) => <Link key={index} href={href} className="">
+                <Button variant={"base"} size={"none"} style={{ backgroundColor: opacity(colors.info, 0.1) }} className="flex-row gap-1 py-1 px-2 rounded">
+                    <Text className="text-info">{label}</Text>
+                    <ExternalLink size={18} className="text-info" />
+                </Button>
+            </Link>)}
+        </View>
+    </View >
 }
 
-const categoryTiles = [
+const externalLinks = [
     {
-        Icon: (props: LucideProps) => <Award {...props} />,
-        title: "Premium",
-        filterMethod: CommonFilters.Premium
-    }, {
-        Icon: (props: LucideProps) => <Sparkles {...props} />,
-        title: "Listing",
-        filterMethod: CommonFilters.Listing
-    }, {
-        Icon: (props: LucideProps) => <CreditCard {...props} />,
-        title: "Enquiry",
-        filterMethod: CommonFilters.Enquiry
-    }, {
-        Icon: (props: LucideProps) => <Home {...props} />,
-        title: "Rent",
-        filterMethod: CommonFilters.Rent
+        label: "Website",
+        href: portfolioUrl
+    },
+    {
+        label: "Dashboard",
+        href: directusUrl
+    },
+    {
+        label: "Courses",
+        href: `${directusUrl}/courses`
+    },
+    {
+        label: "News",
+        href: `${directusUrl}/news`
     }
 ]
-
-export const LoginPopover = () => {
-    const [isOpen, setIsOpen] = useState(false)
-    const [canClose, setCanClose] = useState(true)
-    const { colors } = useColorScheme()
-
-    // useEffect(() => {
-    //     const isOpenTimeout = setInterval(() => {
-    //         setIsOpen(true)
-    //     }, 1000 * 60 * 1)
-    //     const canCloseTimeout = setTimeout(() => {
-    //         setCanClose(false)
-    //     }, 1000 * 60 * 5)
-    //     return () => {
-    //         clearInterval(isOpenTimeout)
-    //         clearTimeout(canCloseTimeout)
-    //     }
-    // }, [])
-
-    const handleClose = () => {
-        if (!canClose) return
-        setIsOpen(false)
-    }
-
-    return <BottomSheet open={isOpen} setOpen={setIsOpen} onBackdropPress={handleClose}>
-        <View className="p-4 bg-card gap-4 flex flex-row justify-center">
-            <View className="md:w-[600px]">
-                <View className="flex-row justify-between w-full">
-                    <View className="flex-row gap-2">
-                        <Sparkles fill={colors.primary} className="text-primary" />
-                        <Text className="text-xl font-bold">Get Started</Text>
-                    </View>
-                    {canClose ? <CloseButton onPress={() => setIsOpen(false)} /> : <></>}
-                </View>
-                <View className="flex-col gap-4">
-                    <Text>Login to unlock the full application</Text>
-                    <GoToLoginButton additionalOnPress={() => setIsOpen(false)} />
-                </View>
-            </View>
-        </View>
-    </BottomSheet>
-}
-
-export const HomeScreenComponent = () => {
-    const [collapsed, setCollapsed] = useState(false)
-    const { authenticated } = directusStore()
-    const { colors } = useColorScheme()
-
-    return (
-        <View className="p-4">
-            <Collapsible duration={500} collapsed={collapsed}>
-                <View className="flex-col gap-8 py-4">
-                    <Button variant={"base"} size={"none"} className="flex-row gap-1 items-center w-40 ml-auto mr-0">
-                        <Text className="text-right text-subtext">Premium listings curated by A2APoint</Text>
-                        <ArrowUpRight size={24} color={colors.info} />
-                    </Button>
-                    <RenderListings<SmallListingCardProps>
-                        render={bodies.small}
-                        flatListProps={{
-                            horizontal: true,
-                        }}
-                    />
-                    <View className="flex-col gap-2">
-                        <Text className="text-subtext">Browse popular locations</Text>
-                        <LocationCards />
-                    </View>
-                    <Separator />
-                    <View className="">
-                        <Text className="text-2xl font-medium">Let&apos;s search your next lead!</Text>
-                    </View>
-                </View>
-            </Collapsible>
-            <HomeScreenListing setCollapsed={setCollapsed} />
-            {authenticated ? <></> : <LoginPopover />}
-        </View>
-    )
-}

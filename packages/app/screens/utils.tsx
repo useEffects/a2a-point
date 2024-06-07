@@ -1,5 +1,5 @@
 import { Text } from "app/components/ui/text"
-import { GoToLoginButton as Button } from "app/components/utils"
+import { GoToLoginButton as Button } from "app/components/link-buttons"
 import { ArrowUpRight } from "app/components/icons"
 
 export const GoToLoginButton = () => {

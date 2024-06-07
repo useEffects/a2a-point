@@ -1,13 +1,11 @@
-import { Button } from "app/components/ui/button"
 import { useColorScheme } from "app/hooks/color-scheme"
 import { buildAssetUrl } from "app/lib/helpers"
 import { cn } from "app/lib/utils"
 import opacity from "hex-color-opacity"
 import { Image, View } from "react-native"
 import { Link } from "solito/link"
-import { useRouter } from "solito/navigation"
+import { GoToProfileButton } from "./link-buttons"
 import { Text } from "./ui/text"
-import { GoToProfileButton } from "./utils"
 
 export const UserChip = ({ user, className }: { user: { id: string, avatar: string, first_name: string, last_name: string, email?: string, role?: string }, className?: string }) => {
     const { colors } = useColorScheme()

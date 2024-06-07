@@ -12,12 +12,12 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   transpilePackages: [
+    'app',
     'expo-router',
     'react-native',
     'react-native-web',
     'solito',
     'moti',
-    'app',
     'react-native-reanimated',
     'react-native-svg',
     'nativewind',
@@ -27,7 +27,8 @@ const nextConfig = {
     'react-native-ratings',
     'react-native-tab-view',
     'react-native-autocomplete-input',
-    'react-native-collapsible'
+    'react-native-collapsible',
+    '@idiosync/horizontal-flatlist'
   ],
 }
 

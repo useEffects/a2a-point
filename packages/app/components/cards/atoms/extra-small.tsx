@@ -1,7 +1,7 @@
 import { Text } from "app/components/ui/text";
 import { Listing } from "app/lib/types";
 import { View } from "react-native";
-import { GoToFullListingButton } from "app/components/utils";
+import { GoToFullListingButton } from "app/components/link-buttons";
 
 export type ExtraSmallListingCardProps = Pick<Listing, "id" | "title" | "type" | "price">
 

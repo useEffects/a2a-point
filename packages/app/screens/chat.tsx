@@ -10,7 +10,7 @@ import { useDebounce } from "use-debounce";
 import { RoomSubscribed } from "app/context/chats"
 import { useChats } from "app/hooks/chats"
 import { buildAssetUrl, getDMRoomId, timeAgo } from "app/lib/helpers";
-import { GoToRoomButton } from "app/components/utils";
+import { GoToRoomButton } from "app/components/link-buttons";
 import { Room, User } from "app/lib/types";
 import directusStore from "app/store/directus";
 import { useQuery } from "@tanstack/react-query"

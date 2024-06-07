@@ -1,11 +1,11 @@
-import { View } from "react-native"
-import directusStore from "app/store/directus"
 import { createItem, readItem, readItems } from "@directus/sdk"
-import { FullListingCard, FullListingCardFields, FullListingDetailed } from "app/components/listings-cards/atoms/full"
-import { useEffect, useState } from "react"
+import { FullListingCard, FullListingCardFields, FullListingDetailed } from "app/components/cards/atoms/full"
+import { LoginPopover } from "app/screens/listings"
+import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"
 import userStore from "app/store/user"
-import { LoginPopover } from "app/screens/home"
+import { useEffect, useState } from "react"
+import { View } from "react-native"
 
 export default function FullListingScreen({ listingId }: { listingId: string }) {
     const { rest, authenticated } = directusStore()

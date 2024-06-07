@@ -17,7 +17,7 @@ import { Button } from "app/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "app/components/ui/dropdown-menu"
 import { BottomSheet } from "@rneui/themed"
 import SearchBar from "app/components/searchbar"
-import { GoToLocationListingsButton, GoToProfileButton } from "app/components/utils"
+import { GoToLocationListingsButton, GoToProfileButton } from "app/components/link-buttons"
 import { ChevronDown, ChevronUp, EllipsisVertical, Search, X } from "app/components/icons"
 
 const ChatScreen = ({ roomDetails, receivers }: {

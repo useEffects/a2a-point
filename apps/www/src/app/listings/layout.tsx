@@ -1,14 +1,14 @@
 "use client"
 
-import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
 import { Text } from "@/components/ui/text"
-import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/listings-cards/molecules/listings"
+import { useIsSmallDevice } from "@/hooks/is-small-device"
+import { SmallListingCardProps } from "app/components/cards/atoms/small"
+import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings"
+import { SmallLocationCards } from "app/components/listings-cards/molecules/locations"
 import { ArrowUpRight } from "lucide-react"
 import { ReactNode } from "react"
-import { LocationCards } from "app/components/listings-cards/molecules/locations"
-import { useIsSmallDevice } from "@/hooks/is-small-device"
-import { SmallListingCardProps } from "app/components/listings-cards/atoms/small"
 
 export default function ListingsLayout({ children }: { children: ReactNode }) {
     const isSmallDevice = useIsSmallDevice()
@@ -38,7 +38,7 @@ export default function ListingsLayout({ children }: { children: ReactNode }) {
                     </div>
                     <div className="flex flex-col gap-4">
                         <p className="text-2xl font-bold">Browse popular locations</p>
-                        <LocationCards
+                        <SmallLocationCards
                         />
                     </div>
                 </div>

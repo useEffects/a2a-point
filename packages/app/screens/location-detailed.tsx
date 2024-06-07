@@ -1,23 +1,19 @@
-import { Text } from "app/components/ui/text";
-import { Image, Platform, ScrollView, View, } from "react-native";
-import { useParams } from "solito/navigation"
-import { useQuery } from "@tanstack/react-query"
-import directusStore from "app/store/directus";
-import { readItem } from "@directus/sdk";
-import { Room, User } from "app/lib/types";
-import { buildAssetUrl } from "app/lib/helpers";
-import { FullWidthImage } from "app/components/full-width-image"
-import Collapsible from "react-native-collapsible";
-import { FlatList } from "react-native-gesture-handler";
-import { GoToProfileButton, GoToRoomButton } from "app/components/utils";
-import { ArrowUpRight } from "lucide-react-native";
-import { useColorScheme } from "app/hooks/color-scheme";
-import { useState } from "react";
-import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/listings-cards/molecules/listings";
-import { MediumListingCardProps } from "app/components/listings-cards/atoms/medium";
-import { useDebounce } from "use-debounce";
+import { MediumListingCardProps } from "app/components/cards/atoms/medium";
+import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings";
+import { FullWidthImage } from "app/components/full-width-image";
+import { GoToProfileButton, GoToRoomButton } from "app/components/link-buttons";
 import SearchBar from "app/components/searchbar";
 import { Separator } from "app/components/ui/separator";
+import { Text } from "app/components/ui/text";
+import { useColorScheme } from "app/hooks/color-scheme";
+import { buildAssetUrl } from "app/lib/helpers";
+import { Room, User } from "app/lib/types";
+import { ArrowUpRight } from "lucide-react-native";
+import { useState } from "react";
+import { Image, Platform, View } from "react-native";
+import Collapsible from "react-native-collapsible";
+import { FlatList } from "react-native-gesture-handler";
+import { useDebounce } from "use-debounce";
 
 const RenderUserAvatar = ({ id, avatar }: { id: string, avatar: string }) => {
     return <GoToProfileButton userId={id} className="rounded-full">

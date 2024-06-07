@@ -1,31 +1,31 @@
+import { createItem } from "@directus/sdk"
+import { Check, Clock, File as FileIcon, Image as ImageIcon, Paperclip, Send, WandSparkles, X } from 'app/components/icons'
+import { Separator } from 'app/components/ui/separator'
+import { useColorScheme } from "app/hooks/color-scheme"
+import { portfolioUrl } from 'app/lib/constants'
+import { shortTime } from 'app/lib/helpers'
+import { Message, User } from "app/lib/types"
+import { cn } from "app/lib/utils"
+import directusStore from 'app/store/directus'
+import userStore from 'app/store/user'
 import * as DocumentPicker from 'expo-document-picker'
 import * as FileSystem from "expo-file-system"
 import * as ImagePicker from "expo-image-picker"
+import * as Linking from "expo-linking"
+import { Formik, FormikProps } from 'formik'
 import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from "react"
 import { SectionList, SectionListProps, View } from "react-native"
 import Autolink from 'react-native-autolink'
-import { shortTime } from 'app/lib/helpers'
-import { useColorScheme } from "app/hooks/color-scheme"
-import { cn } from "app/lib/utils"
-import userStore from 'app/store/user'
-import { Message, User } from "app/lib/types"
+import * as Yup from "yup"
+import BottomSheet from './bottomsheet'
+import { FormAutoSelect, FormInput, RenderListingTileProps } from './formComponents'
 import { ImageGroup } from './image-group'
+import { CloseButton } from './link-buttons'
 import { Button } from "./ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { Input } from "./ui/input"
 import { Text } from "./ui/text"
 import { UserChip } from './user-chip'
-import { WandSparkles, Paperclip, Camera, Image as ImageIcon, File as FileIcon, X, Send, Check, Clock } from 'app/components/icons'
-import BottomSheet from './bottomsheet'
-import { CloseButton } from './utils'
-import { FormAutoSelect, FormInput, RenderListingTileProps } from './formComponents'
-import directusStore from 'app/store/directus'
-import { createItem } from "@directus/sdk"
-import * as Linking from "expo-linking"
-import { portfolioUrl } from 'app/lib/constants'
-import * as Yup from "yup"
-import { Formik, FormikProps } from 'formik'
-import { Separator } from 'app/components/ui/separator'
 
 export type withId = { id: string }
 export type withUri = { uri: string }

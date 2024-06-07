@@ -58,7 +58,6 @@ export type Listing = {
     price: number;
     carpet_area: number;
     expected_broker_fees: number;
-    address: string;
     description: string;
     mode_of_payments: string[];
     comment_room: null;
@@ -66,6 +65,9 @@ export type Listing = {
     amenities: ListingAmenity[];
     saved_by: any[];
     viewed_by: any[];
+    photo_1: string | null;
+    photo_2: string | null;
+    photo_3: string | null;
 };
 
 
@@ -113,10 +115,12 @@ export type User = {
     theme_dark_overrides: any | null;
     social_media: SocialMedia[];
     work_experience: WorkExperience[];
-    computed_rating: number | null;
     BRN: string | null;
     phone: string | null;
     company: string | null;
+    computed_rating: number | null;
+    rating_count: number | null;
+    score: number | null;
 }
 
 
@@ -188,4 +192,78 @@ export type Company = {
 
 export type FullUser = User & {
     company: Company
+}
+
+export type Course = {
+    id: string;
+    status: string;
+    sort: null;
+    date_created: string;
+    date_updated: string | null;
+    title: string;
+    description: string;
+    tags: string[];
+    cover_image: string;
+    course_lessons: CourseLesson[];
+}
+
+export type CourseLesson = {
+    id: string;
+    status: string;
+    sort: null;
+    date_created: string;
+    date_updated: string | null;
+    title: string;
+    description: string;
+    name: string;
+    content: string;
+    course: CourseRef;
+    lesson_quiz: CourseQuiz[];
+}
+
+export type CourseQuiz = {
+    id: number;
+    options: string[];
+    answers: string[];
+    course_lesson: string;
+    question: string;
+}
+
+export type CourseRef = {
+    id: string;
+    status: string;
+    sort: null;
+    user_created: string;
+    date_created: string;
+    user_updated: string | null;
+    date_updated: string | null;
+    title: string;
+    description: string;
+    cover_image: string;
+    tags: string[];
+    course_lessons: string[];
+}
+
+export type News = {
+    id: string;
+    status: string;
+    user_created: string;
+    date_created: string;
+    user_updated: string;
+    date_updated: string;
+    title: string;
+    description: string;
+    tags: string[];
+    content: string;
+    cover_image: string;
+    categories?: NewsCategory[];
+    read_time: string
+}
+
+export type NewsCategory = {
+    id: number;
+    news_categories_id: {
+        id: number;
+        name: string;
+    };
 }

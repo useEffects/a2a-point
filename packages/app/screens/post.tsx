@@ -269,7 +269,6 @@ export default function PostScreenComponent() {
     const handleSubmit = async () => {
         setLoading(true)
         const payload: Partial<Listing> = {
-            address: form1Values.address,
             bathrooms: form2Values.bathrooms ?? null,
             bedrooms: form2Values.bedrooms ?? null,
             floors: form2Values.floors ?? null,

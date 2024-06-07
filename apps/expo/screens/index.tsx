@@ -8,13 +8,13 @@ import { TopTabParamList } from 'app/lib/misc/navigation';
 import { cn } from 'app/lib/utils';
 import directusStore from 'app/store/directus';
 import opacity from "hex-color-opacity";
-import { Construction, Lock, LucideIcon, MessageCircleMore, Plus, TrendingUp, User } from "lucide-react-native";
+import { Construction, Lock, LucideIcon, MessageCircleMore, Plus, TrendingUp, User, Home } from "lucide-react-native";
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useKeyboardVisible } from '../hooks/keyboard';
 import ChatScreen from './chat';
-import { HomeScreen } from './home';
+import ListingsScreen from './listings';
 import FullListingScreen from './listing-detailed';
 import LocationListings from './location-listings';
 import LoginScreen from './login';
@@ -26,6 +26,8 @@ import ProfileDetailed from './profile-detailed';
 import RoomDetailed from './room-detailed';
 import ActivityScreen from './activity';
 import OffPlansScreen from './offplans';
+import HomeScreen from './home';
+import { Separator } from 'app/components/ui/separator';
 
 const Tab = createMaterialTopTabNavigator<TopTabParamList>();
 const Stack = createStackNavigator()
@@ -35,7 +37,7 @@ export type RootStackParamList = {
     "listing-detailed": { id: string };
 }
 
-const canNavigateTabs = ["Listings", "Login"];
+const canNavigateTabs = ["Listings", "Home",];
 
 const useTabBarLabel = (Icon: LucideIcon, label: string, badgeCount?: number) => {
     const { authenticated } = directusStore();
@@ -64,8 +66,8 @@ const ScreensLayout = () => {
     const chatTabBarLabel = useTabBarLabel(MessageCircleMore, "Chat");
     const notificationsTabBarLabel = useTabBarLabel(Construction, "Off Plans");
     const listingsTabBarLabel = useTabBarLabel(TrendingUp, "Listings");
-    const postTabBarLabel = useTabBarLabel(Plus, "Post");
     const profileTabBarLabel = useTabBarLabel(User, "Profile");
+    const homeTabBarLabel = useTabBarLabel(Home, "Home");
 
     const tabScreens = useMemo(() => [
         <Tab.Screen
@@ -89,15 +91,15 @@ const ScreensLayout = () => {
             name="home"
             component={HomeScreen}
             options={{
-                tabBarLabel: listingsTabBarLabel,
+                tabBarLabel: homeTabBarLabel,
             }}
         />,
         <Tab.Screen
-            key="saved"
-            name="post"
-            component={PostScreen}
+            key="listings"
+            name="listings"
+            component={ListingsScreen}
             options={{
-                tabBarLabel: postTabBarLabel,
+                tabBarLabel: listingsTabBarLabel,
             }}
         />,
         <Tab.Screen
@@ -108,7 +110,7 @@ const ScreensLayout = () => {
                 tabBarLabel: profileTabBarLabel,
             }}
         />,
-    ], [chatTabBarLabel, notificationsTabBarLabel, listingsTabBarLabel, postTabBarLabel, profileTabBarLabel]);
+    ], [chatTabBarLabel, notificationsTabBarLabel, listingsTabBarLabel, homeTabBarLabel, profileTabBarLabel]);
 
     const [listingsCount, setListingsCount] = useState(0);
     const isKeyboardVisible = useKeyboardVisible();
@@ -147,6 +149,7 @@ export default function AppLayout() {
         <Stack.Screen name="activity" component={ActivityScreen} />
         <Stack.Screen name="notifications" component={NotificationsScreen} />
         <Stack.Screen name="login" component={LoginScreen} />
+        <Stack.Screen name="post" component={PostScreen} />
     </Stack.Navigator>
 };
 
@@ -154,48 +157,51 @@ const CustomTabBar: React.FC<MaterialTopTabBarProps> = ({ state, descriptors, na
     const insets = useSafeAreaInsets();
 
     return (
-        <View style={{ paddingBottom: insets.bottom }} className='flex-row items-center h-20 bg-card'>
-            {state.routes.map((route, index) => {
-                const { options } = descriptors[route.key]!;
-                const label =
-                    options.tabBarLabel !== undefined
-                        ? options.tabBarLabel
-                        : options.title !== undefined
-                            ? options.title
-                            : route.name;
+        <View>
+            <Separator />
+            <View style={{ paddingBottom: insets.bottom }} className='flex-row items-center h-20 bg-card'>
+                {state.routes.map((route, index) => {
+                    const { options } = descriptors[route.key]!;
+                    const label =
+                        options.tabBarLabel !== undefined
+                            ? options.tabBarLabel
+                            : options.title !== undefined
+                                ? options.title
+                                : route.name;
 
-                const isFocused = state.index === index;
+                    const isFocused = state.index === index;
 
-                const onPress = () => {
-                    const event = navigation.emit({
-                        type: 'tabPress',
-                        target: route.key,
-                        canPreventDefault: true,
-                    });
+                    const onPress = () => {
+                        const event = navigation.emit({
+                            type: 'tabPress',
+                            target: route.key,
+                            canPreventDefault: true,
+                        });
 
-                    if (!isFocused && !event.defaultPrevented) {
-                        navigation.navigate(route.name);
-                    }
-                };
+                        if (!isFocused && !event.defaultPrevented) {
+                            navigation.navigate(route.name);
+                        }
+                    };
 
-                const onLongPress = () => {
-                    navigation.emit({
-                        type: 'tabLongPress',
-                        target: route.key,
-                    });
-                };
+                    const onLongPress = () => {
+                        navigation.emit({
+                            type: 'tabLongPress',
+                            target: route.key,
+                        });
+                    };
 
-                return (
-                    <Pressable
-                        key={index}
-                        onPress={onPress}
-                        onLongPress={onLongPress}
-                        className='flex-1'
-                    >
-                        {typeof label === "function" ? label({ focused: isFocused, children: '', color: '' }) : label}
-                    </Pressable>
-                );
-            })}
+                    return (
+                        <Pressable
+                            key={index}
+                            onPress={onPress}
+                            onLongPress={onLongPress}
+                            className='flex-1'
+                        >
+                            {typeof label === "function" ? label({ focused: isFocused, children: '', color: '' }) : label}
+                        </Pressable>
+                    );
+                })}
+            </View>
         </View>
     );
 };

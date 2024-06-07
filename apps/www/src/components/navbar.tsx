@@ -16,7 +16,7 @@ import { useIsSmallDevice } from "@/hooks/is-small-device"
 import { useState } from "react"
 import { Menu } from "lucide-react"
 import BottomSheet from "app/components/bottomsheet"
-import { CloseButton } from "app/components/utils"
+import { CloseButton } from "app/components/link-buttons"
 
 const navItems = [
     {

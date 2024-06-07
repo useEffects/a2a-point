@@ -7,7 +7,7 @@ import { Text } from "app/components/ui/text";
 import { Button } from "app/components/ui/button";
 import { ToggleTheme } from "app/components/toggle-theme";
 import { LogOut, Bell } from "app/components/icons";
-import { GoToNotificationsButton } from "app/components/utils";
+import { GoToNotificationsButton } from "app/components/link-buttons";
 
 export default function ProfileScreen() {
     const { user } = userStore()

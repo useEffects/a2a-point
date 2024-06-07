@@ -9,7 +9,7 @@ import { Image, View } from "react-native"
 import { useRouter } from "solito/navigation"
 import { ListingCardMetrics } from "./full"
 import { useColorScheme } from "app/hooks/color-scheme"
-import { GoToFullListingButton } from "app/components/utils"
+import { GoToFullListingButton } from "app/components/link-buttons"
 
 export const OpenDetailsButton = ({ id, size = "sm" }: { id: string, size?: "default" | "sm" | "lg" | "icon" | null | undefined }) => {
     const router = useRouter()
@@ -20,7 +20,7 @@ export const OpenDetailsButton = ({ id, size = "sm" }: { id: string, size?: "def
     </Button>
 }
 
-export type SmallListingCardProps = Pick<Listing, "id" | "title" | "price" | "address" | "type"> & { user_created: Pick<User, "id" | "avatar"> }
+export type SmallListingCardProps = Pick<Listing, "id" | "title" | "price" | "type"> & { user_created: Pick<User, "id" | "avatar"> }
 
 export const RenderMetrics = ({ listingId }: { listingId: string }) => {
     const [metrics, setMetrics] = useState<ListingCardMetrics | null>(null)
@@ -50,14 +50,11 @@ export const RenderMetrics = ({ listingId }: { listingId: string }) => {
 }
 
 export const SmallListingCard = (item: SmallListingCardProps) => {
-    const router = useRouter()
-
     return <GoToFullListingButton listingId={item.id} variant={"base"} size={"none"} className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start">
         <Image source={{ uri: buildAssetUrl(item.user_created.avatar) }} className="w-8 h-8 rounded-full" />
         <View className="flex-col gap-1">
             <View>
                 <Text className="text-lg font-bold w-[300px]">{item.title}</Text>
-                <Text className="!text-subtext">{item.address}</Text>
                 <View className="flex-row justify-between gap-4 items-center">
                     <Text className="!text-success">AED {Number(item.price).toLocaleString()}</Text>
                     <Text className="border-solid text-info rounded-full border-info border px-2 my-1">{item.type}</Text>
