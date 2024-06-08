@@ -60,7 +60,7 @@ export function LocationDetailed({ room }: { room: LocationListingProps }) {
             />
             <RenderListings<MediumListingCardProps>
                 render={bodies.medium}
-                filterMethod={commonFilters[CommonFilters.GroupId](room.id)}
+                filter={commonFilters[CommonFilters.GroupId](room.id)}
                 searchText={debouncedSearchText}
                 flatListProps={{
                     scrollEnabled: Platform.OS === "web",

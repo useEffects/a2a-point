@@ -9,7 +9,7 @@ export default function HomeScreen() {
         <Header>
             <Text className="text-xl font-bold">A2APoint</Text>
         </Header>
-        <View className="px-4 pb-12">
+        <View className="px-4 pb-12 pt-4">
             <HomeScreenComponent />
         </View>
     </ScrollView>

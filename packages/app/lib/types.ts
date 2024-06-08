@@ -119,7 +119,6 @@ export type User = {
     phone: string | null;
     company: string | null;
     computed_rating: number | null;
-    rating_count: number | null;
     score: number | null;
 }
 

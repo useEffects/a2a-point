@@ -1,5 +1,5 @@
 import { iconWithClassName } from "app/lib/iconsWithClassName";
-import { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot } from "lucide-react-native";
+import { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot, Star, Badge, Award, Building2, Rocket, Plus, CreditCard } from "lucide-react-native";
 
 iconWithClassName(Check);
 iconWithClassName(ChevronDown);
@@ -27,5 +27,12 @@ iconWithClassName(ExternalLink)
 iconWithClassName(ArrowLeft)
 iconWithClassName(Bell)
 iconWithClassName(LandPlot)
+iconWithClassName(Star)
+iconWithClassName(Badge)
+iconWithClassName(Award)
+iconWithClassName(Building2)
+iconWithClassName(Rocket)
+iconWithClassName(Plus)
+iconWithClassName(CreditCard)
 
-export { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot };
+export { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot, Star, Badge, Award, Building2, Rocket, Plus, CreditCard };

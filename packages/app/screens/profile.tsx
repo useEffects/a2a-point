@@ -248,7 +248,7 @@ const ListingTab = ({ user, big, setBig }: { user: User, big: boolean, setBig: D
         </View>
         {big ? <RenderListings<MediumListingCardProps>
             render={bodies.medium}
-            filterMethod={commonFilters[CommonFilters.User](user.id)}
+            filter={commonFilters[CommonFilters.User](user.id)}
             noAds={true}
             flatListProps={{
                 scrollEnabled: false,
@@ -256,7 +256,7 @@ const ListingTab = ({ user, big, setBig }: { user: User, big: boolean, setBig: D
         /> :
             <RenderListings<ExtraSmallListingCardProps>
                 render={bodies.extraSmall}
-                filterMethod={commonFilters[CommonFilters.User](user.id)}
+                filter={commonFilters[CommonFilters.User](user.id)}
                 flatListProps={{
                     scrollEnabled: false,
                 }}

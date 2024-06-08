@@ -1,16 +1,16 @@
 import { readItems } from "@directus/sdk"
+import { FlatList } from "app/components/utils/virtual-lists"
 import { useIsFocused } from "app/hooks/is-focused"
-import { FlatListProps, View } from "react-native"
 import directusStore from "app/store/directus"
+import { queryClient } from "app/store/query"
 import userStore from "app/store/user"
+import { ComponentType, useEffect, useMemo, useState } from "react"
+import { FlatListProps, View } from "react-native"
 import { ExtraSmallListingCard, ExtraSmallListingCardProps } from "../atoms/extra-small"
 import { MediumListingCard, MediumListingCardProps } from "../atoms/medium"
+import { PhotoListingCard, PhotoListingProps } from "../atoms/photo"
 import { SmallListingCard, SmallListingCardProps } from "../atoms/small"
 import { AdvertisementCard, AdvertisementCardProps } from "./advertisements"
-import { ComponentType, useEffect, useState } from "react"
-import { queryClient } from "app/store/query"
-import { FlatList } from "app/components/utils/virtual-lists"
-import { PhotoListingCard, PhotoListingProps } from "../atoms/photo"
 
 type ListCardProps = SmallListingCardProps | ExtraSmallListingCardProps | MediumListingCardProps | PhotoListingProps
 
@@ -29,7 +29,9 @@ export enum CommonFilters {
     Sale = "sale",
     Rent = "rent",
     User = "user",
-    Photo = "with-photo"
+    Photo = "with-photo",
+    Custom = "custom",
+    None = "none"
 }
 
 export const commonFilterTitles: { [K in CommonFilters]: ((label: string) => string) | string } = {
@@ -42,7 +44,9 @@ export const commonFilterTitles: { [K in CommonFilters]: ((label: string) => str
     [CommonFilters.Sale]: "Sale",
     [CommonFilters.Rent]: "Rent",
     [CommonFilters.User]: (label: string) => label,
-    [CommonFilters.Photo]: "With Photo"
+    [CommonFilters.Photo]: "With Photo",
+    [CommonFilters.Custom]: "Custom",
+    [CommonFilters.None]: "None"
 }
 
 export const commonFilters = {
@@ -117,7 +121,13 @@ export const commonFilters = {
                 }
             }
         ]
-    })
+    }),
+    [CommonFilters.Custom]: (filters: Record<string, any>[]) => {
+        return {
+            _and: filters
+        }
+    },
+    [CommonFilters.None]: () => ({})
 };
 
 export const bodies = {
@@ -141,10 +151,10 @@ export const bodies = {
 
 type ConfirmedAdvertisementCardProps = AdvertisementCardProps & { isAdvertisement: true }
 
-export const RenderListings = <R extends ListCardProps>({ data, render, filterMethod, flatListProps, limit = 5, searchText, noAds, flatListComponent, infinite }: {
+export const RenderListings = <R extends ListCardProps>({ data, render, filter, flatListProps, limit = 5, searchText = "", noAds, flatListComponent, infinite }: {
     data?: R[],
     render: RenderType<R>,
-    filterMethod?: ReturnType<typeof commonFilters[CommonFilters]>,
+    filter?: ReturnType<typeof commonFilters[CommonFilters]>,
     searchText?: string,
     noAds?: boolean,
     flatListProps?: Omit<FlatListProps<ConfirmedAdvertisementCardProps | R>,
@@ -159,7 +169,6 @@ export const RenderListings = <R extends ListCardProps>({ data, render, filterMe
     }
 
     const { rest } = directusStore()
-    const isFocused = useIsFocused()
     const [offset, setOffset] = useState(0)
     const [endReached, setEndReached] = useState(false)
     const [items, setItems] = useState<(R | ConfirmedAdvertisementCardProps)[]>([])
@@ -176,21 +185,21 @@ export const RenderListings = <R extends ListCardProps>({ data, render, filterMe
             if (endReached) return
             let _items: (R | ConfirmedAdvertisementCardProps)[] = []
             const listings = await queryClient.fetchQuery<R[]>({
-                queryKey: ["Fetching Listings with fields: ", ...render.fields, JSON.stringify(filterMethod), searchText, isFocused, offset, limit],
+                queryKey: ["Fetching Listings with fields: ", render.fields, filter, searchText, offset, limit],
                 queryFn: async () => await rest.request(readItems("listings", {
                     fields: render.fields,
                     limit: limit,
                     offset: limit * offset,
                     sort: ["-date_created"],
-                    search: searchText ?? "",
-                    filter: filterMethod ?? {},
+                    search: searchText,
+                    filter: filter ?? {},
                 })) as R[],
                 initialData: [],
             })
 
             _items.push(...listings)
 
-            if (isMedium && !noAds) {
+            if (isMedium && !noAds && listings.length) {
                 const ads = await queryClient.fetchQuery<ConfirmedAdvertisementCardProps[]>({
                     queryKey: ["Fetch Ads"],
                     queryFn: async () => await rest.request(readItems("advertisements", {
@@ -210,13 +219,13 @@ export const RenderListings = <R extends ListCardProps>({ data, render, filterMe
             }
 
             if (_items.length) {
-                setItems([...items, ..._items])
+                setItems(p => [...p, ..._items])
             } else {
                 setEndReached(true)
             }
         }
         fetchData()
-    }, [offset, endReached])
+    }, [offset])
 
     const FlatListComponent = flatListComponent ?? FlatList
 

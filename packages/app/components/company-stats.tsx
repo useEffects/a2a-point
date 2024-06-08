@@ -39,7 +39,7 @@ export const CompanyStats = ({ className }: { className?: string }) => {
 
     return <View className={cn("flex-row justify-between", className)}>
         {stats.map(stat => <View key={stat.title}>
-            <View className="flex-col gap-4 justify-center items-center w-24 h-24">
+            <View className="flex-col gap-4 justify-center items-start w-24 h-24">
                 <Text className="">{stat.title}</Text>
                 <Text className="text-center text-5xl font-bold">{stat.count}+</Text>
             </View>

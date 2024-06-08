@@ -30,7 +30,7 @@ export default function ActivityScreenComponent() {
 
 const RenderViewed = () => <RenderListings
     render={bodies.medium}
-    filterMethod={commonFilters[CommonFilters.ViewedByMe]()}
+    filter={commonFilters[CommonFilters.ViewedByMe]()}
     noAds
     flatListProps={{
         contentContainerClassName: "px-4",
@@ -40,7 +40,7 @@ const RenderViewed = () => <RenderListings
 
 const RenderSaved = () => <RenderListings
     render={bodies.medium}
-    filterMethod={commonFilters[CommonFilters.SavedByMe]()}
+    filter={commonFilters[CommonFilters.SavedByMe]()}
     noAds
     flatListProps={{
         contentContainerClassName: "px-4",

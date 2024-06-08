@@ -14,6 +14,7 @@
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@react-native-assets/slider": "^7.2.1",
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@rneui/base": "^4.0.0-rc.8",
     "@tamagui/config": "^1.99.1",
@@ -29,6 +30,7 @@
     "fp-ts": "^2.16.5",
     "hex-color-opacity": "^0.4.2",
     "javascript-time-ago": "^2.5.10",
+    "lodash": "^4.17.21",
     "lucide-react-native": "^0.378.0",
     "moti": "latest",
     "nativewind": "^4.0.36",
@@ -50,5 +52,9 @@
     "yup": "^1.4.0",
     "zustand": "^4.5.2"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "devDependencies": {
+    "@types/lodash": "^4.17.5",
+    "@typs/": "ptomasroos/react-native-multi-slider"
+  }
 }

@@ -18,6 +18,23 @@ export const getListingsCountForUser = async (userId: string) => {
     return getListingsCount?.[0]!.count as unknown as number
 }
 
+export const getFeedbacksCountForUser = async (userId: string) => {
+    const { rest } = directusStore.getState()
+    const getFeedbacksCount = await rest.request(aggregate("feedbacks", {
+        aggregate: {
+            count: ["*"]
+        },
+        query: {
+            filter: {
+                agent: {
+                    _eq: userId
+                }
+            }
+        }
+    }))
+    return getFeedbacksCount?.[0]!.count as unknown as number
+}
+
 export const getListingsCount = async () => {
     const { rest } = directusStore.getState()
     const getListingsCount = await rest.request(aggregate("listings", {
