@@ -187,6 +187,7 @@ export type Company = {
     email: string;
     ORN: string;
     DED_LISC: string;
+    avatar: string
 };
 
 export type FullUser = User & {

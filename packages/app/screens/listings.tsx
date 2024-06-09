@@ -17,6 +17,8 @@ import { View } from "react-native";
 import { useDebounce } from "use-debounce";
 import { GoToLoginButton } from "./locked-screens";
 import { NavigationState, Route, SceneRendererProps, TabView } from 'react-native-tab-view';
+import { AutoCompleteRenderItemProps, FormAutoSelect, RenderCompanyTileProps, RenderListingTileProps, RenderUserTileProps } from 'app/components/formComponents';
+import { initial } from 'lodash';
 
 enum FilterKeys {
     Price = "price",
@@ -28,8 +30,13 @@ enum FilterKeys {
     Listing = "is_listing",
     Enquiry = "is_enquiry",
     Rent = "is_rent",
+    Location = "group",
+    Agent = "user",
+    Company = "company"
 }
-type FilterType = { key: FilterKeys, filter: Record<string, any> }
+
+type FilterValue = AutoCompleteRenderItemProps | [number, number] | CommonFilters
+type FilterType = { key: FilterKeys, filter: Record<string, any>, value: FilterValue }
 
 const priceRange: [number, number] = [0, 10000000]
 const bedRoomsRange: [number, number] = [0, 8]
@@ -44,11 +51,6 @@ export default function ListingsScreenComponent({ className }: { className?: str
     const [filters, setFilters] = useState<FilterType[]>([])
     const { colors } = useColorScheme()
     const { authenticated } = directusStore()
-    const [price, setPrice] = useState<[number, number]>(priceRange)
-    const [bedRooms, setBedrooms] = useState<[number, number]>(bedRoomsRange)
-    const [bathRooms, setBathrooms] = useState<[number, number]>(bathRoomsRange)
-    const [parking, setParking] = useState<[number, number]>(parkingRange)
-    const [size, setSize] = useState<[number, number]>(sizeRange)
     const [key, setKey] = useState(0)
 
     const _filters = useMemo(() => filters.map(f => f.filter), [filters])
@@ -88,34 +90,297 @@ export default function ListingsScreenComponent({ className }: { className?: str
             onBackdropPress={() => setBottomSheetVisible(false)}
             setOpen={setBottomSheetVisible}
         >
-            <View className="p-8 flex-col gap-8 bg-card">
+            <View className="p-4 flex-col gap-8 bg-card">
                 <View className="flex-row items-center justify-between">
                     <Text className="text-lg">Filter leads</Text>
                     <CloseButton onPress={() => setBottomSheetVisible(false)} />
                 </View>
-                <View className="flex-row justify-between">
-                    {categoryTiles.map((category, i) => <Button
-                        onPress={() => {
-                            if (filters.some(f => f.filter === category.filter)) {
-                                setFilters(filters.filter(f => f.key !== category.key))
-                            } else {
-                                setFilters([...filters, { key: category.key, filter: category.filter }])
-                            }
-                        }}
-                        variant={"base"}
-                        size={"none"}
-                        key={i}
-                        className="flex-col gap-1">
-                        <Text>{category.Icon({ size: 24, color: filters.some(f => f.key === category.key) ? colors.primary : colors.foreground })}</Text>
-                        <Text className={filters.some(f => f.key === category.key) ? "text-primary" : "text-foreground"}>{category.title}</Text>
-                    </Button>)}
-                </View>
+                <ComboBoxFilters filters={filters} setFilters={setFilters} />
+                <Separator />
+                <CategoryFilters filters={filters} setFilters={setFilters} />
                 <Separator />
                 <RangeSliders filters={filters} setFilters={setFilters} />
-                <Separator />
             </View>
         </BottomSheet>
         {!authenticated ? <LoginPopover /> : <></>}
+    </View>
+}
+
+const RangeSliders = ({ filters, setFilters }: { filters: FilterType[], setFilters: Dispatch<SetStateAction<FilterType[]>> }) => {
+    const [navigationState, setNavigationState] = useState<NavigationState<Route>>({
+        index: 0,
+        routes: [
+            { key: FilterKeys.Price },
+            { key: FilterKeys.Size },
+            { key: FilterKeys.Bedrooms },
+            { key: FilterKeys.Bathrooms },
+            { key: FilterKeys.Parking }
+        ]
+    })
+    return <TabView
+        style={{ height: 32 * 4, maxHeight: 32 * 4 }}
+        navigationState={navigationState}
+        onIndexChange={index => setNavigationState(s => ({ ...s, index }))}
+        renderScene={(props) => <RangeSliderScenes {...props} setFilters={setFilters} filters={filters} />}
+        renderTabBar={(props) => <RangeSliderTab {...props} setNavigationState={setNavigationState} filters={filters} />}
+        swipeEnabled={false}
+    />
+}
+
+const RangeSliderTab = (props: SceneRendererProps & { navigationState: NavigationState<Route>, setNavigationState: Dispatch<SetStateAction<NavigationState<Route>>>, filters: FilterType[] }) => {
+    return <View className='w-full flex-row justify-between py-4'>
+        {props.navigationState.routes.map((route, i) => {
+            const Icon = RangeSliderTabIcons(route.key)!
+            const isActive = props.filters.some(f => f.key === route.key)
+            return <Button className='flex-grow flex-col gap-2 relative' key={i} variant={"base"} size="none" onPress={() => props.setNavigationState(p => ({ ...p, index: i }))}>
+                <View className={cn('absolute h-2 w-2 rounded-full top-0 right-0', isActive && "bg-primary")} />
+                <Icon className={cn(props.navigationState.index === i ? "text-foreground" : "text-subtext")} />
+                <View className={cn("w-full h-[1px]", props.navigationState.index === i ? "bg-foreground" : "bg-transparent")} />
+            </Button>
+        })}
+    </View>
+}
+
+const RangeSliderScenes = (props: SceneRendererProps & { route: Route } & { filters: FilterType[], setFilters: Dispatch<SetStateAction<FilterType[]>> }) => {
+
+    const initialPrice = props.filters.find(f => f.key === FilterKeys.Price)?.value as [number, number] || priceRange
+    const initialSize = props.filters.find(f => f.key === FilterKeys.Size)?.value as [number, number] || sizeRange
+    const initialBedrooms = props.filters.find(f => f.key === FilterKeys.Bedrooms)?.value as [number, number] || bedRoomsRange
+    const initialBathrooms = props.filters.find(f => f.key === FilterKeys.Bathrooms)?.value as [number, number] || bathRoomsRange
+    const initialParking = props.filters.find(f => f.key === FilterKeys.Parking)?.value as [number, number] || parkingRange
+
+    const [price, setPrice] = useState<[number, number]>(initialPrice)
+    const [bedRooms, setBedrooms] = useState<[number, number]>(initialBedrooms)
+    const [bathRooms, setBathrooms] = useState<[number, number]>(initialBathrooms)
+    const [parking, setParking] = useState<[number, number]>(initialParking)
+    const [size, setSize] = useState<[number, number]>(initialSize)
+
+    useEffect(() => {
+        const newRangeFilters: FilterType[] = []
+        if (price[0] !== priceRange[0] || price[1] !== priceRange[1]) {
+            newRangeFilters.push({
+                key: FilterKeys.Price,
+                filter: getFilterFromRange(price, "price", price[1] === priceRange[1]),
+                value: price
+            })
+        }
+        if (size[0] !== sizeRange[0] || size[1] !== sizeRange[1]) {
+            newRangeFilters.push({
+                key: FilterKeys.Size,
+                filter: getFilterFromRange(size, "carpet_area", size[1] === sizeRange[1]),
+                value: size
+            })
+        }
+        if (bedRooms[0] !== bedRoomsRange[0] || bedRooms[1] !== bedRoomsRange[1]) {
+            newRangeFilters.push({
+                key: FilterKeys.Bedrooms,
+                filter: getFilterFromRange(bedRooms, "bedrooms", bedRooms[1] === bedRoomsRange[1]),
+                value: bedRooms
+            })
+        }
+        if (bathRooms[0] !== bathRoomsRange[0] || bathRooms[1] !== bathRoomsRange[1]) {
+            newRangeFilters.push({
+                key: FilterKeys.Bathrooms,
+                filter: getFilterFromRange(bathRooms, "bathrooms", bathRooms[1] === bathRoomsRange[1]),
+                value: bathRooms
+            })
+        }
+        if (parking[0] !== parkingRange[0] || parking[1] !== parkingRange[1]) {
+            newRangeFilters.push({
+                key: FilterKeys.Parking,
+                filter: getFilterFromRange(parking, "parking", parking[1] === parkingRange[1]),
+                value: parking
+            })
+        }
+
+        props.setFilters(filters => {
+            const newFilters = filters.filter(f => !newRangeFilters.some(nf => nf.key === f.key))
+            return [...newFilters, ...newRangeFilters]
+        })
+
+        // if (parking[0] === parkingRange[0] && parking[1] === parkingRange[1]) {
+        //     props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Parking))
+        // }
+        // if (bathRooms[0] === bathRoomsRange[0] && bathRooms[1] === bathRoomsRange[1]) {
+        //     props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Bathrooms))
+        // }
+        // if (bedRooms[0] === bedRoomsRange[0] && bedRooms[1] === bedRoomsRange[1]) {
+        //     props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Bedrooms))
+        // }
+        // if (size[0] === sizeRange[0] && size[1] === sizeRange[1]) {
+        //     props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Size))
+        // }
+        // if (price[0] === priceRange[0] && price[1] === priceRange[1]) {
+        //     props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Price))
+        // }
+
+    }, [price, bedRooms, bathRooms, parking, size])
+
+    switch (props.route.key) {
+        case FilterKeys.Price:
+            return <RangeFilter label='Price' range={priceRange} value={price} setValue={setPrice} />
+        case FilterKeys.Size:
+            return <RangeFilter label='Size' range={sizeRange} value={size} setValue={setSize} />
+        case FilterKeys.Bedrooms:
+            return <RangeFilter label='Bedrooms' range={bedRoomsRange} value={bedRooms} setValue={setBedrooms} />
+        case FilterKeys.Bathrooms:
+            return <RangeFilter label='Bathrooms' range={bathRoomsRange} value={bathRooms} setValue={setBathrooms} />
+        case FilterKeys.Parking:
+            return <RangeFilter label='Parking' range={parkingRange} value={parking} setValue={setParking} />
+    }
+}
+
+const RangeSliderTabIcons = (route: string): LucideIcon | undefined => {
+    switch (route) {
+        case FilterKeys.Price:
+            return CreditCard
+        case FilterKeys.Size:
+            return LandPlot
+        case FilterKeys.Bedrooms:
+            return BedDouble
+        case FilterKeys.Bathrooms:
+            return Bath
+        case FilterKeys.Parking:
+            return CarFront
+    }
+}
+
+const RangeFilter = ({ value, setValue, range, label }: { value: [number, number], setValue: Dispatch<SetStateAction<[number, number]>>, range: [number, number], label: string }) => {
+    const { colors } = useColorScheme()
+    const [minRange, maxRange] = range
+    const [min, max] = value
+    const isAtMax = max === maxRange
+
+    return <View className="flex-col gap-2 w-full h-full justify-center">
+        <View className='flex-row gap-2 items-center justify-between'>
+            <Text>{label}</Text>
+            <Text className='text-info'>{min.toLocaleString()} - {max.toLocaleString()}{isAtMax ? "+" : ""}</Text>
+        </View>
+        <RangeSlider
+            style={{ paddingHorizontal: 8 }}
+            range={value}
+            onValueChange={setValue}
+            inboundColor={colors.subtext}
+            outboundColor={"transparent"}
+            thumbTintColor={colors.primary}
+            crossingAllowed={false}
+            step={Math.ceil((maxRange - minRange) / 100)}
+            minimumValue={minRange}
+            maximumValue={maxRange}
+            trackHeight={1}
+            thumbSize={12}
+        />
+    </View>
+}
+
+const getFilterFromRange = (range: [number, number], key: string, isAtMax: boolean) => {
+    const [min, max] = range
+    return {
+        [key]: {
+            _gte: min,
+            _lte: isAtMax ? undefined : max
+        }
+    }
+
+}
+
+const ComboBoxFilters = ({ filters, setFilters }: { filters: FilterType[], setFilters: Dispatch<SetStateAction<FilterType[]>> }) => {
+
+    const initialLocation = filters.find(f => f.key === FilterKeys.Location)?.value as RenderListingTileProps | null
+    const initialAgent = filters.find(f => f.key === FilterKeys.Agent)?.value as RenderUserTileProps | null
+    const initialCompany = filters.find(f => f.key === FilterKeys.Company)?.value as RenderCompanyTileProps | null
+
+    const [location, setLocation] = useState<RenderListingTileProps | null>(initialLocation)
+    const [agent, setAgent] = useState<RenderUserTileProps | null>(initialAgent)
+    const [company, setCompany] = useState<RenderCompanyTileProps | null>(initialCompany)
+
+    useEffect(() => {
+        if (location) {
+            setFilters(filters => {
+                const existingFilter = filters.find(f => f.key === FilterKeys.Location)
+                if (existingFilter) {
+                    return filters.map(f => f.key === FilterKeys.Location ? { ...f, value: location } : f)
+                }
+                return [...filters, { key: FilterKeys.Location, filter: { group: location.id }, value: location }]
+            })
+        }
+        if (agent) {
+            setFilters(filters => {
+                const existingFilter = filters.find(f => f.key === FilterKeys.Agent)
+                if (existingFilter) {
+                    return filters.map(f => f.key === FilterKeys.Agent ? { ...f, value: agent } : f)
+                }
+                return [...filters, { key: FilterKeys.Agent, filter: { user_created: agent.id }, value: agent }]
+            })
+        }
+        if (company) {
+            setFilters(filters => {
+                const existingFilter = filters.find(f => f.key === FilterKeys.Company)
+                if (existingFilter) {
+                    return filters.map(f => f.key === FilterKeys.Company ? { ...f, value: company } : f)
+                }
+                return [...filters, {
+                    key: FilterKeys.Company, filter: {
+                        user_created: {
+                            company: {
+                                _eq: company.id
+                            }
+                        }
+                    }, value: company
+                }]
+            })
+        }
+        if (!location) setFilters(filters => filters.filter(f => f.key !== FilterKeys.Location))
+        if (!agent) setFilters(filters => filters.filter(f => f.key !== FilterKeys.Agent))
+        if (!company) setFilters(filters => filters.filter(f => f.key !== FilterKeys.Company))
+    }, [location, agent, company])
+
+    return <View className='flex flex-col gap-4'>
+        <FormAutoSelect
+            item='rooms'
+            label='Location'
+            currentItem={location}
+            setCurrentItem={(item) => item && setLocation(item as RenderListingTileProps)}
+            filter={{
+                type: {
+                    _eq: "group"
+                }
+            }}
+        />
+        <FormAutoSelect
+            item='users'
+            label="Agents"
+            currentItem={agent}
+            setCurrentItem={(item) => item && setAgent(item as RenderUserTileProps)}
+        />
+        <FormAutoSelect
+            item='companies'
+            label='Company'
+            currentItem={company}
+            setCurrentItem={(item) => item && setCompany(item as RenderCompanyTileProps)}
+        />
+    </View>
+}
+
+const CategoryFilters = ({ filters, setFilters }: { filters: FilterType[], setFilters: Dispatch<SetStateAction<FilterType[]>> }) => {
+    const { colors } = useColorScheme()
+
+    return <View className="flex-row justify-between">
+        {categoryTiles.map((category, i) => <Button
+            onPress={() => {
+                if (filters.some(f => f.value === category.value)) {
+                    setFilters(filters.filter(f => f.key !== category.key))
+                } else {
+                    setFilters([...filters, { key: category.key, filter: commonFilters[category.value], value: category.value }])
+                }
+            }}
+            variant={"base"}
+            size={"none"}
+            key={i}
+            className="flex-col gap-1">
+            <Text>{category.Icon({ size: 24, color: filters.some(f => f.key === category.key) ? colors.primary : colors.foreground })}</Text>
+            <Text className={filters.some(f => f.key === category.key) ? "text-primary" : "text-foreground"}>{category.title}</Text>
+        </Button>)}
     </View>
 }
 
@@ -123,24 +388,24 @@ const categoryTiles = [
     {
         Icon: (props: LucideProps) => <Award {...props} />,
         title: "Premium",
-        filter: commonFilters[CommonFilters.Premium](),
-        key: FilterKeys.Premium
+        key: FilterKeys.Premium,
+        value: CommonFilters.Premium,
     }, {
         Icon: (props: LucideProps) => <Sparkles {...props} />,
         title: "Listing",
-        filter: commonFilters[CommonFilters.Listing](),
-        key: FilterKeys.Listing
+        key: FilterKeys.Listing,
+        value: CommonFilters.Listing,
 
     }, {
         Icon: (props: LucideProps) => <CreditCard {...props} />,
         title: "Enquiry",
-        filter: commonFilters[CommonFilters.Enquiry](),
-        key: FilterKeys.Enquiry
+        key: FilterKeys.Enquiry,
+        value: CommonFilters.Enquiry
     }, {
         Icon: (props: LucideProps) => <Home {...props} />,
         title: "Rent",
-        filter: commonFilters[CommonFilters.Rent](),
-        key: FilterKeys.Rent
+        key: FilterKeys.Rent,
+        value: CommonFilters.Rent
     }
 ]
 
@@ -185,171 +450,4 @@ export const LoginPopover = () => {
             </View>
         </View>
     </BottomSheet>
-}
-
-const RangeSliders = ({ filters, setFilters }: { filters: FilterType[], setFilters: Dispatch<SetStateAction<FilterType[]>> }) => {
-    const [navigationState, setNavigationState] = useState<NavigationState<Route>>({
-        index: 0,
-        routes: [
-            { key: FilterKeys.Price },
-            { key: FilterKeys.Size },
-            { key: FilterKeys.Bedrooms },
-            { key: FilterKeys.Bathrooms },
-            { key: FilterKeys.Parking }
-        ]
-    })
-    return <TabView
-        style={{ height: 32 * 4 }}
-        navigationState={navigationState}
-        onIndexChange={index => setNavigationState(s => ({ ...s, index }))}
-        renderScene={(props) => <RangeSliderScenes {...props} setFilters={setFilters} />}
-        renderTabBar={(props) => <RangeSliderTab {...props} setNavigationState={setNavigationState} filters={filters} />}
-        swipeEnabled={false}
-    />
-}
-
-const RangeSliderTab = (props: SceneRendererProps & { navigationState: NavigationState<Route>, setNavigationState: Dispatch<SetStateAction<NavigationState<Route>>>, filters: FilterType[] }) => {
-    return <View className='w-full flex-row justify-between py-4'>
-        {props.navigationState.routes.map((route, i) => {
-            const Icon = RangeSliderTabIcons(route.key)!
-            const isActive = props.filters.some(f => f.key === route.key)
-            return <Button className='flex-grow flex-col gap-2 relative' key={i} variant={"base"} size="none" onPress={() => props.setNavigationState(p => ({ ...p, index: i }))}>
-                <View className={cn('absolute h-2 w-2 rounded-full top-0 right-0', isActive && "bg-primary")} />
-                <Icon className={cn(props.navigationState.index === i ? "text-foreground" : "text-subtext")} />
-                <View className={cn("w-full h-[1px]", props.navigationState.index === i ? "bg-foreground" : "bg-transparent")} />
-            </Button>
-        })}
-    </View>
-}
-
-const RangeSliderScenes = (props: SceneRendererProps & { route: Route } & { setFilters: Dispatch<SetStateAction<FilterType[]>> }) => {
-    const [price, setPrice] = useState<[number, number]>(priceRange)
-    const [bedRooms, setBedrooms] = useState<[number, number]>(bedRoomsRange)
-    const [bathRooms, setBathrooms] = useState<[number, number]>(bathRoomsRange)
-    const [parking, setParking] = useState<[number, number]>(parkingRange)
-    const [size, setSize] = useState<[number, number]>(sizeRange)
-
-    useEffect(() => {
-        const newRangeFilters: FilterType[] = []
-        if (price[0] !== priceRange[0] || price[1] !== priceRange[1]) {
-            newRangeFilters.push({
-                key: FilterKeys.Price,
-                filter: getFilterFromRange(price, "price", price[1] === priceRange[1])
-            })
-        }
-        if (size[0] !== sizeRange[0] || size[1] !== sizeRange[1]) {
-            newRangeFilters.push({
-                key: FilterKeys.Size,
-                filter: getFilterFromRange(size, "carpet_area", size[1] === sizeRange[1])
-            })
-        }
-        if (bedRooms[0] !== bedRoomsRange[0] || bedRooms[1] !== bedRoomsRange[1]) {
-            newRangeFilters.push({
-                key: FilterKeys.Bedrooms,
-                filter: getFilterFromRange(bedRooms, "bedrooms", bedRooms[1] === bedRoomsRange[1])
-            })
-        }
-        if (bathRooms[0] !== bathRoomsRange[0] || bathRooms[1] !== bathRoomsRange[1]) {
-            newRangeFilters.push({
-                key: FilterKeys.Bathrooms,
-                filter: getFilterFromRange(bathRooms, "bathrooms", bathRooms[1] === bathRoomsRange[1])
-            })
-        }
-        if (parking[0] !== parkingRange[0] || parking[1] !== parkingRange[1]) {
-            newRangeFilters.push({
-                key: FilterKeys.Parking,
-                filter: getFilterFromRange(parking, "parking", parking[1] === parkingRange[1])
-            })
-        }
-
-        props.setFilters(filters => {
-            const newFilters = filters.filter(f => !newRangeFilters.some(nf => nf.key === f.key))
-            return [...newFilters, ...newRangeFilters]
-        })
-
-        if (parking[0] === parkingRange[0] && parking[1] === parkingRange[1]) {
-            props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Parking))
-        }
-        if (bathRooms[0] === bathRoomsRange[0] && bathRooms[1] === bathRoomsRange[1]) {
-            props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Bathrooms))
-        }
-        if (bedRooms[0] === bedRoomsRange[0] && bedRooms[1] === bedRoomsRange[1]) {
-            props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Bedrooms))
-        }
-        if (size[0] === sizeRange[0] && size[1] === sizeRange[1]) {
-            props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Size))
-        }
-        if (price[0] === priceRange[0] && price[1] === priceRange[1]) {
-            props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Price))
-        }
-
-    }, [price, bedRooms, bathRooms, parking, size])
-
-    switch (props.route.key) {
-        case FilterKeys.Price:
-            return <RangeFilter label='Price' range={priceRange} icon={CreditCard} value={price} setValue={setPrice} />
-        case FilterKeys.Size:
-            return <RangeFilter label='Size' range={sizeRange} icon={LandPlot} value={size} setValue={setSize} />
-        case FilterKeys.Bedrooms:
-            return <RangeFilter label='Bedrooms' range={bedRoomsRange} icon={BedDouble} value={bedRooms} setValue={setBedrooms} />
-        case FilterKeys.Bathrooms:
-            return <RangeFilter label='Bathrooms' range={bathRoomsRange} icon={Bath} value={bathRooms} setValue={setBathrooms} />
-        case FilterKeys.Parking:
-            return <RangeFilter label='Parking' range={parkingRange} icon={CarFront} value={parking} setValue={setParking} />
-    }
-}
-
-const RangeSliderTabIcons = (route: string): LucideIcon | undefined => {
-    switch (route) {
-        case FilterKeys.Price:
-            return CreditCard
-        case FilterKeys.Size:
-            return LandPlot
-        case FilterKeys.Bedrooms:
-            return BedDouble
-        case FilterKeys.Bathrooms:
-            return Bath
-        case FilterKeys.Parking:
-            return CarFront
-    }
-}
-
-export const RangeFilter = ({ value, setValue, range, label, icon }: { value: [number, number], setValue: Dispatch<SetStateAction<[number, number]>>, range: [number, number], label: string, icon?: LucideIcon }) => {
-    const { colors } = useColorScheme()
-    const [minRange, maxRange] = range
-    const [min, max] = value
-    const isAtMax = max === maxRange
-    const Icon = icon
-
-    return <View className="flex-col gap-2 w-full h-full justify-center">
-        <View className='flex-row gap-2 items-center justify-between'>
-            <Text>{label}</Text>
-            <Text className='text-info'>{min.toLocaleString()} - {max.toLocaleString()}{isAtMax ? "+" : ""}</Text>
-        </View>
-        <RangeSlider
-            style={{ paddingHorizontal: 8 }}
-            range={value}
-            onValueChange={setValue}
-            inboundColor={colors.subtext}
-            outboundColor={"transparent"}
-            thumbTintColor={colors.primary}
-            crossingAllowed={false}
-            step={Math.ceil((maxRange - minRange) / 100)}
-            minimumValue={minRange}
-            maximumValue={maxRange}
-            trackHeight={1}
-            thumbSize={12}
-        />
-    </View>
-}
-
-const getFilterFromRange = (range: [number, number], key: string, isAtMax: boolean) => {
-    const [min, max] = range
-    return {
-        [key]: {
-            _gte: min,
-            _lte: isAtMax ? undefined : max
-        }
-    }
-
 }

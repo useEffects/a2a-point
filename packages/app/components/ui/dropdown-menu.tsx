@@ -1,8 +1,9 @@
 import * as DropdownMenuPrimitive from 'app/components/primitives/dropdown-menu';
-import { TextClassContext } from 'app/components/ui/text';
-import { cn } from 'app/lib/utils';
 import * as React from 'react';
 import { Platform, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { ChevronUp, ChevronDown, ChevronRight, Check } from 'app/components/icons';
+import { cn } from 'app/lib/utils';
+import { TextClassContext } from 'app/components/ui/text';
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 
@@ -23,6 +24,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
   }
 >(({ className, inset, children, ...props }, ref) => {
   const { open } = DropdownMenuPrimitive.useSubContext();
+  const Icon = Platform.OS === 'web' ? ChevronRight : open ? ChevronUp : ChevronDown;
   return (
     <TextClassContext.Provider
       value={cn(
@@ -41,6 +43,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
         {...props}
       >
         <>{children}</>
+        <Icon size={18} className='ml-auto text-foreground' />
       </DropdownMenuPrimitive.SubTrigger>
     </TextClassContext.Provider>
   );
@@ -73,18 +76,19 @@ const DropdownMenuContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content> & {
     overlayStyle?: StyleProp<ViewStyle>;
     overlayClassName?: string;
+    portalHost?: string;
   }
->(({ className, overlayClassName, overlayStyle, ...props }, ref) => {
+>(({ className, overlayClassName, overlayStyle, portalHost, ...props }, ref) => {
   const { open } = DropdownMenuPrimitive.useRootContext();
   return (
-    <DropdownMenuPrimitive.Portal>
+    <DropdownMenuPrimitive.Portal hostName={portalHost}>
       <DropdownMenuPrimitive.Overlay
         style={
           overlayStyle
             ? StyleSheet.flatten([
               Platform.OS !== 'web' ? StyleSheet.absoluteFill : undefined,
               overlayStyle,
-            ])
+            ] as ViewStyle)
             : Platform.OS !== 'web'
               ? StyleSheet.absoluteFill
               : undefined
@@ -145,7 +149,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
   >
     <View className='absolute left-2 flex h-3.5 w-3.5 items-center justify-center'>
       <DropdownMenuPrimitive.ItemIndicator>
-        {/* <Check size={14} strokeWidth={3} className='text-foreground' /> */}
+        <Check size={14} strokeWidth={3} className='text-foreground' />
       </DropdownMenuPrimitive.ItemIndicator>
     </View>
     <>{children}</>
@@ -237,6 +241,5 @@ export {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 };
-
