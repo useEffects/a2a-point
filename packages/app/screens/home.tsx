@@ -3,9 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { NewsCard } from "app/components/cards/atoms/news";
 import { PhotoListingProps } from "app/components/cards/atoms/photo";
 import { SmallListingCardProps } from "app/components/cards/atoms/small";
-import { SmallUsersCard, SmallUsersCardProps, smallUsersFields } from "app/components/cards/atoms/users";
+import { SmallUsersCardProps } from "app/components/cards/atoms/users";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings";
 import { SmallLocationCards } from "app/components/cards/molecules/locations";
+import { RenderUsers } from "app/components/cards/molecules/users";
 import { CompanyStats } from "app/components/company-stats";
 import { ArrowUpRight, ExternalLink } from "app/components/icons";
 import { SeparatorText } from "app/components/separator-text";
@@ -20,6 +21,11 @@ import userStore from "app/store/user";
 import opacity from "hex-color-opacity";
 import { View } from "react-native";
 import { Link } from "solito/link";
+import { Mode as UsersRenderMode } from "app/components/cards/molecules/users";
+import * as Linking from "expo-linking";
+import { ViewAllButton } from "app/components/utils/common-ui";
+import { FilterKeys } from "./listings";
+import { GoToListingsListButton } from "app/components/link-buttons";
 
 export default function HomeScreen() {
     const { authenticated, token } = directusStore()
@@ -32,16 +38,6 @@ export default function HomeScreen() {
         queryFn: async () => await rest.request(readItems("news", {
             limit: 10,
         })) as News[],
-        initialData: []
-    })
-
-    const { data: users } = useQuery<SmallUsersCardProps[]>({
-        queryKey: ["Fetch top agents"],
-        queryFn: async () => await fetch(`${directusUrl}/users/?fields=${smallUsersFields.join(",")}&sort=score&limit=5`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }).then(res => res.json()).then(res => res.data) as SmallUsersCardProps[],
         initialData: []
     })
 
@@ -58,15 +54,20 @@ export default function HomeScreen() {
             />
             <CompanyStats className="justify-start gap-12" />
         </View>
-        <Button variant={"base"} size={"none"} className="flex-row gap-1 items-center w-40 ml-auto mr-0">
+        <GoToListingsListButton filter={{
+            key: FilterKeys.Premium,
+            id: ""
+        }} variant={"base"} size={"none"} className="flex-row gap-1 items-center w-40 ml-auto mr-0">
             <Text className="text-right text-subtext">Premium listings curated by A2APoint</Text>
             <ArrowUpRight size={24} className="text-info" />
-        </Button>
+        </GoToListingsListButton>
         <RenderListings<SmallListingCardProps>
             render={bodies.small}
             flatListProps={{
                 horizontal: true,
             }}
+            filter={commonFilters[CommonFilters.Premium]()}
+            paramFilter={{ key: FilterKeys.Premium, id: "" }}
         />
         <SeparatorText hideLeft>
             <Text className="font-medium">Browse popular locations</Text>
@@ -75,11 +76,13 @@ export default function HomeScreen() {
         <SeparatorText hideLeft>
             <Text className="font-medium">Top rated agents</Text>
         </SeparatorText>
-        <FlatList
-            data={users}
-            renderItem={({ item }) => <SmallUsersCard {...item} />}
-            horizontal
-            ItemSeparatorComponent={() => <View className="w-4 h-4" />}
+        <RenderUsers<SmallUsersCardProps>
+            mode={UsersRenderMode.small}
+            limit={5}
+            sort={["score"]}
+            flatListProps={{
+                horizontal: true,
+            }}
         />
         <SeparatorText hideLeft>
             <Text className="font-medium">News and feeds</Text>
@@ -89,6 +92,7 @@ export default function HomeScreen() {
             renderItem={({ item }) => <NewsCard news={item} />}
             horizontal
             ItemSeparatorComponent={() => <View className="w-4 h-4" />}
+            ListFooterComponent={() => <ViewAllButton button={(props) => <Button {...props} onPress={() => Linking.openURL(`${portfolioUrl}/news`)} />} />}
         />
         <SeparatorText hideLeft>
             <Text className="font-medium">Quick links</Text>

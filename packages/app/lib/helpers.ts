@@ -14,8 +14,8 @@ TimeAgo.addLocale(en)
 export const timeAgo = new TimeAgo('ar-AE')
 
 export const buildAssetUrl = (id: string | null) => {
-  if (null) {
-    return "https://dev.a2apoint.com/logo.svg"
+  if (!id) {
+    return "https://a2apoint.com/no-image-available.png"
   }
   const { token } = directusStore.getState()
   return `${directusUrl}/assets/${id}?access_token=${token}`;

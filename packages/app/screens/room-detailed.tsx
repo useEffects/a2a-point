@@ -13,11 +13,11 @@ import { randomUUID } from "expo-crypto"
 import { Image, ScrollView, View } from "react-native"
 import { Header } from "app/components/header"
 import { Text } from "app/components/ui/text"
-import { Button } from "app/components/ui/button"
+import { Button, ButtonProps } from "app/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "app/components/ui/dropdown-menu"
 import { BottomSheet } from "@rneui/themed"
 import SearchBar from "app/components/searchbar"
-import { GoToLocationListingsButton, GoToProfileButton } from "app/components/link-buttons"
+import { GoToLocationListingsButton, GoToLocationsListButton, GoToProfileButton, GoToRoomButton } from "app/components/link-buttons"
 import { ChevronDown, ChevronUp, EllipsisVertical, Search, X } from "app/components/icons"
 
 const ChatScreen = ({ roomDetails, receivers }: {
@@ -35,6 +35,8 @@ const ChatScreen = ({ roomDetails, receivers }: {
     const [currentMessage, setCurrentMessage] = useState<CurrentMessage>({ text: "" })
     const [offset, setOffset] = useState(1)
     const [endReached, setEndReached] = useState(false)
+
+    const GoToButton = (props: ButtonProps) => isGroup ? <GoToLocationListingsButton roomId={roomId} {...props} /> : <GoToProfileButton userId={receivers[0]!.directus_users_id.id} {...props} />
 
     const { data: scrollToMessages, isLoading: isScrollToMessagesLoading } = useQuery({
         queryKey: ["Search Messages", debouncedSearchText, roomId],
@@ -99,15 +101,17 @@ const ChatScreen = ({ roomDetails, receivers }: {
                     <X size={18} className="!text-foreground" />
                 </Button>
             </View> : <View className="flex-row justify-between items-center flex-1">
-                <View className="flex-row items-center gap-2">
-                    <Image source={{ uri: roomAvatar }} className="w-8 h-8 rounded-full" />
-                    <Text>{roomName}</Text>
-                </View>
+                <GoToButton variant={"base"} size={"none"}>
+                    <View className="flex-row items-center gap-2">
+                        <Image source={{ uri: roomAvatar }} className="w-8 h-8 rounded-full" />
+                        <Text>{roomName}</Text>
+                    </View>
+                </GoToButton>
                 <View className="flex-row items-center gap-2">
                     <Button variant={"ghost"} size={"icon"} onPress={() => setSearchBarVisible(true)}>
                         <Search size={18} className="!text-foreground" />
                     </Button>
-                    <ChatDropDownMenu roomId={roomId} members={receivers} isGroup={isGroup} open={openDropdown} setOpen={setOpenDropdown} />
+                    {/* <ChatDropDownMenu roomId={roomId} members={receivers} isGroup={isGroup} open={openDropdown} setOpen={setOpenDropdown} /> */}
                 </View>
             </View>}
         </Header>
@@ -186,68 +190,68 @@ export default function RoomDetailedComponent({ roomId }: { roomId: string }) {
     /> : <></>
 }
 
-const ChatDropDownMenu = (props: { members: Member[], isGroup: boolean, open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, roomId: string }) => {
+// const ChatDropDownMenu = (props: { members: Member[], isGroup: boolean, open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, roomId: string }) => {
 
-    const [bottomSheetVisible, setBottomSheetVisible] = useState(false)
+//     const [bottomSheetVisible, setBottomSheetVisible] = useState(false)
 
-    return <View>
-        <DropdownMenu open={props.open} onOpenChange={props.setOpen}>
-            <DropdownMenuTrigger asChild>
-                <Button variant={"ghost"} size={"icon"} onPress={() => props.setOpen(p => !p)}>
-                    {props.open ? <X size={18} className="!text-foreground" /> : <EllipsisVertical size={18} className="!text-foreground" />}
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent sideOffset={-40}>
-                {props.isGroup ? (
-                    <Button
-                        onPress={() => setBottomSheetVisible(true)}
-                        className="!justify-start !w-full !items-start !flex !flex-row"
-                    >
-                        <Text className="!text-sm">See members</Text>
-                    </Button>
-                ) : (
-                    <GoToProfileButton
-                        additionalOnPress={() => props.setOpen(false)}
-                        userId={props.members[0]!.directus_users_id.id}
-                        variant={"ghost"}
-                        size={"default"}
-                        className="!justify-start !w-full !items-start !flex !flex-row"
-                    >
-                        <Text className="!text-sm !text-left">See profile</Text>
-                    </GoToProfileButton>
-                )}
-                {props.isGroup && (
-                    <GoToLocationListingsButton
-                        roomId={props.roomId}
-                        variant={"base"}
-                        size={"none"}
-                        className="justify-start w-full"
-                    >
-                        <DropdownMenuItem className="w-full">
-                            <Text className="!text-sm">Browse listings</Text>
-                        </DropdownMenuItem>
-                    </GoToLocationListingsButton>
-                )}
-                <Button variant={"ghost"} className="!justify-start !w-full !items-start flex flex-row">
-                    <Text className="!text-sm !text-left">Mute notifications</Text>
-                </Button>
-            </DropdownMenuContent>
-        </DropdownMenu>
-        <BottomSheet isVisible={bottomSheetVisible} onBackdropPress={() => setBottomSheetVisible(false)}>
-            <View className="bg-card flex-col gap-4 py-4">
-                <View className="flex-row justify-between px-4">
-                    <Text>Members</Text>
-                    <Button onPress={() => setBottomSheetVisible(false)} variant={"destructive"} size={"icon"} className="w-6 h-6">
-                        {/* <Ionicons name="close-outline" size={18} className="!text-destructive-foreground" /> */}
-                    </Button>
-                </View>
-                <ScrollView className="flex-col gap-4">
-                    {props.members.map((member, index) => <GoToProfileButton userId={member.directus_users_id.id} variant={"ghost"} key={index} className="flex-row items-center justify-start gap-2 native:!px-4 px-4">
-                        <Image source={{ uri: buildAssetUrl(member.directus_users_id.avatar) }} className="w-8 h-8 rounded-full" />
-                        <Text>{member.directus_users_id.first_name} {member.directus_users_id.last_name}</Text>
-                    </GoToProfileButton>)}
-                </ScrollView>
-            </View>
-        </BottomSheet>
-    </View>
-}
+//     return <View>
+//         <DropdownMenu open={props.open} onOpenChange={props.setOpen}>
+//             <DropdownMenuTrigger asChild>
+//                 <Button variant={"ghost"} size={"icon"} onPress={() => props.setOpen(p => !p)}>
+//                     {props.open ? <X size={18} className="!text-foreground" /> : <EllipsisVertical size={18} className="!text-foreground" />}
+//                 </Button>
+//             </DropdownMenuTrigger>
+//             <DropdownMenuContent sideOffset={-40}>
+//                 {props.isGroup ? (
+//                     <Button
+//                         onPress={() => setBottomSheetVisible(true)}
+//                         className="!justify-start !w-full !items-start !flex !flex-row"
+//                     >
+//                         <Text className="!text-sm">See members</Text>
+//                     </Button>
+//                 ) : (
+//                     <GoToProfileButton
+//                         additionalOnPress={() => props.setOpen(false)}
+//                         userId={props.members[0]!.directus_users_id.id}
+//                         variant={"ghost"}
+//                         size={"default"}
+//                         className="!justify-start !w-full !items-start !flex !flex-row"
+//                     >
+//                         <Text className="!text-sm !text-left">See profile</Text>
+//                     </GoToProfileButton>
+//                 )}
+//                 {props.isGroup && (
+//                     <GoToLocationListingsButton
+//                         roomId={props.roomId}
+//                         variant={"base"}
+//                         size={"none"}
+//                         className="justify-start w-full"
+//                     >
+//                         <DropdownMenuItem className="w-full">
+//                             <Text className="!text-sm">Browse listings</Text>
+//                         </DropdownMenuItem>
+//                     </GoToLocationListingsButton>
+//                 )}
+//                 <Button variant={"ghost"} className="!justify-start !w-full !items-start flex flex-row">
+//                     <Text className="!text-sm !text-left">Mute notifications</Text>
+//                 </Button>
+//             </DropdownMenuContent>
+//         </DropdownMenu>
+//         <BottomSheet isVisible={bottomSheetVisible} onBackdropPress={() => setBottomSheetVisible(false)}>
+//             <View className="bg-card flex-col gap-4 py-4">
+//                 <View className="flex-row justify-between px-4">
+//                     <Text>Members</Text>
+//                     <Button onPress={() => setBottomSheetVisible(false)} variant={"destructive"} size={"icon"} className="w-6 h-6">
+//                         {/* <Ionicons name="close-outline" size={18} className="!text-destructive-foreground" /> */}
+//                     </Button>
+//                 </View>
+//                 <ScrollView className="flex-col gap-4">
+//                     {props.members.map((member, index) => <GoToProfileButton userId={member.directus_users_id.id} variant={"ghost"} key={index} className="flex-row items-center justify-start gap-2 native:!px-4 px-4">
+//                         <Image source={{ uri: buildAssetUrl(member.directus_users_id.avatar) }} className="w-8 h-8 rounded-full" />
+//                         <Text>{member.directus_users_id.first_name} {member.directus_users_id.last_name}</Text>
+//                     </GoToProfileButton>)}
+//                 </ScrollView>
+//             </View>
+//         </BottomSheet>
+//     </View>
+// }

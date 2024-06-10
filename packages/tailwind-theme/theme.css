@@ -1,7 +1,7 @@
 /*Auto Generated*/
 
-@tailwind base;
-@tailwind components;
+@tailwind base;@tailwind components;
+
 @tailwind utilities;
 
 @layer base {
@@ -23,7 +23,7 @@
 		--destructive: 7 64% 54%;
 		--destructive-foreground: 30 17% 98%;
 		--info: 217 69% 52%;
-		--info-foreground: 210 65% 25%;
+		--info-foreground: 30 17% 98%;
 		--success: 197 53% 34%;
 		--success-foreground: 30 17% 98%;
 		--warning: 43 100% 71%;
@@ -34,8 +34,7 @@
 		--subtext: 0 0% 31%;
 		--light: 30 17% 98%;
 		--dark: 234 16% 35%;
-	}
-
+}
 	.dark:root {
 		--background: 0 4% 5%;
 		--foreground: 30 100% 98%;
@@ -54,16 +53,16 @@
 		--destructive: 4 66% 66%;
 		--destructive-foreground: 0 4% 5%;
 		--info: 217 90% 61%;
-		--info-foreground: 210 93% 70%;
+		--info-foreground: 0 4% 5%;
 		--success: 93 50% 65%;
 		--success-foreground: 0 4% 5%;
 		--warning: 32 56% 19%;
-		--warning-foreground: 32 100% 56%;
+		--warning-foreground: 0 4% 5%;
 		--border: 20 5% 12%;
 		--input: 30 21% 26%;
 		--ring: 20 5% 12%;
 		--subtext: 35 19% 64%;
 		--light: 30 100% 98%;
 		--dark: 0 4% 5%;
-	}
+}
 }

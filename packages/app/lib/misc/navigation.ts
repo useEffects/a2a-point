@@ -1,3 +1,6 @@
+import { CommonFilters } from "app/components/cards/molecules/listings"
+import { FilterKeys, FilterType } from "app/screens/listings"
+
 export type RootStackParamList = {
     "app": undefined,
     "listing-detailed": {
@@ -18,12 +21,18 @@ export type RootStackParamList = {
     },
     "activity": undefined,
     "notifications": undefined,
-    "post": undefined
+    "post": undefined,
+    "locations-list": undefined,
+    "users-list": undefined,
+    "company-list": undefined,
 }
 
 export type TopTabParamList = {
     "home": undefined,
-    "listings": undefined,
+    "listings": {
+        key: FilterKeys,
+        id: string
+    } | undefined,
     "search": undefined,
     "offPlans": undefined,
     "profile": undefined,

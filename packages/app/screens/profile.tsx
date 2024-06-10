@@ -15,7 +15,8 @@ import directusStore from "app/store/directus";
 import userStore from "app/store/user";
 import { ArrowUp, Expand, Info, MessageCircle, Rows2, Shrink } from "lucide-react-native";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { DimensionValue, FlatList, Image, Linking, NativeScrollEvent, NativeSyntheticEvent, Platform, ScrollView, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import { DimensionValue, Image, Linking, NativeScrollEvent, NativeSyntheticEvent, Platform, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import { FlatList, ScrollView } from "app/components/utils/virtual-lists";
 import Collapsible from 'react-native-collapsible';
 import StarRating, { StarIconProps } from "react-native-star-rating-widget";
 import { NavigationState, SceneMap, SceneRendererProps, TabView } from 'react-native-tab-view';
@@ -26,6 +27,7 @@ import { CommonFilters, RenderListings, bodies, commonFilters } from "../compone
 import { GoToActivityButton, GoToPostFeedbackButton } from "../components/link-buttons";
 import { Button } from "../components/ui/button";
 import LockedScreen from "./locked-screens";
+import { FilterKeys } from "./listings";
 
 export const ProfileScreen = ({ user }: { user: FullUser }) => {
     const { authenticated } = directusStore()
@@ -253,12 +255,20 @@ const ListingTab = ({ user, big, setBig }: { user: User, big: boolean, setBig: D
             flatListProps={{
                 scrollEnabled: false,
             }}
+            paramFilter={{
+                key: FilterKeys.Agent,
+                id: user.id
+            }}
         /> :
             <RenderListings<ExtraSmallListingCardProps>
                 render={bodies.extraSmall}
                 filter={commonFilters[CommonFilters.User](user.id)}
                 flatListProps={{
                     scrollEnabled: false,
+                }}
+                paramFilter={{
+                    key: FilterKeys.Agent,
+                    id: user.id
                 }}
             />}
     </View>

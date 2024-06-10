@@ -117,7 +117,7 @@ const FooterDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateAc
         }
     }
 
-    return <DropdownMenu open={props.open} onOpenChange={props.setOpen}>
+    return <DropdownMenu onOpenChange={props.setOpen}>
         <DropdownMenuTrigger asChild>
             <Button size={"icon"} variant={"ghost"} onPress={() => props.setOpen(p => !p)}>
                 <Paperclip size={18} className="!text-foreground" />

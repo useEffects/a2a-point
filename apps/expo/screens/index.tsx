@@ -16,7 +16,7 @@ import { useKeyboardVisible } from '../hooks/keyboard';
 import ChatScreen from './chat';
 import ListingsScreen from './listings';
 import FullListingScreen from './listing-detailed';
-import LocationListings from './location-listings';
+import LocationListings from './location-detailed';
 import LoginScreen from './login';
 import NotificationsScreen from './notifications';
 import PostScreen from './post';
@@ -28,6 +28,8 @@ import ActivityScreen from './activity';
 import OffPlansScreen from './offplans';
 import HomeScreen from './home';
 import { Separator } from 'app/components/ui/separator';
+import { UsersListScreen } from './users-list';
+import { LocationsListScreen } from './locations-list';
 
 const Tab = createMaterialTopTabNavigator<TopTabParamList>();
 const Stack = createStackNavigator()
@@ -150,6 +152,8 @@ export default function AppLayout() {
         <Stack.Screen name="notifications" component={NotificationsScreen} />
         <Stack.Screen name="login" component={LoginScreen} />
         <Stack.Screen name="post" component={PostScreen} />
+        <Stack.Screen name="locations-list" component={LocationsListScreen} />
+        <Stack.Screen name="users-list" component={UsersListScreen} />
     </Stack.Navigator>
 };
 

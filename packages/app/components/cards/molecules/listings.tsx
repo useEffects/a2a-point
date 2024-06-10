@@ -1,16 +1,22 @@
 import { readItems } from "@directus/sdk"
 import { FlatList } from "app/components/utils/virtual-lists"
-import { useIsFocused } from "app/hooks/is-focused"
 import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"
 import userStore from "app/store/user"
 import { ComponentType, useEffect, useMemo, useState } from "react"
-import { FlatListProps, View } from "react-native"
+import { ActivityIndicator, FlatListProps, View } from "react-native"
 import { ExtraSmallListingCard, ExtraSmallListingCardProps } from "../atoms/extra-small"
 import { MediumListingCard, MediumListingCardProps } from "../atoms/medium"
 import { PhotoListingCard, PhotoListingProps } from "../atoms/photo"
 import { SmallListingCard, SmallListingCardProps } from "../atoms/small"
-import { AdvertisementCard, AdvertisementCardProps } from "./advertisements"
+import { AdvertisementCard, AdvertisementCardProps } from "../atoms/advertisements"
+import { useColorScheme } from "app/hooks/color-scheme"
+import { Text } from "app/components/ui/text"
+import { GoToListingsListButton } from "app/components/link-buttons"
+import { ViewAllButton } from "app/components/utils/common-ui"
+import { Button, ButtonProps } from "app/components/ui/button"
+import { FilterKeys, FilterType } from "app/screens/listings"
+import * as Linking from "expo-linking"
 
 type ListCardProps = SmallListingCardProps | ExtraSmallListingCardProps | MediumListingCardProps | PhotoListingProps
 
@@ -136,11 +142,11 @@ export const bodies = {
         renderMethod: ExtraSmallListingCard
     },
     small: {
-        fields: ["id", "title", "price", "address", "type", "user_created.id", "user_created.avatar", "date_created"],
+        fields: ["id", "title", "price", "address", "type", "user_created.id", "user_created.avatar", "date_created", "group.id", "group.title", "group.avatar", "tags"],
         renderMethod: SmallListingCard
     },
     medium: {
-        fields: ["id", "title", "price", "address", "description", "type", "deal_type", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "user_created.email", "date_created"],
+        fields: ["id", "title", "price", "description", "type", "deal_type", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "user_created.email", "date_created", "group.id", "group.title", "group.avatar", "tags"],
         renderMethod: MediumListingCard
     },
     photo: {
@@ -151,8 +157,7 @@ export const bodies = {
 
 type ConfirmedAdvertisementCardProps = AdvertisementCardProps & { isAdvertisement: true }
 
-export const RenderListings = <R extends ListCardProps>({ data, render, filter, flatListProps, limit = 5, searchText = "", noAds, flatListComponent, infinite }: {
-    data?: R[],
+export const RenderListings = <R extends ListCardProps>({ paramFilter, render, filter, flatListProps, limit = 5, searchText = "", noAds, flatListComponent, infinite, viewAllButtonLink }: {
     render: RenderType<R>,
     filter?: ReturnType<typeof commonFilters[CommonFilters]>,
     searchText?: string,
@@ -161,7 +166,12 @@ export const RenderListings = <R extends ListCardProps>({ data, render, filter, 
         "data" | "renderItem">,
     limit?: number,
     flatListComponent?: ComponentType<FlatListProps<ConfirmedAdvertisementCardProps | R>>,
-    infinite?: boolean
+    infinite?: boolean,
+    paramFilter?: {
+        key: FilterKeys,
+        id: string
+    },
+    viewAllButtonLink?: string
 }) => {
 
     const isAdvertisementCard = (item: ConfirmedAdvertisementCardProps | R): item is ConfirmedAdvertisementCardProps => {
@@ -172,6 +182,7 @@ export const RenderListings = <R extends ListCardProps>({ data, render, filter, 
     const [offset, setOffset] = useState(0)
     const [endReached, setEndReached] = useState(false)
     const [items, setItems] = useState<(R | ConfirmedAdvertisementCardProps)[]>([])
+    const { colors } = useColorScheme()
 
     const onEndReached = () => {
         if (!infinite || endReached) return
@@ -225,7 +236,7 @@ export const RenderListings = <R extends ListCardProps>({ data, render, filter, 
             }
         }
         fetchData()
-    }, [offset])
+    }, [offset, endReached])
 
     const FlatListComponent = flatListComponent ?? FlatList
 
@@ -242,7 +253,18 @@ export const RenderListings = <R extends ListCardProps>({ data, render, filter, 
             onEndReached={onEndReached}
             onEndReachedThreshold={0}
             keyExtractor={(item) => item.id}
+            ListFooterComponent={infinite ? () => <BottomLoader endReached={endReached} /> : <ViewAllButton button={(props) => viewAllButtonLink ? <Button {...props} onPress={() => Linking.openURL(viewAllButtonLink)} /> : <GoToListingsListButton {...props} filter={paramFilter} />} />}
         /> : <></>
+}
+
+export const BottomLoader = ({ endReached }: { endReached: boolean }) => {
+    const { colors } = useColorScheme()
+    return endReached ? <View className="w-full h-20 flex-col justify-center items-center">
+        <Text className="text-destructive">No more items to show</Text>
+    </View> : <View className="w-full h-20 flex-col justify-center items-center">
+        <ActivityIndicator color={colors.info} />
+        <Text className="text-center text-info">loading please wait ...</Text>
+    </View>
 }
 
 function mergeArraysRandomly<T1, T2>(array1: T1[], array2: T2[]): (T1 | T2)[] {

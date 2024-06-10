@@ -21,7 +21,7 @@ import { Separator } from "./ui/separator";
 import { directusUrl } from "app/lib/constants";
 import OutsidePressHandler from 'react-native-outside-press';
 import Collapsible from "react-native-collapsible";
-import { set } from "lodash";
+import { get, set } from "lodash";
 import { FlatList } from "./utils/virtual-lists";
 import { ChevronDown, ChevronUp } from "app/components/icons";
 
@@ -90,7 +90,7 @@ export const FormSelect = (props: SelectRootProps & AdditionalFormSelectProps) =
 
 export type AutoCompleteRenderItemProps = RenderListingTileProps | RenderRoomTileProps | RenderUserTileProps | RenderCompanyTileProps
 
-const autoCompleteFields = {
+export const autoCompleteFields = {
     "rooms": ["id", "title", "avatar"],
     "listings": ["id", "title", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name"],
     "users": ["id", "avatar", "first_name", "last_name"],
@@ -105,11 +105,20 @@ type AdditionalAutoSelectFormProps = {
     initialValue?: AutoCompleteRenderItemProps
 }
 
+export const isRenderUserTile = (item: AutoCompleteRenderItemProps | undefined): item is RenderUserTileProps => {
+    return !!item && "first_name" in item && "last_name" in item
+}
+
+export const getTitle = (item: AutoCompleteRenderItemProps | null) => {
+    if (!item) return ""
+    if (isRenderUserTile(item)) {
+        return `${item.first_name} ${item.last_name}`
+    } else {
+        return item.title!
+    }
+}
 
 export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps & AdditionalAutoSelectFormProps) => {
-    const isRenderUserTile = (item: AutoCompleteRenderItemProps | undefined): item is RenderUserTileProps => {
-        return props.item === "users"
-    }
     const isRenderRoomTile = (item: AutoCompleteRenderItemProps | undefined): item is RenderRoomTileProps => {
         return props.item === "rooms"
     }
@@ -121,16 +130,11 @@ export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps 
     }
 
     const title = useMemo(() => {
-        if (!props.currentItem) return null
-        if (isRenderUserTile(props.currentItem)) {
-            return props.currentItem ? `${props.currentItem.first_name} ${props.currentItem.last_name}` : ""
-        } else {
-            return props.currentItem?.title
-        }
+        return getTitle(props.currentItem)
     }, [props.currentItem])
 
     const { rest, token } = directusStore()
-    const [searchText, setSearchText] = useState(title ?? "")
+    const [searchText, setSearchText] = useState(title)
     const [debouncedSearchText] = useDebounce(searchText, 500)
     const [showResults, setShowResults] = useState(false)
 

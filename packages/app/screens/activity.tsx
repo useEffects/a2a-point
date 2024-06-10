@@ -3,6 +3,7 @@ import { Bookmark, Eye } from "app/components/icons";
 import { Button } from "app/components/ui/button";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
+import { savedByMeUrl, viewedByMeUrl } from "app/lib/constants";
 import { cn } from "app/lib/utils";
 import { LucideIcon } from "lucide-react-native";
 import { useState } from "react";
@@ -36,6 +37,7 @@ const RenderViewed = () => <RenderListings
         contentContainerClassName: "px-4",
         ItemSeparatorComponent: () => <Separator className="my-4" />
     }}
+    viewAllButtonLink={viewedByMeUrl}
 />
 
 const RenderSaved = () => <RenderListings
@@ -46,6 +48,7 @@ const RenderSaved = () => <RenderListings
         contentContainerClassName: "px-4",
         ItemSeparatorComponent: () => <Separator className="my-4" />
     }}
+    viewAllButtonLink={savedByMeUrl}
 />
 
 const TabBar = (props: SceneRendererProps & { navigationState: NavigationState<Route> }) => {

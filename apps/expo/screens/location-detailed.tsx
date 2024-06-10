@@ -1,6 +1,6 @@
 import { Header } from "app/components/header";
 import { Text } from "app/components/ui/text";
-import { ScrollView, } from "react-native";
+import { ScrollView, } from "app/components/utils/virtual-lists";
 import { useParams } from "solito/navigation"
 import { useQuery } from "@tanstack/react-query"
 import directusStore from "app/store/directus";

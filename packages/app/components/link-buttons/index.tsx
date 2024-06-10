@@ -3,6 +3,7 @@ import useNavigation from "app/hooks/navigation"
 import { X } from "lucide-react-native"
 import { GestureResponderEvent } from "react-native"
 import { Button, ButtonProps } from "../ui/button"
+import { FilterKeys, FilterType } from "app/screens/listings"
 
 export const CloseButton = (props: ButtonProps) => {
     const { colors } = useColorScheme()
@@ -120,4 +121,49 @@ export const GoToPostButton = (props: ButtonProps) => {
     }
 
     return <Button variant={"base"} size={"none"} onPress={goToPost} {...props} />
+}
+
+export const GoToLocationsListButton = (props: ButtonProps) => {
+    const navigation = useNavigation()
+
+    const goToLocationsList = () => {
+        navigation.getState() && navigation.push("locations-list")
+    }
+
+    return <Button variant={"base"} size={"none"} onPress={goToLocationsList} {...props} />
+}
+
+export const GoToUsersListButton = (props: ButtonProps) => {
+    const navigation = useNavigation()
+
+    const goToUsersList = () => {
+        navigation.getState() && navigation.push("users-list")
+    }
+
+    return <Button variant={"base"} size={"none"} onPress={goToUsersList} {...props} />
+}
+
+export const GoToCompanyListButton = (props: ButtonProps) => {
+    const navigation = useNavigation()
+
+    const goToCompanyList = () => {
+        navigation.getState() && navigation.push("company-list")
+    }
+
+    return <Button variant={"base"} size={"none"} onPress={goToCompanyList} {...props} />
+}
+
+export const GoToListingsListButton = (props: ButtonProps & {
+    filter?: {
+        key: FilterKeys,
+        id: string
+    }
+}) => {
+    const navigation = useNavigation()
+
+    const goToListingsList = () => {
+        navigation.getState() && navigation.navigate("listings", props.filter)
+    }
+
+    return <Button variant={"base"} size={"none"} onPress={goToListingsList} {...props} />
 }
