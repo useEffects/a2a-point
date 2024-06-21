@@ -48,7 +48,6 @@ services:
       KC_USERNAME: ${KC_ADMIN_USERNAME}
       KC_PASSWORD: ${KC_ADMIN_PASSWORD}
       KC_CLIENT_ID: ${KC_DIRECTUS_CLIENT_ID}
-    restart: always
 
   # webapp:
   #   build:
@@ -68,10 +67,13 @@ services:
       context: .
       dockerfile: infra/nginx/Dockerfile
     healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:80/nginx-healthcheck"]
+        test: curl -f http://auth.a2apoint.com/realms/master/.well-known/openid-configuration || exit 1
         interval: 30s
         timeout: 10s
         retries: 3
     ports:
       - "80:80"
       - "443:443"
+    depends_on:
+      auth:
+        condition: service_healthy
