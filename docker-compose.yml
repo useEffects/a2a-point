@@ -72,10 +72,3 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    depends_on:
-      auth:
-        condition: service_healthy
-      dashboard:
-        condition: service_healthy
-      # webapp:
-      #   condition: service_healthy
