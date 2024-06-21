@@ -14,10 +14,5 @@
     "bootstrap": "directus bootstrap",
     "start": "directus start",
     "snapshot-apply": "directus schema apply --yes ./schema/snapshot.yaml"
-  },
-  "workspaces": {
-    "nohoist": [
-      "**"
-    ]
   }
 }
