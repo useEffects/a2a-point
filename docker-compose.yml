@@ -17,7 +17,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    restart: always
 
   dashboard:
     build:
@@ -47,7 +46,6 @@ services:
       KC_USERNAME: ${KC_ADMIN_USERNAME}
       KC_PASSWORD: ${KC_ADMIN_PASSWORD}
       KC_CLIENT_ID: ${KC_DIRECTUS_CLIENT_ID}
-    restart: always
 
   # webapp:
   #   build:
@@ -74,4 +72,3 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    restart: always
