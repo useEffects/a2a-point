@@ -5,11 +5,10 @@ RUN apt-get update && \
     apt-get clean
 RUN pip3 install requests
 
-WORKDIR /directus
-
+RUN mkdir /directus
 # RUN yarn install
 # RUN yarn add sharp --ignore-engines --ignore-workspace-root-check
-COPY directus .
+COPY directus /directus
 RUN mv prod.env .env
 
 ARG PUBLIC_URL
@@ -64,6 +63,7 @@ ENV DB_PASSWORD=${DB_PASSWORD}
 
 EXPOSE 8055
 
+WORKDIR /directus
 RUN npx --yes directus bootstrap
 # RUN yarn snapshot-apply
 ENTRYPOINT [ "sh", "-c", "npx --yes directus start" ]
