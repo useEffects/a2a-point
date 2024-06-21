@@ -9,7 +9,7 @@ RUN mkdir /directus
 # RUN yarn install
 # RUN yarn add sharp --ignore-engines --ignore-workspace-root-check
 COPY directus /directus
-RUN mv prod.env .env
+RUN mv /direcuts/prod.env /directus/.env
 
 ARG PUBLIC_URL
 ARG ADMIN_EMAIL
