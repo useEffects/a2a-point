@@ -23,7 +23,7 @@ services:
       context: .
       dockerfile: apps/directus/Dockerfile
       args:
-        PUBLIC_URL: https://dev.dashboard.a2apoint.com
+        PUBLIC_URL: https://dashboard.a2apoint.com
         ADMIN_EMAIL: admin@a2apoint.com
         ADMIN_PASSWORD: admin
         SECRET: dg0EJXNmJAFr3D2AFb8uu6ejtQv5o3OD
