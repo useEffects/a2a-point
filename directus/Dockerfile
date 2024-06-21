@@ -5,12 +5,12 @@ RUN apt-get update && \
     apt-get clean
 RUN pip3 install requests
 
-WORKDIR /app/apps/directus
+WORKDIR /app/directus
 
 COPY package.json package.json
 RUN yarn install
 RUN yarn add sharp --ignore-engines --ignore-workspace-root-check
-COPY apps/directus .
+COPY directus .
 RUN mv prod.env .env
 
 ARG PUBLIC_URL

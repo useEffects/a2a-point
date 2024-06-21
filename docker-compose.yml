@@ -21,7 +21,7 @@ services:
   dashboard:
     build:
       context: .
-      dockerfile: apps/directus/Dockerfile
+      dockerfile: directus/Dockerfile
       args:
         PUBLIC_URL: https://dashboard.a2apoint.com
         ADMIN_EMAIL: admin@a2apoint.com
