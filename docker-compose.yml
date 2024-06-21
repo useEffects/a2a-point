@@ -67,7 +67,7 @@ services:
       context: .
       dockerfile: infra/nginx/Dockerfile
     healthcheck:
-        test: curl -f http://auth.a2apoint.com/realms/master/.well-known/openid-configuration || exit 1
+        test: curl -f https://auth.a2apoint.com/realms/master/.well-known/openid-configuration || exit 1
         interval: 30s
         timeout: 10s
         retries: 3
