@@ -1,5 +1,5 @@
 version: 1
-directus: 10.11.2
+directus: 10.12.1
 vendor: sqlite
 collections:
   - collection: advertisements
@@ -14,7 +14,7 @@ collections:
       display_template: null
       group: null
       hidden: false
-      icon: live_tv
+      icon: null
       item_duplication_fields: null
       note: null
       preview_url: null
@@ -62,7 +62,7 @@ collections:
       display_template: null
       group: null
       hidden: false
-      icon: date_range
+      icon: null
       item_duplication_fields: null
       note: null
       preview_url: null
@@ -182,7 +182,7 @@ collections:
       display_template: null
       group: null
       hidden: false
-      icon: menu_book
+      icon: null
       item_duplication_fields: null
       note: null
       preview_url: null
@@ -206,7 +206,7 @@ collections:
       display_template: null
       group: null
       hidden: false
-      icon: text_snippet
+      icon: null
       item_duplication_fields: null
       note: null
       preview_url: null
@@ -230,7 +230,7 @@ collections:
       display_template: null
       group: null
       hidden: false
-      icon: magic_exchange
+      icon: null
       item_duplication_fields: null
       note: null
       preview_url: null
@@ -254,7 +254,7 @@ collections:
       display_template: null
       group: null
       hidden: false
-      icon: forms_add_on
+      icon: null
       item_duplication_fields: null
       note: null
       preview_url: null
@@ -302,7 +302,7 @@ collections:
       display_template: '{{status}}'
       group: null
       hidden: false
-      icon: list_alt
+      icon: null
       item_duplication_fields: []
       note: null
       preview_url: null
@@ -470,7 +470,7 @@ collections:
       display_template: null
       group: null
       hidden: false
-      icon: breaking_news_alt_1
+      icon: null
       item_duplication_fields: null
       note: null
       preview_url: null
@@ -542,9 +542,9 @@ collections:
       display_template: null
       group: null
       hidden: false
-      icon: work
+      icon: null
       item_duplication_fields: null
-      note: Configuration related to the website @https://a2apoint.com
+      note: null
       preview_url: null
       singleton: true
       sort: null
@@ -798,8 +798,7 @@ fields:
       hidden: false
       interface: input
       note: null
-      options:
-        iconLeft: title
+      options: null
       readonly: false
       required: true
       sort: 6
@@ -1440,8 +1439,7 @@ fields:
       hidden: false
       interface: input
       note: null
-      options:
-        iconLeft: location_on
+      options: null
       readonly: false
       required: false
       sort: 7
@@ -1479,8 +1477,7 @@ fields:
       hidden: false
       interface: input
       note: null
-      options:
-        iconLeft: title
+      options: null
       readonly: false
       required: true
       sort: 5
@@ -1833,8 +1830,7 @@ fields:
       hidden: false
       interface: input
       note: null
-      options:
-        iconLeft: title
+      options: null
       readonly: false
       required: true
       sort: 6
@@ -1910,8 +1906,7 @@ fields:
       hidden: false
       interface: input
       note: null
-      options:
-        iconLeft: call
+      options: null
       readonly: false
       required: true
       sort: 8
@@ -1949,8 +1944,7 @@ fields:
       hidden: false
       interface: input
       note: null
-      options:
-        iconLeft: fax
+      options: null
       readonly: false
       required: false
       sort: 10
@@ -1988,8 +1982,7 @@ fields:
       hidden: false
       interface: input
       note: null
-      options:
-        iconLeft: mark_email_unread
+      options: null
       readonly: false
       required: true
       sort: 9
@@ -2027,8 +2020,7 @@ fields:
       hidden: false
       interface: input
       note: null
-      options:
-        iconLeft: partner_exchange
+      options: null
       readonly: false
       required: false
       sort: 11
@@ -2066,8 +2058,7 @@ fields:
       hidden: false
       interface: input
       note: null
-      options:
-        iconLeft: rounded_corner
+      options: null
       readonly: false
       required: false
       sort: 12
@@ -2595,44 +2586,6 @@ fields:
       foreign_key_table: null
       foreign_key_column: null
   - collection: course_lessons
-    field: course
-    type: string
-    meta:
-      collection: course_lessons
-      conditions: null
-      display: null
-      display_options: null
-      field: course
-      group: null
-      hidden: false
-      interface: input
-      note: null
-      options: null
-      readonly: false
-      required: false
-      sort: 13
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: course
-      table: course_lessons
-      data_type: varchar
-      default_value: null
-      max_length: 255
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: true
-      is_unique: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: courses
-      foreign_key_column: id
-  - collection: course_lessons
     field: lesson_quiz
     type: alias
     meta:
@@ -2656,6 +2609,45 @@ fields:
       validation: null
       validation_message: null
       width: full
+  - collection: course_lessons
+    field: course
+    type: uuid
+    meta:
+      collection: course_lessons
+      conditions: null
+      display: null
+      display_options: null
+      field: course
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 15
+      special:
+        - uuid
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: course
+      table: course_lessons
+      data_type: char
+      default_value: null
+      max_length: 36
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: courses
+      foreign_key_column: id
   - collection: course_quiz
     field: id
     type: integer
@@ -3165,8 +3157,7 @@ fields:
       hidden: false
       interface: input
       note: null
-      options:
-        iconLeft: title
+      options: null
       readonly: false
       required: true
       sort: 8
@@ -3282,8 +3273,7 @@ fields:
       hidden: false
       interface: tags
       note: null
-      options:
-        iconLeft: tag
+      options: null
       readonly: false
       required: true
       sort: 11
@@ -3322,10 +3312,9 @@ fields:
       hidden: false
       interface: list-o2m
       note: null
-      options:
-        template: '{{name}}'
+      options: null
       readonly: false
-      required: true
+      required: false
       sort: 12
       special:
         - o2m
@@ -3555,64 +3544,44 @@ fields:
       has_auto_increment: false
       foreign_key_table: rooms
       foreign_key_column: id
-  # - collection: directus_notifications
-  #   field: message
-  #   type: text
-  #   meta:
-  #     collection: directus_notifications
-  #     conditions: null
-  #     display: null
-  #     display_options: null
-  #     field: message
-  #     group: null
-  #     hidden: false
-  #     interface: input-multiline
-  #     note: null
-  #     options: null
-  #     readonly: false
-  #     required: false
-  #     sort: 5
-  #     special: null
-  #     translations: null
-  #     validation: null
-  #     validation_message: null
-  #     width: full
-  #   schema:
-  #     name: message
-  #     table: directus_notifications
-  #     data_type: text
-  #     default_value: null
-  #     max_length: null
-  #     numeric_precision: null
-  #     numeric_scale: null
-  #     is_nullable: true
-  #     is_unique: false
-  #     is_primary_key: false
-  #     is_generated: false
-  #     generation_expression: null
-  #     has_auto_increment: false
-  #     foreign_key_table: null
-  #     foreign_key_column: null
-  # - collection: directus_sessions
-  #   field: next_token
-  #   type: string
-  #   meta: null
-  #   schema:
-  #     name: next_token
-  #     table: directus_sessions
-  #     data_type: varchar
-  #     default_value: null
-  #     max_length: 64
-  #     numeric_precision: null
-  #     numeric_scale: null
-  #     is_nullable: true
-  #     is_unique: false
-  #     is_primary_key: false
-  #     is_generated: false
-  #     generation_expression: null
-  #     has_auto_increment: false
-  #     foreign_key_table: null
-  #     foreign_key_column: null
+  - collection: directus_notifications
+    field: message
+    type: text
+    meta:
+      collection: directus_notifications
+      conditions: null
+      display: null
+      display_options: null
+      field: message
+      group: null
+      hidden: false
+      interface: input-multiline
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 5
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: message
+      table: directus_notifications
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: directus_users
     field: social_media
     type: json
@@ -4213,8 +4182,7 @@ fields:
       hidden: false
       interface: input
       note: null
-      options:
-        iconLeft: edit_document
+      options: null
       readonly: true
       required: true
       sort: 8
@@ -4794,8 +4762,7 @@ fields:
       hidden: false
       interface: input
       note: null
-      options:
-        iconLeft: edit_document
+      options: null
       readonly: false
       required: true
       sort: 4
@@ -4833,8 +4800,7 @@ fields:
       hidden: false
       interface: input
       note: null
-      options:
-        iconLeft: format_image_left
+      options: null
       readonly: false
       required: false
       sort: 5
@@ -5319,7 +5285,7 @@ fields:
       interface: input
       note: null
       options:
-        iconLeft: title
+        iconLeft: subtitles
       readonly: false
       required: true
       sort: 7
@@ -5402,7 +5368,6 @@ fields:
       interface: tags
       note: null
       options:
-        iconLeft: tag
         presets:
           - Real Estate
       readonly: false
@@ -5716,8 +5681,7 @@ fields:
       hidden: false
       interface: input
       note: null
-      options:
-        iconLeft: location_on
+      options: null
       readonly: false
       required: true
       sort: 24
@@ -7413,8 +7377,7 @@ fields:
       hidden: false
       interface: input
       note: null
-      options:
-        iconLeft: title
+      options: null
       readonly: false
       required: true
       sort: 7
@@ -7490,8 +7453,7 @@ fields:
       hidden: false
       interface: tags
       note: null
-      options:
-        iconLeft: tag
+      options: null
       readonly: false
       required: true
       sort: 9
@@ -7632,8 +7594,7 @@ fields:
       hidden: false
       interface: input
       note: null
-      options:
-        iconLeft: nest_clock_farsight_analog
+      options: null
       readonly: false
       required: true
       sort: 14
@@ -7668,7 +7629,7 @@ fields:
       display_options: null
       field: id
       group: null
-      hidden: false
+      hidden: true
       interface: input
       note: null
       options: null
