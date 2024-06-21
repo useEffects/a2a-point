@@ -2586,30 +2586,6 @@ fields:
       foreign_key_table: null
       foreign_key_column: null
   - collection: course_lessons
-    field: lesson_quiz
-    type: alias
-    meta:
-      collection: course_lessons
-      conditions: null
-      display: null
-      display_options: null
-      field: lesson_quiz
-      group: null
-      hidden: false
-      interface: list-o2m
-      note: null
-      options:
-        template: '{{question}}'
-      readonly: false
-      required: false
-      sort: 14
-      special:
-        - o2m
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-  - collection: course_lessons
     field: course
     type: uuid
     meta:
@@ -2648,6 +2624,29 @@ fields:
       has_auto_increment: false
       foreign_key_table: courses
       foreign_key_column: id
+  - collection: course_lessons
+    field: course_quiz
+    type: alias
+    meta:
+      collection: course_lessons
+      conditions: null
+      display: null
+      display_options: null
+      field: course_quiz
+      group: null
+      hidden: false
+      interface: list-o2m
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 16
+      special:
+        - o2m
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
   - collection: course_quiz
     field: id
     type: integer
@@ -2804,7 +2803,7 @@ fields:
       foreign_key_column: null
   - collection: course_quiz
     field: course_lesson
-    type: string
+    type: uuid
     meta:
       collection: course_quiz
       conditions: null
@@ -2819,7 +2818,8 @@ fields:
       readonly: false
       required: false
       sort: 6
-      special: null
+      special:
+        - uuid
       translations: null
       validation: null
       validation_message: null
@@ -2827,9 +2827,9 @@ fields:
     schema:
       name: course_lesson
       table: course_quiz
-      data_type: varchar
+      data_type: char
       default_value: null
-      max_length: 255
+      max_length: 36
       numeric_precision: null
       numeric_scale: null
       is_nullable: true
@@ -3544,44 +3544,6 @@ fields:
       has_auto_increment: false
       foreign_key_table: rooms
       foreign_key_column: id
-  # - collection: directus_notifications
-  #   field: message
-  #   type: text
-  #   meta:
-  #     collection: directus_notifications
-  #     conditions: null
-  #     display: null
-  #     display_options: null
-  #     field: message
-  #     group: null
-  #     hidden: false
-  #     interface: input-multiline
-  #     note: null
-  #     options: null
-  #     readonly: false
-  #     required: false
-  #     sort: 5
-  #     special: null
-  #     translations: null
-  #     validation: null
-  #     validation_message: null
-  #     width: full
-  #   schema:
-  #     name: message
-  #     table: directus_notifications
-  #     data_type: text
-  #     default_value: null
-  #     max_length: null
-  #     numeric_precision: null
-  #     numeric_scale: null
-  #     is_nullable: true
-  #     is_unique: false
-  #     is_primary_key: false
-  #     is_generated: false
-  #     generation_expression: null
-  #     has_auto_increment: false
-  #     foreign_key_table: null
-  #     foreign_key_column: null
   - collection: directus_users
     field: social_media
     type: json
@@ -8885,7 +8847,7 @@ relations:
       one_collection: course_lessons
       one_collection_field: null
       one_deselect_action: nullify
-      one_field: lesson_quiz
+      one_field: course_quiz
       sort_field: null
     schema:
       table: course_quiz
