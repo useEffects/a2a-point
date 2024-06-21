@@ -9,6 +9,7 @@ import { File, Message, Room, User } from "app/lib/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { queryClient } from "app/store/query";
 import * as FileSystem from "expo-file-system";
+import { fileUpload } from "app/lib/file-upload";
 
 const roomsSubscribedQueryKey = ["Subscribed Rooms"]
 
@@ -124,7 +125,7 @@ export const ChatsProvider = ({ children, rest, token }: { children: ReactNode, 
         async function sendMessages() {
             const unsentMessages = messages.filter(m => !m.sent) as ChatMessage<withUri>[]
             unsentMessages.forEach(async message => {
-                const fileIds = await Promise.all(message.assets?.map(asset => Platform.OS === "web" ? webFileUpload(asset) : nativeFileUpload(asset)) ?? [])
+                const fileIds = await Promise.all(message.assets?.map(asset => fileUpload(asset, messagesFolderName)) ?? [])
                 const payload = {
                     id: message.id,
                     content: message.content,
@@ -216,29 +217,6 @@ function transformMessage(message: MessageDetailed, sent?: boolean): ChatMessage
     }
 }
 
-async function nativeFileUpload(asset: Asset<withUri>): Promise<string> {
-    const { token } = directusStore.getState()
-    const fileInfo = await FileSystem.getInfoAsync(asset.uri)
-    if (!fileInfo.exists) {
-        throw new Error("File does not exist")
-    }
-    const res = await FileSystem.uploadAsync(`${directusUrl}/files`, asset.uri, {
-        uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-        fieldName: "file",
-        headers: {
-            "Authorization": `Bearer ${token}`
-        },
-        parameters: {
-            folder: messagesFolderName
-        }
-    })
-    return JSON.parse(res.body).data.id
-}
-
-async function webFileUpload(asset: Asset<withUri>): Promise<string> {
-    return Promise.resolve("")
-}
-
 async function sendNotification(message: MessageDetailed, recipients: string[]) {
     const { rest } = directusStore.getState()
     const { user } = userStore.getState()
@@ -272,7 +250,7 @@ async function _setRoomsSubscribed(setRoomsSubscribed: Dispatch<SetStateAction<R
                     fields: roomSubscribedFields
                 })),
             }) as RoomSubscribed
-            console.log({room})
+            console.log({ room })
             setRoomsSubscribed(rooms => [room, ...rooms])
             queryClient.setQueryData(roomsSubscribedQueryKey, (rooms: RoomSubscribed[]) => [room, ...rooms])
             return room

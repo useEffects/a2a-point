@@ -13,7 +13,7 @@ export default function PostScreen() {
         <Header>
             <Text className="text-xl font-bold">Post</Text>
         </Header>
-        {authenticated ? <View className="p-4 flex-1">
+        {true ? <View className="p-4 flex-1">
             <PostScreenComponent />
         </View>: <LockedScreen
             SVGComponent={<PostSVG width={300} height={300} />}

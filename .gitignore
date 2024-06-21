@@ -83,3 +83,5 @@ build/**
 
 # keywind
 apps/keycloak-theme/out
+
+misc/secrets

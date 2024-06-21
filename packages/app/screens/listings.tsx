@@ -89,7 +89,7 @@ export default function ListingsScreenComponent({ className }: { className?: str
                 <ListFilter size={18} color={filters.length ? colors.card : colors.info} />
             </Button>
         </View>
-        {filters.length ? <RenderChips filters={filters} setFilters={setFilters} /> : <View className='h-2 w-full' />}
+        {filters.length ? <RenderChips filters={filters} setFilters={setFilters} /> : <View className='h-4 w-full bg-card' />}
         <RenderListings<MediumListingCardProps>
             key={key}
             render={bodies.medium}

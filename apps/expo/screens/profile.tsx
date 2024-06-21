@@ -6,8 +6,10 @@ import { Header } from "app/components/header";
 import { Text } from "app/components/ui/text";
 import { Button } from "app/components/ui/button";
 import { ToggleTheme } from "app/components/toggle-theme";
-import { LogOut, Bell } from "app/components/icons";
-import { GoToNotificationsButton } from "app/components/link-buttons";
+import { LogOut, Bell, EllipsisVertical, UserCog2 } from "app/components/icons";
+import { GoToNotificationsButton, useGoToRoute } from "app/components/link-buttons";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "app/components/ui/dropdown-menu";
+import { useState } from "react";
 
 export default function ProfileScreen() {
     const { user } = userStore()
@@ -17,18 +19,52 @@ export default function ProfileScreen() {
             <View className="flex-row gap-8 justify-between flex-1 items-center">
                 <Text className="text-xl font-bold">Profile</Text>
                 <View className="flex-row gap-4 items-center">
-                    {authenticated ? <>
-                        <Button onPress={logout} variant="base" size="none">
-                            <LogOut size={18} className="text-foreground" />
-                        </Button>
-                        <GoToNotificationsButton>
-                            <Bell size={18} className="text-foreground" />
-                        </GoToNotificationsButton>
-                    </> : <></>}
+                    {authenticated ? <ProfileDropdown /> : <></>}
                     <ToggleTheme />
                 </View>
             </View>
         </Header>
         <ProfileScreenComponent user={user} />
     </View>
+}
+
+const ProfileDropdown = () => {
+    const goToNotifications = useGoToRoute("notifications")
+    const goToAccountConsole = useGoToRoute("account-console")
+
+    const [_, setOpen] = useState(false)
+
+    return <DropdownMenu onOpenChange={setOpen}>
+        <DropdownMenuTrigger asChild>
+            <Button variant={"ghost"} size={"icon"}>
+                <EllipsisVertical size={24} className="text-foreground" />
+            </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent sideOffset={-40}>
+            <DropdownMenuItem>
+                <View className="flex-row items-center gap-2">
+                    <LogOut size={18} className="text-foreground" />
+                    <Text>Logout</Text>
+                </View>
+            </DropdownMenuItem>
+            <DropdownMenuItem onPress={() => {
+                setOpen(false)
+                goToNotifications()
+            }}>
+                <View className="flex-row items-center gap-2">
+                    <Bell size={18} className="text-foreground" />
+                    <Text>Notifications</Text>
+                </View>
+            </DropdownMenuItem>
+            <DropdownMenuItem onPress={() => {
+                setOpen(false)
+                goToAccountConsole()
+            }}>
+                <View className="flex-row items-center gap-2">
+                    <UserCog2 size={18} className="text-foreground" />
+                    <Text>Account console</Text>
+                </View>
+            </DropdownMenuItem>
+        </DropdownMenuContent>
+    </DropdownMenu>
 }

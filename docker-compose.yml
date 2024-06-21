@@ -1,0 +1,81 @@
+services:
+  auth:
+    build:
+      context: .
+      dockerfile: infra/keycloak/Dockerfile
+      args:
+        DB_USERNAME: ${DB_USERNAME}
+        DB_PASSWORD: ${DB_PASSWORD}
+        DB_HOST: ${DB_HOST}
+        DB_PORT: ${DB_PORT}
+        DB_DATABASE: ${DB_KEYCLOAK_DATABASE}
+        KC_ADMIN_USERNAME: ${KC_ADMIN_USERNAME}
+        KC_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", 'exec 3<>/dev/tcp/localhost/8080 && echo -e "GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n" >&3 || exit 1']
+      start_period: 15s
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: apps/directus/Dockerfile
+      args:
+        PUBLIC_URL: https://dev.dashboard.a2apoint.com
+        ADMIN_EMAIL: admin@a2apoint.com
+        ADMIN_PASSWORD: admin
+        SECRET: dg0EJXNmJAFr3D2AFb8uu6ejtQv5o3OD
+        DB_HOST: ${DB_HOST}
+        DB_PORT: ${DB_PORT}
+        DB_USER: ${DB_USERNAME}
+        DB_PASSWORD: ${DB_PASSWORD}
+        DB_DATABASE: ${DB_DIRECTUS_DATABASE}
+        CLIENT_ID: ${KC_DIRECTUS_CLIENT_ID}
+        CLIENT_SECRET: ${KC_DIRECTUS_CLIENT_SECRET}
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8055/server/health || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      auth:
+        condition: service_healthy
+    environment:
+      KC_USERNAME: ${KC_ADMIN_USERNAME}
+      KC_PASSWORD: ${KC_ADMIN_PASSWORD}
+      KC_CLIENT_ID: ${KC_DIRECTUS_CLIENT_ID}
+
+  # webapp:
+  #   build:
+  #     context: .
+  #     dockerfile: apps/www/Dockerfile
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:3000/api/healthcheck"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #   depends_on:
+  #     dashboard:
+  #       condition: service_healthy
+
+  server:
+    build:
+      context: .
+      dockerfile: infra/nginx/Dockerfile
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:80/nginx-healthcheck"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      auth:
+        condition: service_healthy
+      dashboard:
+        condition: service_healthy
+      # webapp:
+      #   condition: service_healthy

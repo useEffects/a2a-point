@@ -2,7 +2,7 @@ import { readItems } from "@directus/sdk"
 import { HorizontalFlatList } from "@idiosync/horizontal-flatlist"
 import { HorizontalFlatListProps } from "@idiosync/horizontal-flatlist/dist/horizontal-flat-list"
 import { useQuery } from "@tanstack/react-query"
-import { GoToLocationListingsButton, GoToLocationsListButton, GoToRoomButton } from "app/components/link-buttons"
+import { GoToLocationListingsButton, GoToLocationsListButton, GoToMembersListButton, GoToRoomButton } from "app/components/link-buttons"
 import { Button, ButtonProps } from "app/components/ui/button"
 import { Text } from "app/components/ui/text"
 import { buildAssetUrl, getDMRoomId, shortString } from "app/lib/helpers"
@@ -90,7 +90,7 @@ const MediumLocationCard = ({ item }: { item: MediumLocationCardProps }) => {
         <View className="h-full flex-col justify-start gap-2 p-4 w-1/2">
             <Text className="font-medium">{item.title}</Text>
             <Text className="text-success">{listingsCount} leads available</Text>
-            <MembersList members={item.members.slice(0, 5)} total={membersCount} />
+            <MembersList locationId={item.id} members={item.members.slice(0, 5)} total={membersCount} />
             <GoToRoomButton disabled={!authenticated} variant={"default"} roomId={item.id} className="mt-auto mb-0 flex-row" size={"sm"}>
                 <Text>Open group chat</Text>
                 <ArrowUpRight size={18} className="text-primary-foreground" />
@@ -143,10 +143,10 @@ export const MediumLocationCards = ({ limit = 5, searchText = "", infinite }: { 
     />
 }
 
-export const MembersList = ({ members, total }: {
+export const MembersList = ({ members, total, locationId }: {
     members: {
         directus_users_id: Pick<User, "avatar">,
-    }[], total: number
+    }[], total: number, locationId: string
 }) => {
     const { colors } = useColorScheme()
     const faces = members.map(member => ({
@@ -155,9 +155,9 @@ export const MembersList = ({ members, total }: {
 
     return <View className="flex-row relative self-start">
         {faces.map((face, i) => <Image key={i} className="w-12 h-12 -mr-4 rounded-full border-background  border-1 border" source={{ uri: face.imageUrl }} />)}
-        <Button className="absolute -right-4 w-12 h-12 flex-col rounded-full justify-center items-center" variant={"base"} size={"none"} style={{ backgroundColor: opacity(colors.info, 0.75), zIndex: 10, elevation: 10 }}>
+        <GoToMembersListButton locationId={locationId} className="absolute -right-4 w-12 h-12 flex-col rounded-full justify-center items-center" variant={"base"} size={"none"} style={{ backgroundColor: opacity(colors.info, 0.75), zIndex: 10, elevation: 10 }}>
             <Text className="text-info-foreground text-xs">{total}+</Text>
             <ArrowUpRight className="text-info-foreground" size={12} />
-        </Button>
+        </GoToMembersListButton>
     </View>
 }

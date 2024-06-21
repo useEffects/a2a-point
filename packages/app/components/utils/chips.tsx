@@ -5,7 +5,7 @@ import { Text } from "../ui/text"
 import { buildAssetUrl } from "app/lib/helpers"
 
 export const LocationChip = ({ avatar, id, title }: Pick<Room, "id" | "title" | "avatar">) => {
-    return <GoToLocationListingsButton roomId={id} className="flex-row gap-2 items-center rounded bg-card justify-start self-start">
+    return <GoToLocationListingsButton roomId={id} className="flex-row gap-2 items-center rounded justify-start self-start">
         <Image source={{ uri: buildAssetUrl(avatar) }} className="w-6 h-6 rounded-full" />
         <Text>{title}</Text>
     </GoToLocationListingsButton>

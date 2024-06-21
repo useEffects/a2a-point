@@ -77,3 +77,40 @@ export const getMembersCountForLocation = async (locationId: string) => {
     }))
     return membersCount?.[0]!.count as unknown as number
 }
+
+export const getCompaniesCount = async () => {
+    const { rest } = directusStore.getState()
+    const companiesCount = await rest.request(aggregate("companies", {
+        aggregate: {
+            count: ["*"]
+        }
+    }))
+    return companiesCount?.[0]!.count as unknown as number
+}
+
+export const getLocationsCount = async () => {
+    const { rest } = directusStore.getState()
+    const locationsCount = await rest.request(aggregate("rooms", {
+        aggregate: {
+            count: ["*"]
+        },
+        query: {
+            filter: {
+                type: {
+                    _eq: "group"
+                }
+            }
+        }
+    }))
+    return locationsCount?.[0]!.count as unknown as number
+}
+
+export const getUsersCount = async () => {
+    const { rest } = directusStore.getState()
+    const usersCount = await rest.request(aggregate("directus_users", {
+        aggregate: {
+            count: ["*"]
+        }
+    }))
+    return usersCount?.[0]!.count as unknown as number
+}

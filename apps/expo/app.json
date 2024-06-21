@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "A2APoint Community",
+    "name": "A2APoint",
     "slug": "a2apoint-community",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -23,7 +23,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.a2apoint.community"
+      "package": "com.a2apoint.community",
+      "googleServicesFile": "./assets/firebase/google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -32,7 +33,9 @@
     },
     "plugins": [
       "expo-router",
-      "expo-font"
+      "expo-font",
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth"
     ],
     "experiments": {
       "typedRoutes": true

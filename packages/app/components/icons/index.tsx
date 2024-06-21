@@ -1,5 +1,5 @@
 import { iconWithClassName } from "app/lib/iconsWithClassName";
-import { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot, Star, Badge, Award, Building2, Rocket, Plus, CreditCard, ChevronRight, AtSign, Rows2, Users } from "lucide-react-native";
+import { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot, Star, Badge, Award, Building2, Rocket, Plus, CreditCard, ChevronRight, AtSign, Rows2, Users, Edit, Delete, MessageCircleMore, Lock, Trash, LogIn, Phone, BriefcaseBusiness, Shield, UserCog2 } from "lucide-react-native";
 
 iconWithClassName(Check);
 iconWithClassName(ChevronDown);
@@ -38,5 +38,15 @@ iconWithClassName(ChevronRight)
 iconWithClassName(AtSign);
 iconWithClassName(Rows2);
 iconWithClassName(Users);
+iconWithClassName(Edit);
+iconWithClassName(Delete);
+iconWithClassName(MessageCircleMore);
+iconWithClassName(Lock);
+iconWithClassName(Trash);
+iconWithClassName(LogIn);
+iconWithClassName(Phone);
+iconWithClassName(BriefcaseBusiness);
+iconWithClassName(Shield);
+iconWithClassName(UserCog2);
 
-export { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot, Star, Badge, Award, Building2, Rocket, Plus, CreditCard, ChevronRight, AtSign, Rows2, Users };
+export { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot, Star, Badge, Award, Building2, Rocket, Plus, CreditCard, ChevronRight, AtSign, Rows2, Users, Edit, Delete, MessageCircleMore, Lock, Trash, LogIn, Phone, BriefcaseBusiness, Shield, UserCog2 };

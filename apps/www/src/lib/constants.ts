@@ -1,13 +1,8 @@
-import { token } from "app/store/directus"
+import { createDirectus, rest, staticToken } from "@directus/sdk"
+import Stripe from "stripe"
 
 export const directusUrl = "https://dashboard.a2apoint.com"
 export const nextUrl = process.env.NEXT_PUBLIC_URL
-export const directusToken = token
-export const basicPlanStripeCodes = {
-    monthly: "price_1POIoQCXSPTRj2Wj7dkgRn4d",
-    yearly: "price_1POIyzCXSPTRj2WjdgbDZYge"
-}
-export const proPlanStripeCodes = {
-    monthly: "price_1POIxACXSPTRj2WjrlgGAnro",
-    yearly: "price_1POJ0TCXSPTRj2WjszJgywln"
-}
+export const canUpdateToken = "ln_N8JIY7VkTZzD-6H0tJsv8FMc39OBf"
+export const canUpdateDirectus = createDirectus(directusUrl).with(rest()).with(staticToken(canUpdateToken))
+export const twilioVerifySID = process.env.TWILIO_VERIFY_SID

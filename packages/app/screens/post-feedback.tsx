@@ -12,10 +12,9 @@ import { Text } from "app/components/ui/text";
 import { Feedback } from "app/lib/types";
 import directusStore from "app/store/directus";
 import { createItem, updateItem } from "@directus/sdk";
-import useNavigation from "app/hooks/navigation";
-import { toast, ToastPosition, Toasts } from '@backpackapp-io/react-native-toast';
 import { useState } from "react";
-import { set } from "fp-ts";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "app/components/ui/dialog"
+import { useRouter } from "solito/navigation";
 
 export const StarIcon = (props: StarIconProps) => {
     const { colors } = useColorScheme()
@@ -43,8 +42,9 @@ type FeedbackValues = {
 export function PostFeedback({ userId, feedback }: { userId: string, feedback?: Feedback }) {
     const user = useUserDetails(userId)
     const { rest } = directusStore()
-    const { colors } = useColorScheme()
     const [loading, setLoading] = useState(false)
+    const [open, setOpen] = useState(false)
+    const router = useRouter()
 
     const handleSubmit = async (values: FeedbackValues) => {
         async function _handleSubmit() {
@@ -61,24 +61,8 @@ export function PostFeedback({ userId, feedback }: { userId: string, feedback?: 
             }
         }
         _handleSubmit().then(() => {
-            toast.success("Feedback submitted", {
-                styles: {
-                    view: {
-                        backgroundColor: colors.card
-                    },
-                    text: {
-                        color: colors.foreground
-                    },
-                    indicator: {
-                        backgroundColor: colors.success
-                    },
-                    pressable: {
-                        backgroundColor: colors.card,
-                        shadowColor: "transparent",
-                    }
-                }
-            })
             setLoading(false)
+            router.back()
         })
     }
 
@@ -101,12 +85,36 @@ export function PostFeedback({ userId, feedback }: { userId: string, feedback?: 
                 multiline
                 className="w-full"
             />
-            <Button disabled={loading} className="" onPress={() => {
-                props.submitForm()
-                props.resetForm()
-            }}>
-                <Text>Submit</Text>
-            </Button>
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                    <Button disabled={loading} className="">
+                        <Text>Submit</Text>
+                    </Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Submit Feedback</DialogTitle>
+                    </DialogHeader>
+                    <DialogDescription>
+                        Are you sure you want to submit this feedback?
+                    </DialogDescription>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <View className="flex-row items-center gap-4 justify-end">
+                                <Button onPress={() => setOpen(false)} variant={"outline"} size={"sm"}>
+                                    <Text>Cancel</Text>
+                                </Button>
+                                <Button onPress={() => {
+                                    setOpen(false)
+                                    props.handleSubmit()
+                                }} size={"sm"}>
+                                    <Text>Submit</Text>
+                                </Button>
+                            </View>
+                        </DialogClose>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </View>
     }
 
@@ -124,7 +132,6 @@ export function PostFeedback({ userId, feedback }: { userId: string, feedback?: 
         >
             {(props) => <Form {...props} />}
         </Formik>
-        <Toasts />
     </View>
 }
 

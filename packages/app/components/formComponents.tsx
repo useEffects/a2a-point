@@ -2,7 +2,7 @@
 import { useColorScheme } from "app/hooks/color-scheme";
 import { cn } from "app/lib/utils";
 import { Dispatch, ReactNode, SetStateAction, useEffect, useMemo, useState } from "react";
-import { DimensionValue, Image, TextInputProps, View } from "react-native";
+import { DimensionValue, Image, Platform, TextInputProps, View } from "react-native";
 import { SelectRootProps } from "./primitives/select/types";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
@@ -21,15 +21,13 @@ import { Separator } from "./ui/separator";
 import { directusUrl } from "app/lib/constants";
 import OutsidePressHandler from 'react-native-outside-press';
 import Collapsible from "react-native-collapsible";
-import { get, set } from "lodash";
-import { FlatList } from "./utils/virtual-lists";
-import { ChevronDown, ChevronUp } from "app/components/icons";
 
 type AdditionalFormInputProps = {
     error?: string,
     label?: string,
     maxLines?: number,
-    initialHeight?: DimensionValue
+    initialHeight?: DimensionValue,
+    rightComponent?: () => ReactNode,
 }
 
 export const initialInputHeight = 40
@@ -39,21 +37,26 @@ export const FormInput = (props: TextInputProps & AdditionalFormInputProps) => {
     const [height, setHeight] = useState<DimensionValue>(props.initialHeight ?? initialInputHeight)
     const { colors } = useColorScheme()
 
+    const RightComponent = props.rightComponent ?? (() => <></>)
+
     const handleSizeChange = (newHeight: number) => {
         if (newHeight <= initialInputHeight * maxLines && newHeight >= initialInputHeight) {
             setHeight(newHeight)
         }
     }
 
-    return <View className="flex-col gap-2 w-full">
+    return <View className="flex-col gap-2 flex-grow">
         {props.label && <Text className={cn("text-sm", error?.length ? "text-destructive" : "text-subtext")}>{label}</Text>}
-        <Input
-            {...rest}
-            style={{ height, borderColor: error?.length ? colors.destructive : colors.border }}
-            onContentSizeChange={e => handleSizeChange(e.nativeEvent.contentSize.height)}
-            multiline
-            className="text-base"
-        />
+        <View className="flex-row gap-4 items-center">
+            <Input
+                {...rest}
+                style={{ height: Platform.OS !== "web" ? height : undefined, borderColor: error?.length ? colors.destructive : colors.border }}
+                onContentSizeChange={e => handleSizeChange(e.nativeEvent.contentSize.height)}
+                multiline={Platform.OS !== "web"}
+                className={cn("text-base flex-grow", props.readOnly && "text-subtext", rest.className)}
+            />
+            <RightComponent />
+        </View>
         {error && <Text className="text-destructive text-xs">{error}</Text>}
     </View>
 }
@@ -138,7 +141,6 @@ export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps 
     const [debouncedSearchText] = useDebounce(searchText, 500)
     const [showResults, setShowResults] = useState(false)
 
-
     const { data } = useQuery<AutoCompleteRenderItemProps[]>({
         queryKey: ["Fetch AutoComplete Data", props.item, debouncedSearchText],
         queryFn: async () => props.item === "users" ?
@@ -177,18 +179,18 @@ export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps 
         }
     }
     return <View className="w-full">
-        <View className="flex-row">
-            <FormInput
-                label={props.label}
-                error={props.error}
-                value={searchText}
-                onChangeText={handleChange}
-                onFocus={() => setShowResults(true)}
-            />
-        </View>
-        <Collapsible collapsed={!showResults}>
+        <FormInput
+            label={props.label}
+            error={props.error}
+            value={searchText}
+            onChangeText={handleChange}
+            onFocus={() => setShowResults(true)}
+            className={cn(showResults && "rounded-b-none", props.className)}
+            {...props}
+        />
+        <Collapsible collapsed={!showResults || !data.length}>
             <OutsidePressHandler onOutsidePress={() => setShowResults(false)}>
-                <View className="p-1 bg-popover rounded">
+                <View className="p-1 bg-popover rounded rounded-t-none">
                     {data.map((item, index) => <View key={index}>
                         <Button className="flex-row justify-start" variant={"base"} size={"none"} onPress={() => {
                             props.setCurrentItem(item)

@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query"
 import { MediumUsersCard, SmallUsersCard, mediumUsersFields, smallUsersFields } from "../atoms/users"
 import directusStore from "app/store/directus"
 import { directusUrl } from "app/lib/constants"
@@ -55,7 +54,7 @@ export const RenderUsers = <R,>({ mode, limit = 5, sort = [], filter, searchText
     useEffect(() => {
         async function fetchData() {
             if (endReached) return
-            const url = `${directusUrl}/users/?fields=${fields.join(",")}&limit=${limit}&filter=${filter ?? ""}&sort=${sort.join(",")}&offset=${offset * limit}&search=${searchText}`
+            const url = `${directusUrl}/users/?fields=${fields.join(",")}&limit=${limit}&filter=${filter ? JSON.stringify(filter) : ""}&sort=${sort.join(",")}&offset=${offset * limit}&search=${searchText}`
             const res = await queryClient.fetchQuery<R[]>({
                 queryKey: ["fetching users list", fields, filter, limit, offset],
                 queryFn: async () => await fetch(url, {

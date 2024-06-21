@@ -4,6 +4,8 @@ import { aggregate } from "@directus/sdk"
 import { View } from "react-native"
 import { Text } from "./ui/text"
 import { cn } from "app/lib/utils"
+import { getCompaniesCount, getListingsCount, getLocationsCount, getUsersCount } from "app/lib/misc/get-counts"
+import { HorizontalFlatList } from "./utils/virtual-lists"
 
 export const CompanyStats = ({ className }: { className?: string }) => {
     const { rest } = directusStore()
@@ -11,18 +13,10 @@ export const CompanyStats = ({ className }: { className?: string }) => {
 
     useEffect(() => {
         async function getCompanyStats() {
-            const getListingsCount = await rest.request(aggregate("listings", {
-                aggregate: {
-                    count: ["*"]
-                }
-            }))
-            const getUsersCount = await rest.request(aggregate("directus_users", {
-                aggregate: {
-                    count: ["*"]
-                }
-            }))
-            const listingsCount = getListingsCount?.[0]!.count as unknown as number
-            const usersCount = getUsersCount?.[0]!.count as unknown as number
+            const listingsCount = await getListingsCount()
+            const usersCount = await getUsersCount()
+            const companiesCount = await getCompaniesCount()
+            const locationsCount = await getLocationsCount()
             setStats([
                 {
                     title: "Listings",
@@ -31,6 +25,14 @@ export const CompanyStats = ({ className }: { className?: string }) => {
                 {
                     title: "Users",
                     count: usersCount
+                },
+                {
+                    title: "Companies",
+                    count: companiesCount
+                },
+                {
+                    title: "Locations",
+                    count: locationsCount
                 }
             ])
         }
@@ -38,11 +40,16 @@ export const CompanyStats = ({ className }: { className?: string }) => {
     }, [rest])
 
     return <View className={cn("flex-row justify-between", className)}>
-        {stats.map(stat => <View key={stat.title}>
-            <View className="flex-col gap-4 justify-center items-start w-24 h-24">
-                <Text className="">{stat.title}</Text>
-                <Text className="text-center text-5xl font-bold">{stat.count}+</Text>
-            </View>
-        </View>)}
+        <HorizontalFlatList
+            data={stats}
+            keyExtractor={item => item.title}
+            numRows={2}
+            renderItem={({ item: stat, row, col }) =>
+                <View className={cn("flex-col gap-4 justify-center items-start w-24 h-24", col === 1 && "ml-12", row === 1 && "mt-4")}>
+                    <Text className="">{stat.title}</Text>
+                    <Text className="text-center text-5xl font-bold">{stat.count}+</Text>
+                </View>
+            }
+        />
     </View>
 }

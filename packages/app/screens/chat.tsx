@@ -5,7 +5,7 @@ import { Text } from "app/components/ui/text";
 import { useColorScheme } from "app/hooks/color-scheme";
 import userStore from "app/store/user";
 import { useMemo, useState } from "react";
-import { FlatList, Image, Platform, ScrollView, View } from "react-native";
+import { Image, Platform, ScrollView, View } from "react-native";
 import { useDebounce } from "use-debounce";
 import { RoomSubscribed } from "app/context/chats"
 import { useChats } from "app/hooks/chats"
@@ -16,15 +16,13 @@ import directusStore from "app/store/directus";
 import { useQuery } from "@tanstack/react-query"
 import { directusUrl } from "app/lib/constants";
 import { readItems } from "@directus/sdk";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { FlatList } from "app/components/utils/virtual-lists";
 
 export default function ChatScreen() {
     const { rest, token } = directusStore()
-    const { colors } = useColorScheme()
     const [searchText, setSearchText] = useState("")
     const [debouncedSearchText] = useDebounce(searchText, 500)
     const { roomsSubscribed, messages } = useChats()
-    const { bottom } = useSafeAreaInsets()
 
     const filteredRoomsSubscribed = useMemo(() => {
         return roomsSubscribed.sort((a, b) => {

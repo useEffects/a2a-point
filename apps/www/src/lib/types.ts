@@ -82,3 +82,21 @@ export type Feedback = {
     content: string;
     agent: string;
 }
+
+export type AgencyPackages = {
+    id: string;
+    status: string;
+    date_created: string;
+    company: string;
+    members_count: number;
+    price: number;
+    discount: number;
+}
+
+export type Coupon = {
+    id: string;
+    status: string;
+    code: string;
+    agent_used: string | null;
+    agency_package: string;
+}

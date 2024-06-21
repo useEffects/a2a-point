@@ -21,10 +21,17 @@ export type RootStackParamList = {
     },
     "activity": undefined,
     "notifications": undefined,
-    "post": undefined,
+    "post": {
+        type: "buy" | "sale" | "rent"
+    },
     "locations-list": undefined,
     "users-list": undefined,
     "company-list": undefined,
+    "login": undefined,
+    "account-console": undefined,
+    "members-list": {
+        locationId: string
+    }
 }
 
 export type TopTabParamList = {
@@ -36,6 +43,5 @@ export type TopTabParamList = {
     "search": undefined,
     "offPlans": undefined,
     "profile": undefined,
-    "login": undefined,
     "chat": undefined,
 }

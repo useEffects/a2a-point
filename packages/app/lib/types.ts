@@ -47,13 +47,11 @@ export type Listing = {
     date_created: string;
     date_updated: string;
     title: string;
-    type: string;
     deal_type: string;
     tags: string[];
     bathrooms: number | null;
     bedrooms: number | null;
     garages: number | null;
-    floors: number | null;
     group: string;
     price: number;
     carpet_area: number;
@@ -120,6 +118,11 @@ export type User = {
     company: string | null;
     computed_rating: number | null;
     score: number | null;
+    premium_quota: number;
+    ads_quota: number;
+    plan: string | null;
+    document: string | null;
+    is_verified: boolean;
 }
 
 

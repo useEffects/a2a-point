@@ -5,7 +5,7 @@ import { cn } from "app/lib/utils"
 import { ReactNode } from "react"
 
 export const SeparatorText = (props: { wrapperClassName?: string, separatorProps?: SeparatorRootProps, children: ReactNode, hideLeft?: boolean, hideRight?: boolean }) => {
-    return <View className={cn("flex-1 flex-row w-full gap-4 items-center", props.wrapperClassName)}>
+    return <View className={cn("flex-row w-full gap-4 items-center", props.wrapperClassName)}>
         {!props.hideLeft && <Separator {...props.separatorProps} className="flex-1" />}
         {props.children}
         {!props.hideRight && <Separator {...props.separatorProps} className="flex-1" />}

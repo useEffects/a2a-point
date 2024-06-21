@@ -36,7 +36,7 @@ export function LocationDetailed({ room }: { room: LocationListingProps }) {
     return <View className="">
         <FullWidthImage source={{ uri: buildAssetUrl(room.avatar) }} />
         <View className="flex-1 p-4 flex-col gap-4">
-            <MembersList members={room.members} total={totalMembers} />
+            <MembersList locationId={room.id} members={room.members} total={totalMembers} />
             <SeparatorText hideLeft>
                 <Text>Leads posted</Text>
             </SeparatorText>

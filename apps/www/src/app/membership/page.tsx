@@ -8,19 +8,44 @@ import Buildings from "src/assets/svg/buildings";
 import { NewsLetter } from "src/components/news-letter";
 import { Button } from "src/components/ui/button";
 import { Text } from "src/components/ui/text";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { useIsSmallDevice } from '@/hooks/is-small-device';
-import { basicPlanStripeCodes, proPlanStripeCodes } from '@/lib/constants';
-import Link from 'next/link';
-import directusStore from 'app/store/directus';
+import { FormInput } from 'app/components/formComponents';
+import { useRouter } from 'next/navigation';
 import { useLogin } from '@/hooks/login';
+import userStore from 'app/store/user';
+import directusStore from 'app/store/directus';
+import { basicPlanStripeCodes, proPlanStripeCodes } from 'app/lib/constants';
 
 export default function Membership() {
+    const handleLogin = useLogin()
     const [yearly, setYearly] = useState(false)
     const isSmallDevice = useIsSmallDevice()
+    const [couponVal, setCouponVal] = useState("")
+    const router = useRouter()
+    const { user } = userStore()
     const { authenticated } = directusStore()
-    const handleLogin = useLogin()
+
+    const checkCoupon = async () => {
+        const res = await fetch(`/api/check-coupon/${couponVal}`)
+        return res.status === 200
+    }
+
+    const checkoutWithCoupon = async () => {
+        if (!authenticated) return handleLogin()
+        const isValid = await checkCoupon()
+        if (isValid) {
+            router.push(`/api/pay/${basicPlanStripeCodes.monthly}/?mode=subscription&redirect=/&coupon=${couponVal}&user_id=${user.id}`)
+        } else {
+            alert("Invalid coupon")
+        }
+    }
+
+    const checkout = (productId: string) => {
+        if (!authenticated) return handleLogin()
+        router.push(`/api/pay/${productId}/?mode=subscription&redirect=/&user_id=${user.id}`)
+    }
 
     return (
         <div className="flex flex-col gap-12 md:gap-40 relative overflow-hidden">
@@ -51,11 +76,9 @@ export default function Membership() {
                                 <p className="text-inherit"> {info} </p>
                             </div>)}
                         </div>
-                        <Link href={`/api/pay/${yearly ? item.yearlyProductId : item.monthlyProductId}/?mode=subscription&redirect=/`}>
-                            <Button className="rounded-full w-full" variant={item.isPro ? "secondary" : "default"}>
-                                <Text>Choose Plan</Text>
-                            </Button>
-                        </Link>
+                        <Button onPress={() => checkout(yearly ? item.yearlyPriceId : item.monthlyPriceId)} className="rounded-full w-full" variant={item.isPro ? "secondary" : "default"}>
+                            <Text>Choose Plan</Text>
+                        </Button>
                     </div>)}
                     <Separator className='h-[500px]' orientation={isSmallDevice ? "horizontal" : "vertical"} />
                     <div className='bg-card border px-8 flex flex-col justify-center rounded-xl gap-6 flex-1 flex-grow'>
@@ -70,6 +93,19 @@ export default function Membership() {
                                 </Text>
                             </Button>
                         </a>
+                        <Separator className='my-12' />
+                        <div className='flex flex-col gap-4'>
+                            <p>Have a coupon from your company?</p>
+                            <div className='flex gap-4'>
+                                <FormInput
+                                    value={couponVal}
+                                    onChangeText={setCouponVal} className='flex-1' placeholder='Enter coupon code'
+                                />
+                                <Button onPress={checkoutWithCoupon}>
+                                    <Text>Join</Text>
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -91,8 +127,8 @@ const items = [
         name: "Member",
         about: "For agent seeking a secure streamlined experience",
         info: ["Limited Access to Listings", "Per Post Charges"],
-        monthlyProductId: basicPlanStripeCodes.monthly,
-        yearlyProductId: basicPlanStripeCodes.yearly,
+        monthlyPriceId: basicPlanStripeCodes.monthly,
+        yearlyPriceId: basicPlanStripeCodes.yearly,
     },
     {
         monthlyAmount: 99.98,
@@ -104,8 +140,8 @@ const items = [
         about: "For agents who want to use full potential of A2A",
         info: ["Featured Listings", "Pro Badge and Logo", "Enhanced Exposure"],
         isPro: true,
-        monthlyProductId: proPlanStripeCodes.monthly,
-        yearlyProductId: proPlanStripeCodes.yearly
+        monthlyPriceId: proPlanStripeCodes.monthly,
+        yearlyPriceId: proPlanStripeCodes.yearly
     }
 ]
 

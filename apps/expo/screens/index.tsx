@@ -1,5 +1,6 @@
 import { MaterialTopTabBarProps, createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Separator } from 'app/components/ui/separator';
 import { Text } from 'app/components/ui/text';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { shortString } from 'app/lib/helpers';
@@ -8,28 +9,29 @@ import { TopTabParamList } from 'app/lib/misc/navigation';
 import { cn } from 'app/lib/utils';
 import directusStore from 'app/store/directus';
 import opacity from "hex-color-opacity";
-import { Construction, Lock, LucideIcon, MessageCircleMore, Plus, TrendingUp, User, Home } from "lucide-react-native";
+import { Construction, Home, Lock, LucideIcon, MessageCircleMore, TrendingUp, User } from "lucide-react-native";
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useKeyboardVisible } from '../hooks/keyboard';
+import AccountConsoleScreen from './account-console';
+import ActivityScreen from './activity';
 import ChatScreen from './chat';
-import ListingsScreen from './listings';
+import HomeScreen from './home';
 import FullListingScreen from './listing-detailed';
+import ListingsScreen from './listings';
 import LocationListings from './location-detailed';
+import { LocationsListScreen } from './locations-list';
 import LoginScreen from './login';
 import NotificationsScreen from './notifications';
+import OffPlansScreen from './offplans';
 import PostScreen from './post';
 import PostFeedback from './post-feedback';
 import ProfileScreen from "./profile";
 import ProfileDetailed from './profile-detailed';
 import RoomDetailed from './room-detailed';
-import ActivityScreen from './activity';
-import OffPlansScreen from './offplans';
-import HomeScreen from './home';
-import { Separator } from 'app/components/ui/separator';
 import { UsersListScreen } from './users-list';
-import { LocationsListScreen } from './locations-list';
+import { MembersList } from './members-list';
 
 const Tab = createMaterialTopTabNavigator<TopTabParamList>();
 const Stack = createStackNavigator()
@@ -141,16 +143,18 @@ const ScreensLayout = () => {
 };
 
 export default function AppLayout() {
-    return <Stack.Navigator screenOptions={{ header: () => null }}>
+    return <Stack.Navigator initialRouteName='app' screenOptions={{ header: () => null }}>
         <Stack.Screen name="app" component={ScreensLayout} />
         <Stack.Screen name="listing-detailed" component={FullListingScreen} />
         <Stack.Screen name="room-detailed" component={RoomDetailed} />
         <Stack.Screen name="profile-detailed" component={ProfileDetailed} />
         <Stack.Screen name="location-listings" component={LocationListings} />
+        <Stack.Screen name="members-list" component={MembersList} />
         <Stack.Screen name="post-feedback" component={PostFeedback} />
         <Stack.Screen name="activity" component={ActivityScreen} />
         <Stack.Screen name="notifications" component={NotificationsScreen} />
         <Stack.Screen name="login" component={LoginScreen} />
+        <Stack.Screen name="account-console" component={AccountConsoleScreen} />
         <Stack.Screen name="post" component={PostScreen} />
         <Stack.Screen name="locations-list" component={LocationsListScreen} />
         <Stack.Screen name="users-list" component={UsersListScreen} />

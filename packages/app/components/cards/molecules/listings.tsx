@@ -138,19 +138,19 @@ export const commonFilters = {
 
 export const bodies = {
     extraSmall: {
-        fields: ["id", "title", "price", "type", "date_created"],
+        fields: ["id", "title", "price", "date_created"],
         renderMethod: ExtraSmallListingCard
     },
     small: {
-        fields: ["id", "title", "price", "address", "type", "user_created.id", "user_created.avatar", "date_created", "group.id", "group.title", "group.avatar", "tags"],
+        fields: ["id", "title", "price", "address", "deal_type", "user_created.id", "user_created.avatar", "date_created", "group.id", "group.title", "group.avatar", "tags"],
         renderMethod: SmallListingCard
     },
     medium: {
-        fields: ["id", "title", "price", "description", "type", "deal_type", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "user_created.email", "date_created", "group.id", "group.title", "group.avatar", "tags"],
+        fields: ["id", "title", "price", "description", "deal_type", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "user_created.email", "date_created", "group.id", "group.title", "group.avatar", "tags"],
         renderMethod: MediumListingCard
     },
     photo: {
-        fields: ["id", "title", "price", "type", "photo_1", "photo_2", "photo_3", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "date_created"],
+        fields: ["id", "title", "price", "photo_1", "photo_2", "photo_3", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "date_created"],
         renderMethod: PhotoListingCard
     }
 }

@@ -4,6 +4,7 @@ import { Text } from "app/components/ui/text"
 import ListingsScreenComponent from "app/screens/listings"
 import { View } from "react-native"
 import { Plus } from "app/components/icons"
+import { GoToPostButtonUi } from "app/components/utils/common-ui"
 
 const ListingsScreen = () => {
     return (
@@ -11,9 +12,7 @@ const ListingsScreen = () => {
             <Header className="items-center py-4" height={"auto"}>
                 <View className="flex-row flex-1 justify-between items-center">
                     <Text className="text-xl font-bold">Listings</Text>
-                    <GoToPostButton variant={"default"} size={"icon"} className="rounded-full">
-                        <Plus size={24} className="text-primary-foreground" />
-                    </GoToPostButton>
+                    <GoToPostButtonUi />
                 </View>
             </Header>
             <ListingsScreenComponent />

@@ -8,7 +8,7 @@ import { useColorScheme } from "app/hooks/color-scheme";
 import { directusUrl } from "app/lib/constants";
 import { buildAssetUrl, timeAgo } from "app/lib/helpers";
 import { getListingsCountForUser } from "app/lib/misc/get-counts";
-import { Feedback, FullUser, User } from "app/lib/types";
+import { Company, Feedback, FullUser, User } from "app/lib/types";
 import { cn } from "app/lib/utils";
 import { StarIcon } from "app/screens/post-feedback";
 import directusStore from "app/store/directus";
@@ -28,18 +28,19 @@ import { GoToActivityButton, GoToPostFeedbackButton } from "../components/link-b
 import { Button } from "../components/ui/button";
 import LockedScreen from "./locked-screens";
 import { FilterKeys } from "./listings";
+import { queryClient } from "app/store/query";
 
-export const ProfileScreen = ({ user }: { user: FullUser }) => {
+export const ProfileScreen = (props: { user: User, company?: Company }) => {
     const { authenticated } = directusStore()
 
-    return authenticated ? <Profile user={user} /> : <LockedScreen
+    return authenticated ? <Profile {...props} /> : <LockedScreen
         SVGComponent={<ProfileSVG width={300} height={300} />}
         readMoreLink="https://a2apoint.com"
         title="Showcase your profile on A2APoint, attract more clients and grow your business"
     />
 }
 
-export function Profile({ user }: { user: FullUser }) {
+export function Profile({ user, company }: { user: User, company?: Company }) {
     const [index, setIndex] = useState(0)
     const { colors } = useColorScheme()
     const [listingsCount, setListingsCount] = useState<number | null>(0)
@@ -119,7 +120,7 @@ export function Profile({ user }: { user: FullUser }) {
         };
 
         const renderScene = SceneMap({
-            info: () => <InfoTab user={user} />,
+            info: () => <InfoTab user={user} company={company} />,
             listings: () => <ListingTab user={user} big={big} setBig={setBig} />,
             feedbacks: () => <ListingFeedbacks userId={user.id} />,
         });
@@ -160,30 +161,30 @@ const TabIcons = ({ index, isActive }: { index: number, isActive: boolean }) => 
     return <Icon style={{ marginVertical: 4 }} size={18} color={isActive ? colors.primary : colors.foreground} />
 }
 
-const InfoTab = ({ user }: { user: FullUser }) => {
+const InfoTab = ({ user, company }: { user: User, company?: Company }) => {
     return <View className="p-4 flex-col gap-4 w-full">
-        {user.company ? <View className="rounded p-4 bg-card border border-border gap-4">
+        {company ? <View className="rounded p-4 bg-card border border-border gap-4">
             <Text className="text-xl font-bold">Company</Text>
             <WithLabel label="Title">
-                <Text>{user.company.title}</Text>
+                <Text>{company.title}</Text>
             </WithLabel>
             <WithLabel label="Address">
-                <Text>{user.company.address}</Text>
+                <Text>{company.address}</Text>
             </WithLabel>
             <WithLabel label="DED License">
-                <Text>{user.company.DED_LISC}</Text>
+                <Text>{company.DED_LISC}</Text>
             </WithLabel>
             <WithLabel label="ORN">
-                <Text>{user.company.ORN}</Text>
+                <Text>{company.ORN}</Text>
             </WithLabel>
             <WithLabel label="Phone">
-                <Text>{user.company.phone}</Text>
+                <Text>{company.phone}</Text>
             </WithLabel>
             <WithLabel label="Fax">
-                <Text>{user.company.fax}</Text>
+                <Text>{company.fax}</Text>
             </WithLabel>
             <WithLabel label="Email">
-                <Text>{user.company.email}</Text>
+                <Text>{company.email}</Text>
             </WithLabel>
         </View> : <></>}
         {(user.description && user.tags && user.tags.length) ? <View className="flex flex-col gap-4 w-full">
@@ -278,45 +279,54 @@ export type UserFeedbacksProps = Omit<Feedback, "user_created"> & { user_created
 
 const ListingFeedbacks = ({ userId }: { userId: string }) => {
     const { rest } = directusStore()
-    const { data } = useQuery<UserFeedbacksProps[]>({
-        queryKey: ["listing-feedbacks"],
-        queryFn: async () => await rest.request(readItems("feedbacks", {
-            fields: ["*", "user_created.id", "user_created.first_name", "user_created.last_name", "user_created.avatar"],
-            filter: {
-                agent: { _eq: userId }
-            }
-        })) as UserFeedbacksProps[],
-        initialData: []
-    })
+    const [data, setData] = useState<UserFeedbacksProps[]>([])
+
+    useEffect(() => {
+        async function fetchData() {
+            const res = await queryClient.fetchQuery<UserFeedbacksProps[]>({
+                queryKey: ["listing-feedbacks", userId],
+                queryFn: async () => await rest.request(readItems("feedbacks", {
+                    fields: ["*", "user_created.id", "user_created.first_name", "user_created.last_name", "user_created.avatar"],
+                    filter: {
+                        agent: { _eq: userId }
+                    }
+                })) as UserFeedbacksProps[],
+                initialData: []
+            })
+            setData(res)
+        }
+        fetchData()
+    }, [])
+
+    const handleDelete = async (id: string) => {
+        await rest.request(deleteItem("feedbacks", id))
+        setData(data.filter(item => item.id !== id))
+    }
 
     return !data?.length ? <View className="p-4">
         <Text>No feedbacks received yet</Text>
     </View> : <FlatList
         contentContainerClassName="p-4"
         data={data}
-        renderItem={({ item }) => <RenderFeedbackCard {...item} />}
+        renderItem={({ item }) => <RenderFeedbackCard {...item} handleDelete={handleDelete} />}
         scrollEnabled={false}
         ItemSeparatorComponent={() => <Separator className="my-6" />}
     />
 }
 
-const RenderFeedbackCard = (props: UserFeedbacksProps) => {
+const RenderFeedbackCard = (props: UserFeedbacksProps & { handleDelete: (id: string) => void }) => {
     const { rest } = directusStore()
     const { user } = userStore()
-
-    const handleDelete = async () => {
-        await rest.request(deleteItem("feedbacks", props.id))
-    }
 
     return <View className="flex-col gap-4">
         <View className="flex-row items-center justify-between">
             <UserChip user={props.user_created} />
             {user.id === props.user_created.id ?
-                <View className="flex-row items-center gap-4">
+                <View className="flex-row items-center gap-2">
                     <GoToPostFeedbackButton agentId={props.agent} feedbackId={props.id} size={"sm"} variant={"outline"}>
                         <Text>Edit</Text>
                     </GoToPostFeedbackButton>
-                    <Button onPress={handleDelete} size={"sm"} variant={"outline"}>
+                    <Button onPress={() => props.handleDelete(props.id)} size={"sm"} variant={"outline"}>
                         <Text>Delete</Text>
                     </Button>
                 </View> : <></>}

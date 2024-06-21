@@ -7,7 +7,8 @@ import * as FileSystem from "expo-file-system";
 import TimeAgo from 'javascript-time-ago';
 import en from "javascript-time-ago/locale/en";
 import { Alert, Linking, Platform } from "react-native";
-import { appName, directusUrl } from "./constants";
+import { appName, directusUrl, messagesFolderName } from "./constants";
+import * as DocumentPicker from 'expo-document-picker';
 
 TimeAgo.addLocale(en)
 
@@ -240,4 +241,24 @@ export const checkCollectionId = async (id: string, collection: string): Promise
     console.error(error)
     return false
   }
+}
+
+export const pickDocuments = async (params: DocumentPicker.DocumentPickerOptions): Promise<Asset<withUri>[]> => {
+  const result = await DocumentPicker.getDocumentAsync(params)
+  if (!result.canceled) {
+    return result.assets.map(asset => {
+      return {
+        uri: asset.uri,
+        mimeType: asset.mimeType ?? "application/octet-stream",
+        name: asset.name
+      }
+    }).filter(async asset => {
+      const fileInfo = await FileSystem.getInfoAsync(asset.uri, { size: true }) as FileSystem.FileInfo & { size: number }
+      if (fileInfo.size > 1 * 1024 * 1024) {
+        alert(`File size exceeds 1MB limit for ${asset.name} (${fileInfo.size / 1000 / 1000}MB)`)
+        return false
+      }
+      return true
+    })
+  } else return []
 }

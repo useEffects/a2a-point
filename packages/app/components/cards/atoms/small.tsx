@@ -23,7 +23,7 @@ export const OpenDetailsButton = ({ id, size = "sm" }: { id: string, size?: "def
     </Button>
 }
 
-export type SmallListingCardProps = Pick<Listing, "id" | "title" | "price" | "type" | "tags" | "date_created"> & { user_created: Pick<User, "id" | "avatar"> } & { group: Pick<Room, "id" | "title" | "avatar"> }
+export type SmallListingCardProps = Pick<Listing, "id" | "title" | "price" | "deal_type" | "tags" | "date_created"> & { user_created: Pick<User, "id" | "avatar"> } & { group: Pick<Room, "id" | "title" | "avatar"> }
 
 export const RenderMetrics = ({ listingId }: { listingId: string }) => {
     const [metrics, setMetrics] = useState<ListingCardMetrics | null>(null)
@@ -61,7 +61,7 @@ export const SmallListingCard = (item: SmallListingCardProps) => {
                 <Text className="text-lg font-bold w-[300px]">{item.title}</Text>
                 <View className="flex-row justify-between gap-4 items-center">
                     <Text className="!text-success">AED {Number(item.price).toLocaleString()}</Text>
-                    <Text style={{ backgroundColor: opacity(colors.success, 0.1) }} className="text-success px-1 rounded">{item.type}</Text>
+                    <Text style={{ backgroundColor: opacity(colors.success, 0.1) }} className="text-success px-1 rounded">{item.deal_type}</Text>
                 </View>
                 <View className="flex-row gap-1 flex-wrap items-center">
                     {item.tags.map((tag, i) => <Text className="text-info text-sm px-1 rounded" style={{ backgroundColor: opacity(colors.info, 0.1) }} key={i}>{tag}</Text>)}

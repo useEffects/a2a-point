@@ -3,7 +3,15 @@ import useNavigation from "app/hooks/navigation"
 import { X } from "lucide-react-native"
 import { GestureResponderEvent } from "react-native"
 import { Button, ButtonProps } from "../ui/button"
-import { FilterKeys, FilterType } from "app/screens/listings"
+import { FilterKeys } from "app/screens/listings"
+
+export const useGoToRoute = (route: "notifications" | "account-console") => {
+    const navigation = useNavigation()
+
+    return () => {
+        navigation.getState() && navigation.push(route)
+    }
+}
 
 export const CloseButton = (props: ButtonProps) => {
     const { colors } = useColorScheme()
@@ -113,11 +121,14 @@ export const GoToNotificationsButton = (props: ButtonProps) => {
     return <Button variant={"base"} size={"none"} onPress={goToNotifications} {...props} />
 }
 
-export const GoToPostButton = (props: ButtonProps) => {
+export const GoToPostButton = (props: ButtonProps & { type: "buy" | "sale" | "rent", additionalOnPress?: () => void }) => {
     const navigation = useNavigation()
 
     const goToPost = () => {
-        navigation.getState() && navigation.push("post")
+        props.additionalOnPress && props.additionalOnPress()
+        navigation.getState() && navigation.push("post", {
+            type: props.type
+        })
     }
 
     return <Button variant={"base"} size={"none"} onPress={goToPost} {...props} />
@@ -166,4 +177,16 @@ export const GoToListingsListButton = (props: ButtonProps & {
     }
 
     return <Button variant={"base"} size={"none"} onPress={goToListingsList} {...props} />
+}
+
+export const GoToMembersListButton = (props: ButtonProps & { locationId: string }) => {
+    const navigation = useNavigation()
+    
+    const goToMembersList = () => {
+        navigation.getState() && navigation.push("members-list", {
+            locationId: props.locationId
+        })
+    }
+
+    return <Button variant={"base"} size={"none"} onPress={goToMembersList} {...props} />
 }

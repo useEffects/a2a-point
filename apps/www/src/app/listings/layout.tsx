@@ -6,7 +6,7 @@ import { Text } from "@/components/ui/text"
 import { useIsSmallDevice } from "@/hooks/is-small-device"
 import { SmallListingCardProps } from "app/components/cards/atoms/small"
 import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings"
-import { SmallLocationCards } from "app/components/listings-cards/molecules/locations"
+import { SmallLocationCards } from "app/components/cards/molecules/locations"
 import { ArrowUpRight } from "lucide-react"
 import { ReactNode } from "react"
 
@@ -25,7 +25,7 @@ export default function ListingsLayout({ children }: { children: ReactNode }) {
                         <p className="text-2xl font-bold">Premium listings curated by <span className="text-primary">A2APoint</span></p>
                         <RenderListings<SmallListingCardProps>
                             render={bodies.small}
-                            filterMethod={commonFilters[CommonFilters.Premium]()}
+                            filter={commonFilters[CommonFilters.Premium]()}
                             flatListProps={{
                                 scrollEnabled: false,
                                 className: "flex-none"
