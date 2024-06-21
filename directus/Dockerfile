@@ -8,8 +8,8 @@ RUN pip3 install requests
 WORKDIR /app/directus
 
 COPY package.json package.json
-RUN yarn install
-RUN yarn add sharp --ignore-engines --ignore-workspace-root-check
+# RUN yarn install
+# RUN yarn add sharp --ignore-engines --ignore-workspace-root-check
 COPY directus .
 RUN mv prod.env .env
 
@@ -65,6 +65,6 @@ ENV DB_PASSWORD=${DB_PASSWORD}
 
 EXPOSE 8055
 
-RUN yarn bootstrap
+RUN npx --yes directus bootstrap
 # RUN yarn snapshot-apply
-ENTRYPOINT [ "sh", "-c", "yarn start" ]
+ENTRYPOINT [ "sh", "-c", "npx --yes directus start" ]
