@@ -19,8 +19,8 @@ export default function ProfileScreen() {
             <View className="flex-row gap-8 justify-between flex-1 items-center">
                 <Text className="text-xl font-bold">Profile</Text>
                 <View className="flex-row gap-4 items-center">
-                    {authenticated ? <ProfileDropdown /> : <></>}
                     <ToggleTheme />
+                    {authenticated ? <ProfileDropdown /> : <></>}
                 </View>
             </View>
         </Header>

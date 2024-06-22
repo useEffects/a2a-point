@@ -1,10 +1,11 @@
-import Stripe from "stripe"
+import Stripe from "stripe";
 
-export const directusUrl = "https://dashboard.a2apoint.com";
-export const directusWSUrl = "wss://dashboard.a2apoint.com/websocket";
-export const portfolioUrl = "https://a2apoint.com"
+export const directusUrl = "https://dev.dashboard.a2apoint.com";
+export const directusWSUrl = "wss://dev.dashboard.a2apoint.com/websocket";
+export const portfolioUrl = "https://dev.a2apoint.com"
 export const appName = "a2apoint"
-export const messagesFolderName = "4006910f-be8d-43b0-acff-7fe83ed90b43"
+export const messagesFolderId = "4006910f-be8d-43b0-acff-7fe83ed90b43"
+export const documentsFolderId = "2e080305-7ca1-4652-8903-d3deab11f5b1"
 export const savedByMeUrl = `${directusUrl}/admin/content/listings?bookmark=6`
 export const viewedByMeUrl = `${directusUrl}/admin/content/listings?bookmark=7`
 
@@ -67,3 +68,5 @@ export const products: {
             mode: "payment"
         }
     ];
+
+export const phoneRegionalCode = process.env.NODE_ENV === "production" ? "AE" : "IN"

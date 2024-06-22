@@ -2,7 +2,7 @@ import { UserChip } from "app/components/user-chip"
 import { getDMRoomId, shortString, timeAgo } from "app/lib/helpers"
 import { Listing, Room, User } from "app/lib/types"
 import userStore from "app/store/user"
-import { MessageCircleMore, Lock, Edit, Delete, Trash } from "app/components/icons"
+import { MessageCircleMore, Lock, Edit, Trash } from "app/components/icons"
 import { Button } from "../../ui/button"
 import { Text } from "../../ui/text"
 import { RenderMetrics } from "./small"
@@ -14,7 +14,7 @@ import { LocationChip } from "app/components/utils/chips"
 import { directusUrl } from "app/lib/constants"
 import * as Linking from 'expo-linking';
 
-export type MediumListingCardProps = Pick<Listing, "id" | "title" | "price" | "deal_type" | "description" | "date_created"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email"> } & { group: Pick<Room, "id" | "title" | "avatar"> }
+export type MediumListingCardProps = Pick<Listing, "id" | "title" | "price" | "deal_type" | "description" | "date_created"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email" | "plan"> } & { group: Pick<Room, "id" | "title" | "avatar"> }
 
 export const LockedChatButton = () => {
     const { colors } = useColorScheme()
@@ -40,7 +40,7 @@ export const MediumListingCard = (item: MediumListingCardProps) => {
             <Text className="text-lg text-primary">{item.title}</Text>
             <View className="flex-row justify-between w-full">
                 <LocationChip {...item.group} />
-                {true && <View className="flex-row gap-4">
+                {user.id === item.user_created.id && <View className="flex-row gap-4">
                     <Button variant={"base"} size={"none"}>
                         <Edit size={18} className="text-info" />
                     </Button>

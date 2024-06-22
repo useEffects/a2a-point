@@ -6,7 +6,7 @@ import { UsersListComponent } from "app/screens/users-list"
 export const UsersListScreen = () => {
     return <View className="flex-1 flex-col">
         <Header>
-            <Text>Agents list</Text>
+            <Text className="font-bold text-xl">Agents list</Text>
         </Header>
         <UsersListComponent />
     </View>

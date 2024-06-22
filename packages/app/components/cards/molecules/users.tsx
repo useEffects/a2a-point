@@ -54,6 +54,7 @@ export const RenderUsers = <R,>({ mode, limit = 5, sort = [], filter, searchText
     useEffect(() => {
         async function fetchData() {
             if (endReached) return
+            if (process.env.NODE_ENV === "development" && data.length) return
             const url = `${directusUrl}/users/?fields=${fields.join(",")}&limit=${limit}&filter=${filter ? JSON.stringify(filter) : ""}&sort=${sort.join(",")}&offset=${offset * limit}&search=${searchText}`
             const res = await queryClient.fetchQuery<R[]>({
                 queryKey: ["fetching users list", fields, filter, limit, offset],
@@ -80,7 +81,7 @@ export const RenderUsers = <R,>({ mode, limit = 5, sort = [], filter, searchText
         renderItem={({ item }) => <Component {...item} />}
         ItemSeparatorComponent={() => <View className="w-4 h-4" />}
         onEndReached={(infinite && !endReached) ? () => setOffset(p => p + 1) : undefined}
-        ListFooterComponent={infinite ? <BottomLoader endReached={endReached} /> : <ViewAllButton
+        ListFooterComponent={infinite ? <BottomLoader endReached={endReached} /> : <ViewAllButton horizontal={!!flatListProps.horizontal}
             button={(props) => <GoToUsersListButton {...props} />}
         />}
         {...flatListProps}

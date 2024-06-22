@@ -28,6 +28,7 @@ type AdditionalFormInputProps = {
     maxLines?: number,
     initialHeight?: DimensionValue,
     rightComponent?: () => ReactNode,
+    autoSelect?: boolean,
 }
 
 export const initialInputHeight = 40
@@ -46,7 +47,10 @@ export const FormInput = (props: TextInputProps & AdditionalFormInputProps) => {
     }
 
     return <View className="flex-col gap-2 flex-grow">
-        {props.label && <Text className={cn("text-sm", error?.length ? "text-destructive" : "text-subtext")}>{label}</Text>}
+        <View className="flex-row justify-between items-center">
+            {props.label && <Text className={cn("text-sm", error?.length ? "text-destructive" : "text-subtext")}>{label}</Text>}
+            {props.autoSelect && error && <Text className="text-destructive text-xs text-right">{error}</Text>}
+        </View>
         <View className="flex-row gap-4 items-center">
             <Input
                 {...rest}
@@ -57,7 +61,7 @@ export const FormInput = (props: TextInputProps & AdditionalFormInputProps) => {
             />
             <RightComponent />
         </View>
-        {error && <Text className="text-destructive text-xs">{error}</Text>}
+        {!props.autoSelect && error && <Text className="text-destructive text-xs">{error}</Text>}
     </View>
 }
 
@@ -178,6 +182,7 @@ export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps 
             return <RenderListingTile {...item} currentId={props.currentItem?.id} />
         }
     }
+
     return <View className="w-full">
         <FormInput
             label={props.label}
@@ -186,6 +191,7 @@ export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps 
             onChangeText={handleChange}
             onFocus={() => setShowResults(true)}
             className={cn(showResults && "rounded-b-none", props.className)}
+            autoSelect
             {...props}
         />
         <Collapsible collapsed={!showResults || !data.length}>
@@ -210,7 +216,7 @@ export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps 
 export type RenderRoomTileProps = Pick<Room, "id" | "avatar" | "title">
 export type RenderUserTileProps = Pick<User, "id" | "avatar" | "first_name" | "last_name">
 export type RenderCompanyTileProps = Pick<Company, "id" | "avatar" | "title">
-export type RenderListingTileProps = Pick<Listing, "id" | "title"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name"> }
+export type RenderListingTileProps = Pick<Listing, "id" | "title"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "plan"> }
 
 const RenderRoomTile = (props: RenderRoomTileProps & { currentId: string | undefined }) => {
     return <View className={cn("flex-row p-2 rounded gap-4 items-center", props.currentId === props.id && "bg-popover flex-1 w-full")}>

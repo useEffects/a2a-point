@@ -5,16 +5,15 @@ import { Text } from 'app/components/ui/text';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { shortString } from 'app/lib/helpers';
 import { getListingsCount } from 'app/lib/misc/get-counts';
-import { TopTabParamList } from 'app/lib/misc/navigation';
+import { AccountConsoleParamList, MainTopTabParamList } from 'app/lib/misc/navigation';
 import { cn } from 'app/lib/utils';
 import directusStore from 'app/store/directus';
 import opacity from "hex-color-opacity";
-import { Construction, Home, Lock, LucideIcon, MessageCircleMore, TrendingUp, User } from "lucide-react-native";
+import { BriefcaseBusiness, Building2, Construction, Home, Lock, LucideIcon, MessageCircleMore, Phone, Shield, TrendingUp, User } from "lucide-react-native";
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useKeyboardVisible } from '../hooks/keyboard';
-import AccountConsoleScreen from './account-console';
 import ActivityScreen from './activity';
 import ChatScreen from './chat';
 import HomeScreen from './home';
@@ -23,6 +22,7 @@ import ListingsScreen from './listings';
 import LocationListings from './location-detailed';
 import { LocationsListScreen } from './locations-list';
 import LoginScreen from './login';
+import { MembersList } from './members-list';
 import NotificationsScreen from './notifications';
 import OffPlansScreen from './offplans';
 import PostScreen from './post';
@@ -31,15 +31,14 @@ import ProfileScreen from "./profile";
 import ProfileDetailed from './profile-detailed';
 import RoomDetailed from './room-detailed';
 import { UsersListScreen } from './users-list';
-import { MembersList } from './members-list';
+import { PhoneVerificationScreen } from './account-console/phone';
+import { CompanySelectScreen } from './account-console/company';
+import { MembershipScreen } from './account-console/membership';
+import { VerificationScreen } from './account-console/verification';
 
-const Tab = createMaterialTopTabNavigator<TopTabParamList>();
+const MainTab = createMaterialTopTabNavigator<MainTopTabParamList>();
+const AccountConsoleTab = createMaterialTopTabNavigator<AccountConsoleParamList>();
 const Stack = createStackNavigator()
-
-export type RootStackParamList = {
-    "app": undefined;
-    "listing-detailed": { id: string };
-}
 
 const canNavigateTabs = ["Listings", "Home",];
 
@@ -74,7 +73,7 @@ const ScreensLayout = () => {
     const homeTabBarLabel = useTabBarLabel(Home, "Home");
 
     const tabScreens = useMemo(() => [
-        <Tab.Screen
+        <MainTab.Screen
             key="chats"
             name="chat"
             component={ChatScreen}
@@ -82,7 +81,7 @@ const ScreensLayout = () => {
                 tabBarLabel: chatTabBarLabel,
             }}
         />,
-        <Tab.Screen
+        <MainTab.Screen
             key="offPlans"
             name="offPlans"
             component={OffPlansScreen}
@@ -90,7 +89,7 @@ const ScreensLayout = () => {
                 tabBarLabel: notificationsTabBarLabel,
             }}
         />,
-        <Tab.Screen
+        <MainTab.Screen
             key="home"
             name="home"
             component={HomeScreen}
@@ -98,7 +97,7 @@ const ScreensLayout = () => {
                 tabBarLabel: homeTabBarLabel,
             }}
         />,
-        <Tab.Screen
+        <MainTab.Screen
             key="listings"
             name="listings"
             component={ListingsScreen}
@@ -106,7 +105,7 @@ const ScreensLayout = () => {
                 tabBarLabel: listingsTabBarLabel,
             }}
         />,
-        <Tab.Screen
+        <MainTab.Screen
             key="profile"
             name="profile"
             component={ProfileScreen}
@@ -117,17 +116,16 @@ const ScreensLayout = () => {
     ], [chatTabBarLabel, notificationsTabBarLabel, listingsTabBarLabel, homeTabBarLabel, profileTabBarLabel]);
 
     const [listingsCount, setListingsCount] = useState(0);
-    const isKeyboardVisible = useKeyboardVisible();
 
     useEffect(() => {
         getListingsCount().then(setListingsCount);
     }, []);
 
-    return <Tab.Navigator
+    return <MainTab.Navigator
         initialRouteName={"home"}
         backBehavior="history"
         tabBarPosition='bottom'
-        tabBar={isKeyboardVisible ? () => null : CustomTabBar}
+        tabBar={CustomTabBar}
         screenOptions={{
             tabBarAndroidRipple: {
                 color: "transparent"
@@ -139,12 +137,55 @@ const ScreensLayout = () => {
         }}
     >
         {tabScreens}
-    </Tab.Navigator>
+    </MainTab.Navigator>
 };
+
+const AccountConsoleLayout = () => {
+    const phoneTabBarLabel = useTabBarLabel(Phone, "Phone");
+    const companyTabBarLabel = useTabBarLabel(Building2, "Company");
+    const membershipTabBarLabel = useTabBarLabel(BriefcaseBusiness, "Membership");
+    const verificationTabBarLabel = useTabBarLabel(Shield, "Verification");
+
+    return <AccountConsoleTab.Navigator tabBar={CustomTabBar} tabBarPosition='bottom'>
+        <AccountConsoleTab.Screen
+            key={"phone"}
+            name='phone'
+            component={PhoneVerificationScreen}
+            options={{
+                tabBarLabel: phoneTabBarLabel,
+            }}
+        />
+        <AccountConsoleTab.Screen
+            key={"company"}
+            name='company'
+            component={CompanySelectScreen}
+            options={{
+                tabBarLabel: companyTabBarLabel,
+            }}
+        />
+        <AccountConsoleTab.Screen
+            key={"membership"}
+            name='membership'
+            component={MembershipScreen}
+            options={{
+                tabBarLabel: membershipTabBarLabel,
+            }}
+        />
+        <AccountConsoleTab.Screen
+            key={"verification"}
+            name='verification'
+            component={VerificationScreen}
+            options={{
+                tabBarLabel: verificationTabBarLabel,
+            }}
+        />
+    </AccountConsoleTab.Navigator>
+}
 
 export default function AppLayout() {
     return <Stack.Navigator initialRouteName='app' screenOptions={{ header: () => null }}>
         <Stack.Screen name="app" component={ScreensLayout} />
+        <Stack.Screen name="account-console" component={AccountConsoleLayout} />
         <Stack.Screen name="listing-detailed" component={FullListingScreen} />
         <Stack.Screen name="room-detailed" component={RoomDetailed} />
         <Stack.Screen name="profile-detailed" component={ProfileDetailed} />
@@ -154,7 +195,6 @@ export default function AppLayout() {
         <Stack.Screen name="activity" component={ActivityScreen} />
         <Stack.Screen name="notifications" component={NotificationsScreen} />
         <Stack.Screen name="login" component={LoginScreen} />
-        <Stack.Screen name="account-console" component={AccountConsoleScreen} />
         <Stack.Screen name="post" component={PostScreen} />
         <Stack.Screen name="locations-list" component={LocationsListScreen} />
         <Stack.Screen name="users-list" component={UsersListScreen} />
@@ -163,8 +203,9 @@ export default function AppLayout() {
 
 const CustomTabBar: React.FC<MaterialTopTabBarProps> = ({ state, descriptors, navigation }) => {
     const insets = useSafeAreaInsets();
+    const isKeyboardVisible = useKeyboardVisible();
 
-    return (
+    return isKeyboardVisible ? <></> : (
         <View>
             <Separator />
             <View style={{ paddingBottom: insets.bottom }} className='flex-row items-center h-20 bg-card'>

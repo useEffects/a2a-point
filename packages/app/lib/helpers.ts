@@ -3,12 +3,12 @@ import { ListingCardMetrics } from "app/components/cards/atoms/full";
 import { Asset, withUri } from "app/components/chat-ui";
 import directusStore from "app/store/directus";
 import { queryClient } from "app/store/query";
+import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from "expo-file-system";
 import TimeAgo from 'javascript-time-ago';
 import en from "javascript-time-ago/locale/en";
 import { Alert, Linking, Platform } from "react-native";
-import { appName, directusUrl, messagesFolderName } from "./constants";
-import * as DocumentPicker from 'expo-document-picker';
+import { ProductType, appName, directusUrl, products } from "./constants";
 
 TimeAgo.addLocale(en)
 
@@ -261,4 +261,15 @@ export const pickDocuments = async (params: DocumentPicker.DocumentPickerOptions
       return true
     })
   } else return []
+}
+
+export const isUserPro = (plan: string | null | undefined) => {
+  const product = products.find(p => p.productType === plan)
+  switch (product?.productType) {
+    case ProductType.proPlanMonthly:
+    case ProductType.proPlanYearly:
+      return true
+    default:
+      return false
+  }
 }

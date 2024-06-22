@@ -1,11 +1,11 @@
-import { useNavigation as useReactNavigation, CompositeNavigationProp } from '@react-navigation/native'
-import { RootStackParamList, TopTabParamList } from 'app/lib/misc/navigation'
-import { StackNavigationProp } from '@react-navigation/stack'
 import { MaterialTopTabNavigationProp } from '@react-navigation/material-top-tabs';
+import { CompositeNavigationProp, useNavigation as useReactNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { MainTopTabParamList, RootStackParamList } from 'app/lib/misc/navigation';
 
 type AppNavigationProp = CompositeNavigationProp<
     StackNavigationProp<RootStackParamList>,
-    MaterialTopTabNavigationProp<TopTabParamList>
+    MaterialTopTabNavigationProp<MainTopTabParamList>
 >;
 
 export default function useNavigation() {

@@ -5,7 +5,7 @@ import { buildAssetUrl, getDMRoomId, shortTime, timeAgo } from "app/lib/helpers"
 import userStore from "app/store/user";
 import { UserChip } from "app/components/user-chip";
 
-export type AdvertisementCardProps = Pick<Advertisement, "id" | "caption" | "title" | "photo" | "date_created"> & { user_created: Pick<User, "id" | "first_name" | "last_name" | "email" | "avatar"> }
+export type AdvertisementCardProps = Pick<Advertisement, "id" | "caption" | "title" | "photo" | "date_created"> & { user_created: Pick<User, "id" | "first_name" | "last_name" | "email" | "avatar" | "plan"> }
 
 export const AdvertisementCard = (props: AdvertisementCardProps) => {
     const { user } = userStore()

@@ -2,6 +2,54 @@ version: 1
 directus: 10.12.1
 vendor: sqlite
 collections:
+  - collection: advertisements
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: advertisements
+      color: null
+      display_template: null
+      group: null
+      hidden: false
+      icon: live_tv
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: sort
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: advertisements
+  - collection: agency_packages
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: status
+      archive_value: archived
+      collapse: open
+      collection: agency_packages
+      color: null
+      display_template: null
+      group: null
+      hidden: true
+      icon: null
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: draft
+      versioning: false
+    schema:
+      name: agency_packages
   - collection: amenities
     meta:
       accountability: all
@@ -38,7 +86,7 @@ collections:
       display_template: null
       group: null
       hidden: false
-      icon: null
+      icon: date_range
       item_duplication_fields: null
       note: null
       preview_url: null
@@ -98,6 +146,30 @@ collections:
       versioning: false
     schema:
       name: companies
+  - collection: coupons
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: status
+      archive_value: archived
+      collapse: open
+      collection: coupons
+      color: null
+      display_template: null
+      group: null
+      hidden: true
+      icon: null
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: draft
+      versioning: false
+    schema:
+      name: coupons
   - collection: course_lessons
     meta:
       accountability: all
@@ -158,7 +230,7 @@ collections:
       display_template: null
       group: null
       hidden: false
-      icon: null
+      icon: menu_book
       item_duplication_fields: null
       note: null
       preview_url: null
@@ -182,7 +254,7 @@ collections:
       display_template: null
       group: null
       hidden: false
-      icon: null
+      icon: text_snippet
       item_duplication_fields: null
       note: null
       preview_url: null
@@ -206,7 +278,7 @@ collections:
       display_template: null
       group: null
       hidden: false
-      icon: null
+      icon: magic_exchange
       item_duplication_fields: null
       note: null
       preview_url: null
@@ -230,7 +302,7 @@ collections:
       display_template: null
       group: null
       hidden: false
-      icon: null
+      icon: forms_add_on
       item_duplication_fields: null
       note: null
       preview_url: null
@@ -278,7 +350,7 @@ collections:
       display_template: '{{status}}'
       group: null
       hidden: false
-      icon: null
+      icon: list_alt
       item_duplication_fields: []
       note: null
       preview_url: null
@@ -446,7 +518,7 @@ collections:
       display_template: null
       group: null
       hidden: false
-      icon: null
+      icon: breaking_news_alt_1
       item_duplication_fields: null
       note: null
       preview_url: null
@@ -518,9 +590,9 @@ collections:
       display_template: null
       group: null
       hidden: false
-      icon: null
+      icon: work
       item_duplication_fields: null
-      note: null
+      note: Configuration related to the website @https://a2apoint.com
       preview_url: null
       singleton: true
       sort: null
@@ -603,6 +675,802 @@ collections:
     schema:
       name: rooms_directus_users
 fields:
+  - collection: advertisements
+    field: id
+    type: uuid
+    meta:
+      collection: advertisements
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: true
+      required: false
+      sort: 1
+      special:
+        - uuid
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: advertisements
+      data_type: char
+      default_value: null
+      max_length: 36
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: advertisements
+    field: sort
+    type: integer
+    meta:
+      collection: advertisements
+      conditions: null
+      display: null
+      display_options: null
+      field: sort
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: sort
+      table: advertisements
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: advertisements
+    field: user_created
+    type: string
+    meta:
+      collection: advertisements
+      conditions: null
+      display: user
+      display_options: null
+      field: user_created
+      group: null
+      hidden: true
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{avatar.$thumbnail}} {{first_name}} {{last_name}}'
+      readonly: true
+      required: false
+      sort: 3
+      special:
+        - user-created
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: user_created
+      table: advertisements
+      data_type: char
+      default_value: null
+      max_length: 36
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_users
+      foreign_key_column: id
+  - collection: advertisements
+    field: date_created
+    type: timestamp
+    meta:
+      collection: advertisements
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: date_created
+      group: null
+      hidden: true
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      sort: 4
+      special:
+        - cast-timestamp
+        - date-created
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: date_created
+      table: advertisements
+      data_type: datetime
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: advertisements
+    field: title
+    type: string
+    meta:
+      collection: advertisements
+      conditions: null
+      display: null
+      display_options: null
+      field: title
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options:
+        iconLeft: title
+      readonly: false
+      required: true
+      sort: 6
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: title
+      table: advertisements
+      data_type: varchar
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: advertisements
+    field: photo
+    type: uuid
+    meta:
+      collection: advertisements
+      conditions: null
+      display: null
+      display_options: null
+      field: photo
+      group: null
+      hidden: false
+      interface: file-image
+      note: null
+      options:
+        folder: 0aea47c8-7ad3-44d6-9c3b-83d35291719d
+      readonly: false
+      required: true
+      sort: 7
+      special:
+        - file
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: photo
+      table: advertisements
+      data_type: char
+      default_value: null
+      max_length: 36
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_files
+      foreign_key_column: id
+  - collection: advertisements
+    field: caption
+    type: text
+    meta:
+      collection: advertisements
+      conditions: null
+      display: null
+      display_options: null
+      field: caption
+      group: null
+      hidden: false
+      interface: input-multiline
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 8
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: caption
+      table: advertisements
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: advertisements
+    field: isActive
+    type: boolean
+    meta:
+      collection: advertisements
+      conditions: null
+      display: null
+      display_options: null
+      field: isActive
+      group: null
+      hidden: false
+      interface: boolean
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 9
+      special:
+        - cast-boolean
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: isActive
+      table: advertisements
+      data_type: boolean
+      default_value: false
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: advertisements
+    field: notice-5w8go5
+    type: alias
+    meta:
+      collection: advertisements
+      conditions:
+        - name: is active
+          rule:
+            _and:
+              - isActive:
+                  _eq: true
+          options:
+            color: success
+            icon: view_kanban
+            text: Advertisement is active
+          hidden: false
+        - name: is inactive
+          hidden: true
+          options:
+            color: normal
+          rule:
+            _and:
+              - isActive:
+                  _eq: false
+      display: null
+      display_options: null
+      field: notice-5w8go5
+      group: null
+      hidden: false
+      interface: presentation-notice
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 5
+      special:
+        - alias
+        - no-data
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: advertisements
+    field: notice-qwvvqw
+    type: alias
+    meta:
+      collection: advertisements
+      conditions:
+        - name: Inactive
+          rule:
+            _and:
+              - isActive:
+                  _eq: false
+          options:
+            color: warning
+            text: Advertisement is inactive
+          hidden: false
+        - name: active
+          hidden: true
+          options:
+            color: normal
+          rule:
+            _and:
+              - isActive:
+                  _eq: true
+      display: null
+      display_options: null
+      field: notice-qwvvqw
+      group: null
+      hidden: false
+      interface: presentation-notice
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 10
+      special:
+        - alias
+        - no-data
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+  - collection: advertisements
+    field: links-ezc5ln
+    type: alias
+    meta:
+      collection: advertisements
+      conditions:
+        - name: is inactive
+          rule:
+            _and:
+              - isActive:
+                  _eq: false
+          hidden: false
+          options:
+            links:
+              - label: Proceed to pay
+                type: info
+        - name: is active
+          hidden: true
+          options: {}
+          rule:
+            _and:
+              - isActive:
+                  _eq: true
+      display: null
+      display_options: null
+      field: links-ezc5ln
+      group: null
+      hidden: false
+      interface: presentation-links
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 11
+      special:
+        - alias
+        - no-data
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+  - collection: agency_packages
+    field: id
+    type: uuid
+    meta:
+      collection: agency_packages
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: true
+      required: false
+      sort: 1
+      special:
+        - uuid
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: agency_packages
+      data_type: char
+      default_value: null
+      max_length: 36
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: agency_packages
+    field: status
+    type: string
+    meta:
+      collection: agency_packages
+      conditions: null
+      display: labels
+      display_options:
+        choices:
+          - text: $t:published
+            value: published
+            color: var(--theme--primary)
+            foreground: var(--theme--primary)
+            background: var(--theme--primary-background)
+          - text: $t:draft
+            value: draft
+            color: var(--theme--foreground)
+            foreground: var(--theme--foreground)
+            background: var(--theme--background-normal)
+          - text: $t:archived
+            value: archived
+            color: var(--theme--warning)
+            foreground: var(--theme--warning)
+            background: var(--theme--warning-background)
+        showAsDot: true
+      field: status
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        choices:
+          - text: Package created
+            value: published
+            color: var(--theme--primary)
+          - text: Payment pending
+            value: draft
+            color: var(--theme--foreground)
+          - text: $t:archived
+            value: archived
+            color: var(--theme--warning)
+      readonly: false
+      required: false
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: status
+      table: agency_packages
+      data_type: varchar
+      default_value: draft
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: agency_packages
+    field: date_created
+    type: timestamp
+    meta:
+      collection: agency_packages
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: date_created
+      group: null
+      hidden: true
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      sort: 3
+      special:
+        - cast-timestamp
+        - date-created
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: date_created
+      table: agency_packages
+      data_type: datetime
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: agency_packages
+    field: members_count
+    type: integer
+    meta:
+      collection: agency_packages
+      conditions: null
+      display: null
+      display_options: null
+      field: members_count
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 4
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: members_count
+      table: agency_packages
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: agency_packages
+    field: price
+    type: integer
+    meta:
+      collection: agency_packages
+      conditions: null
+      display: formatted-value
+      display_options: null
+      field: price
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 5
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: price
+      table: agency_packages
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: agency_packages
+    field: links-ktdvsx
+    type: alias
+    meta:
+      collection: agency_packages
+      conditions:
+        - name: show button
+          rule:
+            _and:
+              - status:
+                  _neq: draft
+          hidden: true
+          options: {}
+      display: null
+      display_options: null
+      field: links-ktdvsx
+      group: null
+      hidden: false
+      interface: presentation-links
+      note: null
+      options:
+        links:
+          - label: payment link
+            type: normal
+            url: https://a2apoint.com/api/agency-package-creation/{{id}}
+      readonly: false
+      required: false
+      sort: 7
+      special:
+        - alias
+        - no-data
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: agency_packages
+    field: coupons
+    type: alias
+    meta:
+      collection: agency_packages
+      conditions: null
+      display: null
+      display_options: null
+      field: coupons
+      group: null
+      hidden: false
+      interface: list-o2m
+      note: null
+      options:
+        template: "{{agent_used.avatar.$thumbnail}}\_{{code}}"
+      readonly: false
+      required: false
+      sort: 8
+      special:
+        - o2m
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: agency_packages
+    field: company
+    type: string
+    meta:
+      collection: agency_packages
+      conditions: null
+      display: null
+      display_options: null
+      field: company
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 9
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: company
+      table: agency_packages
+      data_type: varchar
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: companies
+      foreign_key_column: id
+  - collection: agency_packages
+    field: discount
+    type: integer
+    meta:
+      collection: agency_packages
+      conditions: null
+      display: null
+      display_options: null
+      field: discount
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options:
+        max: 100
+        min: 0
+      readonly: false
+      required: true
+      sort: 6
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: discount
+      table: agency_packages
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: amenities
     field: id
     type: integer
@@ -978,7 +1846,8 @@ fields:
       hidden: false
       interface: input
       note: null
-      options: null
+      options:
+        iconLeft: location_on
       readonly: false
       required: false
       sort: 7
@@ -1016,7 +1885,8 @@ fields:
       hidden: false
       interface: input
       note: null
-      options: null
+      options:
+        iconLeft: title
       readonly: false
       required: true
       sort: 5
@@ -1369,7 +2239,8 @@ fields:
       hidden: false
       interface: input
       note: null
-      options: null
+      options:
+        iconLeft: title
       readonly: false
       required: true
       sort: 6
@@ -1445,7 +2316,8 @@ fields:
       hidden: false
       interface: input
       note: null
-      options: null
+      options:
+        iconLeft: call
       readonly: false
       required: true
       sort: 8
@@ -1483,7 +2355,8 @@ fields:
       hidden: false
       interface: input
       note: null
-      options: null
+      options:
+        iconLeft: fax
       readonly: false
       required: false
       sort: 10
@@ -1521,7 +2394,8 @@ fields:
       hidden: false
       interface: input
       note: null
-      options: null
+      options:
+        iconLeft: mark_email_unread
       readonly: false
       required: true
       sort: 9
@@ -1559,7 +2433,8 @@ fields:
       hidden: false
       interface: input
       note: null
-      options: null
+      options:
+        iconLeft: partner_exchange
       readonly: false
       required: false
       sort: 11
@@ -1597,7 +2472,8 @@ fields:
       hidden: false
       interface: input
       note: null
-      options: null
+      options:
+        iconLeft: rounded_corner
       readonly: false
       required: false
       sort: 12
@@ -1623,6 +2499,69 @@ fields:
       foreign_key_table: null
       foreign_key_column: null
   - collection: companies
+    field: avatar
+    type: uuid
+    meta:
+      collection: companies
+      conditions: null
+      display: null
+      display_options: null
+      field: avatar
+      group: null
+      hidden: false
+      interface: file-image
+      note: null
+      options:
+        folder: ac22e406-48a6-47ba-8920-e9bc42c6bbfb
+      readonly: false
+      required: true
+      sort: 13
+      special:
+        - file
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: avatar
+      table: companies
+      data_type: char
+      default_value: null
+      max_length: 36
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_files
+      foreign_key_column: id
+  - collection: companies
+    field: agency_packages
+    type: alias
+    meta:
+      collection: companies
+      conditions: null
+      display: null
+      display_options: null
+      field: agency_packages
+      group: null
+      hidden: false
+      interface: list-o2m
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 15
+      special:
+        - o2m
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: companies
     field: members
     type: alias
     meta:
@@ -1638,13 +2577,231 @@ fields:
       options: null
       readonly: false
       required: false
-      sort: 13
+      sort: 16
       special:
         - o2m
       translations: null
       validation: null
       validation_message: null
       width: full
+  - collection: coupons
+    field: id
+    type: integer
+    meta:
+      collection: coupons
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: true
+      required: false
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: coupons
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: coupons
+    field: status
+    type: string
+    meta:
+      collection: coupons
+      conditions: null
+      display: labels
+      display_options:
+        choices:
+          - text: $t:published
+            value: published
+            color: var(--theme--primary)
+            foreground: var(--theme--primary)
+            background: var(--theme--primary-background)
+          - text: $t:draft
+            value: draft
+            color: var(--theme--foreground)
+            foreground: var(--theme--foreground)
+            background: var(--theme--background-normal)
+          - text: $t:archived
+            value: archived
+            color: var(--theme--warning)
+            foreground: var(--theme--warning)
+            background: var(--theme--warning-background)
+        showAsDot: true
+      field: status
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        choices:
+          - text: $t:published
+            value: published
+            color: var(--theme--primary)
+          - text: $t:draft
+            value: draft
+            color: var(--theme--foreground)
+          - text: $t:archived
+            value: archived
+            color: var(--theme--warning)
+      readonly: false
+      required: false
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: status
+      table: coupons
+      data_type: varchar
+      default_value: draft
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: coupons
+    field: agent_used
+    type: string
+    meta:
+      collection: coupons
+      conditions: null
+      display: null
+      display_options: null
+      field: agent_used
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 4
+      special:
+        - m2o
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: agent_used
+      table: coupons
+      data_type: char
+      default_value: null
+      max_length: 36
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_users
+      foreign_key_column: id
+  - collection: coupons
+    field: agency_package
+    type: string
+    meta:
+      collection: coupons
+      conditions: null
+      display: null
+      display_options: null
+      field: agency_package
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: true
+      sort: 5
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: agency_package
+      table: coupons
+      data_type: varchar
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: agency_packages
+      foreign_key_column: id
+  - collection: coupons
+    field: code
+    type: string
+    meta:
+      collection: coupons
+      conditions: null
+      display: null
+      display_options: null
+      field: code
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: true
+      sort: 6
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: code
+      table: coupons
+      data_type: varchar
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: course_lessons
     field: id
     type: uuid
@@ -2149,7 +3306,7 @@ fields:
       foreign_key_column: null
   - collection: course_lessons
     field: course
-    type: uuid
+    type: string
     meta:
       collection: course_lessons
       conditions: null
@@ -2163,9 +3320,8 @@ fields:
       options: null
       readonly: false
       required: false
-      sort: 15
-      special:
-        - uuid
+      sort: 13
+      special: null
       translations: null
       validation: null
       validation_message: null
@@ -2173,9 +3329,9 @@ fields:
     schema:
       name: course
       table: course_lessons
-      data_type: char
+      data_type: varchar
       default_value: null
-      max_length: 36
+      max_length: 255
       numeric_precision: null
       numeric_scale: null
       is_nullable: true
@@ -2187,22 +3343,23 @@ fields:
       foreign_key_table: courses
       foreign_key_column: id
   - collection: course_lessons
-    field: course_quiz
+    field: lesson_quiz
     type: alias
     meta:
       collection: course_lessons
       conditions: null
       display: null
       display_options: null
-      field: course_quiz
+      field: lesson_quiz
       group: null
       hidden: false
       interface: list-o2m
       note: null
-      options: null
+      options:
+        template: '{{question}}'
       readonly: false
       required: false
-      sort: 16
+      sort: 14
       special:
         - o2m
       translations: null
@@ -2365,7 +3522,7 @@ fields:
       foreign_key_column: null
   - collection: course_quiz
     field: course_lesson
-    type: uuid
+    type: string
     meta:
       collection: course_quiz
       conditions: null
@@ -2380,8 +3537,7 @@ fields:
       readonly: false
       required: false
       sort: 6
-      special:
-        - uuid
+      special: null
       translations: null
       validation: null
       validation_message: null
@@ -2389,9 +3545,9 @@ fields:
     schema:
       name: course_lesson
       table: course_quiz
-      data_type: char
+      data_type: varchar
       default_value: null
-      max_length: 36
+      max_length: 255
       numeric_precision: null
       numeric_scale: null
       is_nullable: true
@@ -2719,7 +3875,8 @@ fields:
       hidden: false
       interface: input
       note: null
-      options: null
+      options:
+        iconLeft: title
       readonly: false
       required: true
       sort: 8
@@ -2835,7 +3992,8 @@ fields:
       hidden: false
       interface: tags
       note: null
-      options: null
+      options:
+        iconLeft: tag
       readonly: false
       required: true
       sort: 11
@@ -2874,9 +4032,10 @@ fields:
       hidden: false
       interface: list-o2m
       note: null
-      options: null
+      options:
+        template: '{{name}}'
       readonly: false
-      required: false
+      required: true
       sort: 12
       special:
         - o2m
@@ -2931,23 +4090,43 @@ fields:
       foreign_key_column: null
   - collection: directus_notifications
     field: related_user
-    type: uuid
+    type: string
     meta:
       collection: directus_notifications
-      conditions: null
+      conditions:
+        - name: is type user
+          rule:
+            _and:
+              - type:
+                  _eq: user
+          required: true
+          options:
+            enableCreate: true
+            enableSelect: true
+        - name: is type not user
+          rule:
+            _and:
+              - type:
+                  _neq: user
+          readonly: true
+          hidden: true
+          required: false
+          options:
+            enableCreate: true
+            enableSelect: true
       display: null
       display_options: null
       field: related_user
       group: null
       hidden: false
-      interface: input
+      interface: select-dropdown-m2o
       note: null
       options: null
       readonly: false
       required: false
       sort: 2
       special:
-        - uuid
+        - m2o
       translations: null
       validation: null
       validation_message: null
@@ -2966,27 +4145,106 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
+      foreign_key_table: directus_users
+      foreign_key_column: id
   - collection: directus_notifications
-    field: related_room
-    type: uuid
+    field: related_listing
+    type: string
     meta:
       collection: directus_notifications
-      conditions: null
+      conditions:
+        - name: is type listing
+          rule:
+            _and:
+              - type:
+                  _eq: listing
+          required: true
+          options:
+            enableCreate: true
+            enableSelect: true
+        - name: is type not listing
+          rule:
+            _and:
+              - type:
+                  _neq: listing
+          readonly: true
+          hidden: true
+          required: false
+          options:
+            enableCreate: true
+            enableSelect: true
       display: null
       display_options: null
-      field: related_room
+      field: related_listing
       group: null
       hidden: false
-      interface: input
+      interface: select-dropdown-m2o
       note: null
       options: null
       readonly: false
       required: false
       sort: 3
       special:
-        - uuid
+        - m2o
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: related_listing
+      table: directus_notifications
+      data_type: char
+      default_value: null
+      max_length: 36
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: listings
+      foreign_key_column: id
+  - collection: directus_notifications
+    field: related_room
+    type: string
+    meta:
+      collection: directus_notifications
+      conditions:
+        - name: is type room
+          rule:
+            _and:
+              - type:
+                  _eq: room
+          required: true
+          options:
+            enableCreate: true
+            enableSelect: true
+        - name: is type not room
+          rule:
+            _and:
+              - type:
+                  _neq: room
+          readonly: true
+          hidden: true
+          required: false
+          options:
+            enableCreate: true
+            enableSelect: true
+      display: null
+      display_options: null
+      field: related_room
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 4
+      special:
+        - m2o
       translations: null
       validation: null
       validation_message: null
@@ -3005,37 +4263,36 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
+      foreign_key_table: rooms
+      foreign_key_column: id
   - collection: directus_notifications
-    field: related_listing
-    type: uuid
+    field: message
+    type: text
     meta:
       collection: directus_notifications
       conditions: null
       display: null
       display_options: null
-      field: related_listing
+      field: message
       group: null
       hidden: false
-      interface: input
+      interface: input-multiline
       note: null
       options: null
       readonly: false
       required: false
-      sort: 4
-      special:
-        - uuid
+      sort: 5
+      special: null
       translations: null
       validation: null
       validation_message: null
       width: full
     schema:
-      name: related_listing
+      name: message
       table: directus_notifications
-      data_type: char
+      data_type: text
       default_value: null
-      max_length: 36
+      max_length: null
       numeric_precision: null
       numeric_scale: null
       is_nullable: true
@@ -3233,7 +4490,7 @@ fields:
       options: null
       readonly: false
       required: false
-      sort: 3
+      sort: 6
       special: null
       translations: null
       validation: null
@@ -3271,7 +4528,7 @@ fields:
       options: null
       readonly: false
       required: false
-      sort: 4
+      sort: 3
       special: null
       translations: null
       validation: null
@@ -3309,7 +4566,7 @@ fields:
       options: null
       readonly: false
       required: false
-      sort: 5
+      sort: 4
       special: null
       translations: null
       validation: null
@@ -3332,8 +4589,247 @@ fields:
       foreign_key_table: null
       foreign_key_column: null
   - collection: directus_users
+    field: rating_count
+    type: integer
+    meta:
+      collection: directus_users
+      conditions: null
+      display: null
+      display_options: null
+      field: rating_count
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 7
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: rating_count
+      table: directus_users
+      data_type: integer
+      default_value: 0
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: directus_users
+    field: score
+    type: integer
+    meta:
+      collection: directus_users
+      conditions: null
+      display: null
+      display_options: null
+      field: score
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 8
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: score
+      table: directus_users
+      data_type: integer
+      default_value: 0
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: directus_users
+    field: premium_quota
+    type: integer
+    meta:
+      collection: directus_users
+      conditions: null
+      display: null
+      display_options: null
+      field: premium_quota
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 9
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: premium_quota
+      table: directus_users
+      data_type: integer
+      default_value: 0
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: directus_users
+    field: ads_quota
+    type: integer
+    meta:
+      collection: directus_users
+      conditions: null
+      display: null
+      display_options: null
+      field: ads_quota
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 10
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: ads_quota
+      table: directus_users
+      data_type: integer
+      default_value: 0
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: directus_users
+    field: plan
+    type: string
+    meta:
+      collection: directus_users
+      conditions: null
+      display: null
+      display_options: null
+      field: plan
+      group: null
+      hidden: false
+      interface: select-radio
+      note: null
+      options:
+        choices:
+          - text: Basic Plan (monthly)
+            value: Basic Plan (monthly)
+          - text: Basic Plan (yearly)
+            value: Basic Plan (yearly)
+          - text: Pro Plan (monthly)
+            value: Pro Plan (monthly)
+          - text: Pro Plan (yearly)
+            value: Pro Plan (yearly)
+      readonly: false
+      required: false
+      sort: 11
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: plan
+      table: directus_users
+      data_type: varchar
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: directus_users
+    field: document
+    type: integer
+    meta:
+      collection: directus_users
+      conditions: null
+      display: null
+      display_options: null
+      field: document
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{id}}'
+      readonly: false
+      required: false
+      sort: 13
+      special:
+        - m2o
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: document
+      table: directus_users
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: documents
+      foreign_key_column: id
+  - collection: directus_users
     field: company
-    type: uuid
+    type: string
     meta:
       collection: directus_users
       conditions: null
@@ -3347,9 +4843,8 @@ fields:
       options: null
       readonly: false
       required: false
-      sort: 6
-      special:
-        - uuid
+      sort: 14
+      special: null
       translations: null
       validation: null
       validation_message: null
@@ -3357,9 +4852,9 @@ fields:
     schema:
       name: company
       table: directus_users
-      data_type: char
+      data_type: varchar
       default_value: null
-      max_length: 36
+      max_length: 255
       numeric_precision: null
       numeric_scale: null
       is_nullable: true
@@ -3370,6 +4865,45 @@ fields:
       has_auto_increment: false
       foreign_key_table: companies
       foreign_key_column: id
+  - collection: directus_users
+    field: is_verified
+    type: boolean
+    meta:
+      collection: directus_users
+      conditions: null
+      display: null
+      display_options: null
+      field: is_verified
+      group: null
+      hidden: false
+      interface: boolean
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 15
+      special:
+        - cast-boolean
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: is_verified
+      table: directus_users
+      data_type: boolean
+      default_value: false
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: documents
     field: id
     type: integer
@@ -3634,83 +5168,6 @@ fields:
       foreign_key_table: null
       foreign_key_column: null
   - collection: documents
-    field: document_name
-    type: string
-    meta:
-      collection: documents
-      conditions: null
-      display: null
-      display_options: null
-      field: document_name
-      group: null
-      hidden: false
-      interface: input
-      note: null
-      options: null
-      readonly: true
-      required: true
-      sort: 8
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: document_name
-      table: documents
-      data_type: varchar
-      default_value: null
-      max_length: 255
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: true
-      is_unique: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: documents
-    field: document_file
-    type: uuid
-    meta:
-      collection: documents
-      conditions: null
-      display: null
-      display_options: null
-      field: document_file
-      group: null
-      hidden: false
-      interface: file
-      note: null
-      options: null
-      readonly: true
-      required: true
-      sort: 9
-      special:
-        - file
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: document_file
-      table: documents
-      data_type: char
-      default_value: null
-      max_length: 36
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: true
-      is_unique: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: directus_files
-      foreign_key_column: id
-  - collection: documents
     field: notice-qwgbat
     type: alias
     meta:
@@ -3738,6 +5195,124 @@ fields:
       validation: null
       validation_message: null
       width: full
+  - collection: documents
+    field: brokder_ID
+    type: string
+    meta:
+      collection: documents
+      conditions: null
+      display: null
+      display_options: null
+      field: brokder_ID
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 8
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: brokder_ID
+      table: documents
+      data_type: varchar
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: documents
+    field: ID_proof
+    type: uuid
+    meta:
+      collection: documents
+      conditions: null
+      display: null
+      display_options: null
+      field: ID_proof
+      group: null
+      hidden: false
+      interface: file
+      note: null
+      options:
+        folder: 2e080305-7ca1-4652-8903-d3deab11f5b1
+      readonly: false
+      required: false
+      sort: 9
+      special:
+        - file
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: ID_proof
+      table: documents
+      data_type: char
+      default_value: null
+      max_length: 36
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_files
+      foreign_key_column: id
+  - collection: documents
+    field: verified
+    type: boolean
+    meta:
+      collection: documents
+      conditions: null
+      display: null
+      display_options: null
+      field: verified
+      group: null
+      hidden: false
+      interface: boolean
+      note: null
+      options:
+        label: Mark as verified
+      readonly: false
+      required: false
+      sort: 10
+      special:
+        - cast-boolean
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: verified
+      table: documents
+      data_type: boolean
+      default_value: false
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: feedbacks
     field: id
     type: integer
@@ -4226,7 +5801,8 @@ fields:
       hidden: false
       interface: input
       note: null
-      options: null
+      options:
+        iconLeft: edit_document
       readonly: false
       required: true
       sort: 4
@@ -4264,7 +5840,8 @@ fields:
       hidden: false
       interface: input
       note: null
-      options: null
+      options:
+        iconLeft: format_image_left
       readonly: false
       required: false
       sort: 5
@@ -4357,6 +5934,120 @@ fields:
       has_auto_increment: false
       foreign_key_table: directus_users
       foreign_key_column: id
+  - collection: forms
+    field: commission_seller
+    type: float
+    meta:
+      collection: forms
+      conditions: null
+      display: null
+      display_options: null
+      field: commission_seller
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: true
+      sort: 10
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: commission_seller
+      table: forms
+      data_type: float
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: forms
+    field: commission_buyer
+    type: float
+    meta:
+      collection: forms
+      conditions: null
+      display: null
+      display_options: null
+      field: commission_buyer
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: true
+      sort: 11
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: commission_buyer
+      table: forms
+      data_type: float
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: forms
+    field: client_name
+    type: string
+    meta:
+      collection: forms
+      conditions: null
+      display: null
+      display_options: null
+      field: client_name
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: true
+      sort: 12
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: client_name
+      table: forms
+      data_type: varchar
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: forms_directus_users
     field: id
     type: integer
@@ -4749,7 +6440,7 @@ fields:
       interface: input
       note: null
       options:
-        iconLeft: subtitles
+        iconLeft: title
       readonly: false
       required: true
       sort: 7
@@ -4760,50 +6451,6 @@ fields:
       width: full
     schema:
       name: title
-      table: listings
-      data_type: varchar
-      default_value: null
-      max_length: 255
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: true
-      is_unique: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: listings
-    field: type
-    type: string
-    meta:
-      collection: listings
-      conditions: null
-      display: null
-      display_options: null
-      field: type
-      group: null
-      hidden: false
-      interface: select-dropdown
-      note: null
-      options:
-        choices:
-          - text: Listing
-            value: listing
-          - text: Enquiry
-            value: enquiry
-        icon: type_specimen
-      readonly: false
-      required: true
-      sort: 12
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: half
-    schema:
-      name: type
       table: listings
       data_type: varchar
       default_value: null
@@ -4832,6 +6479,7 @@ fields:
       interface: tags
       note: null
       options:
+        iconLeft: tag
         presets:
           - Real Estate
       readonly: false
@@ -5145,7 +6793,8 @@ fields:
       hidden: false
       interface: input
       note: null
-      options: null
+      options:
+        iconLeft: location_on
       readonly: false
       required: true
       sort: 24
@@ -5386,12 +7035,14 @@ fields:
       note: null
       options:
         choices:
-          - text: Rent
-            value: rent
+          - text: Give on rent
+            value: give on rent
           - text: Buy
             value: buy
-          - text: Sell
-            value: sell
+          - text: Sale
+            value: sale
+          - text: Take on rent
+            value: take on rent
       readonly: false
       required: true
       sort: 13
@@ -6841,7 +8492,8 @@ fields:
       hidden: false
       interface: input
       note: null
-      options: null
+      options:
+        iconLeft: title
       readonly: false
       required: true
       sort: 7
@@ -6917,7 +8569,8 @@ fields:
       hidden: false
       interface: tags
       note: null
-      options: null
+      options:
+        iconLeft: tag
       readonly: false
       required: true
       sort: 9
@@ -7058,7 +8711,8 @@ fields:
       hidden: false
       interface: input
       note: null
-      options: null
+      options:
+        iconLeft: nest_clock_farsight_analog
       readonly: false
       required: true
       sort: 14
@@ -7093,7 +8747,7 @@ fields:
       display_options: null
       field: id
       group: null
-      hidden: true
+      hidden: false
       interface: input
       note: null
       options: null
@@ -8128,6 +9782,69 @@ fields:
       foreign_key_table: directus_users
       foreign_key_column: id
 relations:
+  - collection: advertisements
+    field: user_created
+    related_collection: directus_users
+    meta:
+      junction_field: null
+      many_collection: advertisements
+      many_field: user_created
+      one_allowed_collections: null
+      one_collection: directus_users
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: advertisements
+      column: user_created
+      foreign_key_table: directus_users
+      foreign_key_column: id
+      constraint_name: null
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: advertisements
+    field: photo
+    related_collection: directus_files
+    meta:
+      junction_field: null
+      many_collection: advertisements
+      many_field: photo
+      one_allowed_collections: null
+      one_collection: directus_files
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: advertisements
+      column: photo
+      foreign_key_table: directus_files
+      foreign_key_column: id
+      constraint_name: null
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: agency_packages
+    field: company
+    related_collection: companies
+    meta:
+      junction_field: null
+      many_collection: agency_packages
+      many_field: company
+      one_allowed_collections: null
+      one_collection: companies
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: agency_packages
+      sort_field: null
+    schema:
+      table: agency_packages
+      column: company
+      foreign_key_table: companies
+      foreign_key_column: id
+      constraint_name: null
+      on_update: NO ACTION
+      on_delete: SET NULL
   - collection: appointments
     field: user_created
     related_collection: directus_users
@@ -8233,6 +9950,69 @@ relations:
       constraint_name: null
       on_update: NO ACTION
       on_delete: NO ACTION
+  - collection: companies
+    field: avatar
+    related_collection: directus_files
+    meta:
+      junction_field: null
+      many_collection: companies
+      many_field: avatar
+      one_allowed_collections: null
+      one_collection: directus_files
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: companies
+      column: avatar
+      foreign_key_table: directus_files
+      foreign_key_column: id
+      constraint_name: null
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: coupons
+    field: agent_used
+    related_collection: directus_users
+    meta:
+      junction_field: null
+      many_collection: coupons
+      many_field: agent_used
+      one_allowed_collections: null
+      one_collection: directus_users
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: coupons
+      column: agent_used
+      foreign_key_table: directus_users
+      foreign_key_column: id
+      constraint_name: null
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: coupons
+    field: agency_package
+    related_collection: agency_packages
+    meta:
+      junction_field: null
+      many_collection: coupons
+      many_field: agency_package
+      one_allowed_collections: null
+      one_collection: agency_packages
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: coupons
+      sort_field: null
+    schema:
+      table: coupons
+      column: agency_package
+      foreign_key_table: agency_packages
+      foreign_key_column: id
+      constraint_name: null
+      on_update: NO ACTION
+      on_delete: SET NULL
   - collection: course_lessons
     field: user_created
     related_collection: directus_users
@@ -8307,7 +10087,7 @@ relations:
       one_collection: course_lessons
       one_collection_field: null
       one_deselect_action: nullify
-      one_field: course_quiz
+      one_field: lesson_quiz
       sort_field: null
     schema:
       table: course_quiz
@@ -8380,6 +10160,69 @@ relations:
       constraint_name: null
       on_update: NO ACTION
       on_delete: SET NULL
+  - collection: directus_notifications
+    field: related_user
+    related_collection: directus_users
+    meta:
+      junction_field: null
+      many_collection: directus_notifications
+      many_field: related_user
+      one_allowed_collections: null
+      one_collection: directus_users
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: directus_notifications
+      column: related_user
+      foreign_key_table: directus_users
+      foreign_key_column: id
+      constraint_name: null
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: directus_notifications
+    field: related_listing
+    related_collection: listings
+    meta:
+      junction_field: null
+      many_collection: directus_notifications
+      many_field: related_listing
+      one_allowed_collections: null
+      one_collection: listings
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: directus_notifications
+      column: related_listing
+      foreign_key_table: listings
+      foreign_key_column: id
+      constraint_name: null
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: directus_notifications
+    field: related_room
+    related_collection: rooms
+    meta:
+      junction_field: null
+      many_collection: directus_notifications
+      many_field: related_room
+      one_allowed_collections: null
+      one_collection: rooms
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: directus_notifications
+      column: related_room
+      foreign_key_table: rooms
+      foreign_key_column: id
+      constraint_name: null
+      on_update: NO ACTION
+      on_delete: SET NULL
   - collection: directus_settings
     field: public_registration_role
     related_collection: directus_roles
@@ -8388,6 +10231,27 @@ relations:
       table: directus_settings
       column: public_registration_role
       foreign_key_table: directus_roles
+      foreign_key_column: id
+      constraint_name: null
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: directus_users
+    field: document
+    related_collection: documents
+    meta:
+      junction_field: null
+      many_collection: directus_users
+      many_field: document
+      one_allowed_collections: null
+      one_collection: documents
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: directus_users
+      column: document
+      foreign_key_table: documents
       foreign_key_column: id
       constraint_name: null
       on_update: NO ACTION
@@ -8447,12 +10311,12 @@ relations:
       on_update: NO ACTION
       on_delete: NO ACTION
   - collection: documents
-    field: document_file
+    field: ID_proof
     related_collection: directus_files
     meta:
       junction_field: null
       many_collection: documents
-      many_field: document_file
+      many_field: ID_proof
       one_allowed_collections: null
       one_collection: directus_files
       one_collection_field: null
@@ -8461,7 +10325,7 @@ relations:
       sort_field: null
     schema:
       table: documents
-      column: document_file
+      column: ID_proof
       foreign_key_table: directus_files
       foreign_key_column: id
       constraint_name: null

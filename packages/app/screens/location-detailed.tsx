@@ -18,6 +18,7 @@ import { SeparatorText } from "app/components/separator-text";
 import { MembersList } from "app/components/cards/molecules/locations";
 import { getMembersCountForLocation } from "app/lib/misc/get-counts";
 import { Button } from "app/components/ui/button";
+import directusStore from "app/store/directus";
 
 export type LocationListingProps = Pick<Room, "id" | "avatar" | "title"> & {
     members: {
@@ -26,8 +27,8 @@ export type LocationListingProps = Pick<Room, "id" | "avatar" | "title"> & {
 }
 
 export function LocationDetailed({ room }: { room: LocationListingProps }) {
-    const { colors } = useColorScheme()
     const [totalMembers, setTotalMembers] = useState(0)
+    const { authenticated } = directusStore()
 
     useEffect(() => {
         getMembersCountForLocation(room.id).then(setTotalMembers)
@@ -52,7 +53,7 @@ export function LocationDetailed({ room }: { room: LocationListingProps }) {
                     key: FilterKeys.Location,
                 }}
             />
-            <GoToRoomButton className="flex-row" variant={"default"} size={"sm"} roomId={room.id}>
+            <GoToRoomButton disabled={!authenticated} className="flex-row" variant={"default"} size={"sm"} roomId={room.id}>
                 <Text>Open group chat</Text>
                 <ArrowUpRight size={16} className="text-primary-foreground" />
             </GoToRoomButton>

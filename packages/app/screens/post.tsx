@@ -1,6 +1,7 @@
 import { cn } from "app/lib/utils";
 import { Formik, FormikProps } from "formik";
-import { Image, ScrollView, View } from "react-native";
+import { View } from "react-native";
+import { ScrollView } from "app/components/utils/virtual-lists";
 import * as Yup from "yup";
 import { AutoCompleteRenderItemProps, FormAutoSelect, FormInput, FormSelect, RenderRoomTileProps } from "app/components/formComponents";
 import { Button } from "app/components/ui/button";
@@ -48,7 +49,11 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
             .typeError("Expected broker fees must be a valid number"),
         location: Yup.object().shape({
             id: Yup.string().required("Location is required"),
-        }).nonNullable("Location is required")
+        }).nonNullable().required("Location is required"),
+        size: Yup.number()
+            .min(0)
+            .required("Size is required")
+            .typeError("Size must be a valid number"),
     })
 
 
@@ -61,7 +66,7 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
     const Form = (props: FormikProps<Form1Values>) => {
         return <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="flex-grow">
             <View className="flex-1 flex-col gap-4">
-                <View className="flex-1 flex-col gap-4">
+                <View className="flex-col gap-4">
                     <FormInput
                         label="Title"
                         value={props.values.title}
@@ -122,9 +127,7 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
                         onBlur={props.handleBlur("size")}
                     />
                 </View>
-                <Button
-                    onPress={() => props.handleSubmit()}
-                >
+                <Button onPress={() => props.handleSubmit()} className="mt-auto mb-0">
                     <Text>Next</Text>
                 </Button>
             </View>
@@ -154,10 +157,9 @@ function Form2({ formValues, setFormValues, setNavigationState }: { formValues: 
     }
 
     const Form = (props: FormikProps<Form2Values>) => {
-        console.log(props.errors)
         return <ScrollView contentContainerClassName="flex-grow">
             <View className={cn("flex-1 flex-col gap-4 justify-start")}>
-                <View className="flex-1 flex-col gap-2">
+                <View className="flex-col gap-4">
                     <Text className="my-4">Optional fields that would boost user interactions</Text>
                     <View className="flex-col gap-1">
                         <FormInput
@@ -168,7 +170,7 @@ function Form2({ formValues, setFormValues, setNavigationState }: { formValues: 
                             onBlur={props.handleBlur("tags")}
                         />
                         {(props.values.tags && props.values.tags?.split(",").length) && <View className="flex-row gap-1">
-                            {props.values.tags.split(",").map((tag, i) => <Text className="text-info bg-info/10 text-xs px-1" key={i}>{tag}</Text>)}
+                            {stringToTag(props.values.tags).map((tag, i) => <Text className="text-info bg-info/10 text-xs px-1" key={i}>{tag}</Text>)}
                         </View>}
                     </View>
                     <FormInput
@@ -196,7 +198,7 @@ function Form2({ formValues, setFormValues, setNavigationState }: { formValues: 
                         onBlur={props.handleBlur("garage")}
                     />
                 </View>
-                <View className="flex-row gap-4">
+                <View className="flex-row gap-4 mt-auto mb-0">
                     <Button className="flex-1" onPress={() => setNavigationState(p => ({ ...p, index: p.index - 1 }))}>
                         <Text>Back</Text>
                     </Button>
@@ -396,3 +398,5 @@ type Form2Values = {
 type Form3Values = {
     featured: boolean
 }
+
+const stringToTag = (str: string) => str.split(",").map(t => t.replace(/^\s+|\s+$/gm,'')).filter(Boolean)

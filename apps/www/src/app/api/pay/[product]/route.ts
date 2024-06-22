@@ -14,6 +14,8 @@ export const GET = async (req: Request, { params }: { params: { product?: string
     const foundProduct = products.find(p => p.stripeCode === product)
     if (!foundProduct) return NextResponse.json({ error: "Invalid request" }, { status: 400 })
 
+    const isMobile = Boolean(searchParams.get("isMobile"))
+
     const coupon = searchParams.get("coupon")
     let isCouponValid = false
     let agencyPackageId = ""
@@ -46,7 +48,7 @@ export const GET = async (req: Request, { params }: { params: { product?: string
                 }
             ],
             mode: foundProduct.mode,
-            success_url: `${portfolioUrl}/api/pay/callback?session_id={CHECKOUT_SESSION_ID}`,
+            success_url: `${portfolioUrl}/api/pay/callback?session_id={CHECKOUT_SESSION_ID}&isMobile=${isMobile}`,
             cancel_url: `${portfolioUrl}/membership`,
             metadata: {
                 userId: user_id,

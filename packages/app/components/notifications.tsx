@@ -1,6 +1,7 @@
 import { deleteNotification, readNotifications, updateNotification } from "@directus/sdk";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { FlatList, View } from "react-native";
+import { View } from "react-native";
+import { FlatList } from "app/components/utils/virtual-lists";
 import { Button } from "app/components/ui/button";
 import { Text } from "app/components/ui/text";
 import directusStore from "app/store/directus";
@@ -45,7 +46,7 @@ const NotificationDropdown = (props: Notification & { setNotifications: Dispatch
         setOpen(false)
     }
 
-    return <DropdownMenu open={open} onOpenChange={v => setOpen(v)}>
+    return <DropdownMenu onOpenChange={v => setOpen(v)}>
         <DropdownMenuTrigger asChild>
             <Button variant={"base"} size={"none"} onPress={() => setOpen(p => !p)}>
                 <EllipsisVertical size={14} color={colors.foreground} />

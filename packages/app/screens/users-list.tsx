@@ -1,4 +1,4 @@
-import { MediumUsersCardProps, SmallUsersCardProps } from "app/components/cards/atoms/users"
+import { MediumUsersCardProps } from "app/components/cards/atoms/users"
 import { Mode, RenderUsers } from "app/components/cards/molecules/users"
 import SearchBar from "app/components/searchbar"
 import { Separator } from "app/components/ui/separator"
@@ -26,8 +26,15 @@ export const UsersListComponent = () => {
             infinite={!searchText}
             searchText={searchText}
             flatListProps={{
-                ItemSeparatorComponent: () => <View className="w-8 h-8" />,
+                ItemSeparatorComponent: () => <Separator className="my-8" />,
                 contentContainerClassName: "p-4"
+            }}
+            filter={{
+                role: {
+                    name: {
+                        _eq: "Member"
+                    }
+                }
             }}
         />
     </View>

@@ -3,8 +3,8 @@ import { FlatList } from "app/components/utils/virtual-lists"
 import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"
 import userStore from "app/store/user"
-import { ComponentType, useEffect, useMemo, useState } from "react"
-import { ActivityIndicator, FlatListProps, View } from "react-native"
+import { ComponentType, useEffect, useMemo, useRef, useState } from "react"
+import { ActivityIndicator, FlatList as RNFlatList, FlatListProps, View } from "react-native"
 import { ExtraSmallListingCard, ExtraSmallListingCardProps } from "../atoms/extra-small"
 import { MediumListingCard, MediumListingCardProps } from "../atoms/medium"
 import { PhotoListingCard, PhotoListingProps } from "../atoms/photo"
@@ -157,7 +157,7 @@ export const bodies = {
 
 type ConfirmedAdvertisementCardProps = AdvertisementCardProps & { isAdvertisement: true }
 
-export const RenderListings = <R extends ListCardProps>({ paramFilter, render, filter, flatListProps, limit = 5, searchText = "", noAds, flatListComponent, infinite, viewAllButtonLink }: {
+export const RenderListings = <R extends ListCardProps>({ paramFilter, render, filter, flatListProps, limit = 5, searchText = "", noAds, infinite, viewAllButtonLink }: {
     render: RenderType<R>,
     filter?: ReturnType<typeof commonFilters[CommonFilters]>,
     searchText?: string,
@@ -165,7 +165,6 @@ export const RenderListings = <R extends ListCardProps>({ paramFilter, render, f
     flatListProps?: Omit<FlatListProps<ConfirmedAdvertisementCardProps | R>,
         "data" | "renderItem">,
     limit?: number,
-    flatListComponent?: ComponentType<FlatListProps<ConfirmedAdvertisementCardProps | R>>,
     infinite?: boolean,
     paramFilter?: {
         key: FilterKeys,
@@ -183,6 +182,7 @@ export const RenderListings = <R extends ListCardProps>({ paramFilter, render, f
     const [endReached, setEndReached] = useState(false)
     const [items, setItems] = useState<(R | ConfirmedAdvertisementCardProps)[]>([])
     const { colors } = useColorScheme()
+    const ref = useRef<RNFlatList<ConfirmedAdvertisementCardProps | R>>(null)
 
     const onEndReached = () => {
         if (!infinite || endReached) return
@@ -238,10 +238,8 @@ export const RenderListings = <R extends ListCardProps>({ paramFilter, render, f
         fetchData()
     }, [offset, endReached])
 
-    const FlatListComponent = flatListComponent ?? FlatList
-
     return (items.length) ?
-        <FlatListComponent
+        <FlatList
             {...flatListProps}
             data={items}
             renderItem={({ item }) => {
@@ -253,7 +251,10 @@ export const RenderListings = <R extends ListCardProps>({ paramFilter, render, f
             onEndReached={onEndReached}
             onEndReachedThreshold={0}
             keyExtractor={(item) => item.id}
-            ListFooterComponent={infinite ? () => <BottomLoader endReached={endReached} /> : <ViewAllButton button={(props) => viewAllButtonLink ? <Button {...props} onPress={() => Linking.openURL(viewAllButtonLink)} /> : <GoToListingsListButton {...props} filter={paramFilter} />} />}
+            ListFooterComponent={
+                infinite ? () => <BottomLoader endReached={endReached} /> :
+                    <ViewAllButton horizontal={!!flatListProps?.horizontal} button={(props) => viewAllButtonLink ?
+                        <Button {...props} onPress={() => Linking.openURL(viewAllButtonLink)} /> : <GoToListingsListButton {...props} filter={paramFilter} />} />}
         /> : <></>
 }
 

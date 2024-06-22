@@ -6,10 +6,11 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { View } from "react-native"
 import { Separator } from "../ui/separator"
 import { GoToPostButton } from "../link-buttons"
+import { cn } from "app/lib/utils"
 
-export const ViewAllButton = ({ button }: { button: ComponentType<ButtonProps> }) => {
+export const ViewAllButton = ({ button, horizontal }: { button: ComponentType<ButtonProps>, horizontal: boolean }) => {
     const Component = button
-    return <Component variant={"ghost"} size={"none"} className="h-28 w-28 ml-4 flex-col gap-1" >
+    return <Component variant={"ghost"} size={"none"} className={cn("h-28 w-28 flex-col gap-1", horizontal ? "mx-4" : "my-4")}>
         <Text className="text-subtext">View all</Text>
         <ArrowUpRight className="text-info" />
     </Component>

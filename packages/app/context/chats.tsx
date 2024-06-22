@@ -1,15 +1,13 @@
 import { createItem, createNotifications, readItem, readItems } from "@directus/sdk";
-import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useEffect, useState } from "react";
-import { Platform } from "react-native";
-import { Asset, ChatMessage, withId, withUri } from "app/components/chat-ui";
-import { directusUrl, directusWSUrl, messagesFolderName } from "app/lib/constants";
-import directusStore, { MyDirectusClient } from "app/store/directus";
-import userStore from "app/store/user";
-import { File, Message, Room, User } from "app/lib/types";
 import { useQueryClient } from "@tanstack/react-query";
-import { queryClient } from "app/store/query";
-import * as FileSystem from "expo-file-system";
+import { ChatMessage, withId, withUri } from "app/components/chat-ui";
+import { directusWSUrl, messagesFolderId } from "app/lib/constants";
 import { fileUpload } from "app/lib/file-upload";
+import { File, Message, Room, User } from "app/lib/types";
+import directusStore, { MyDirectusClient } from "app/store/directus";
+import { queryClient } from "app/store/query";
+import userStore from "app/store/user";
+import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useState } from "react";
 
 const roomsSubscribedQueryKey = ["Subscribed Rooms"]
 
@@ -125,7 +123,7 @@ export const ChatsProvider = ({ children, rest, token }: { children: ReactNode, 
         async function sendMessages() {
             const unsentMessages = messages.filter(m => !m.sent) as ChatMessage<withUri>[]
             unsentMessages.forEach(async message => {
-                const fileIds = await Promise.all(message.assets?.map(asset => fileUpload(asset, messagesFolderName)) ?? [])
+                const fileIds = await Promise.all(message.assets?.map(asset => fileUpload(asset, messagesFolderId)) ?? [])
                 const payload = {
                     id: message.id,
                     content: message.content,

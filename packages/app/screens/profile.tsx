@@ -275,7 +275,7 @@ const ListingTab = ({ user, big, setBig }: { user: User, big: boolean, setBig: D
     </View>
 }
 
-export type UserFeedbacksProps = Omit<Feedback, "user_created"> & { user_created: Pick<User, "id" | "first_name" | "last_name" | "avatar"> }
+export type UserFeedbacksProps = Omit<Feedback, "user_created"> & { user_created: Pick<User, "id" | "first_name" | "last_name" | "avatar" | "plan"> }
 
 const ListingFeedbacks = ({ userId }: { userId: string }) => {
     const { rest } = directusStore()

@@ -78,7 +78,7 @@ const ChatScreen = ({ roomDetails, receivers }: {
 
     return <View className="flex-col h-full w-full">
         <Header className="w-full">
-            {searchBarVisible ? <View className="flex-row items-center justify-between flex-1 w-full pr-2">
+            {searchBarVisible ? <View className="flex-row items-center justify-between flex-1 gap-4">
                 <SearchBar
                     searchText={searchText}
                     setSearchText={setSearchText}
@@ -86,20 +86,22 @@ const ChatScreen = ({ roomDetails, receivers }: {
                         showLoading: isScrollToMessagesLoading
                     }}
                 />
-                {(scrollToMessages && scrollToMessages.length) ? <View className="flex-row gap-2 items-center px-1">
-                    <Text>{scrollToIndex + 1} / {scrollToMessages.length}</Text>
-                    <View className="flex-row">
-                        <Button disabled={scrollToIndex === scrollToMessages.length - 1} className="mx-0" onPress={() => (scrollToIndex < scrollToMessages.length - 1) && setScrollToIndex(p => p + 1)} variant={"ghost"} size={"icon"}>
-                            <ChevronUp size={18} className="!text-foreground" />
-                        </Button>
-                        <Button disabled={scrollToIndex === 0} className="mx-0" variant={"ghost"} size={"icon"} onPress={() => (scrollToIndex > 0) && setScrollToIndex(p => p - 1)}>
-                            <ChevronDown size={18} className="!text-foreground" />
-                        </Button>
-                    </View>
-                </View> : <></>}
-                <Button variant={"ghost"} size={"icon"} onPress={() => { setSearchBarVisible(false); setSearchText("") }}>
-                    <X size={18} className="!text-foreground" />
-                </Button>
+                <View className="flex-row items-center">
+                    {(scrollToMessages && scrollToMessages.length) ? <View className="flex-row items-center">
+                        <Text>{scrollToIndex + 1} / {scrollToMessages.length}</Text>
+                        <View className="flex-row">
+                            <Button disabled={scrollToIndex === scrollToMessages.length - 1} className="mx-0" onPress={() => (scrollToIndex < scrollToMessages.length - 1) && setScrollToIndex(p => p + 1)} variant={"ghost"} size={"icon"}>
+                                <ChevronUp size={18} className="!text-foreground" />
+                            </Button>
+                            <Button disabled={scrollToIndex === 0} className="mx-0" variant={"ghost"} size={"icon"} onPress={() => (scrollToIndex > 0) && setScrollToIndex(p => p - 1)}>
+                                <ChevronDown size={18} className="!text-foreground" />
+                            </Button>
+                        </View>
+                    </View> : <></>}
+                    <Button variant={"ghost"} size={"icon"} onPress={() => { setSearchBarVisible(false); setSearchText("") }}>
+                        <X size={18} className="!text-foreground" />
+                    </Button>
+                </View>
             </View> : <View className="flex-row justify-between items-center flex-1">
                 <GoToButton variant={"base"} size={"none"}>
                     <View className="flex-row items-center gap-2">

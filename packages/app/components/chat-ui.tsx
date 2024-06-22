@@ -26,12 +26,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Input } from "./ui/input"
 import { Text } from "./ui/text"
 import { UserChip } from './user-chip'
+import { ScrollView } from "./utils/virtual-lists"
 
 export type withId = { id: string }
 export type withUri = { uri: string }
 export type Asset<T extends withId | withUri> = T & { mimeType: string, name: string }
 
-export type ChatMessage<T extends withId | withUri> = (Omit<Message, "user_created" | "assets"> & { user_created: Pick<User, "first_name" | "id" | "last_name" | "avatar"> } & { sent: boolean, assets?: Asset<T>[] })
+export type ChatMessage<T extends withId | withUri> = (Omit<Message, "user_created" | "assets"> & { user_created: Pick<User, "first_name" | "id" | "last_name" | "avatar" | "plan"> } & { sent: boolean, assets?: Asset<T>[] })
 
 export type CurrentMessage = {
     text: string,
@@ -171,52 +172,56 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
         name: Yup.string().required("Name is required"),
         listing: Yup.object().shape({
             id: Yup.string().required("Listing is required"),
-        }),
+        }).nonNullable().required("Listing is required"),
         commissionSeller: Yup.number().required("Seller Commission is required"),
         commissionBuyer: Yup.number().required("Buyer Commission is required"),
         clientName: Yup.string().required("Client Name is required")
     })
 
     const Form = (props: FormikProps<A2AFormType>) => {
-        return <View className='flex-1 flex-col gap-4'>
-            <FormInput
-                value={props.values.name}
-                onChangeText={props.handleChange("name")}
-                label='Title of the listing'
-                error={props.touched.name ? props.errors.name : ""}
-            />
-            <FormAutoSelect
-                currentItem={props.values.listing}
-                setCurrentItem={item => props.setFieldValue("listing", item)}
-                label="Listing"
-                error={props.errors.listing}
-                item="listings"
-                filter={{}}
-            />
-            <FormInput
-                value={props.values.commissionSeller?.toString()}
-                onChangeText={props.handleChange("commissionSeller")}
-                label='Seller Commission'
-                error={props.touched.commissionSeller ? props.errors.commissionSeller : ""}
-                keyboardType='numeric'
-            />
-            <FormInput
-                value={props.values.commissionBuyer?.toString()}
-                onChangeText={props.handleChange("commissionBuyer")}
-                label='Buyer Commission'
-                error={props.touched.commissionBuyer ? props.errors.commissionBuyer : ""}
-                keyboardType='numeric'
-            />
-            <FormInput
-                value={props.values.clientName}
-                onChangeText={props.handleChange("clientName")}
-                label='Client Name'
-                error={props.touched.clientName ? props.errors.clientName : ""}
-            />
-            <Separator />
-            <Button disabled={!props.isValid} onPress={props.submitForm}>
-                <Text>Generate</Text>
-            </Button>
+        return <View className="flex-1">
+            <ScrollView contentContainerClassName="flex-grow flex-col gap-4">
+                <View className="flex-col gap-4">
+                    <FormInput
+                        value={props.values.name}
+                        onChangeText={props.handleChange("name")}
+                        label='Title of the listing'
+                        error={props.touched.name ? props.errors.name : ""}
+                    />
+                    <FormAutoSelect
+                        currentItem={props.values.listing}
+                        setCurrentItem={item => props.setFieldValue("listing", item)}
+                        label="Listing"
+                        error={props.errors.listing}
+                        item="listings"
+                        filter={{}}
+                    />
+                    <FormInput
+                        value={props.values.commissionSeller?.toString()}
+                        onChangeText={props.handleChange("commissionSeller")}
+                        label='Seller Commission'
+                        error={props.touched.commissionSeller ? props.errors.commissionSeller : ""}
+                        keyboardType='numeric'
+                    />
+                    <FormInput
+                        value={props.values.commissionBuyer?.toString()}
+                        onChangeText={props.handleChange("commissionBuyer")}
+                        label='Buyer Commission'
+                        error={props.touched.commissionBuyer ? props.errors.commissionBuyer : ""}
+                        keyboardType='numeric'
+                    />
+                    <FormInput
+                        value={props.values.clientName}
+                        onChangeText={props.handleChange("clientName")}
+                        label='Client Name'
+                        error={props.touched.clientName ? props.errors.clientName : ""}
+                    />
+                    <Separator />
+                </View>
+                <Button disabled={!props.isValid} onPress={props.submitForm} className="mt-auto mb-0">
+                    <Text>Generate</Text>
+                </Button>
+            </ScrollView>
         </View>
     }
 
@@ -247,7 +252,7 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
             }
         </View>
         <BottomSheet open={openBottomSheet} onBackdropPress={() => setOpenBottomSheet(false)} setOpen={setOpenBottomSheet}>
-            <View className='p-4 bg-card flex-col gap-8 h-screen'>
+            <View className='p-4 bg-card flex-col gap-8'>
                 <View className='flex-row justify-between'>
                     <Text>Generate <Text className='text-primary'>Agent to Agent</Text> agreement form</Text>
                     <CloseButton onPress={() => setOpenBottomSheet(false)} />

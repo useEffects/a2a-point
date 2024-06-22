@@ -15,8 +15,9 @@ import { GoToProfileButton, GoToRoomButton } from 'app/components/link-buttons';
 import { Link } from 'solito/link';
 import Carousel from 'react-native-reanimated-carousel';
 import opacity from 'hex-color-opacity';
+import { MediumUsersCard, MediumUsersCardProps, mediumUsersFields } from './users';
 
-export const FullListingCardFields = ["*", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "user_created.email", "amenities.additional_value", "amenities.amenities_id.*", "photo1", "photo2", "photo3"]
+export const FullListingCardFields = ["*", "amenities.additional_value", "amenities.amenities_id.*", "photo1", "photo2", "photo3"].concat(mediumUsersFields.map(field => `user_created.${field}`))
 
 export const ListingIconTile = ({
     icon,
@@ -40,7 +41,7 @@ export const ListingIconTile = ({
 
 export type DetailedAmenity = ListingAmenity & { amenities_id: Amenity }
 
-export type FullListingDetailed = Listing & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email"> } & { amenities: DetailedAmenity[] }
+export type FullListingDetailed = Listing & { user_created: MediumUsersCardProps } & { amenities: DetailedAmenity[] }
 
 const Amenities = (props: DetailedAmenity) => {
     return <View className="p-4 rounded w-[45%] border border-solid border-border">
@@ -71,20 +72,17 @@ export const FullListingCard = (props: FullListingDetailed) => {
         <View className='px-4 flex flex-col gap-4'>
             <View className="flex-col gap-2">
                 <Text className="text-xl font-medium text-primary">{props.title}</Text>
-                <View className="flex-row gap-4">
+                <View className="flex-row gap-4 flex-wrap">
                     <Text className="">AED {Number(props.price).toLocaleString()}</Text>
                     <Text style={{ backgroundColor: opacity(colors.info, 0.1) }} className='p-1 rounded text-sm text-info'>Expected broker fees: {props.expected_broker_fees} % </Text>
+                    <Text className="border border-solid border-foreground px-2 rounded-full self-start">{props.deal_type}</Text>
                 </View>
-            </View>
-            <View className="flex-row items-start gap-4">
-                <Text className="border border-solid border-primary text-primary px-2 rounded-full">{props.type}</Text>
-                <Text className="border border-solid border-foreground px-2 rounded-full">{props.deal_type}</Text>
             </View>
         </View>
         <Text className='px-4'>{props.description}</Text>
         <Separator className='px-4' />
         {photos.length ? <Carousel
-            style={{marginTop: -32}}
+            style={{ marginTop: -32 }}
             loop={false}
             height={height}
             data={photos}
@@ -141,24 +139,8 @@ export const FullListingCard = (props: FullListingDetailed) => {
             />
         </View> : <></>}
         <Separator className='px-4' />
-        <View className="flex-row gap-4 items-center px-4">
-            <Text className="text-lg">Pro Member</Text>
-            <Text>{props.user_created.computed_rating}</Text>
-        </View>
-        <View className="flex-row gap-4 items-center px-4">
-            <Image source={{ uri: buildAssetUrl(props.user_created.avatar) }} className="rounded w-28 h-28" />
-            <View className="flex-col gap-2">
-                <View>
-                    <Text className="text-lg font-medium">{props.user_created.first_name} {props.user_created.last_name}</Text>
-                    <Link href={`mailto:${props.user_created.email}`}>
-                        <Text className="text-info">{props.user_created.email}</Text>
-                    </Link>
-                </View>
-                <View className="flex-row gap-2">
-                    {user.id === props.user_created.id ? <></> : <GoToRoomButton disabled={!authenticated} roomId={getDMRoomId([props.user_created.id, user.id])} size={"sm"} variant={"outline"}><Text className="!text-sm">Chat</Text></GoToRoomButton>}
-                    <GoToProfileButton disabled={!authenticated} userId={props.user_created.id} size={"sm"} variant={"outline"}><Text className="!text-sm">Profile</Text></GoToProfileButton>
-                </View>
-            </View>
+        <View className='p-4'>
+            <MediumUsersCard {...props.user_created} />
         </View>
         <Separator />
         {(views !== null && saves !== null && views !== undefined && saves !== undefined) ? <View className="flex-row gap-4 justify-around px-4">

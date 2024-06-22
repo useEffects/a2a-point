@@ -11,7 +11,7 @@ import { Text } from "app/components/ui/text";
 import { useColorScheme } from "app/hooks/color-scheme";
 import { cn } from "app/lib/utils";
 import directusStore from "app/store/directus";
-import { Award, Home, ListFilter, LucideIcon, LucideProps, Sparkles } from "lucide-react-native";
+import { Award, Handshake, Home, HousePlus, ListFilter, LucideIcon, LucideProps, Sparkles } from "lucide-react-native";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 import { useDebounce } from "use-debounce";
@@ -63,7 +63,7 @@ export default function ListingsScreenComponent({ className }: { className?: str
 
     useEffect(() => {
         setKey(p => p + 1)
-    }, [filters, debouncedSearchText])
+    }, [JSON.stringify(filters), debouncedSearchText])
 
     useEffect(() => {
         const initialFilter = (params?.key && (params?.id !== undefined || params?.id !== null)) ? getInitialFilter(params.key as FilterKeys, params.id as string) : Promise.resolve(null)
@@ -149,9 +149,9 @@ const RangeSliderTab = (props: SceneRendererProps & { navigationState: Navigatio
             const Icon = RangeSliderTabIcons(route.key)!
             const isActive = props.filters.some(f => f.key === route.key)
             return <Button className='flex-grow flex-col gap-2 relative' key={i} variant={"base"} size="none" onPress={() => props.setNavigationState(p => ({ ...p, index: i }))}>
-                <View className={cn('absolute h-2 w-2 rounded-full top-0 right-0', isActive && "bg-primary")} />
+                <View style={{ height: 8, width: 8, borderRadius: 4 }} className={cn('absolute top-0 right-0', isActive && "bg-primary")} />
                 <Icon className={cn(props.navigationState.index === i ? "text-foreground" : "text-subtext")} />
-                <View className={cn("w-full h-[1px]", props.navigationState.index === i ? "bg-foreground" : "bg-transparent")} />
+                <View className={cn("w-full h-[2px] rounded", props.navigationState.index === i ? "bg-foreground" : "bg-transparent")} />
             </Button>
         })}
     </View>
@@ -210,8 +210,8 @@ const RangeSliderScenes = (props: SceneRendererProps & { route: Route } & { filt
         }
 
         props.setFilters(filters => {
-            const newFilters = filters.filter(f => !newRangeFilters.some(nf => nf.key === f.key))
-            return [...newFilters, ...newRangeFilters]
+            const restFilters = filters.filter(f => !newRangeFilters.some(nf => nf.key === f.key))
+            return [...restFilters, ...newRangeFilters]
         })
 
         if (parking[0] === parkingRange[0] && parking[1] === parkingRange[1]) {
@@ -285,6 +285,7 @@ const RangeFilter = ({ value, setValue, range, label }: { value: [number, number
             maximumValue={maxRange}
             trackHeight={1}
             thumbSize={12}
+            trackStyle={{ height: 2 }}
         />
     </View>
 }
@@ -365,7 +366,7 @@ const ComboBoxFilters = ({ filters, setFilters }: { filters: FilterType[], setFi
         />
         <FormAutoSelect
             item='users'
-            label="Agents"
+            label="Agent"
             currentItem={agent}
             setCurrentItem={(item) => item && setAgent(item as RenderUserTileProps)}
         />
@@ -381,7 +382,7 @@ const ComboBoxFilters = ({ filters, setFilters }: { filters: FilterType[], setFi
 const CategoryFilters = ({ filters, setFilters }: { filters: FilterType[], setFilters: Dispatch<SetStateAction<FilterType[]>> }) => {
     const { colors } = useColorScheme()
 
-    return <View className="flex-row justify-between">
+    return <View className="flex-row justify-between w-full">
         {categoryTiles.map((category, i) => <Button
             onPress={() => {
                 if (filters.some(f => f.value === category.value)) {
@@ -393,9 +394,9 @@ const CategoryFilters = ({ filters, setFilters }: { filters: FilterType[], setFi
             variant={"base"}
             size={"none"}
             key={i}
-            className="flex-col gap-1">
-            <Text>{category.Icon({ size: 24, color: filters.some(f => f.key === category.key) ? colors.primary : colors.foreground })}</Text>
-            <Text className={filters.some(f => f.key === category.key) ? "text-primary" : "text-foreground"}>{category.title}</Text>
+            className="flex-col gap-1 w-1/5 justify-start">
+            {category.Icon({ size: 24, color: filters.some(f => f.key === category.key) ? colors.primary : colors.foreground })}
+            <Text className={cn("text-sm text-center w-16", filters.some(f => f.key === category.key) ? "text-primary" : "text-foreground")}>{category.title}</Text>
         </Button>)}
     </View>
 }
@@ -408,18 +409,24 @@ const categoryTiles = [
         value: CommonFilters.Premium,
     }, {
         Icon: (props: LucideProps) => <Sparkles {...props} />,
-        title: "Listing",
+        title: "Sale",
         key: FilterKeys.Listing,
         value: CommonFilters.Listing,
 
     }, {
         Icon: (props: LucideProps) => <CreditCard {...props} />,
-        title: "Enquiry",
+        title: "Buy",
         key: FilterKeys.Enquiry,
         value: CommonFilters.Enquiry
     }, {
-        Icon: (props: LucideProps) => <Home {...props} />,
-        title: "Rent",
+        Icon: (props: LucideProps) => <HousePlus {...props} />,
+        title: "Take on rent",
+        key: FilterKeys.Rent,
+        value: CommonFilters.Rent
+    },
+    {
+        Icon: (props: LucideProps) => <Handshake {...props} />,
+        title: "Give on rent",
         key: FilterKeys.Rent,
         value: CommonFilters.Rent
     }

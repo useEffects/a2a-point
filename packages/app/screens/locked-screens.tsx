@@ -1,13 +1,11 @@
-import { Text } from "app/components/ui/text";
-import PostSVG from "app/components/svg/post";
-import { View } from "react-native";
-import { GoToLoginButtonProps, GoToLoginButton as LoginButton } from "app/components/link-buttons";
-import { cn } from "app/lib/utils";
 import { ArrowUpRight } from "app/components/icons";
-import { Button, ButtonProps } from "app/components/ui/button";
-import { ReactNode } from "react";
-import { TopTabParamList } from "app/lib/misc/navigation";
+import { GoToLoginButtonProps, GoToLoginButton as LoginButton } from "app/components/link-buttons";
+import { Button } from "app/components/ui/button";
+import { Text } from "app/components/ui/text";
+import { cn } from "app/lib/utils";
 import * as Linking from "expo-linking";
+import { ReactNode } from "react";
+import { View } from "react-native";
 
 type LockedScreenProps = {
     className?: string,

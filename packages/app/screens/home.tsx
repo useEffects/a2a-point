@@ -26,6 +26,7 @@ import * as Linking from "expo-linking";
 import { ViewAllButton } from "app/components/utils/common-ui";
 import { FilterKeys } from "./listings";
 import { GoToListingsListButton } from "app/components/link-buttons";
+import { Separator } from "app/components/ui/separator";
 
 export default function HomeScreen() {
     const { authenticated, token } = directusStore()
@@ -42,7 +43,7 @@ export default function HomeScreen() {
     })
 
     return <View className="flex-1 flex-col gap-8">
-        <Text className="text-2xl font-bold text-wrap">{authenticated ? `Welcome back ${user.first_name} ${user.last_name}` : "The one stop for all agents"}</Text>
+        <Text className="text-2xl font-bold text-wrap px-4">{authenticated ? `Welcome back ${user.first_name} ${user.last_name}` : "The one stop for all agents"}</Text>
         <View className="flex-col gap-4">
             <RenderListings<PhotoListingProps>
                 render={bodies.photo}
@@ -50,30 +51,34 @@ export default function HomeScreen() {
                 flatListProps={{
                     horizontal: true,
                     showsHorizontalScrollIndicator: false,
+                    ListHeaderComponent: () => <View className="w-4 h-4" />
                 }}
             />
-            <CompanyStats className="justify-start gap-12" />
+            <CompanyStats className="justify-start gap-12 px-4" />
         </View>
-        <GoToListingsListButton filter={{
-            key: FilterKeys.Premium,
-            id: ""
-        }} variant={"base"} size={"none"} className="flex-row gap-1 items-center w-40 ml-auto mr-0">
-            <Text className="text-right text-subtext">Premium listings curated by A2APoint</Text>
-            <ArrowUpRight size={24} className="text-info" />
-        </GoToListingsListButton>
+        <SeparatorText hideRight>
+            <GoToListingsListButton filter={{
+                key: FilterKeys.Premium,
+                id: ""
+            }} variant={"base"} size={"none"} className="flex-row px-4 gap-1 items-center w-60 ml-auto mr-0">
+                <Text className="text-right text-subtext">Premium listings curated by A2APoint</Text>
+                <ArrowUpRight size={24} className="text-info" />
+            </GoToListingsListButton>
+        </SeparatorText>
         <RenderListings<SmallListingCardProps>
             render={bodies.small}
             flatListProps={{
                 horizontal: true,
+                ListHeaderComponent: () => <View className="w-4 h-4" />
             }}
             filter={commonFilters[CommonFilters.Premium]()}
             paramFilter={{ key: FilterKeys.Premium, id: "" }}
         />
-        <SeparatorText hideLeft>
+        <SeparatorText hideLeft wrapperClassName="px-4">
             <Text className="font-medium">Browse popular locations</Text>
         </SeparatorText>
         <SmallLocationCards />
-        <SeparatorText hideLeft>
+        <SeparatorText hideLeft wrapperClassName="px-4">
             <Text className="font-medium">Top rated agents</Text>
         </SeparatorText>
         <RenderUsers<SmallUsersCardProps>
@@ -82,9 +87,10 @@ export default function HomeScreen() {
             sort={["score"]}
             flatListProps={{
                 horizontal: true,
+                ListHeaderComponent: () => <View className="w-4 h-4" />
             }}
         />
-        <SeparatorText hideLeft>
+        <SeparatorText hideLeft wrapperClassName="px-4">
             <Text className="font-medium">News and feeds</Text>
         </SeparatorText>
         <FlatList
@@ -92,12 +98,13 @@ export default function HomeScreen() {
             renderItem={({ item }) => <NewsCard news={item} />}
             horizontal
             ItemSeparatorComponent={() => <View className="w-4 h-4" />}
-            ListFooterComponent={() => <ViewAllButton button={(props) => <Button {...props} onPress={() => Linking.openURL(`${portfolioUrl}/news`)} />} />}
+            ListFooterComponent={() => <ViewAllButton horizontal button={(props) => <Button {...props} onPress={() => Linking.openURL(`${portfolioUrl}/news`)} />} />}
+            ListHeaderComponent={() => <View className="w-4 h-4" />}
         />
-        <SeparatorText hideLeft>
+        <SeparatorText hideLeft wrapperClassName="px-4">
             <Text className="font-medium">Quick links</Text>
         </SeparatorText>
-        <View className="flex-row justify-between">
+        <View className="flex-row justify-between px-4">
             {externalLinks.map(({ label, href }, index) => <Link key={index} href={href} className="">
                 <Button variant={"base"} size={"none"} style={{ backgroundColor: opacity(colors.info, 0.1) }} className="flex-row gap-1 py-1 px-2 rounded">
                     <Text className="text-info">{label}</Text>

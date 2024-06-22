@@ -7,8 +7,10 @@ import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"
 import userStore from "app/store/user"
 import { useEffect, useState } from "react"
-import { ScrollView, View } from "react-native"
+import { View } from "react-native"
+import { ScrollView } from "app/components/utils/virtual-lists"
 import { useParams } from "solito/navigation"
+import { shortString } from "app/lib/helpers"
 
 export default function FullListingScreen() {
     const { rest, authenticated } = directusStore()
@@ -55,13 +57,15 @@ export default function FullListingScreen() {
         addViewCount()
     }, [params.id, rest, user.id, listing, authenticated])
 
-    return listing ? <ScrollView className="flex-col" contentContainerClassName="gap-4">
+    return listing ? <View className="flex-1">
         <Header>
             <View>
-                <Text className="font-medium">{listing.title}</Text>
+                <Text className="font-bold text-xl">{shortString(listing.title)}</Text>
             </View>
         </Header>
-        <FullListingCard {...listing} />
-        {!authenticated ? <LoginPopover /> : <></>}
-    </ScrollView> : <></>
+        <ScrollView contentContainerClassName="flex-grow py-4">
+            <FullListingCard {...listing} />
+            {!authenticated ? <LoginPopover /> : <></>}
+        </ScrollView>
+    </View> : <></>
 }

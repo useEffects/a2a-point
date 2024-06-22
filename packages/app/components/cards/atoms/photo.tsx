@@ -5,7 +5,7 @@ import { buildAssetUrl } from "app/lib/helpers";
 import { Listing, User } from "app/lib/types";
 import { Dimensions, Image, View } from "react-native";
 
-export type PhotoListingProps = Pick<Listing, "id" | "title" | "price" | "deal_type" | "photo_1" | "photo_2" | "photo_3"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name"> }
+export type PhotoListingProps = Pick<Listing, "id" | "title" | "price" | "deal_type" | "photo_1" | "photo_2" | "photo_3"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "plan"> }
 
 export const PhotoListingCard = (item: PhotoListingProps) => {
     const photo = item.photo_1 || item.photo_2 || item.photo_3

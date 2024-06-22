@@ -3,7 +3,7 @@ import directusStore from "app/store/directus"
 import * as FileSystem from "expo-file-system"
 import { directusUrl } from "../constants"
 
-export async function fileUpload(asset: Asset<withUri>, folderName: string): Promise<string> {
+export async function fileUpload(asset: Asset<withUri>, folderId: string): Promise<string> {
     const { token } = directusStore.getState()
     const fileInfo = await FileSystem.getInfoAsync(asset.uri)
     if (!fileInfo.exists) {
@@ -16,7 +16,8 @@ export async function fileUpload(asset: Asset<withUri>, folderName: string): Pro
             "Authorization": `Bearer ${token}`
         },
         parameters: {
-            folder: folderName
+            folder: folderId,
+            title: asset.name
         }
     })
     return JSON.parse(res.body).data.id

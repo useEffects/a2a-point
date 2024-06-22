@@ -73,6 +73,8 @@ export default function RootLayout() {
     return null
   }
 
+  console.log("rendering")
+
   return (
 
     <ThemeProvider value={theme}>

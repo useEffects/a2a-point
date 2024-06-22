@@ -270,3 +270,13 @@ export type NewsCategory = {
         name: string;
     };
 }
+
+export type Document = {
+    id: string;
+    BRN: string;
+    ID_proof: string;
+    user_created: string;
+    date_created: string;
+    date_updated: string;
+    verified: boolean;
+}
