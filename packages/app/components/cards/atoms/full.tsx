@@ -1,23 +1,22 @@
+import { Bath, BedDouble, Bookmark, CarFront, ExternalLink, Eye, LandPlot } from "app/components/icons";
 import { Separator } from 'app/components/ui/separator';
+import { useColorScheme } from 'app/hooks/color-scheme';
 import { useListingMetrics } from "app/hooks/listing-metrics";
 import { directusUrl } from "app/lib/constants";
-import { buildAssetUrl, getDMRoomId } from "app/lib/helpers";
-import { Amenity, Listing, ListingAmenity, User } from "app/lib/types";
+import { buildAssetUrl, groupByN } from "app/lib/helpers";
+import { Amenity, Listing, ListingAmenity } from "app/lib/types";
+import { RenderAmenity } from 'app/screens/post';
+import directusStore from 'app/store/directus';
 import userStore from "app/store/user";
-import { Bath, BedDouble, Bookmark, Building, CarFront, ExternalLink, Eye, LandPlot } from "app/components/icons";
+import opacity from 'hex-color-opacity';
 import { ReactNode, useMemo } from "react";
-import { Dimensions, FlatList, Image, Linking, View } from "react-native";
+import { Dimensions, Image, Linking, View } from "react-native";
+import Carousel from 'react-native-reanimated-carousel';
 import { Button } from "../../ui/button";
 import { Text } from "../../ui/text";
-import { useColorScheme } from 'app/hooks/color-scheme';
-import directusStore from 'app/store/directus';
-import { GoToProfileButton, GoToRoomButton } from 'app/components/link-buttons';
-import { Link } from 'solito/link';
-import Carousel from 'react-native-reanimated-carousel';
-import opacity from 'hex-color-opacity';
 import { MediumUsersCard, MediumUsersCardProps, mediumUsersFields } from './users';
 
-export const FullListingCardFields = ["*", "amenities.additional_value", "amenities.amenities_id.*", "photo1", "photo2", "photo3"].concat(mediumUsersFields.map(field => `user_created.${field}`))
+export const FullListingCardFields = ["*", "amenities.*", "photo1", "photo2", "photo3"].concat(mediumUsersFields.map(field => `user_created.${field}`))
 
 export const ListingIconTile = ({
     icon,
@@ -32,7 +31,7 @@ export const ListingIconTile = ({
         <View>
             <View className="flex-row gap-2 items-center">
                 {icon}
-                <Text className="font-bold">{value}</Text>
+                <Text className="font-semibold">{value}</Text>
             </View>
             <Text className="text-sm text-subtext">{text}</Text>
         </View>
@@ -42,16 +41,6 @@ export const ListingIconTile = ({
 export type DetailedAmenity = ListingAmenity & { amenities_id: Amenity }
 
 export type FullListingDetailed = Listing & { user_created: MediumUsersCardProps } & { amenities: DetailedAmenity[] }
-
-const Amenities = (props: DetailedAmenity) => {
-    return <View className="p-4 rounded w-[45%] border border-solid border-border">
-        <View className="gap-2 flex-row items-center">
-            {/* <MaterialIcons name="signal-wifi-0-bar" size={24} className="!text-foreground !text-base" /> */}
-            <Text className="text-sm">{props.amenities_id.label}</Text>
-        </View>
-        <Text>{props.additional_value}</Text>
-    </View>
-}
 
 export type ListingCardMetrics = { views: string | null, saves: string | null }
 
@@ -73,27 +62,33 @@ export const FullListingCard = (props: FullListingDetailed) => {
             <View className="flex-col gap-2">
                 <Text className="text-xl font-medium text-primary">{props.title}</Text>
                 <View className="flex-row gap-4 flex-wrap">
-                    <Text className="">AED {Number(props.price).toLocaleString()}</Text>
+                    <Text className="text-success">AED {Number(props.budget).toLocaleString()}</Text>
                     <Text style={{ backgroundColor: opacity(colors.info, 0.1) }} className='p-1 rounded text-sm text-info'>Expected broker fees: {props.expected_broker_fees} % </Text>
-                    <Text className="border border-solid border-foreground px-2 rounded-full self-start">{props.deal_type}</Text>
+                    <Text className="border border-solid border-foreground px-2 rounded-full self-start capitalize">{props.deal_type}</Text>
                 </View>
             </View>
         </View>
         <Text className='px-4'>{props.description}</Text>
         <Separator className='px-4' />
-        {photos.length ? <Carousel
-            style={{ marginTop: -32 }}
-            loop={false}
-            height={height}
-            data={photos}
-            renderItem={({ item, index }) => <View style={{ width, height }} className='relative'>
-                <Image source={{ uri: buildAssetUrl(item) }} className='w-full h-full' />
-                <View className='absolute bottom-4 left-4 bg-dark rounded p-1'>
-                    <Text className='text-light text-xs'>{index + 1} / 3</Text>
-                </View>
-            </View>}
-            width={width}
-        /> : <></>}
+        {photos.length ?
+            <View>
+                <Separator />
+                <Carousel
+                    style={{ marginTop: -32 }}
+                    loop={false}
+                    height={height}
+                    data={photos}
+                    renderItem={({ item, index }) => <View style={{ width, height }} className='relative'>
+                        <Image source={{ uri: buildAssetUrl(item) }} className='w-full h-full' />
+                        <View className='absolute bottom-4 left-4 bg-dark rounded p-1'>
+                            <Text className='text-light text-xs'>{index + 1} / {photos.length}</Text>
+                        </View>
+                    </View>}
+                    width={width}
+                />
+                <Separator />
+            </View>
+            : <></>}
         {props.tags.length ?
             <View className="flex-row gap-4 px-4">
                 {props.tags.map((tag, index) => <Text className="text-sm bg-primary text-primary-foreground px-2 rounded" key={index}>{tag}</Text>)}
@@ -102,7 +97,7 @@ export const FullListingCard = (props: FullListingDetailed) => {
             {<ListingIconTile
                 icon={<LandPlot className="!text-base !text-foreground" />}
                 text='Size'
-                value={`${props.carpet_area} sqft`}
+                value={`${props.size} sqft`}
             />}
             {props.bedrooms ? (
                 <ListingIconTile
@@ -118,25 +113,22 @@ export const FullListingCard = (props: FullListingDetailed) => {
                     value={props.bathrooms}
                 />
             ) : <></>}
-            {props.garages ? (
+            {props.parking ? (
                 <ListingIconTile
                     icon={<CarFront className="!text-base !text-foreground" />}
                     text="Parking"
-                    value={props.garages}
+                    value={props.parking}
                 />
             ) : <></>}
         </View>
         {props.amenities && props.amenities.length ? <View className="flex-col gap-4 px-4">
             <Separator />
             <Text className="text-lg font-medium">Amenities</Text>
-            <FlatList
-                scrollEnabled={false}
-                ItemSeparatorComponent={() => <View className="w-4 h-4" />}
-                numColumns={2}
-                columnWrapperStyle={{ justifyContent: 'space-evenly' }}
-                data={props.amenities}
-                renderItem={({ item }) => Amenities(item)}
-            />
+            {groupByN(props.amenities).map((_amenities, i) => <View key={i} className="flex-row gap-4">
+                {_amenities.map((amenity, j) => <View className="flex-grow" key={j}>
+                    <RenderAmenity {...amenity} />
+                </View>)}
+            </View>)}
         </View> : <></>}
         <Separator className='px-4' />
         <View className='p-4'>

@@ -7,7 +7,7 @@ import { View } from "react-native";
 export default function HomeScreen() {
     return <ScrollView className="flex-col flex-1" contentContainerClassName="gap-4">
         <Header>
-            <Text className="text-xl font-bold">A2APoint</Text>
+            <Text className="text-xl font-semibold">A2APoint</Text>
         </Header>
         <View className="flex-1 pb-8">
             <HomeScreenComponent />

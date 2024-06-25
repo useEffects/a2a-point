@@ -52,6 +52,7 @@
     "react-native-star-rating-widget": "^1.7.3",
     "react-native-step-indicator": "^1.0.3",
     "react-native-svg": "15.2.0",
+    "react-native-switch": "^1.5.1",
     "react-native-tab-view": "^3.5.2",
     "react-native-vector-icons": "^10.1.0",
     "shuffle-array": "^1.0.1",

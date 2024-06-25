@@ -1,11 +1,11 @@
+import { readItem } from "@directus/sdk"
 import { Header } from "app/components/header"
 import { Text } from "app/components/ui/text"
+import { MembersListScreenComponent } from "app/screens/members-list"
+import directusStore from "app/store/directus"
+import { useEffect, useState } from "react"
 import { View } from "react-native"
 import { useParams } from "solito/navigation"
-import { MembersListScreenComponent } from "app/screens/members-list"
-import { useEffect, useState } from "react"
-import directusStore from "app/store/directus"
-import { readItem } from "@directus/sdk"
 
 export const MembersList = () => {
     const params = useParams()
@@ -29,7 +29,7 @@ export const MembersList = () => {
 
     return <View className="flex-1 flex-col gap-4">
         <Header>
-            <Text className="text-xl font-bold">{title}</Text>
+            <Text className="text-xl font-semibold">{title}</Text>
         </Header>
         <MembersListScreenComponent locationId={params.locationId as string} />
     </View>

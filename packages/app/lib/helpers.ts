@@ -5,10 +5,13 @@ import directusStore from "app/store/directus";
 import { queryClient } from "app/store/query";
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from "expo-file-system";
+import * as ImagePicker from "expo-image-picker"
 import TimeAgo from 'javascript-time-ago';
 import en from "javascript-time-ago/locale/en";
 import { Alert, Linking, Platform } from "react-native";
 import { ProductType, appName, directusUrl, products } from "./constants";
+import { Image } from "react-native-svg";
+import { Document } from "./types";
 
 TimeAgo.addLocale(en)
 
@@ -243,24 +246,47 @@ export const checkCollectionId = async (id: string, collection: string): Promise
   }
 }
 
-export const pickDocuments = async (params: DocumentPicker.DocumentPickerOptions): Promise<Asset<withUri>[]> => {
-  const result = await DocumentPicker.getDocumentAsync(params)
-  if (!result.canceled) {
-    return result.assets.map(asset => {
+const pickDocumentsHelper = (assets: DocumentPicker.DocumentPickerAsset[] | ImagePicker.ImagePickerAsset[]) => {
+  return assets.map(asset => {
+    function isDocument(asset: DocumentPicker.DocumentPickerAsset | ImagePicker.ImagePickerAsset): asset is DocumentPicker.DocumentPickerAsset {
+      return (asset as DocumentPicker.DocumentPickerAsset).name !== undefined
+    }
+    if (isDocument(asset)) {
       return {
         uri: asset.uri,
         mimeType: asset.mimeType ?? "application/octet-stream",
         name: asset.name
       }
-    }).filter(async asset => {
-      const fileInfo = await FileSystem.getInfoAsync(asset.uri, { size: true }) as FileSystem.FileInfo & { size: number }
-      if (fileInfo.size > 1 * 1024 * 1024) {
-        alert(`File size exceeds 1MB limit for ${asset.name} (${fileInfo.size / 1000 / 1000}MB)`)
-        return false
+    } else {
+      return {
+        uri: asset.uri,
+        mimeType: asset.mimeType ?? "image/jpeg",
+        name: asset.fileName ?? "image.jpg"
       }
-      return true
-    })
+    }
+  }).filter(async asset => {
+    const fileInfo = await FileSystem.getInfoAsync(asset.uri, { size: true }) as FileSystem.FileInfo & { size: number }
+    if (fileInfo.size > 1 * 1024 * 1024) {
+      alert(`File size exceeds 1MB limit for ${asset.name} (${fileInfo.size / 1000 / 1000}MB)`)
+      return false
+    }
+    return true
+  })
+}
+
+export const pickDocuments = async (params: DocumentPicker.DocumentPickerOptions): Promise<Asset<withUri>[]> => {
+  const result = await DocumentPicker.getDocumentAsync(params)
+  if (!result.canceled) {
+    return pickDocumentsHelper([...result.assets])
   } else return []
+}
+
+export const pickImages = async (params: ImagePicker.ImagePickerOptions): Promise<Asset<withUri>[]> => {
+  const result = await ImagePicker.launchImageLibraryAsync(params)
+  if (!result.canceled) {
+    return pickDocumentsHelper([...result.assets])
+  }
+  else return []
 }
 
 export const isUserPro = (plan: string | null | undefined) => {
@@ -268,8 +294,36 @@ export const isUserPro = (plan: string | null | undefined) => {
   switch (product?.productType) {
     case ProductType.proPlanMonthly:
     case ProductType.proPlanYearly:
+    case ProductType.basicPlanMonthly:
+    case ProductType.basicPlanYearly:
       return true
     default:
       return false
   }
+}
+
+export const isUserVerified = (document: Pick<Document, "verified">) => {
+  return document.verified
+}
+
+// Utility type to derive dot-separated keys from a type T
+export type DotSeparatedKeys<T> = T extends object
+  ? T extends infer O
+  ? {
+    [K in keyof O]: O[K] extends object
+    ? `${K & string}.${DotSeparatedKeys<O[K]>}`
+    : `${K & string}`;
+  }[keyof O]
+  : never
+  : never;
+
+export function groupByN<T>(arr: T[], n: number = 2): T[][] {
+  const grouped: T[][] = [];
+
+  for (let i = 0; i < arr.length; i += n) {
+    const group = arr.slice(i, i + n);
+    grouped.push(group);
+  }
+
+  return grouped;
 }

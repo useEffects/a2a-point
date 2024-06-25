@@ -1,14 +1,14 @@
+import { readItem } from "@directus/sdk";
+import { useQuery } from "@tanstack/react-query";
 import { Header } from "app/components/header";
 import { Text } from "app/components/ui/text";
 import { ScrollView, } from "app/components/utils/virtual-lists";
-import { useParams } from "solito/navigation"
-import { useQuery } from "@tanstack/react-query"
-import directusStore from "app/store/directus";
-import { readItem } from "@directus/sdk";
-import { Room, User } from "app/lib/types";
-import { useEffect } from "react";
 import useNavigation from "app/hooks/navigation";
-import { LocationDetailed as LocationDetailedComponent } from "app/screens/location-detailed"
+import { Room, User } from "app/lib/types";
+import { LocationDetailed as LocationDetailedComponent } from "app/screens/location-detailed";
+import directusStore from "app/store/directus";
+import { useEffect } from "react";
+import { useParams } from "solito/navigation";
 
 export default function LocationDetailed() {
     const params = useParams<{ id: string }>()
@@ -34,7 +34,7 @@ export default function LocationDetailed() {
         if (room?.title) {
             navigation.setOptions({
                 header: () => <Header>
-                    <Text className="text-xl font-bold">{room.title}</Text>
+                    <Text className="text-xl font-semibold">{room.title}</Text>
                 </Header>
             })
         }

@@ -1,5 +1,5 @@
 import { Text } from "app/components/ui/text"
-import { buildAssetUrl, isUserPro, shortString, timeAgo } from "app/lib/helpers"
+import { DotSeparatedKeys, buildAssetUrl, isUserPro, isUserVerified, shortString, timeAgo } from "app/lib/helpers"
 import { Company, Document, User } from "app/lib/types"
 import { cn } from "app/lib/utils"
 import { Image, View } from "react-native"
@@ -18,7 +18,7 @@ import * as Linking from "expo-linking"
 
 export type SmallUsersCardProps = Pick<User, "id" | "avatar" | "first_name" | "last_name" | "computed_rating"> & { company: Pick<Company, "title" | "avatar" | "id"> | null }
 
-export type MediumUsersCardProps = Pick<User, "id" | "avatar" | "first_name" | "last_name" | "computed_rating" | "tags" | "email" | "last_access" | "phone" | "description" | "plan"> & { company: Pick<Company, "title" | "avatar" | "id"> | null } & { document: Pick<Document, "verified"> }
+export type MediumUsersCardProps = Pick<User, "id" | "avatar" | "first_name" | "last_name" | "computed_rating" | "tags" | "email" | "last_access" | "phone" | "description" | "plan"> & { company: Pick<Company, "title" | "avatar" | "id"> | null } & { document: Pick<Document, "verified"> | null }
 
 export const smallUsersFields = ["id", "avatar", "first_name", "last_name", "computed_rating", "company.title", "company.avatar", "company.id"]
 
@@ -111,11 +111,11 @@ export const MediumUsersCard = (item: MediumUsersCardProps) => {
             </View>
             <View className="w-1/2 bg-background flex-col">
                 <View className="h-8 w-full flex-row justify-end items-center gap-4">
-                    {true && <View className="bg-primary/10 text-primary text-sm py-[2px] px-1 rounded flex-row gap-1 items-center">
+                    {isUserPro(item.plan) && <View className="bg-primary/10 text-primary text-sm py-[2px] px-1 rounded flex-row gap-1 items-center">
                         <Award size={12} className="text-primary" />
                         <Text className="text-sm text-primary">Pro</Text>
                     </View>}
-                    {true && <View className="bg-success/10 text-success text-sm py-[2px] px-1 rounded flex-row gap-1 items-center">
+                    {(item.document && isUserVerified(item.document)) && <View className="bg-success/10 text-success text-sm py-[2px] px-1 rounded flex-row gap-1 items-center">
                         <Check size={12} className="text-success" />
                         <Text className="text-sm text-success">Verified</Text>
                     </View>}

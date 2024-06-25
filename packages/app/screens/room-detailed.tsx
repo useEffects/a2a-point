@@ -157,8 +157,6 @@ export default function RoomDetailedComponent({ roomId }: { roomId: string }) {
                     if (checkRoom && checkRoom.id) {
                         const _room = await addRoom(roomId)
                         setRoom(_room)
-                    } else {
-                        alert("Room not found")
                     }
                 }
             }
@@ -170,7 +168,7 @@ export default function RoomDetailedComponent({ roomId }: { roomId: string }) {
         const _receivers = room?.members.filter(
             (m) => m.directus_users_id.id !== user?.id,
         );
-        if (roomId && _receivers && _receivers.length > 0) {
+        if (roomId && _receivers) {
             const [roomName, roomAvatar] = room?.type === "group"
                 ? [room?.title!, buildAssetUrl(room?.avatar)]
                 : [
@@ -186,7 +184,7 @@ export default function RoomDetailedComponent({ roomId }: { roomId: string }) {
         return null
     }
 
-    return (roomDetails && receivers?.length) ? <ChatScreen
+    return (roomDetails && receivers) ? <ChatScreen
         roomDetails={roomDetails}
         receivers={receivers}
     /> : <></>

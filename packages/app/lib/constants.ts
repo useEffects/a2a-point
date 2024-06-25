@@ -6,6 +6,7 @@ export const portfolioUrl = "https://dev.a2apoint.com"
 export const appName = "a2apoint"
 export const messagesFolderId = "4006910f-be8d-43b0-acff-7fe83ed90b43"
 export const documentsFolderId = "2e080305-7ca1-4652-8903-d3deab11f5b1"
+export const listingsFolderId = "3c995bad-8d9b-4330-a38a-3bad6412a853"
 export const savedByMeUrl = `${directusUrl}/admin/content/listings?bookmark=6`
 export const viewedByMeUrl = `${directusUrl}/admin/content/listings?bookmark=7`
 

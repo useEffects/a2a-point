@@ -21,7 +21,7 @@ export type RootStackParamList = {
     "activity": undefined,
     "notifications": undefined,
     "post": {
-        type: "buy" | "sale" | "rent"
+        type: "buy" | "sale" | "give on rent" | "take on rent"
     },
     "locations-list": undefined,
     "users-list": undefined,

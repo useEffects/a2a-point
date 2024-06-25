@@ -121,7 +121,7 @@ export const GoToNotificationsButton = (props: ButtonProps) => {
     return <Button variant={"base"} size={"none"} onPress={goToNotifications} {...props} />
 }
 
-export const GoToPostButton = (props: ButtonProps & { type: "buy" | "sale" | "rent", additionalOnPress?: () => void }) => {
+export const GoToPostButton = (props: ButtonProps & { type: "buy" | "sale" | "give on rent" | "take on rent", additionalOnPress?: () => void }) => {
     const navigation = useNavigation()
 
     const goToPost = () => {

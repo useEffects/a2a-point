@@ -1,22 +1,22 @@
 import { deleteItem, readItems } from "@directus/sdk";
-import { useQuery } from "@tanstack/react-query";
 import ProfileSVG from "app/components/svg/profile";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
 import { UserChip } from "app/components/user-chip";
+import { FlatList, ScrollView } from "app/components/utils/virtual-lists";
 import { useColorScheme } from "app/hooks/color-scheme";
 import { directusUrl } from "app/lib/constants";
 import { buildAssetUrl, timeAgo } from "app/lib/helpers";
 import { getListingsCountForUser } from "app/lib/misc/get-counts";
-import { Company, Feedback, FullUser, User } from "app/lib/types";
+import { Company, Feedback, User } from "app/lib/types";
 import { cn } from "app/lib/utils";
 import { StarIcon } from "app/screens/post-feedback";
 import directusStore from "app/store/directus";
+import { queryClient } from "app/store/query";
 import userStore from "app/store/user";
 import { ArrowUp, Expand, Info, MessageCircle, Rows2, Shrink } from "lucide-react-native";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { DimensionValue, Image, Linking, NativeScrollEvent, NativeSyntheticEvent, Platform, TouchableOpacity, View, useWindowDimensions } from "react-native";
-import { FlatList, ScrollView } from "app/components/utils/virtual-lists";
 import Collapsible from 'react-native-collapsible';
 import StarRating, { StarIconProps } from "react-native-star-rating-widget";
 import { NavigationState, SceneMap, SceneRendererProps, TabView } from 'react-native-tab-view';
@@ -26,9 +26,8 @@ import { MediumListingCardProps } from "../components/cards/atoms/medium";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "../components/cards/molecules/listings";
 import { GoToActivityButton, GoToPostFeedbackButton } from "../components/link-buttons";
 import { Button } from "../components/ui/button";
-import LockedScreen from "./locked-screens";
 import { FilterKeys } from "./listings";
-import { queryClient } from "app/store/query";
+import LockedScreen from "./locked-screens";
 
 export const ProfileScreen = (props: { user: User, company?: Company }) => {
     const { authenticated } = directusStore()
@@ -65,7 +64,7 @@ export function Profile({ user, company }: { user: User, company?: Company }) {
                     <View className="flex-col gap-4 items-center">
                         <Image source={{ uri: buildAssetUrl(user.avatar) }} className="w-24 h-24 rounded-full" />
                         <View className="flex-col items-center">
-                            <Text className="text-primary font-bold">{user.first_name} {user.last_name}</Text>
+                            <Text className="text-primary font-semibold">{user.first_name} {user.last_name}</Text>
                             <Link href={`mailto:${user.email}`}>
                                 <Text className="text-info underline">{user.email}</Text>
                             </Link>
@@ -164,7 +163,7 @@ const TabIcons = ({ index, isActive }: { index: number, isActive: boolean }) => 
 const InfoTab = ({ user, company }: { user: User, company?: Company }) => {
     return <View className="p-4 flex-col gap-4 w-full">
         {company ? <View className="rounded p-4 bg-card border border-border gap-4">
-            <Text className="text-xl font-bold">Company</Text>
+            <Text className="text-xl font-semibold">Company</Text>
             <WithLabel label="Title">
                 <Text>{company.title}</Text>
             </WithLabel>
@@ -188,14 +187,14 @@ const InfoTab = ({ user, company }: { user: User, company?: Company }) => {
             </WithLabel>
         </View> : <></>}
         {(user.description && user.tags && user.tags.length) ? <View className="flex flex-col gap-4 w-full">
-            <Text className="text-xl font-bold">Bio</Text>
+            <Text className="text-xl font-semibold">Bio</Text>
             <Text className="text-sm">{user.description}</Text>
             <View className="flex-row flex-wrap gap-2 w-full">
                 {user.tags.map((tag, index) => <Text className="rounded-full border border-solid border-foreground px-2 w-auto" key={index}>{tag}</Text>)}
             </View>
         </View> : <></>}
         {user.social_media ? <View className="flex-col gap-4">
-            <Text className="text-xl font-bold">Social links</Text>
+            <Text className="text-xl font-semibold">Social links</Text>
             <View className="flex-row gap-4">
                 {user.social_media.map((item, i) =>
                     <View key={i} className="flex flex-row gap-2 items-center">
@@ -207,7 +206,7 @@ const InfoTab = ({ user, company }: { user: User, company?: Company }) => {
             </View>
         </View> : <></>}
         {user.work_experience ? <View className="flex-col gap-4">
-            <Text className="text-xl font-bold">Work experience</Text>
+            <Text className="text-xl font-semibold">Work experience</Text>
             {user.work_experience.map((item, i) => (
                 <View key={i} className="flex flex-col gap-2 border border-solid p-4 border-border">
                     <View className="flex-col gap-4">

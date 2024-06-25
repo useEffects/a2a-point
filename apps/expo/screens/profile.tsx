@@ -1,15 +1,15 @@
-import userStore from "app/store/user";
+import { Header } from "app/components/header";
+import { Bell, EllipsisVertical, LogOut, UserCog2 } from "app/components/icons";
+import { useGoToRoute } from "app/components/link-buttons";
+import { ToggleTheme } from "app/components/toggle-theme";
+import { Button } from "app/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "app/components/ui/dropdown-menu";
+import { Text } from "app/components/ui/text";
 import { ProfileScreen as ProfileScreenComponent } from "app/screens/profile";
 import directusStore from "app/store/directus";
-import { View } from "react-native";
-import { Header } from "app/components/header";
-import { Text } from "app/components/ui/text";
-import { Button } from "app/components/ui/button";
-import { ToggleTheme } from "app/components/toggle-theme";
-import { LogOut, Bell, EllipsisVertical, UserCog2 } from "app/components/icons";
-import { GoToNotificationsButton, useGoToRoute } from "app/components/link-buttons";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "app/components/ui/dropdown-menu";
+import userStore from "app/store/user";
 import { useState } from "react";
+import { View } from "react-native";
 
 export default function ProfileScreen() {
     const { user } = userStore()
@@ -17,7 +17,7 @@ export default function ProfileScreen() {
     return <View className="flex-1">
         <Header>
             <View className="flex-row gap-8 justify-between flex-1 items-center">
-                <Text className="text-xl font-bold">Profile</Text>
+                <Text className="text-xl font-semibold">Profile</Text>
                 <View className="flex-row gap-4 items-center">
                     <ToggleTheme />
                     {authenticated ? <ProfileDropdown /> : <></>}

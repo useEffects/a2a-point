@@ -2,15 +2,15 @@ import { createItem, readItem, readItems } from "@directus/sdk"
 import { FullListingCard, FullListingCardFields, FullListingDetailed } from "app/components/cards/atoms/full"
 import { Header } from "app/components/header"
 import { Text } from "app/components/ui/text"
+import { ScrollView } from "app/components/utils/virtual-lists"
+import { shortString } from "app/lib/helpers"
 import { LoginPopover } from "app/screens/listings"
 import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"
 import userStore from "app/store/user"
 import { useEffect, useState } from "react"
 import { View } from "react-native"
-import { ScrollView } from "app/components/utils/virtual-lists"
 import { useParams } from "solito/navigation"
-import { shortString } from "app/lib/helpers"
 
 export default function FullListingScreen() {
     const { rest, authenticated } = directusStore()
@@ -60,7 +60,7 @@ export default function FullListingScreen() {
     return listing ? <View className="flex-1">
         <Header>
             <View>
-                <Text className="font-bold text-xl">{shortString(listing.title)}</Text>
+                <Text className="font-semibold text-xl">{shortString(listing.title)}</Text>
             </View>
         </Header>
         <ScrollView contentContainerClassName="flex-grow py-4">

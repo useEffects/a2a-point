@@ -17,6 +17,7 @@ import { ViewAllButton } from "app/components/utils/common-ui"
 import { Button, ButtonProps } from "app/components/ui/button"
 import { FilterKeys, FilterType } from "app/screens/listings"
 import * as Linking from "expo-linking"
+import { DotSeparatedKeys } from "app/lib/helpers"
 
 type ListCardProps = SmallListingCardProps | ExtraSmallListingCardProps | MediumListingCardProps | PhotoListingProps
 
@@ -30,10 +31,10 @@ export enum CommonFilters {
     ViewedByMe = 'viewed-by-me',
     SavedByMe = 'saved-by-me',
     GroupId = 'groupId',
-    Listing = "listing",
-    Enquiry = "enquiry",
+    Buy = "buy",
     Sale = "sale",
-    Rent = "rent",
+    GiveOnRent = "give-on-rent",
+    TakeOnRent = "take-on-rent",
     User = "user",
     Photo = "with-photo",
     Custom = "custom",
@@ -45,10 +46,10 @@ export const commonFilterTitles: { [K in CommonFilters]: ((label: string) => str
     [CommonFilters.ViewedByMe]: "Viewed by Me",
     [CommonFilters.SavedByMe]: "Saved by Me",
     [CommonFilters.GroupId]: "Group",
-    [CommonFilters.Listing]: "Listing",
-    [CommonFilters.Enquiry]: "Enquiry",
+    [CommonFilters.Buy]: "Buy",
     [CommonFilters.Sale]: "Sale",
-    [CommonFilters.Rent]: "Rent",
+    [CommonFilters.GiveOnRent]: "Give on rent",
+    [CommonFilters.TakeOnRent]: "Take on rent",
     [CommonFilters.User]: (label: string) => label,
     [CommonFilters.Photo]: "With Photo",
     [CommonFilters.Custom]: "Custom",
@@ -82,24 +83,24 @@ export const commonFilters = {
             }
         }
     }),
-    [CommonFilters.Listing]: () => ({
-        type: {
-            _eq: "listing"
-        }
-    }),
-    [CommonFilters.Enquiry]: () => ({
-        type: {
-            _eq: "enquiry"
+    [CommonFilters.Buy]: () => ({
+        deal_type: {
+            _eq: "buy"
         }
     }),
     [CommonFilters.Sale]: () => ({
         deal_type: {
-            _eq: "sell"
+            _eq: "sale"
         }
     }),
-    [CommonFilters.Rent]: () => ({
+    [CommonFilters.GiveOnRent]: () => ({
         deal_type: {
-            _eq: "rent"
+            _eq: "give on rent"
+        }
+    }),
+    [CommonFilters.TakeOnRent]: () => ({
+        deal_type: {
+            _eq: "take on rent"
         }
     }),
     [CommonFilters.User]: (userId: string) => ({
@@ -136,21 +137,29 @@ export const commonFilters = {
     [CommonFilters.None]: () => ({})
 };
 
+const extraSmallFields: DotSeparatedKeys<ExtraSmallListingCardProps>[] = ["id", "title", "budget"];
+
+const smallFields: DotSeparatedKeys<SmallListingCardProps>[] = ["id", "title", "price", "address", "deal_type", "user_created.id", "user_created.avatar", "date_created", "group.id", "group.title", "group.avatar", "tags"];
+
+const mediumFields: DotSeparatedKeys<MediumListingCardProps>[] = ["id", "title", "deal_type", "date_created", "budget", "description", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "location.avatar", "location.avatar", "location.id", "location.title"];
+
+const photoFields: DotSeparatedKeys<PhotoListingProps>[] = ["id", "title", "budget", "photo_1", "photo_2", "photo_3", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name"];
+
 export const bodies = {
     extraSmall: {
-        fields: ["id", "title", "price", "date_created"],
+        fields: extraSmallFields,
         renderMethod: ExtraSmallListingCard
     },
     small: {
-        fields: ["id", "title", "price", "address", "deal_type", "user_created.id", "user_created.avatar", "date_created", "group.id", "group.title", "group.avatar", "tags"],
+        fields: smallFields,
         renderMethod: SmallListingCard
     },
     medium: {
-        fields: ["id", "title", "price", "description", "deal_type", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "user_created.email", "date_created", "group.id", "group.title", "group.avatar", "tags"],
+        fields: mediumFields,
         renderMethod: MediumListingCard
     },
     photo: {
-        fields: ["id", "title", "price", "photo_1", "photo_2", "photo_3", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "date_created"],
+        fields: photoFields,
         renderMethod: PhotoListingCard
     }
 }

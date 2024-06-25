@@ -1,18 +1,18 @@
+import { GoToFullListingButton } from "app/components/link-buttons"
 import { Button } from "app/components/ui/button"
+import { Separator } from "app/components/ui/separator"
 import { Text } from "app/components/ui/text"
+import { LocationChip } from "app/components/utils/chips"
+import { useColorScheme } from "app/hooks/color-scheme"
 import { useIsFocused } from "app/hooks/is-focused"
 import { buildAssetUrl, getListingMetrics, timeAgo } from "app/lib/helpers"
 import { Listing, Room, User } from "app/lib/types"
+import opacity from "hex-color-opacity"
 import { Bookmark, ExternalLink, Eye } from "lucide-react-native"
 import { useEffect, useState } from "react"
 import { Image, View } from "react-native"
 import { useRouter } from "solito/navigation"
 import { ListingCardMetrics } from "./full"
-import { useColorScheme } from "app/hooks/color-scheme"
-import { GoToFullListingButton } from "app/components/link-buttons"
-import opacity from "hex-color-opacity"
-import { LocationChip } from "app/components/utils/chips"
-import { Separator } from "app/components/ui/separator"
 
 export const OpenDetailsButton = ({ id, size = "sm" }: { id: string, size?: "default" | "sm" | "lg" | "icon" | null | undefined }) => {
     const router = useRouter()
@@ -23,7 +23,7 @@ export const OpenDetailsButton = ({ id, size = "sm" }: { id: string, size?: "def
     </Button>
 }
 
-export type SmallListingCardProps = Pick<Listing, "id" | "title" | "price" | "deal_type" | "tags" | "date_created"> & { user_created: Pick<User, "id" | "avatar"> } & { group: Pick<Room, "id" | "title" | "avatar"> }
+export type SmallListingCardProps = Pick<Listing, "id" | "title" | "budget" | "deal_type" | "tags" | "date_created"> & { user_created: Pick<User, "id" | "avatar"> } & { group: Pick<Room, "id" | "title" | "avatar"> }
 
 export const RenderMetrics = ({ listingId }: { listingId: string }) => {
     const [metrics, setMetrics] = useState<ListingCardMetrics | null>(null)
@@ -58,9 +58,9 @@ export const SmallListingCard = (item: SmallListingCardProps) => {
         <Image source={{ uri: buildAssetUrl(item.user_created.avatar) }} className="w-8 h-8 rounded-full" />
         <View className="flex-col gap-4">
             <View className="flex-col gap-1">
-                <Text className="text-lg font-bold w-[300px]">{item.title}</Text>
+                <Text className="text-lg font-semibold w-[300px]">{item.title}</Text>
                 <View className="flex-row justify-between gap-4 items-center">
-                    <Text className="!text-success">AED {Number(item.price).toLocaleString()}</Text>
+                    <Text className="!text-success">AED {Number(item.budget).toLocaleString()}</Text>
                     <Text style={{ backgroundColor: opacity(colors.success, 0.1) }} className="text-success px-1 rounded">{item.deal_type}</Text>
                 </View>
                 <View className="flex-row gap-1 flex-wrap items-center">

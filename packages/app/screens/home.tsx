@@ -26,7 +26,6 @@ import * as Linking from "expo-linking";
 import { ViewAllButton } from "app/components/utils/common-ui";
 import { FilterKeys } from "./listings";
 import { GoToListingsListButton } from "app/components/link-buttons";
-import { Separator } from "app/components/ui/separator";
 
 export default function HomeScreen() {
     const { authenticated, token } = directusStore()
@@ -43,7 +42,7 @@ export default function HomeScreen() {
     })
 
     return <View className="flex-1 flex-col gap-8">
-        <Text className="text-2xl font-bold text-wrap px-4">{authenticated ? `Welcome back ${user.first_name} ${user.last_name}` : "The one stop for all agents"}</Text>
+        <Text className="text-xl font-semibold text-wrap px-4">{authenticated ? `Welcome back ${user.first_name} ${user.last_name}` : "The one stop for all agents"}</Text>
         <View className="flex-col gap-4">
             <RenderListings<PhotoListingProps>
                 render={bodies.photo}
@@ -112,7 +111,7 @@ export default function HomeScreen() {
                 </Button>
             </Link>)}
         </View>
-    </View >
+    </View>
 }
 
 const externalLinks = [

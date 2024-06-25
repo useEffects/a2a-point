@@ -56,13 +56,12 @@ export const GET = async (req: Request, { params: { id } }: { params: { id: stri
     setField(form, "agentEmailSeller", receiver.email)
 
     setField(form, "listingTitle", name)
-    setField(form, "listingPrice", listing.price.toString())
-    setField(form, "listingAddress", listing.address)
+    setField(form, "listingPrice", listing.budget.toString())
+    // setField(form, "listingAddress", listing.lo)
     setField(form, "listingDescription", listing.description)
     setField(form, "listingBedrooms", listing.bedrooms?.toString())
     setField(form, "listingBathrooms", listing.bathrooms?.toString())
-    setField(form, "listingGarage", listing.garages?.toString())
-    setField(form, "listingFloors", listing.floors?.toString())
+    setField(form, "listingGarage", listing.parking?.toString())
 
     setField(form, "commissionSellerAgent", commission_seller.toString())
     setField(form, "commissionBuyerAgent", commission_buyer.toString())

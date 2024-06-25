@@ -1,10 +1,9 @@
+import { getCompaniesCount, getListingsCount, getLocationsCount, getUsersCount } from "app/lib/misc/get-counts"
+import { cn } from "app/lib/utils"
 import directusStore from "app/store/directus"
 import { useEffect, useState } from "react"
-import { aggregate } from "@directus/sdk"
 import { View } from "react-native"
 import { Text } from "./ui/text"
-import { cn } from "app/lib/utils"
-import { getCompaniesCount, getListingsCount, getLocationsCount, getUsersCount } from "app/lib/misc/get-counts"
 import { HorizontalFlatList } from "./utils/virtual-lists"
 
 export const CompanyStats = ({ className }: { className?: string }) => {
@@ -47,7 +46,7 @@ export const CompanyStats = ({ className }: { className?: string }) => {
             renderItem={({ item: stat, row, col }) =>
                 <View className={cn("flex-col gap-4 justify-center items-start w-24 h-24", col === 1 && "ml-12", row === 1 && "mt-4")}>
                     <Text className="">{stat.title}</Text>
-                    <Text className="text-center text-5xl font-bold">{stat.count}+</Text>
+                    <Text className="text-center text-5xl font-semibold">{stat.count}+</Text>
                 </View>
             }
         />

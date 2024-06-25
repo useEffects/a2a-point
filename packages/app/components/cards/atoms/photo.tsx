@@ -5,7 +5,7 @@ import { buildAssetUrl } from "app/lib/helpers";
 import { Listing, User } from "app/lib/types";
 import { Dimensions, Image, View } from "react-native";
 
-export type PhotoListingProps = Pick<Listing, "id" | "title" | "price" | "deal_type" | "photo_1" | "photo_2" | "photo_3"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "plan"> }
+export type PhotoListingProps = Pick<Listing, "id" | "title" | "budget" | "deal_type" | "photo_1" | "photo_2" | "photo_3"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "plan"> }
 
 export const PhotoListingCard = (item: PhotoListingProps) => {
     const photo = item.photo_1 || item.photo_2 || item.photo_3
@@ -18,7 +18,7 @@ export const PhotoListingCard = (item: PhotoListingProps) => {
             <UserChip user={item.user_created} />
             <Text className="text-wrap" style={{ width: imageWidth }}>{item.title}</Text>
             <View className="flex-row gap-4 justify-between w-full">
-                <Text className="text-success">AED {item.price.toLocaleString()}</Text>
+                <Text className="text-success">AED {item.budget.toLocaleString()}</Text>
                 <Text className="capitalize text-info">{item.deal_type}</Text>
             </View>
         </View>

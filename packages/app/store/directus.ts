@@ -94,9 +94,12 @@ const directusStore = create<DirectusStore>((set, get) => ({
                 set(p => ({
                     ...p,
                     token: newTokens.accessToken!,
-                    refreshToken: newTokens.refreshToken!
+                    refreshToken: newTokens.refreshToken!,
+                    rest: createDirectus(directusUrl)
+                        .with(authentication())
+                        .with(rest())
+                        .with(staticToken(newTokens.accessToken!)) as MyDirectusClient
                 }))
-                get().rest.setToken(newTokens.accessToken!)
                 await AsyncStorage.setItem("accessToken", newTokens.accessToken!);
                 await AsyncStorage.setItem("refreshToken", newTokens.refreshToken!);
             }

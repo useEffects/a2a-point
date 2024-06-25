@@ -34,7 +34,7 @@ export const NewsCard = ({ news, isFirst }: { news: News, isFirst?: boolean }) =
             <View className={cn(isFirst ? "w-1/2" : "w-full")}>
                 <Image className={cn(isFirst ? "h-[600px]" : isNative ? "h-[200px]" : "h-[300px]", "rounded-tl-xl rounded-tr-xl")} source={{ uri: buildAssetUrl(news.cover_image) }} />
             </View>
-            <View className={cn("bg-card p-4 rounded-bl-xl rounded-br-xl", isFirst ? "w-1/2 self-center bg-transparent max-w-sm mx-auto" : "w-full", "p-4 flex-col items-start", isNative ? "gap-1" : "gap-4")}>
+            <View className={cn("bg-card p-4 rounded-bl-xl rounded-br-xl", isFirst ? "w-1/2 self-center bg-transparent max-w-sm mx-auto" : "w-full h-40", "p-4 flex-col items-start", isNative ? "gap-1" : "gap-4")}>
                 <View className="flex-row justify-between w-full">
                     <Text className="text-info">{news.read_time}</Text>
                     <Text className="text-subtext text-sm">{timeAgo.format(new Date(news.date_created))}</Text>

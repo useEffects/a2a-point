@@ -12,9 +12,8 @@ import directusStore from "app/store/directus"
 import { GoToFullListingButton, GoToRoomButton } from "app/components/link-buttons"
 import { LocationChip } from "app/components/utils/chips"
 import { directusUrl } from "app/lib/constants"
-import * as Linking from 'expo-linking';
 
-export type MediumListingCardProps = Pick<Listing, "id" | "title" | "price" | "deal_type" | "description" | "date_created"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email" | "plan"> } & { group: Pick<Room, "id" | "title" | "avatar"> }
+export type MediumListingCardProps = Pick<Listing, "id" | "title" | "budget" | "deal_type" | "description" | "date_created"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email" | "plan"> } & { location: Pick<Room, "id" | "title" | "avatar"> }
 
 export const LockedChatButton = () => {
     const { colors } = useColorScheme()
@@ -39,7 +38,7 @@ export const MediumListingCard = (item: MediumListingCardProps) => {
         <GoToFullListingButton listingId={item.id} className="items-start flex-col gap-2 w-full" size={"none"} variant={"base"}>
             <Text className="text-lg text-primary">{item.title}</Text>
             <View className="flex-row justify-between w-full">
-                <LocationChip {...item.group} />
+                <LocationChip {...item.location} />
                 {user.id === item.user_created.id && <View className="flex-row gap-4">
                     <Button variant={"base"} size={"none"}>
                         <Edit size={18} className="text-info" />
@@ -51,7 +50,7 @@ export const MediumListingCard = (item: MediumListingCardProps) => {
             </View>
             <View className="flex-col gap-1 bg-card rounded-2xl p-4 mt-2 w-full">
                 <View className="flex-row justify-between">
-                    <Text className="text-success">AED {Number(item.price).toLocaleString()}</Text>
+                    <Text className="text-success">AED {Number(item.budget).toLocaleString()}</Text>
                     <Text className="text-primary">{item.deal_type}</Text>
                 </View>
                 <Text>{shortString(item.description, 150)}</Text>

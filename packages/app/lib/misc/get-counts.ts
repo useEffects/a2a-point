@@ -53,7 +53,7 @@ export const getListingsCountForLocation = async (locationId: string) => {
         },
         query: {
             filter: {
-                group: {
+                location: {
                     _eq: locationId
                 }
             }

@@ -1,5 +1,3 @@
-import { StringToBoolean } from "class-variance-authority/dist/types";
-
 export type File = {
     id: string;
     storage: string;
@@ -33,10 +31,9 @@ export type Amenity = {
 }
 
 export type ListingAmenity = {
-    id: number;
-    listings_id: string;
-    amenities_id: number;
-    additional_value: null | string;
+    icon: string,
+    label: string,
+    additional_detail: string | null
 };
 
 export type Listing = {
@@ -51,10 +48,12 @@ export type Listing = {
     tags: string[];
     bathrooms: number | null;
     bedrooms: number | null;
-    garages: number | null;
-    group: string;
-    price: number;
-    carpet_area: number;
+    parking: number | null;
+    location: string;
+    budget: number;
+    covered_by_seller: boolean;
+    furnishing: string;
+    size: number;
     expected_broker_fees: number;
     description: string;
     mode_of_payments: string[];
@@ -67,7 +66,6 @@ export type Listing = {
     photo_2: string | null;
     photo_3: string | null;
 };
-
 
 export type SocialMedia = {
     social_media: string;

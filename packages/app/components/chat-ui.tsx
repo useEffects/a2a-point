@@ -173,8 +173,12 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
         listing: Yup.object().shape({
             id: Yup.string().required("Listing is required"),
         }).nonNullable().required("Listing is required"),
-        commissionSeller: Yup.number().required("Seller Commission is required"),
-        commissionBuyer: Yup.number().required("Buyer Commission is required"),
+        commissionSeller: Yup.number()
+            .required("Seller Commission is required")
+            .typeError("Seller Commission must be a number"),
+        commissionBuyer: Yup.number()
+            .required("Buyer Commission is required")
+            .typeError("Buyer Commission must be a number"),
         clientName: Yup.string().required("Client Name is required")
     })
 
@@ -199,14 +203,14 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
                     <FormInput
                         value={props.values.commissionSeller?.toString()}
                         onChangeText={props.handleChange("commissionSeller")}
-                        label='Seller Commission'
+                        label='Seller Commission %'
                         error={props.touched.commissionSeller ? props.errors.commissionSeller : ""}
                         keyboardType='numeric'
                     />
                     <FormInput
                         value={props.values.commissionBuyer?.toString()}
                         onChangeText={props.handleChange("commissionBuyer")}
-                        label='Buyer Commission'
+                        label='Buyer Commission %'
                         error={props.touched.commissionBuyer ? props.errors.commissionBuyer : ""}
                         keyboardType='numeric'
                     />

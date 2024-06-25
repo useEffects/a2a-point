@@ -72,6 +72,8 @@ export const SmallLocationCards = ({ flatListProps }: { flatListProps?: Omit<Hor
         keyExtractor={item => item.id}
         ListFooterComponent={<ViewAllButton horizontal={true} button={(props: ButtonProps) => <GoToLocationsListButton {...props} />} />}
         ListHeaderComponent={() => <View className="w-4 h-4" />}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
         {...flatListProps}
     />
 }

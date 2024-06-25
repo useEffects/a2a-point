@@ -1,17 +1,16 @@
+import { readItem } from "@directus/sdk";
+import { useQuery } from "@tanstack/react-query";
 import { Header } from "app/components/header";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
 import useNavigation from "app/hooks/navigation";
 import { useUserDetails } from "app/hooks/user-details";
+import { Feedback } from "app/lib/types";
 import { PostFeedback as PostFeedbackComponent } from "app/screens/post-feedback";
-import { UserFeedbacksProps } from "app/screens/profile";
+import directusStore from "app/store/directus";
 import { useEffect } from "react";
 import { ScrollView, View } from "react-native";
 import { useParams } from "solito/navigation";
-import { useQuery } from "@tanstack/react-query";
-import directusStore from "app/store/directus";
-import { readItem, readItems } from "@directus/sdk";
-import { Feedback } from "app/lib/types";
 
 export default function PostFeedback() {
     const params = useParams<{ id: string, feedbackId?: string }>();
@@ -23,8 +22,8 @@ export default function PostFeedback() {
         navigation.setOptions({
             header: () => (
                 <Header>
-                    {params.feedbackId ? <Text className="text-xl font-bold">Edit Feedback</Text> :
-                        <Text className="text-xl font-bold">Give Feedback</Text>}
+                    {params.feedbackId ? <Text className="text-xl font-semibold">Edit Feedback</Text> :
+                        <Text className="text-xl font-semibold">Give Feedback</Text>}
                 </Header>
             )
         });

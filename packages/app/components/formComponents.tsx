@@ -191,7 +191,7 @@ export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps 
             onChangeText={handleChange}
             onFocus={() => setShowResults(true)}
             className={cn(showResults && "rounded-b-none", props.className)}
-            autoSelect
+            autoSelect={showResults}
             {...props}
         />
         <Collapsible collapsed={!showResults || !data.length}>

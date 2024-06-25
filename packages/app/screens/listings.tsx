@@ -1,7 +1,9 @@
+import { readItem } from '@directus/sdk';
 import { RangeSlider } from '@react-native-assets/slider';
 import BottomSheet from 'app/components/bottomsheet';
 import { MediumListingCardProps } from "app/components/cards/atoms/medium";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings";
+import { AutoCompleteRenderItemProps, FormAutoSelect, RenderCompanyTileProps, RenderListingTileProps, RenderUserTileProps, autoCompleteFields } from 'app/components/formComponents';
 import { Bath, BedDouble, CarFront, CreditCard, LandPlot, X } from 'app/components/icons';
 import { CloseButton } from "app/components/link-buttons";
 import SearchBar from "app/components/searchbar";
@@ -9,32 +11,32 @@ import { Button } from "app/components/ui/button";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
 import { useColorScheme } from "app/hooks/color-scheme";
+import { directusUrl } from 'app/lib/constants';
 import { cn } from "app/lib/utils";
 import directusStore from "app/store/directus";
-import { Award, Handshake, Home, HousePlus, ListFilter, LucideIcon, LucideProps, Sparkles } from "lucide-react-native";
+import { queryClient } from 'app/store/query';
+import opacity from 'hex-color-opacity';
+import { Award, Handshake, HousePlus, ListFilter, LucideIcon, LucideProps, Sparkles } from "lucide-react-native";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
+import { Circle, Svg } from 'react-native-svg';
+import { NavigationState, Route, SceneRendererProps, TabView } from 'react-native-tab-view';
+import { useParams } from 'solito/navigation';
 import { useDebounce } from "use-debounce";
 import { GoToLoginButton } from "./locked-screens";
-import { NavigationState, Route, SceneRendererProps, TabView } from 'react-native-tab-view';
-import { AutoCompleteRenderItemProps, FormAutoSelect, RenderCompanyTileProps, RenderListingTileProps, RenderUserTileProps, autoCompleteFields } from 'app/components/formComponents';
-import opacity from 'hex-color-opacity';
-import { queryClient } from 'app/store/query';
-import { directusUrl } from 'app/lib/constants';
-import { readItem } from '@directus/sdk';
-import { useParams } from 'solito/navigation';
 
 export enum FilterKeys {
-    Price = "Price",
+    Budget = "Budget",
     Size = "Size",
     Bedrooms = "Bedrooms",
     Bathrooms = "Bathrooms",
     Parking = "Parking",
     Premium = "Premium",
-    Listing = "Listing",
-    Enquiry = "Enquiry",
-    Rent = "Is Rent",
-    Location = "Group",
+    Buy = "Buy",
+    Sale = "Sale",
+    GiveOnRent = "Give on rent",
+    TakeOnRent = "Take on rent",
+    Location = "Location",
     Agent = "Agent",
     Company = "Company"
 }
@@ -42,7 +44,7 @@ export enum FilterKeys {
 type FilterValue = AutoCompleteRenderItemProps | [number, number] | CommonFilters
 export type FilterType = { key: FilterKeys, filter: Record<string, any>, value: FilterValue }
 
-const priceRange: [number, number] = [0, 10000000]
+const budgetRange: [number, number] = [0, 10000000]
 const bedRoomsRange: [number, number] = [0, 8]
 const bathRoomsRange: [number, number] = [0, 8]
 const parkingRange: [number, number] = [0, 8]
@@ -126,7 +128,7 @@ const RangeSliders = ({ filters, setFilters }: { filters: FilterType[], setFilte
     const [navigationState, setNavigationState] = useState<NavigationState<Route>>({
         index: 0,
         routes: [
-            { key: FilterKeys.Price },
+            { key: FilterKeys.Budget },
             { key: FilterKeys.Size },
             { key: FilterKeys.Bedrooms },
             { key: FilterKeys.Bathrooms },
@@ -144,12 +146,16 @@ const RangeSliders = ({ filters, setFilters }: { filters: FilterType[], setFilte
 }
 
 const RangeSliderTab = (props: SceneRendererProps & { navigationState: NavigationState<Route>, setNavigationState: Dispatch<SetStateAction<NavigationState<Route>>>, filters: FilterType[] }) => {
+    const { colors } = useColorScheme()
+
     return <View className='w-full flex-row justify-between py-4'>
         {props.navigationState.routes.map((route, i) => {
             const Icon = RangeSliderTabIcons(route.key)!
             const isActive = props.filters.some(f => f.key === route.key)
             return <Button className='flex-grow flex-col gap-2 relative' key={i} variant={"base"} size="none" onPress={() => props.setNavigationState(p => ({ ...p, index: i }))}>
-                <View style={{ height: 8, width: 8, borderRadius: 4 }} className={cn('absolute top-0 right-0', isActive && "bg-primary")} />
+                <Svg height={8} width={8} style={{ position: "absolute", top: -8, right: 0, display: isActive ? "flex" : "none" }}>
+                    <Circle cx={4} cy={4} r={4} fill={colors.primary} />
+                </Svg>
                 <Icon className={cn(props.navigationState.index === i ? "text-foreground" : "text-subtext")} />
                 <View className={cn("w-full h-[2px] rounded", props.navigationState.index === i ? "bg-foreground" : "bg-transparent")} />
             </Button>
@@ -159,13 +165,13 @@ const RangeSliderTab = (props: SceneRendererProps & { navigationState: Navigatio
 
 const RangeSliderScenes = (props: SceneRendererProps & { route: Route } & { filters: FilterType[], setFilters: Dispatch<SetStateAction<FilterType[]>> }) => {
 
-    const initialPrice = props.filters.find(f => f.key === FilterKeys.Price)?.value as [number, number] || priceRange
+    const initialBudget = props.filters.find(f => f.key === FilterKeys.Budget)?.value as [number, number] || budgetRange
     const initialSize = props.filters.find(f => f.key === FilterKeys.Size)?.value as [number, number] || sizeRange
     const initialBedrooms = props.filters.find(f => f.key === FilterKeys.Bedrooms)?.value as [number, number] || bedRoomsRange
     const initialBathrooms = props.filters.find(f => f.key === FilterKeys.Bathrooms)?.value as [number, number] || bathRoomsRange
     const initialParking = props.filters.find(f => f.key === FilterKeys.Parking)?.value as [number, number] || parkingRange
 
-    const [price, setPrice] = useState<[number, number]>(initialPrice)
+    const [budget, setBudget] = useState<[number, number]>(initialBudget)
     const [bedRooms, setBedrooms] = useState<[number, number]>(initialBedrooms)
     const [bathRooms, setBathrooms] = useState<[number, number]>(initialBathrooms)
     const [parking, setParking] = useState<[number, number]>(initialParking)
@@ -173,17 +179,17 @@ const RangeSliderScenes = (props: SceneRendererProps & { route: Route } & { filt
 
     useEffect(() => {
         const newRangeFilters: FilterType[] = []
-        if (price[0] !== priceRange[0] || price[1] !== priceRange[1]) {
+        if (budget[0] !== budgetRange[0] || budget[1] !== budgetRange[1]) {
             newRangeFilters.push({
-                key: FilterKeys.Price,
-                filter: getFilterFromRange(price, "price", price[1] === priceRange[1]),
-                value: price
+                key: FilterKeys.Budget,
+                filter: getFilterFromRange(budget, "budget", budget[1] === budgetRange[1]),
+                value: budget
             })
         }
         if (size[0] !== sizeRange[0] || size[1] !== sizeRange[1]) {
             newRangeFilters.push({
                 key: FilterKeys.Size,
-                filter: getFilterFromRange(size, "carpet_area", size[1] === sizeRange[1]),
+                filter: getFilterFromRange(size, "size", size[1] === sizeRange[1]),
                 value: size
             })
         }
@@ -214,27 +220,27 @@ const RangeSliderScenes = (props: SceneRendererProps & { route: Route } & { filt
             return [...restFilters, ...newRangeFilters]
         })
 
-        if (parking[0] === parkingRange[0] && parking[1] === parkingRange[1]) {
-            props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Parking))
-        }
-        if (bathRooms[0] === bathRoomsRange[0] && bathRooms[1] === bathRoomsRange[1]) {
-            props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Bathrooms))
-        }
-        if (bedRooms[0] === bedRoomsRange[0] && bedRooms[1] === bedRoomsRange[1]) {
-            props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Bedrooms))
-        }
-        if (size[0] === sizeRange[0] && size[1] === sizeRange[1]) {
-            props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Size))
-        }
-        if (price[0] === priceRange[0] && price[1] === priceRange[1]) {
-            props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Price))
-        }
+        // if (parking[0] === parkingRange[0] && parking[1] === parkingRange[1]) {
+        //     props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Parking))
+        // }
+        // if (bathRooms[0] === bathRoomsRange[0] && bathRooms[1] === bathRoomsRange[1]) {
+        //     props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Bathrooms))
+        // }
+        // if (bedRooms[0] === bedRoomsRange[0] && bedRooms[1] === bedRoomsRange[1]) {
+        //     props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Bedrooms))
+        // }
+        // if (size[0] === sizeRange[0] && size[1] === sizeRange[1]) {
+        //     props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Size))
+        // }
+        // if (budget[0] === budgetRange[0] && budget[1] === budgetRange[1]) {
+        //     props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Budget))
+        // }
 
-    }, [price, bedRooms, bathRooms, parking, size])
+    }, [budget, bedRooms, bathRooms, parking, size])
 
     switch (props.route.key) {
-        case FilterKeys.Price:
-            return <RangeFilter label='Price' range={priceRange} value={price} setValue={setPrice} />
+        case FilterKeys.Budget:
+            return <RangeFilter label='Price' range={budgetRange} value={budget} setValue={setBudget} />
         case FilterKeys.Size:
             return <RangeFilter label='Size' range={sizeRange} value={size} setValue={setSize} />
         case FilterKeys.Bedrooms:
@@ -248,7 +254,7 @@ const RangeSliderScenes = (props: SceneRendererProps & { route: Route } & { filt
 
 const RangeSliderTabIcons = (route: string): LucideIcon | undefined => {
     switch (route) {
-        case FilterKeys.Price:
+        case FilterKeys.Budget:
             return CreditCard
         case FilterKeys.Size:
             return LandPlot
@@ -410,25 +416,25 @@ const categoryTiles = [
     }, {
         Icon: (props: LucideProps) => <Sparkles {...props} />,
         title: "Sale",
-        key: FilterKeys.Listing,
-        value: CommonFilters.Listing,
+        key: FilterKeys.Sale,
+        value: CommonFilters.Sale,
 
     }, {
         Icon: (props: LucideProps) => <CreditCard {...props} />,
         title: "Buy",
-        key: FilterKeys.Enquiry,
-        value: CommonFilters.Enquiry
+        key: FilterKeys.Buy,
+        value: CommonFilters.Buy
     }, {
         Icon: (props: LucideProps) => <HousePlus {...props} />,
         title: "Take on rent",
-        key: FilterKeys.Rent,
-        value: CommonFilters.Rent
+        key: FilterKeys.GiveOnRent,
+        value: CommonFilters.GiveOnRent
     },
     {
         Icon: (props: LucideProps) => <Handshake {...props} />,
         title: "Give on rent",
-        key: FilterKeys.Rent,
-        value: CommonFilters.Rent
+        key: FilterKeys.TakeOnRent,
+        value: CommonFilters.TakeOnRent
     }
 ]
 
@@ -462,7 +468,7 @@ export const LoginPopover = () => {
                 <View className="flex-row justify-between w-full">
                     <View className="flex-row gap-2">
                         <Sparkles fill={colors.primary} className="text-primary" />
-                        <Text className="text-xl font-bold">Get Started</Text>
+                        <Text className="text-xl font-semibold">Get Started</Text>
                     </View>
                     {canClose ? <CloseButton onPress={() => setIsOpen(false)} /> : <></>}
                 </View>
@@ -495,7 +501,7 @@ const RenderChips = ({ filters, setFilters }: { filters: FilterType[], setFilter
 
     const getPriceLabel = (value: FilterValue) => {
         const [minPrice, maxPrice] = value as [number, number];
-        return `Price AED ${minPrice.toLocaleString()} - AED ${maxPrice.toLocaleString()}${shouldRenderPlus(priceRange[1], maxPrice)}`;
+        return `Price AED ${minPrice.toLocaleString()} - AED ${maxPrice.toLocaleString()}${shouldRenderPlus(budgetRange[1], maxPrice)}`;
     };
 
     const getSizeLabel = (value: FilterValue) => {
@@ -523,7 +529,7 @@ const RenderChips = ({ filters, setFilters }: { filters: FilterType[], setFilter
                 return getAgentLabel(value);
             case FilterKeys.Company:
                 return getCompanyLabel(value);
-            case FilterKeys.Price:
+            case FilterKeys.Budget:
                 return getPriceLabel(value);
             case FilterKeys.Size:
                 return getSizeLabel(value);
