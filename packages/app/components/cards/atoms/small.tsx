@@ -54,7 +54,7 @@ export const RenderMetrics = ({ listingId }: { listingId: string }) => {
 
 export const SmallListingCard = (item: SmallListingCardProps) => {
     const { colors } = useColorScheme()
-    return <GoToFullListingButton listingId={item.id} variant={"base"} size={"none"} className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start rounded">
+    return <GoToFullListingButton listingId={item.id} variant={"base"} size={"none"} className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start rounded native:w-[400px]">
         <Image source={{ uri: buildAssetUrl(item.user_created.avatar) }} className="w-8 h-8 rounded-full" />
         <View className="flex-col gap-4 flex-grow">
             <View className="flex-col gap-1">

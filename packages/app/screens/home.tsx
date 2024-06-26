@@ -6,26 +6,25 @@ import { SmallListingCardProps } from "app/components/cards/atoms/small";
 import { SmallUsersCardProps } from "app/components/cards/atoms/users";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings";
 import { SmallLocationCards } from "app/components/cards/molecules/locations";
-import { RenderUsers } from "app/components/cards/molecules/users";
+import { RenderUsers, Mode as UsersRenderMode } from "app/components/cards/molecules/users";
 import { CompanyStats } from "app/components/company-stats";
 import { ArrowUpRight, ExternalLink } from "app/components/icons";
+import { GoToListingsListButton } from "app/components/link-buttons";
 import { SeparatorText } from "app/components/separator-text";
 import { Button } from "app/components/ui/button";
 import { Text } from "app/components/ui/text";
+import { ViewAllButton } from "app/components/utils/common-ui";
 import { FlatList } from "app/components/utils/virtual-lists";
 import { useColorScheme } from "app/hooks/color-scheme";
 import { directusUrl, portfolioUrl } from "app/lib/constants";
 import { News } from "app/lib/types";
 import directusStore from "app/store/directus";
 import userStore from "app/store/user";
+import * as Linking from "expo-linking";
 import opacity from "hex-color-opacity";
 import { View } from "react-native";
 import { Link } from "solito/link";
-import { Mode as UsersRenderMode } from "app/components/cards/molecules/users";
-import * as Linking from "expo-linking";
-import { ViewAllButton } from "app/components/utils/common-ui";
 import { FilterKeys } from "./listings";
-import { GoToListingsListButton } from "app/components/link-buttons";
 
 export default function HomeScreen() {
     const { authenticated, token } = directusStore()
@@ -54,10 +53,9 @@ export default function HomeScreen() {
         />
         <CompanyStats className="justify-start gap-12 px-4" />
         <SeparatorText hideRight>
-            <GoToListingsListButton filter={{
-                key: FilterKeys.Premium,
-                id: ""
-            }} variant={"base"} size={"none"} className="flex-row px-4 gap-1 items-center w-60 ml-auto mr-0">
+            <GoToListingsListButton filters={[{
+                [FilterKeys.Premium]: CommonFilters.Premium
+            }]} variant={"base"} size={"none"} className="flex-row px-4 gap-1 items-center w-60 ml-auto mr-0">
                 <Text className="text-right text-subtext">Premium listings curated by A2APoint</Text>
                 <ArrowUpRight size={24} className="text-info" />
             </GoToListingsListButton>
@@ -69,7 +67,7 @@ export default function HomeScreen() {
                 ListHeaderComponent: () => <View className="w-4 h-4" />
             }}
             filter={commonFilters[CommonFilters.Premium]()}
-            paramFilter={{ key: FilterKeys.Premium, id: "" }}
+            paramFilter={[{ [FilterKeys.Premium]: CommonFilters.Premium }]}
         />
         <SeparatorText hideLeft wrapperClassName="px-4">
             <Text className="font-medium">Browse popular locations</Text>

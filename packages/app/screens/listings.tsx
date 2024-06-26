@@ -3,7 +3,7 @@ import { RangeSlider } from '@react-native-assets/slider';
 import BottomSheet from 'app/components/bottomsheet';
 import { MediumListingCardProps } from "app/components/cards/atoms/medium";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings";
-import { AutoCompleteRenderItemProps, FormAutoSelect, RenderCompanyTileProps, RenderListingTileProps, RenderUserTileProps, autoCompleteFields } from 'app/components/formComponents';
+import { FormAutoSelect, RenderCompanyTileProps, RenderListingTileProps, RenderUserTileProps, autoCompleteFields, useAutoCompleteItem } from 'app/components/formComponents';
 import { Bath, BedDouble, CarFront, CreditCard, LandPlot, X } from 'app/components/icons';
 import { CloseButton } from "app/components/link-buttons";
 import SearchBar from "app/components/searchbar";
@@ -16,14 +16,17 @@ import { cn } from "app/lib/utils";
 import directusStore from "app/store/directus";
 import { queryClient } from 'app/store/query';
 import opacity from 'hex-color-opacity';
-import { Award, Handshake, HousePlus, ListFilter, LucideIcon, LucideProps, Sparkles } from "lucide-react-native";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
-import { View } from "react-native";
+import { Award, Filter, Handshake, HousePlus, ListFilter, LucideIcon, LucideProps, Sparkles } from "lucide-react-native";
+import { Dispatch, SetStateAction, use, useEffect, useMemo, useState } from "react";
+import { Platform, View } from "react-native";
 import { Circle, Svg } from 'react-native-svg';
 import { NavigationState, Route, SceneRendererProps, TabView } from 'react-native-tab-view';
-import { useParams } from 'solito/navigation';
+import { useParams, usePathname, useRouter } from 'solito/navigation';
 import { useDebounce } from "use-debounce";
 import { GoToLoginButton } from "./locked-screens";
+import { get, isArray, isNumber, isPlainObject, isString } from 'lodash';
+import useNavigation from 'app/hooks/navigation';
+import { useQuery } from '@tanstack/react-query';
 
 export enum FilterKeys {
     Budget = "Budget",
@@ -41,8 +44,9 @@ export enum FilterKeys {
     Company = "Company"
 }
 
-type FilterValue = AutoCompleteRenderItemProps | [number, number] | CommonFilters
-export type FilterType = { key: FilterKeys, filter: Record<string, any>, value: FilterValue }
+export type FilterValue = string | [number, number] | CommonFilters
+export type Filter = { key: FilterKeys, value: FilterValue }
+export type FilterParam = { [key in FilterKeys]?: FilterValue }
 
 const budgetRange: [number, number] = [0, 10000000]
 const bedRoomsRange: [number, number] = [0, 8]
@@ -56,25 +60,52 @@ export default function ListingsScreenComponent({ className }: { className?: str
     const [searchText, setSearchText] = useState("")
     const [debouncedSearchText] = useDebounce(searchText, 500)
     const [bottomSheetVisible, setBottomSheetVisible] = useState(false)
-    const [filters, setFilters] = useState<FilterType[]>([])
     const { colors } = useColorScheme()
     const { authenticated } = directusStore()
     const [key, setKey] = useState(0)
+    const [filters, setFilters] = useState([] as Filter[])
+    const setParams = useSetParams()
 
-    const _filters = useMemo(() => filters.map(f => f.filter), [filters])
+    const updateParams = function (filters: Filter[]) {
+        const newFilters = filters.reduce<{ [key in FilterKeys]?: FilterValue }[]>((acc, filter) => [...acc, { [filter.key]: filter.value }], [])
+        const dispatcher = setParams(newFilters)
+        typeof dispatcher === "function" && dispatcher()
+    }
+
+    const finalFilters = useMemo(() => filters.map(f => expandFilterValue(f.key, f.value)), [filters])
+
+    useEffect(() => {
+        let parsedFilters: unknown
+        if (Platform.OS === "web") {
+            parsedFilters = (params && params.filters) ? JSON.parse(params.filters.toString()) : []
+        } else {
+            parsedFilters = (params && params.filters) ? params.filters : []
+        }
+        if (isArray(parsedFilters)) {
+            Promise.all(parsedFilters.map(filter => {
+                if (isPlainObject(filter)) {
+                    const key = Object.keys(filter)[0] as FilterKeys
+                    if (filter.hasOwnProperty(key)) {
+                        const value = (filter as Record<string, any>)[key]
+                        if (isArray(value) && value.length === 2 && isNumber(value[0]) && isNumber(value[1])) {
+                            return { key, value: value as [number, number] }
+                        } else if (isString(value)) {
+                            return { key, value: value as string }
+                        }
+                        return { key, value }
+                    }
+                } else return null
+            }))
+                .then(r => r.filter(r => r?.key && r?.value) as Filter[])
+                .then(r => {
+                    setFilters(r)
+                })
+        }
+    }, [params])
 
     useEffect(() => {
         setKey(p => p + 1)
     }, [JSON.stringify(filters), debouncedSearchText])
-
-    useEffect(() => {
-        const initialFilter = (params?.key && (params?.id !== undefined || params?.id !== null)) ? getInitialFilter(params.key as FilterKeys, params.id as string) : Promise.resolve(null)
-        Promise.resolve(initialFilter).then(filter => {
-            if (filter) {
-                setFilters([filter])
-            }
-        })
-    }, [params])
 
     return <View className={cn("flex-1", className)}>
         <View className="flex-row items-center justify-between gap-4 w-full native:bg-card px-4">
@@ -91,7 +122,7 @@ export default function ListingsScreenComponent({ className }: { className?: str
                 <ListFilter size={18} color={filters.length ? colors.card : colors.info} />
             </Button>
         </View>
-        {filters.length ? <RenderChips filters={filters} setFilters={setFilters} /> : <View className='h-4 w-full native:bg-card' />}
+        {filters.length ? <RenderChips filters={filters} setFilters={updateParams} /> : <View className='h-4 w-full native:bg-card' />}
         <RenderListings<MediumListingCardProps>
             key={key}
             render={bodies.medium}
@@ -99,7 +130,7 @@ export default function ListingsScreenComponent({ className }: { className?: str
                 ItemSeparatorComponent: () => <Separator />,
                 contentContainerClassName: "px-4",
             }}
-            filter={filters.length ? commonFilters[CommonFilters.Custom](_filters) : undefined}
+            filter={filters.length ? commonFilters[CommonFilters.Custom](finalFilters) : undefined}
             searchText={debouncedSearchText}
             infinite={true}
         />
@@ -114,15 +145,15 @@ export default function ListingsScreenComponent({ className }: { className?: str
                     <CloseButton onPress={() => setBottomSheetVisible(false)} />
                 </View>
                 <View className='px-4'>
-                    <ComboBoxFilters filters={filters} setFilters={setFilters} />
+                    <ComboBoxFilters filters={filters} setFilters={updateParams} />
                 </View>
                 <Separator />
                 <View className='px-4'>
-                    <CategoryFilters filters={filters} setFilters={setFilters} />
+                    <CategoryFilters filters={filters} setFilters={updateParams} />
                 </View>
                 <Separator />
                 <View className='px-4'>
-                    <RangeSliders filters={filters} setFilters={setFilters} />
+                    <RangeSliders filters={filters} setFilters={updateParams} />
                 </View>
             </View>
         </BottomSheet>
@@ -130,7 +161,7 @@ export default function ListingsScreenComponent({ className }: { className?: str
     </View>
 }
 
-const RangeSliders = ({ filters, setFilters }: { filters: FilterType[], setFilters: Dispatch<SetStateAction<FilterType[]>> }) => {
+const RangeSliders = ({ filters, setFilters }: { filters: Filter[], setFilters: (newFilters: Filter[]) => void }) => {
     const [navigationState, setNavigationState] = useState<NavigationState<Route>>({
         index: 0,
         routes: [
@@ -151,7 +182,7 @@ const RangeSliders = ({ filters, setFilters }: { filters: FilterType[], setFilte
     />
 }
 
-const RangeSliderTab = (props: SceneRendererProps & { navigationState: NavigationState<Route>, setNavigationState: Dispatch<SetStateAction<NavigationState<Route>>>, filters: FilterType[] }) => {
+const RangeSliderTab = (props: SceneRendererProps & { navigationState: NavigationState<Route>, setNavigationState: Dispatch<SetStateAction<NavigationState<Route>>>, filters: Filter[] }) => {
     const { colors } = useColorScheme()
 
     return <View className='w-full flex-row justify-between py-4'>
@@ -169,92 +200,37 @@ const RangeSliderTab = (props: SceneRendererProps & { navigationState: Navigatio
     </View>
 }
 
-const RangeSliderScenes = (props: SceneRendererProps & { route: Route } & { filters: FilterType[], setFilters: Dispatch<SetStateAction<FilterType[]>> }) => {
+const RangeSliderScenes = (props: SceneRendererProps & { route: Route } & { filters: Filter[], setFilters: (newFilters: Filter[]) => void }) => {
 
-    const initialBudget = props.filters.find(f => f.key === FilterKeys.Budget)?.value as [number, number] || budgetRange
-    const initialSize = props.filters.find(f => f.key === FilterKeys.Size)?.value as [number, number] || sizeRange
-    const initialBedrooms = props.filters.find(f => f.key === FilterKeys.Bedrooms)?.value as [number, number] || bedRoomsRange
-    const initialBathrooms = props.filters.find(f => f.key === FilterKeys.Bathrooms)?.value as [number, number] || bathRoomsRange
-    const initialParking = props.filters.find(f => f.key === FilterKeys.Parking)?.value as [number, number] || parkingRange
+    const budget = props.filters.find(f => f.key === FilterKeys.Budget)?.value as [number, number] || budgetRange
+    const size = props.filters.find(f => f.key === FilterKeys.Size)?.value as [number, number] || sizeRange
+    const bedRooms = props.filters.find(f => f.key === FilterKeys.Bedrooms)?.value as [number, number] || bedRoomsRange
+    const bathRooms = props.filters.find(f => f.key === FilterKeys.Bathrooms)?.value as [number, number] || bathRoomsRange
+    const parking = props.filters.find(f => f.key === FilterKeys.Parking)?.value as [number, number] || parkingRange
 
-    const [budget, setBudget] = useState<[number, number]>(initialBudget)
-    const [bedRooms, setBedrooms] = useState<[number, number]>(initialBedrooms)
-    const [bathRooms, setBathrooms] = useState<[number, number]>(initialBathrooms)
-    const [parking, setParking] = useState<[number, number]>(initialParking)
-    const [size, setSize] = useState<[number, number]>(initialSize)
-
-    useEffect(() => {
-        const newRangeFilters: FilterType[] = []
-        if (budget[0] !== budgetRange[0] || budget[1] !== budgetRange[1]) {
-            newRangeFilters.push({
-                key: FilterKeys.Budget,
-                filter: getFilterFromRange(budget, "budget", budget[1] === budgetRange[1]),
-                value: budget
-            })
+    const dispatcher = (key: FilterKeys, range: [number, number]) => (value: [number, number]) => {
+        if (props.filters.some(f => f.key === key)) {
+            if (value[0] === range[0] && value[1] === range[1]) {
+                props.setFilters(props.filters.filter(f => f.key !== key))
+            } else {
+                props.setFilters(props.filters.map(f => f.key === key ? { key, value } : f))
+            }
+        } else {
+            props.setFilters([...props.filters, { key, value }])
         }
-        if (size[0] !== sizeRange[0] || size[1] !== sizeRange[1]) {
-            newRangeFilters.push({
-                key: FilterKeys.Size,
-                filter: getFilterFromRange(size, "size", size[1] === sizeRange[1]),
-                value: size
-            })
-        }
-        if (bedRooms[0] !== bedRoomsRange[0] || bedRooms[1] !== bedRoomsRange[1]) {
-            newRangeFilters.push({
-                key: FilterKeys.Bedrooms,
-                filter: getFilterFromRange(bedRooms, "bedrooms", bedRooms[1] === bedRoomsRange[1]),
-                value: bedRooms
-            })
-        }
-        if (bathRooms[0] !== bathRoomsRange[0] || bathRooms[1] !== bathRoomsRange[1]) {
-            newRangeFilters.push({
-                key: FilterKeys.Bathrooms,
-                filter: getFilterFromRange(bathRooms, "bathrooms", bathRooms[1] === bathRoomsRange[1]),
-                value: bathRooms
-            })
-        }
-        if (parking[0] !== parkingRange[0] || parking[1] !== parkingRange[1]) {
-            newRangeFilters.push({
-                key: FilterKeys.Parking,
-                filter: getFilterFromRange(parking, "parking", parking[1] === parkingRange[1]),
-                value: parking
-            })
-        }
-
-        props.setFilters(filters => {
-            const restFilters = filters.filter(f => !newRangeFilters.some(nf => nf.key === f.key))
-            return [...restFilters, ...newRangeFilters]
-        })
-
-        // if (parking[0] === parkingRange[0] && parking[1] === parkingRange[1]) {
-        //     props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Parking))
-        // }
-        // if (bathRooms[0] === bathRoomsRange[0] && bathRooms[1] === bathRoomsRange[1]) {
-        //     props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Bathrooms))
-        // }
-        // if (bedRooms[0] === bedRoomsRange[0] && bedRooms[1] === bedRoomsRange[1]) {
-        //     props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Bedrooms))
-        // }
-        // if (size[0] === sizeRange[0] && size[1] === sizeRange[1]) {
-        //     props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Size))
-        // }
-        // if (budget[0] === budgetRange[0] && budget[1] === budgetRange[1]) {
-        //     props.setFilters(filters => filters.filter(f => f.key !== FilterKeys.Budget))
-        // }
-
-    }, [budget, bedRooms, bathRooms, parking, size])
+    }
 
     switch (props.route.key) {
         case FilterKeys.Budget:
-            return <RangeFilter label='Price' range={budgetRange} value={budget} setValue={setBudget} />
+            return <RangeFilter label='Budget' range={budgetRange} value={budget} setValue={dispatcher(FilterKeys.Budget, budgetRange)} />
         case FilterKeys.Size:
-            return <RangeFilter label='Size' range={sizeRange} value={size} setValue={setSize} />
+            return <RangeFilter label='Size' range={sizeRange} value={size} setValue={dispatcher(FilterKeys.Size, sizeRange)} />
         case FilterKeys.Bedrooms:
-            return <RangeFilter label='Bedrooms' range={bedRoomsRange} value={bedRooms} setValue={setBedrooms} />
+            return <RangeFilter label='Bedrooms' range={bedRoomsRange} value={bedRooms} setValue={dispatcher(FilterKeys.Bedrooms, bedRoomsRange)} />
         case FilterKeys.Bathrooms:
-            return <RangeFilter label='Bathrooms' range={bathRoomsRange} value={bathRooms} setValue={setBathrooms} />
+            return <RangeFilter label='Bathrooms' range={bathRoomsRange} value={bathRooms} setValue={dispatcher(FilterKeys.Bathrooms, bathRoomsRange)} />
         case FilterKeys.Parking:
-            return <RangeFilter label='Parking' range={parkingRange} value={parking} setValue={setParking} />
+            return <RangeFilter label='Parking' range={parkingRange} value={parking} setValue={dispatcher(FilterKeys.Parking, parkingRange)} />
     }
 }
 
@@ -273,7 +249,7 @@ const RangeSliderTabIcons = (route: string): LucideIcon | undefined => {
     }
 }
 
-const RangeFilter = ({ value, setValue, range, label }: { value: [number, number], setValue: Dispatch<SetStateAction<[number, number]>>, range: [number, number], label: string }) => {
+const RangeFilter = ({ value, setValue, range, label }: { value: [number, number], setValue: (newValues: [number, number]) => void, range: [number, number], label: string }) => {
     const { colors } = useColorScheme()
     const [minRange, maxRange] = range
     const [min, max] = value
@@ -302,74 +278,21 @@ const RangeFilter = ({ value, setValue, range, label }: { value: [number, number
     </View>
 }
 
-const getFilterFromRange = (range: [number, number], key: string, isAtMax: boolean) => {
-    const [min, max] = range
-    return {
-        [key]: {
-            _gte: min,
-            _lte: isAtMax ? undefined : max
-        }
-    }
+const ComboBoxFilters = ({ filters, setFilters }: { filters: Filter[], setFilters: (newFilters: Filter[]) => void }) => {
+    const locationId = filters.find(f => f.key === FilterKeys.Location)?.value
+    const agentId = filters.find(f => f.key === FilterKeys.Agent)?.value
+    const companyId = filters.find(f => f.key === FilterKeys.Company)?.value
 
-}
-
-const ComboBoxFilters = ({ filters, setFilters }: { filters: FilterType[], setFilters: Dispatch<SetStateAction<FilterType[]>> }) => {
-
-    const initialLocation = filters.find(f => f.key === FilterKeys.Location)?.value as RenderListingTileProps | null
-    const initialAgent = filters.find(f => f.key === FilterKeys.Agent)?.value as RenderUserTileProps | null
-    const initialCompany = filters.find(f => f.key === FilterKeys.Company)?.value as RenderCompanyTileProps | null
-
-    const [location, setLocation] = useState<RenderListingTileProps | null>(initialLocation)
-    const [agent, setAgent] = useState<RenderUserTileProps | null>(initialAgent)
-    const [company, setCompany] = useState<RenderCompanyTileProps | null>(initialCompany)
-
-    useEffect(() => {
-        if (location) {
-            setFilters(filters => {
-                const existingFilter = filters.find(f => f.key === FilterKeys.Location)
-                if (existingFilter) {
-                    return filters.map(f => f.key === FilterKeys.Location ? { ...f, value: location } : f)
-                }
-                return [...filters, { key: FilterKeys.Location, filter: { location: location.id }, value: location }]
-            })
-        }
-        if (agent) {
-            setFilters(filters => {
-                const existingFilter = filters.find(f => f.key === FilterKeys.Agent)
-                if (existingFilter) {
-                    return filters.map(f => f.key === FilterKeys.Agent ? { ...f, value: agent } : f)
-                }
-                return [...filters, { key: FilterKeys.Agent, filter: { user_created: agent.id }, value: agent }]
-            })
-        }
-        if (company) {
-            setFilters(filters => {
-                const existingFilter = filters.find(f => f.key === FilterKeys.Company)
-                if (existingFilter) {
-                    return filters.map(f => f.key === FilterKeys.Company ? { ...f, value: company } : f)
-                }
-                return [...filters, {
-                    key: FilterKeys.Company, filter: {
-                        user_created: {
-                            company: {
-                                _eq: company.id
-                            }
-                        }
-                    }, value: company
-                }]
-            })
-        }
-        if (!location) setFilters(filters => filters.filter(f => f.key !== FilterKeys.Location))
-        if (!agent) setFilters(filters => filters.filter(f => f.key !== FilterKeys.Agent))
-        if (!company) setFilters(filters => filters.filter(f => f.key !== FilterKeys.Company))
-    }, [location, agent, company])
+    const location = useAutoCompleteItem("rooms", locationId as string | undefined)
+    const agent = useAutoCompleteItem("users", agentId as string | undefined)
+    const company = useAutoCompleteItem("companies", companyId as string | undefined)
 
     return <View className='flex flex-col gap-4'>
         <FormAutoSelect
             item='rooms'
             label='Location'
             currentItem={location}
-            setCurrentItem={(item) => item && setLocation(item as RenderListingTileProps)}
+            setCurrentItem={(item) => item && setFilters([...filters, { key: FilterKeys.Location, value: item.id }])}
             filter={{
                 type: {
                     _eq: "group"
@@ -380,29 +303,31 @@ const ComboBoxFilters = ({ filters, setFilters }: { filters: FilterType[], setFi
             item='users'
             label="Agent"
             currentItem={agent}
-            setCurrentItem={(item) => item && setAgent(item as RenderUserTileProps)}
+            setCurrentItem={(item) => item && setFilters([...filters, { key: FilterKeys.Location, value: item.id }])}
         />
         <FormAutoSelect
             item='companies'
             label='Company'
             currentItem={company}
-            setCurrentItem={(item) => item && setCompany(item as RenderCompanyTileProps)}
+            setCurrentItem={(item) => item && setFilters([...filters, { key: FilterKeys.Location, value: item.id }])}
         />
     </View>
 }
 
-const CategoryFilters = ({ filters, setFilters }: { filters: FilterType[], setFilters: Dispatch<SetStateAction<FilterType[]>> }) => {
+const CategoryFilters = ({ filters, setFilters }: { filters: Filter[], setFilters: (newFilters: Filter[]) => void }) => {
     const { colors } = useColorScheme()
+
+    const handleOnPress = (key: FilterKeys, value: CommonFilters) => {
+        if (filters.some(f => f.key === key)) {
+            setFilters(filters.filter(f => f.key !== key))
+        } else {
+            setFilters([...filters, { key: key, value: value }])
+        }
+    }
 
     return <View className="flex-row justify-between w-full">
         {categoryTiles.map((category, i) => <Button
-            onPress={() => {
-                if (filters.some(f => f.value === category.value)) {
-                    setFilters(filters.filter(f => f.key !== category.key))
-                } else {
-                    setFilters([...filters, { key: category.key, filter: commonFilters[category.value]({} as any), value: category.value }])
-                }
-            }}
+            onPress={() => handleOnPress(category.key, category.value)}
             variant={"base"}
             size={"none"}
             key={i}
@@ -487,117 +412,121 @@ export const LoginPopover = () => {
     </BottomSheet>
 }
 
-const RenderChips = ({ filters, setFilters }: { filters: FilterType[], setFilters: Dispatch<SetStateAction<FilterType[]>> }) => {
+const RenderChips = ({ filters, setFilters }: { filters: Filter[], setFilters: (newFilters: Filter[]) => void }) => {
     const { colors } = useColorScheme()
 
     const shouldRenderPlus = (max: number, value: number) => value === max ? "+" : ""
 
-    const getLocationLabel = (value: FilterValue) => {
-        return `Location: ${(value as RenderListingTileProps).title}`;
-    };
+    const locationId = filters.find(f => f.key === FilterKeys.Location)?.value
+    const agentId = filters.find(f => f.key === FilterKeys.Agent)?.value
+    const companyId = filters.find(f => f.key === FilterKeys.Company)?.value
 
-    const getAgentLabel = (value: FilterValue) => {
-        const { first_name, last_name } = value as RenderUserTileProps;
-        return `Agent: ${first_name} ${last_name}`;
-    };
+    const location = useAutoCompleteItem("rooms", locationId?.toString()) as RenderListingTileProps | null
+    const agent = useAutoCompleteItem("users", agentId?.toString()) as RenderUserTileProps | null
+    const company = useAutoCompleteItem("companies", companyId?.toString()) as RenderCompanyTileProps | null
 
-    const getCompanyLabel = (value: FilterValue) => {
-        return `Company: ${(value as RenderCompanyTileProps).title}`;
-    };
+    const getRangeSliderLabel = (key: FilterKeys, value: [number, number], maxRange: number) => {
+        const [min, max] = value
+        return `${key}: ${min} - ${max}${shouldRenderPlus(maxRange, max)}`
+    }
 
-    const getPriceLabel = (value: FilterValue) => {
-        const [minPrice, maxPrice] = value as [number, number];
-        return `Price AED ${minPrice.toLocaleString()} - AED ${maxPrice.toLocaleString()}${shouldRenderPlus(budgetRange[1], maxPrice)}`;
-    };
-
-    const getSizeLabel = (value: FilterValue) => {
-        const [minSize, maxSize] = value as [number, number];
-        return `Size ${minSize.toLocaleString()}sq.ft - ${maxSize.toLocaleString()}sq.ft${shouldRenderPlus(sizeRange[1], maxSize)}`;
-    };
-
-    const getBedroomsLabel = (value: FilterValue) => {
-        const [minBedrooms, maxBedrooms] = value as [number, number];
-        return `Bedrooms ${minBedrooms} - ${maxBedrooms}${shouldRenderPlus(bedRoomsRange[1], maxBedrooms)}`;
-    };
-
-    const getBathroomsLabel = (value: FilterValue) => {
-        const [minBathrooms, maxBathrooms] = value as [number, number];
-        return `Bathrooms ${minBathrooms} - ${maxBathrooms}${shouldRenderPlus(bathRoomsRange[1], maxBathrooms)}`;
-    };
-
-    const getLabel = (filter: FilterType) => {
+    const getLabel = (filter: Filter) => {
         const { key, value } = filter;
 
         switch (key) {
             case FilterKeys.Location:
-                return getLocationLabel(value);
+                return `Location: ${location?.title}`;
             case FilterKeys.Agent:
-                return getAgentLabel(value);
+                return `Agent: ${agent?.first_name} ${agent?.last_name}`;
             case FilterKeys.Company:
-                return getCompanyLabel(value);
+                return `Company: ${company?.title}`;
             case FilterKeys.Budget:
-                return getPriceLabel(value);
+                return getRangeSliderLabel(FilterKeys.Budget, value as [number, number], budgetRange[1]);
             case FilterKeys.Size:
-                return getSizeLabel(value);
+                return getRangeSliderLabel(FilterKeys.Size, value as [number, number], sizeRange[1]);
             case FilterKeys.Bedrooms:
-                return getBedroomsLabel(value);
+                return getRangeSliderLabel(FilterKeys.Bedrooms, value as [number, number], bedRoomsRange[1]);
             case FilterKeys.Bathrooms:
-                return getBathroomsLabel(value);
+                return getRangeSliderLabel(FilterKeys.Bathrooms, value as [number, number], bathRoomsRange[1]);
+            case FilterKeys.Parking:
+                return getRangeSliderLabel(FilterKeys.Parking, value as [number, number], parkingRange[1]);
             default:
-                return key;
+                return value;
         }
     };
 
     const handlePress = (key: FilterKeys) => {
-        setFilters(filters => filters.filter(f => f.key !== key))
+        setFilters(filters.filter(f => f.key !== key));
     }
 
     return <View className='flex-row gap-2 flex-wrap w-full px-4 py-2 native:bg-card'>
-        {filters.map(((filter, index) => <Button onPress={() => handlePress(filter.key)} variant={"base"} size={"none"} style={{ backgroundColor: opacity(colors.info, 0.1) }} className='flex-row gap-1 p-1' key={index}>
-            <X className='text-destructive' size={12} />
+        {filters.sort((a, b) => a.key.localeCompare(b.key)).map(((filter, index) => <Button onPress={() => handlePress(filter.key)} variant={"base"} size={"none"} style={{ backgroundColor: opacity(colors.info, 0.1) }} className='flex-row gap-1 p-1' key={index}>
             <Text className='text-xs text-info'>{getLabel(filter)}</Text>
         </Button>))}
     </View>
 }
 
-const getInitialFilter = async (key: FilterKeys, id: string): Promise<FilterType | null> => {
-    const { rest, token } = directusStore.getState()
+const expandFilterValue = (key: FilterKeys, value: FilterValue): Record<string, any> => {
     switch (key) {
         case FilterKeys.Agent: {
-            const data = await queryClient.fetchQuery<RenderUserTileProps>({
-                queryKey: ["Fetching for param", key, id],
-                queryFn: async () => await fetch(`${directusUrl}/users/${id}?fields=${autoCompleteFields.users.join(",")}`, {
-                    headers: {
-                        "Authorization": `Bearer ${token}`
-                    }
-                }).then(res => res.json()).then(res => res.data)
-            })
             return {
-                key: FilterKeys.Agent,
-                filter: { user_created: id },
-                value: data
+                user_id: {
+                    _eq: value
+                }
             }
         }
         case FilterKeys.Location: {
-            const data = await queryClient.fetchQuery<RenderListingTileProps>({
-                queryKey: ["Fetching for param", key, id],
-                queryFn: async () => await rest.request(readItem("rooms", id, {
-                    fields: autoCompleteFields.rooms,
-                })) as RenderListingTileProps
-            })
             return {
-                key: FilterKeys.Location,
-                filter: { location: id },
-                value: data
+                location: {
+                    _eq: value
+                }
             }
         }
-        case FilterKeys.Premium: {
+        case FilterKeys.Company: {
             return {
-                key: FilterKeys.Premium,
-                filter: commonFilters[CommonFilters.Premium](),
-                value: CommonFilters.Premium
+                user_created: {
+                    company: {
+                        _eq: value
+                    }
+                }
             }
         }
-        default: return null
+        case FilterKeys.Parking:
+        case FilterKeys.Bedrooms:
+        case FilterKeys.Bathrooms:
+        case FilterKeys.Size:
+        case FilterKeys.Budget:
+            return {
+                [key]: {
+                    _gte: value[0],
+                    _lte: value[1]
+                }
+            }
+
+        case FilterKeys.Premium:
+        case FilterKeys.Buy:
+        case FilterKeys.Sale:
+        case FilterKeys.GiveOnRent:
+        case FilterKeys.TakeOnRent:
+            return commonFilters[value as CommonFilters]("" as any)
     }
+}
+
+const useSetParams = () => {
+    const navigation = useNavigation()
+    const pathname = usePathname()
+    const router = useRouter()
+
+    const setParams = (newFilters: { [key in FilterKeys]?: FilterValue }[]) => Platform.select({
+        native: () => {
+            return navigation.navigate("listings", { filters: newFilters })
+        },
+        web: () => {
+            const searchParams = new URLSearchParams(pathname)
+            searchParams.append("filters", JSON.stringify(newFilters))
+            router.push(`${pathname}/?${searchParams.toString()}`)
+        }
+    })
+
+    return setParams
 }

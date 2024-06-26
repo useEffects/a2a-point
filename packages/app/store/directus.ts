@@ -66,8 +66,8 @@ const directusStore = create<DirectusStore>((set, get) => ({
                     userStore.setState(p => ({ ...p, document: document }))
                 }
             } else {
-                const error = await response.json();
-                console.log(error)
+                await AsyncStorage.removeItem("accessToken");
+                await AsyncStorage.removeItem("refreshToken");
                 return resetDirectus()
             }
         } catch (error) {

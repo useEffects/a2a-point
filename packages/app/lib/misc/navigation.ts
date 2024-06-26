@@ -1,4 +1,4 @@
-import { FilterKeys } from "app/screens/listings"
+import { FilterValue, FilterKeys, FilterParam } from "app/screens/listings"
 
 export type RootStackParamList = {
     "app": undefined,
@@ -35,10 +35,7 @@ export type RootStackParamList = {
 
 export type MainTopTabParamList = {
     "home": undefined,
-    "listings": {
-        key: FilterKeys,
-        id: string
-    } | undefined,
+    "listings": { filters: FilterParam[] } | undefined,
     "search": undefined,
     "offPlans": undefined,
     "profile": undefined,

@@ -1,22 +1,26 @@
-import { Pressable, PressableProps, GestureResponderEvent, Text } from "react-native"
+import { Button, ButtonProps } from "app/components/ui/button"
 import { useColorScheme } from "app/hooks/color-scheme"
 import { X } from "lucide-react-native"
-import { useRouter } from "solito/navigation"
+import { FilterKeys } from "app/screens/listings"
+import { useParams, useRouter, useSearchParams } from "solito/navigation"
+import { GestureResponderEvent } from "react-native"
 
-export const CloseButton = (props: PressableProps) => {
+export const CloseButton = (props: ButtonProps) => {
     const { colors } = useColorScheme()
     return (
-        <Pressable
+        <Button
+            variant="base"
+            size="none"
             style={{ backgroundColor: colors.destructive, padding: 4, borderRadius: 4 }}
             {...props}
         >
             <X size={14} color={colors["destructive-foreground"]} />
             {props.children as React.ReactNode}
-        </Pressable>
+        </Button>
     )
 }
 
-export const GoToFullListingButton = (props: PressableProps & { listingId: string }) => {
+export const GoToFullListingButton = (props: ButtonProps & { listingId: string }) => {
     const router = useRouter()
 
     const goToDetailScreen = () => {
@@ -24,13 +28,13 @@ export const GoToFullListingButton = (props: PressableProps & { listingId: strin
     }
 
     return (
-        <Pressable onPress={goToDetailScreen} {...props}>
+        <Button variant="base" size="none" onPress={goToDetailScreen} {...props}>
             {props.children}
-        </Pressable>
+        </Button>
     )
 }
 
-export const GoToRoomButton = (props: PressableProps & { roomId: string | Promise<string> }) => {
+export const GoToRoomButton = (props: ButtonProps & { roomId: string | Promise<string> }) => {
     const router = useRouter()
 
     const goToDetailScreen = async () => {
@@ -39,13 +43,13 @@ export const GoToRoomButton = (props: PressableProps & { roomId: string | Promis
     }
 
     return (
-        <Pressable onPress={goToDetailScreen} {...props}>
+        <Button variant="base" size="none" onPress={goToDetailScreen} {...props}>
             {props.children}
-        </Pressable>
+        </Button>
     )
 }
 
-export const GoToProfileButton = (props: PressableProps & { userId: string }) => {
+export const GoToProfileButton = (props: ButtonProps & { userId: string }) => {
     const router = useRouter()
 
     const goToProfileDetailed = () => {
@@ -53,13 +57,13 @@ export const GoToProfileButton = (props: PressableProps & { userId: string }) =>
     }
 
     return (
-        <Pressable onPress={goToProfileDetailed} {...props}>
+        <Button variant="base" size="none" onPress={goToProfileDetailed} {...props}>
             {props.children}
-        </Pressable>
+        </Button>
     )
 }
 
-export const GoToLocationListingsButton = (props: PressableProps & { roomId: string }) => {
+export const GoToLocationListingsButton = (props: ButtonProps & { roomId: string }) => {
     const router = useRouter()
 
     const goToLocationDetailed = () => {
@@ -67,13 +71,13 @@ export const GoToLocationListingsButton = (props: PressableProps & { roomId: str
     }
 
     return (
-        <Pressable onPress={goToLocationDetailed} {...props}>
+        <Button variant="base" size="none" onPress={goToLocationDetailed} {...props}>
             {props.children}
-        </Pressable>
+        </Button>
     )
 }
 
-export const GoToPostFeedbackButton = (props: PressableProps & { userId: string }) => {
+export const GoToPostFeedbackButton = (props: ButtonProps & { userId: string }) => {
     const router = useRouter()
 
     const goToPostFeedback = () => {
@@ -81,13 +85,13 @@ export const GoToPostFeedbackButton = (props: PressableProps & { userId: string 
     }
 
     return (
-        <Pressable onPress={goToPostFeedback} {...props}>
+        <Button variant="base" size="none" onPress={goToPostFeedback} {...props}>
             {props.children}
-        </Pressable>
+        </Button>
     )
 }
 
-export type GoToLoginButtonProps = PressableProps & { additionalOnPress?: () => void }
+export type GoToLoginButtonProps = ButtonProps & { additionalOnPress?: () => void }
 export const GoToLoginButton = (props: GoToLoginButtonProps) => {
     const router = useRouter()
 
@@ -101,13 +105,13 @@ export const GoToLoginButton = (props: GoToLoginButtonProps) => {
     }
 
     return (
-        <Pressable onPress={handleOnPress} {...props}>
+        <Button variant="base" size="none" onPress={handleOnPress} {...props}>
             {props.children}
-        </Pressable>
+        </Button>
     )
 }
 
-export const GoToActivityButton = (props: PressableProps) => {
+export const GoToActivityButton = (props: ButtonProps) => {
     const router = useRouter()
 
     const goToActivity = () => {
@@ -115,28 +119,38 @@ export const GoToActivityButton = (props: PressableProps) => {
     }
 
     return (
-        <Pressable onPress={goToActivity} {...props}>
+        <Button variant="base" size="none" onPress={goToActivity} {...props}>
             {props.children}
-        </Pressable>
+        </Button>
     )
 }
 
-export const GoToListingsListButton = (props: PressableProps) => {
+export const GoToListingsListButton = (props: ButtonProps & {
+    filter?: {
+        key: FilterKeys,
+        id: string
+    }
+}) => {
     const router = useRouter()
+    const params = useSearchParams()
 
     const goToListingsList = () => {
-        console.log("here")
-        router.push("/listings")
+        console.log(props.filter)
+        if (params && props.filter?.key && props.filter?.id) {
+            params?.set("key", props.filter.key)
+            params?.set("id", props.filter.id)
+            router.push(`/listings?${params.toString()}`)
+        }
     }
 
     return (
-        <Pressable onPress={goToListingsList} {...props}>
+        <Button variant="base" size="none" onPress={goToListingsList} {...props}>
             {props.children}
-        </Pressable>
+        </Button>
     )
 }
 
-export const GoToLocationsListButton = (props: PressableProps) => {
+export const GoToLocationsListButton = (props: ButtonProps) => {
     const router = useRouter()
 
     const goToLocationsList = () => {
@@ -144,41 +158,43 @@ export const GoToLocationsListButton = (props: PressableProps) => {
     }
 
     return (
-        <Pressable onPress={goToLocationsList} {...props}>
+        <Button variant="base" size="none" onPress={goToLocationsList} {...props}>
             {props.children}
-        </Pressable>
+        </Button>
     )
 }
 
-export const GoToMembersListButton = (props: PressableProps) => {
+export const GoToMembersListButton = (props: ButtonProps & {
+    locationId: string
+}) => {
     const router = useRouter()
 
     const goToMembersList = () => {
-        router.push("/members")
+        router.push(`/locations/${props.locationId}/members`)
     }
 
     return (
-        <Pressable onPress={goToMembersList} {...props}>
+        <Button variant="base" size="none" onPress={goToMembersList} {...props}>
             {props.children}
-        </Pressable>
+        </Button>
     )
 }
 
-export const GoToUsersListButton = (props: PressableProps) => {
+export const GoToUsersListButton = (props: ButtonProps) => {
     const router = useRouter()
 
     const goToGroupsList = () => {
-        router.push("/groups")
+        router.push("/agents")
     }
 
     return (
-        <Pressable onPress={goToGroupsList} {...props}>
+        <Button variant="base" size="none" onPress={goToGroupsList} {...props}>
             {props.children}
-        </Pressable>
+        </Button>
     )
 }
 
-export const GoToPostButton = (props: PressableProps) => {
+export const GoToPostButton = (props: ButtonProps) => {
     const router = useRouter()
 
     const goToPost = () => {
@@ -186,8 +202,8 @@ export const GoToPostButton = (props: PressableProps) => {
     }
 
     return (
-        <Pressable onPress={goToPost} {...props}>
+        <Button variant="base" size="none" onPress={goToPost} {...props}>
             {props.children}
-        </Pressable>
+        </Button>
     )
 }

@@ -1,9 +1,9 @@
 import { useColorScheme } from "app/hooks/color-scheme"
 import useNavigation from "app/hooks/navigation"
+import { Filter, FilterParam } from "app/screens/listings"
 import { X } from "lucide-react-native"
 import { GestureResponderEvent } from "react-native"
 import { Button, ButtonProps } from "../ui/button"
-import { FilterKeys } from "app/screens/listings"
 
 export const useGoToRoute = (route: "notifications" | "account-console") => {
     const navigation = useNavigation()
@@ -165,15 +165,12 @@ export const GoToCompanyListButton = (props: ButtonProps) => {
 }
 
 export const GoToListingsListButton = (props: ButtonProps & {
-    filter?: {
-        key: FilterKeys,
-        id: string
-    }
+    filters?: FilterParam[]
 }) => {
     const navigation = useNavigation()
 
     const goToListingsList = () => {
-        navigation.getState() && navigation.navigate("listings", props.filter)
+        navigation.getState() && navigation.navigate("listings", props.filters ? { filters: props.filters } : undefined)
     }
 
     return <Button variant={"base"} size={"none"} onPress={goToListingsList} {...props} />
@@ -181,7 +178,7 @@ export const GoToListingsListButton = (props: ButtonProps & {
 
 export const GoToMembersListButton = (props: ButtonProps & { locationId: string }) => {
     const navigation = useNavigation()
-    
+
     const goToMembersList = () => {
         navigation.getState() && navigation.push("members-list", {
             locationId: props.locationId

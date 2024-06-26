@@ -1,26 +1,21 @@
 import { readItems } from "@directus/sdk"
+import { useInfiniteQuery } from "@tanstack/react-query"
+import { GoToListingsListButton } from "app/components/link-buttons"
+import { Text } from "app/components/ui/text"
+import { ViewAllButton } from "app/components/utils/common-ui"
 import { FlatList } from "app/components/utils/virtual-lists"
+import { useColorScheme } from "app/hooks/color-scheme"
+import { InViewPort } from "app/lib/detect-viewport"
+import { DotSeparatedKeys } from "app/lib/helpers"
+import { Filter, FilterParam } from "app/screens/listings"
 import directusStore from "app/store/directus"
-import { queryClient } from "app/store/query"
 import userStore from "app/store/user"
-import { ComponentType, useEffect, useMemo, useRef, useState } from "react"
-import { ActivityIndicator, FlatList as RNFlatList, FlatListProps, View } from "react-native"
+import { ActivityIndicator, FlatListProps, View } from "react-native"
+import { AdvertisementCard, AdvertisementCardProps } from "../atoms/advertisements"
 import { ExtraSmallListingCard, ExtraSmallListingCardProps } from "../atoms/extra-small"
 import { MediumListingCard, MediumListingCardProps } from "../atoms/medium"
 import { PhotoListingCard, PhotoListingProps } from "../atoms/photo"
 import { SmallListingCard, SmallListingCardProps } from "../atoms/small"
-import { AdvertisementCard, AdvertisementCardProps } from "../atoms/advertisements"
-import { useColorScheme } from "app/hooks/color-scheme"
-import { Text } from "app/components/ui/text"
-import { GoToListingsListButton } from "app/components/link-buttons"
-import { ViewAllButton } from "app/components/utils/common-ui"
-import { Button, ButtonProps } from "app/components/ui/button"
-import { FilterKeys, FilterType } from "app/screens/listings"
-import * as Linking from "expo-linking"
-import { DotSeparatedKeys } from "app/lib/helpers"
-import { uniqBy } from "lodash"
-import { InViewPort } from "app/lib/detect-viewport"
-import { useInfiniteQuery } from "@tanstack/react-query"
 
 type ListCardProps = SmallListingCardProps | ExtraSmallListingCardProps | MediumListingCardProps | PhotoListingProps
 
@@ -178,10 +173,7 @@ export const RenderListings = <R extends ListCardProps>({ paramFilter, render, f
         "data" | "renderItem">,
     limit?: number,
     infinite?: boolean,
-    paramFilter?: {
-        key: FilterKeys,
-        id: string
-    },
+    paramFilter?: FilterParam[],
     viewAllButtonLink?: string
 }) => {
 
@@ -249,7 +241,7 @@ export const RenderListings = <R extends ListCardProps>({ paramFilter, render, f
         keyExtractor={(item) => item.id}
         ListFooterComponent={
             infinite ? () => <BottomLoader endReached={!hasNextPage} onEndReached={fetchNextPage} /> :
-                <ViewAllButton horizontal={!!flatListProps?.horizontal} button={(props) => <GoToListingsListButton {...props} filter={paramFilter} />} />}
+                <ViewAllButton horizontal={!!flatListProps?.horizontal} button={(props) => <GoToListingsListButton {...props} filters={paramFilter} />} />}
     />
 }
 

@@ -11,7 +11,7 @@ import { Formik, FormikProps } from "formik";
 import AutoComplete from "react-native-autocomplete-input"
 import { useQuery } from "@tanstack/react-query";
 import directusStore from "app/store/directus";
-import { readItems } from "@directus/sdk";
+import { readItem, readItems } from "@directus/sdk";
 import { Company, Listing, Room, User } from "app/lib/types";
 import { buildAssetUrl } from "app/lib/helpers";
 import { UserChip } from "./user-chip";
@@ -21,6 +21,9 @@ import { Separator } from "./ui/separator";
 import { directusUrl } from "app/lib/constants";
 import OutsidePressHandler from 'react-native-outside-press';
 import Collapsible from "react-native-collapsible";
+import useNavigation from "app/hooks/navigation";
+import { usePathname, useRouter } from "solito/navigation";
+import { Filter } from "app/screens/listings";
 
 type AdditionalFormInputProps = {
     error?: string,
@@ -123,6 +126,27 @@ export const getTitle = (item: AutoCompleteRenderItemProps | null) => {
     } else {
         return item.title!
     }
+}
+
+export const useAutoCompleteItem = (item: keyof typeof autoCompleteFields, id: string | undefined | null, filter: Record<string, any> = {}) => {
+    const { rest, token } = directusStore()
+
+    const { data } = useQuery<AutoCompleteRenderItemProps | null>({
+        queryKey: ["Fetch AutoComplete Data", item, id, autoCompleteFields[item]],
+        queryFn: async () => item === "users" ?
+            await fetch(`${directusUrl}/users/${id}?fields=${autoCompleteFields[item].join(",")}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }).then(res => res.json()).then(res => res.data as RenderUserTileProps) :
+            await rest.request(readItem(item, id!, {
+                filter: filter,
+                fields: autoCompleteFields[item]
+            })) as AutoCompleteRenderItemProps,
+        enabled: Boolean(id),
+        initialData: null
+    })
+    return data
 }
 
 export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps & AdditionalAutoSelectFormProps) => {
