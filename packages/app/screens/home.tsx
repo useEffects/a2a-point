@@ -42,19 +42,17 @@ export default function HomeScreen() {
     })
 
     return <View className="flex-1 flex-col gap-8">
-        <Text className="text-xl font-semibold text-wrap px-4">{authenticated ? `Welcome back ${user.first_name} ${user.last_name}` : "The one stop for all agents"}</Text>
-        <View className="flex-col gap-4">
-            <RenderListings<PhotoListingProps>
-                render={bodies.photo}
-                filter={commonFilters[CommonFilters.Photo]()}
-                flatListProps={{
-                    horizontal: true,
-                    showsHorizontalScrollIndicator: false,
-                    ListHeaderComponent: () => <View className="w-4 h-4" />
-                }}
-            />
-            <CompanyStats className="justify-start gap-12 px-4" />
-        </View>
+        <Text className="text-2xl font-bold text-wrap px-4">{authenticated ? `Welcome back ${user.first_name} ${user.last_name}` : "The one stop for all agents"}</Text>
+        <RenderListings<PhotoListingProps>
+            render={bodies.photo}
+            filter={commonFilters[CommonFilters.Photo]()}
+            flatListProps={{
+                horizontal: true,
+                showsHorizontalScrollIndicator: false,
+                ListHeaderComponent: () => <View className="w-4 h-4" />
+            }}
+        />
+        <CompanyStats className="justify-start gap-12 px-4" />
         <SeparatorText hideRight>
             <GoToListingsListButton filter={{
                 key: FilterKeys.Premium,

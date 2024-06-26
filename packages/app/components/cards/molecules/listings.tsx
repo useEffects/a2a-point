@@ -18,6 +18,9 @@ import { Button, ButtonProps } from "app/components/ui/button"
 import { FilterKeys, FilterType } from "app/screens/listings"
 import * as Linking from "expo-linking"
 import { DotSeparatedKeys } from "app/lib/helpers"
+import { uniqBy } from "lodash"
+import { InViewPort } from "app/lib/detect-viewport"
+import { useInfiniteQuery } from "@tanstack/react-query"
 
 type ListCardProps = SmallListingCardProps | ExtraSmallListingCardProps | MediumListingCardProps | PhotoListingProps
 
@@ -139,7 +142,7 @@ export const commonFilters = {
 
 const extraSmallFields: DotSeparatedKeys<ExtraSmallListingCardProps>[] = ["id", "title", "budget"];
 
-const smallFields: DotSeparatedKeys<SmallListingCardProps>[] = ["id", "title", "price", "address", "deal_type", "user_created.id", "user_created.avatar", "date_created", "group.id", "group.title", "group.avatar", "tags"];
+const smallFields: DotSeparatedKeys<SmallListingCardProps>[] = ["id", "title", "budget", "address", "deal_type", "user_created.id", "user_created.avatar", "date_created", "location.id", "location.title", "location.avatar", "tags"];
 
 const mediumFields: DotSeparatedKeys<MediumListingCardProps>[] = ["id", "title", "deal_type", "date_created", "budget", "description", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "location.avatar", "location.avatar", "location.id", "location.title"];
 
@@ -187,94 +190,79 @@ export const RenderListings = <R extends ListCardProps>({ paramFilter, render, f
     }
 
     const { rest } = directusStore()
-    const [offset, setOffset] = useState(0)
-    const [endReached, setEndReached] = useState(false)
-    const [items, setItems] = useState<(R | ConfirmedAdvertisementCardProps)[]>([])
-    const { colors } = useColorScheme()
-    const ref = useRef<RNFlatList<ConfirmedAdvertisementCardProps | R>>(null)
-
-    const onEndReached = () => {
-        if (!infinite || endReached) return
-        setOffset(p => p + 1)
-    }
-
     const isMedium = render === bodies.medium
 
-    useEffect(() => {
-        async function fetchData() {
-            if (endReached) return
-            let _items: (R | ConfirmedAdvertisementCardProps)[] = []
-            const listings = await queryClient.fetchQuery<R[]>({
-                queryKey: ["Fetching Listings with fields: ", render.fields, filter, searchText, offset, limit],
-                queryFn: async () => await rest.request(readItems("listings", {
-                    fields: render.fields,
-                    limit: limit,
-                    offset: limit * offset,
-                    sort: ["-date_created"],
-                    search: searchText,
-                    filter: filter ?? {},
-                })) as R[],
-                initialData: [],
-            })
 
-            _items.push(...listings)
+    const { data, hasNextPage, fetchNextPage } = useInfiniteQuery<{ items: (R | ConfirmedAdvertisementCardProps)[], page: unknown }>({
+        queryKey: ["Fetching Listings with fields: ", render.fields, filter, searchText, limit],
+        queryFn: async ({ pageParam = 0 }) => {
+            const page = pageParam as number
+            let items: (R | ConfirmedAdvertisementCardProps)[] = []
+            const listings = await rest.request(readItems("listings", {
+                fields: render.fields,
+                limit: limit,
+                offset: limit * page,
+                sort: ["-date_created"],
+                search: searchText,
+                filter: filter ?? {},
+            })) as R[]
+
+            items.push(...listings)
 
             if (isMedium && !noAds && listings.length) {
-                const ads = await queryClient.fetchQuery<ConfirmedAdvertisementCardProps[]>({
-                    queryKey: ["Fetch Ads"],
-                    queryFn: async () => await rest.request(readItems("advertisements", {
-                        fields: ["id", "caption", "title", "photo", "date_created", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "user_created.email"],
-                        filter: {
-                            isActive: {
-                                _eq: true
-                            }
-                        },
-                        sort: ["-date_created"],
-                        limit: Math.ceil(limit / 5),
-                        offset: offset
-                    })).then(res => res.map(r => ({ ...r, isAdvertisement: true }))) as ConfirmedAdvertisementCardProps[],
-                    initialData: [],
-                })
-                _items = mergeArraysRandomly(_items, ads)
+                const ads = await rest.request(readItems("advertisements", {
+                    fields: ["id", "caption", "title", "photo", "link_to_open", "date_created", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "user_created.email"],
+                    filter: {
+                        isActive: {
+                            _eq: true
+                        }
+                    },
+                    sort: ["-date_created"],
+                    limit: Math.ceil(limit / 5),
+                    offset: Math.ceil(limit / 5) * page
+                })).then(res => res.map(r => ({ ...r, isAdvertisement: true }))) as ConfirmedAdvertisementCardProps[]
+                items = mergeArraysRandomly(items, ads)
             }
-
-            if (_items.length) {
-                setItems(p => [...p, ..._items])
-            } else {
-                setEndReached(true)
+            return {
+                items: items,
+                page: pageParam
             }
+        },
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, allPages, lastPageParam) => {
+            if (lastPage.items.length < limit) {
+                return null
+            }
+            return Number(lastPageParam) + 1
         }
-        fetchData()
-    }, [offset, endReached])
+    })
 
-    return (items.length) ?
-        <FlatList
-            {...flatListProps}
-            data={items}
-            renderItem={({ item }) => {
-                if (isAdvertisementCard(item)) {
-                    return <AdvertisementCard {...item} />
-                } else return <render.renderMethod {...item} />
-            }}
-            ItemSeparatorComponent={flatListProps?.ItemSeparatorComponent ?? (() => <View className="w-4 h-4" />)}
-            onEndReached={onEndReached}
-            onEndReachedThreshold={0}
-            keyExtractor={(item) => item.id}
-            ListFooterComponent={
-                infinite ? () => <BottomLoader endReached={endReached} /> :
-                    <ViewAllButton horizontal={!!flatListProps?.horizontal} button={(props) => viewAllButtonLink ?
-                        <Button {...props} onPress={() => Linking.openURL(viewAllButtonLink)} /> : <GoToListingsListButton {...props} filter={paramFilter} />} />}
-        /> : <></>
+    return <FlatList
+        {...flatListProps}
+        data={data?.pages.map(page => page.items).flat() ?? []}
+        renderItem={({ item }) => {
+            if (isAdvertisementCard(item)) {
+                return <AdvertisementCard {...item} />
+            } else return <render.renderMethod {...item} />
+        }}
+        ItemSeparatorComponent={flatListProps?.ItemSeparatorComponent ?? (() => <View className="w-4 h-4" />)}
+        keyExtractor={(item) => item.id}
+        ListFooterComponent={
+            infinite ? () => <BottomLoader endReached={!hasNextPage} onEndReached={fetchNextPage} /> :
+                <ViewAllButton horizontal={!!flatListProps?.horizontal} button={(props) => <GoToListingsListButton {...props} filter={paramFilter} />} />}
+    />
 }
 
-export const BottomLoader = ({ endReached }: { endReached: boolean }) => {
+export const BottomLoader = ({ endReached, onEndReached }: { endReached: boolean, onEndReached: () => void }) => {
     const { colors } = useColorScheme()
     return endReached ? <View className="w-full h-20 flex-col justify-center items-center">
         <Text className="text-destructive">No more items to show</Text>
-    </View> : <View className="w-full h-20 flex-col justify-center items-center">
-        <ActivityIndicator color={colors.info} />
-        <Text className="text-center text-info">loading please wait ...</Text>
-    </View>
+    </View> : <InViewPort onEnter={onEndReached}>
+        <View className="w-full h-20 flex-col justify-center items-center">
+            <ActivityIndicator color={colors.info} />
+            <Text className="text-center text-info">loading please wait ...</Text>
+        </View>
+    </InViewPort>
 }
 
 function mergeArraysRandomly<T1, T2>(array1: T1[], array2: T2[]): (T1 | T2)[] {

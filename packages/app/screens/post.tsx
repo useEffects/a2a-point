@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Asset, withId, withUri } from "app/components/chat-ui";
 import { AutoCompleteRenderItemProps, FormAutoSelect, FormInput, FormSelect, RenderRoomTileProps } from "app/components/formComponents";
 import { FullWidthImage } from "app/components/full-width-image";
+import { MaterialSymbolIcon } from "app/components/material-symbol-icon";
 import { SeparatorText } from "app/components/separator-text";
 import { Switch } from "app/components/switch";
 import { Button } from "app/components/ui/button";
@@ -647,17 +648,6 @@ type Form3Values = {
 
 type Form4Values = {
     featured: boolean
-}
-
-export const MaterialSymbolIcon = (props: { name: string } & Omit<XmlProps, "xml">) => {
-    const { name, ...rest } = props
-    const { data: icon } = useQuery({
-        queryKey: ["Fetching icon", name],
-        queryFn: async () => fetch(`${portfolioUrl}/api/icons/${name}`).then(res => res.text()),
-        enabled: !!name,
-        staleTime: 1000 * 60 * 60 * 24
-    })
-    return icon ? <SvgXml color={"white"} fill={"white"} width={24} height={24} xml={icon} {...rest} /> : <></>
 }
 
 export const RenderAmenity = ({ icon, label, additional_detail }: ListingAmenity) => {

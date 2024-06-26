@@ -77,7 +77,7 @@ export default function ListingsScreenComponent({ className }: { className?: str
     }, [params])
 
     return <View className={cn("flex-1", className)}>
-        <View className="flex-row items-center justify-between gap-4 w-full bg-card px-4">
+        <View className="flex-row items-center justify-between gap-4 w-full native:bg-card px-4">
             <SearchBar
                 searchText={searchText}
                 setSearchText={setSearchText}
@@ -91,7 +91,7 @@ export default function ListingsScreenComponent({ className }: { className?: str
                 <ListFilter size={18} color={filters.length ? colors.card : colors.info} />
             </Button>
         </View>
-        {filters.length ? <RenderChips filters={filters} setFilters={setFilters} /> : <View className='h-4 w-full bg-card' />}
+        {filters.length ? <RenderChips filters={filters} setFilters={setFilters} /> : <View className='h-4 w-full native:bg-card' />}
         <RenderListings<MediumListingCardProps>
             key={key}
             render={bodies.medium}
@@ -108,16 +108,22 @@ export default function ListingsScreenComponent({ className }: { className?: str
             onBackdropPress={() => setBottomSheetVisible(false)}
             setOpen={setBottomSheetVisible}
         >
-            <View className="p-4 flex-col gap-8 bg-card">
-                <View className="flex-row items-center justify-between">
+            <View className="py-4 flex-col gap-8 bg-card w-full">
+                <View className="flex-row items-center justify-between px-4">
                     <Text className="text-lg">Filter leads</Text>
                     <CloseButton onPress={() => setBottomSheetVisible(false)} />
                 </View>
-                <ComboBoxFilters filters={filters} setFilters={setFilters} />
+                <View className='px-4'>
+                    <ComboBoxFilters filters={filters} setFilters={setFilters} />
+                </View>
                 <Separator />
-                <CategoryFilters filters={filters} setFilters={setFilters} />
+                <View className='px-4'>
+                    <CategoryFilters filters={filters} setFilters={setFilters} />
+                </View>
                 <Separator />
-                <RangeSliders filters={filters} setFilters={setFilters} />
+                <View className='px-4'>
+                    <RangeSliders filters={filters} setFilters={setFilters} />
+                </View>
             </View>
         </BottomSheet>
         {!authenticated ? <LoginPopover /> : <></>}
@@ -324,7 +330,7 @@ const ComboBoxFilters = ({ filters, setFilters }: { filters: FilterType[], setFi
                 if (existingFilter) {
                     return filters.map(f => f.key === FilterKeys.Location ? { ...f, value: location } : f)
                 }
-                return [...filters, { key: FilterKeys.Location, filter: { group: location.id }, value: location }]
+                return [...filters, { key: FilterKeys.Location, filter: { location: location.id }, value: location }]
             })
         }
         if (agent) {
@@ -546,7 +552,7 @@ const RenderChips = ({ filters, setFilters }: { filters: FilterType[], setFilter
         setFilters(filters => filters.filter(f => f.key !== key))
     }
 
-    return <View className='flex-row gap-2 flex-wrap w-full px-4 py-2 bg-card'>
+    return <View className='flex-row gap-2 flex-wrap w-full px-4 py-2 native:bg-card'>
         {filters.map(((filter, index) => <Button onPress={() => handlePress(filter.key)} variant={"base"} size={"none"} style={{ backgroundColor: opacity(colors.info, 0.1) }} className='flex-row gap-1 p-1' key={index}>
             <X className='text-destructive' size={12} />
             <Text className='text-xs text-info'>{getLabel(filter)}</Text>
@@ -581,7 +587,7 @@ const getInitialFilter = async (key: FilterKeys, id: string): Promise<FilterType
             })
             return {
                 key: FilterKeys.Location,
-                filter: { group: id },
+                filter: { location: id },
                 value: data
             }
         }

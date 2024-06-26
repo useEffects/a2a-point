@@ -10,7 +10,7 @@ import { directusUrl } from "src/lib/constants";
 import { News } from "src/lib/types";
 import { cn } from "app/lib/utils";
 import { timeAgo } from "app/lib/helpers";
-import { useIsSmallDevice } from "@/hooks/is-small-device";
+import { useIsSmallDevice } from "app/hooks/is-small-device";
 import { NewsCard } from "app/components/cards/atoms/news";
 
 export function ListNews({ news, categories: _categories }: { news: News[], categories: { id: number, name: string }[] }) {

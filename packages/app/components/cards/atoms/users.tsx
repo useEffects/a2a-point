@@ -82,7 +82,7 @@ export const MediumUsersCard = (item: MediumUsersCardProps) => {
     const isPro = isUserPro(item.plan)
 
     return <GoToProfileButton userId={item.id} className="flex-col gap-4">
-        <View className="w-full flex-row items-start w-full justify-start">
+        <View className="w-full flex-row w-full justify-start">
             <View className="w-1/2 rounded-tl-xl">
                 <View className="relative flex-col items-start w-full">
                     <View className="h-8 bg-background w-full pl-20 flex-row items-center gap-1">

@@ -40,11 +40,11 @@ const LoginScreen = () => {
 
     return <ScrollView contentContainerClassName="flex-grow">
         <Header>
-            <Text className="text-xl font-semibold">Login</Text>
+            <Text className="text-xl font-bold">Login</Text>
         </Header>
         <View className="flex-col justify-between flex-1 items-start px-4 py-8">
             <View className="flex-col items-center w-full">
-                <Text className="text-2xl font-semibold">Welcome to <Text className="text-2xl text-primary">A2APoint</Text></Text>
+                <Text className="text-2xl font-bold">Welcome to <Text className="text-2xl text-primary">A2APoint</Text></Text>
                 <Text>For more information visit</Text>
                 <Button onPress={() => Linking.openURL("https://a2apoint.com")} size={"none"} variant={"base"}>
                     <Text className="text-info underline">https://a2apoint.com</Text>

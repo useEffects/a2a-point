@@ -23,7 +23,7 @@ export const OpenDetailsButton = ({ id, size = "sm" }: { id: string, size?: "def
     </Button>
 }
 
-export type SmallListingCardProps = Pick<Listing, "id" | "title" | "budget" | "deal_type" | "tags" | "date_created"> & { user_created: Pick<User, "id" | "avatar"> } & { group: Pick<Room, "id" | "title" | "avatar"> }
+export type SmallListingCardProps = Pick<Listing, "id" | "title" | "budget" | "deal_type" | "tags" | "date_created"> & { user_created: Pick<User, "id" | "avatar"> } & { location: Pick<Room, "id" | "title" | "avatar"> }
 
 export const RenderMetrics = ({ listingId }: { listingId: string }) => {
     const [metrics, setMetrics] = useState<ListingCardMetrics | null>(null)
@@ -54,11 +54,11 @@ export const RenderMetrics = ({ listingId }: { listingId: string }) => {
 
 export const SmallListingCard = (item: SmallListingCardProps) => {
     const { colors } = useColorScheme()
-    return <GoToFullListingButton listingId={item.id} variant={"base"} size={"none"} className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start">
+    return <GoToFullListingButton listingId={item.id} variant={"base"} size={"none"} className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start rounded">
         <Image source={{ uri: buildAssetUrl(item.user_created.avatar) }} className="w-8 h-8 rounded-full" />
-        <View className="flex-col gap-4">
+        <View className="flex-col gap-4 flex-grow">
             <View className="flex-col gap-1">
-                <Text className="text-lg font-semibold w-[300px]">{item.title}</Text>
+                <Text className="text-lg font-semibold">{item.title}</Text>
                 <View className="flex-row justify-between gap-4 items-center">
                     <Text className="!text-success">AED {Number(item.budget).toLocaleString()}</Text>
                     <Text style={{ backgroundColor: opacity(colors.success, 0.1) }} className="text-success px-1 rounded">{item.deal_type}</Text>
@@ -70,9 +70,9 @@ export const SmallListingCard = (item: SmallListingCardProps) => {
             <Separator />
             <View className="flex-row justify-between items-center">
                 <RenderMetrics listingId={item.id} />
-                <View className="ml-auto mr-0 flex-col gap-1">
+                <View className="ml-auto mr-0 flex-col gap-2">
                     <Text className="text-xs text-subtext text-right">Posted {timeAgo.format(new Date(item.date_created))} in</Text>
-                    <LocationChip {...item.group} />
+                    <LocationChip {...item.location} />
                 </View>
             </View>
         </View>

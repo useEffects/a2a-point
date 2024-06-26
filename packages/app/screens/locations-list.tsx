@@ -12,13 +12,16 @@ export const LocationsList = () => {
     }, [searchText])
 
     return <View className="flex-1">
-        <View className="p-4 pt-0 bg-card">
+        <View className="p-4 pt-0 native:bg-card">
             <SearchBar searchText={searchText} setSearchText={setSearchText} />
         </View>
         <MediumLocationCards
             key={key}
             searchText={searchText}
             infinite={!searchText}
+            flatListProps={{
+                contentContainerClassName: "p-4 flex-grow"
+            }}
         />
     </View>
 }

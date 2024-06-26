@@ -10,7 +10,7 @@ export default function ChatScreen() {
     const { authenticated } = directusStore()
     return <View className="flex-1">
         <Header>
-            <Text className="text-xl font-semibold">Chat</Text>
+            <Text className="text-xl font-bold">Chat</Text>
         </Header>
         {authenticated ? <ChatScreenComponent /> : <LockedScreen
             SVGComponent={<ChatSVG width={300} height={300} />}

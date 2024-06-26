@@ -1,14 +1,14 @@
 import { readItems } from "@directus/sdk"
 import { HorizontalFlatList } from "@idiosync/horizontal-flatlist"
 import { HorizontalFlatListProps } from "@idiosync/horizontal-flatlist/dist/horizontal-flat-list"
-import { useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { GoToLocationListingsButton, GoToLocationsListButton, GoToMembersListButton, GoToRoomButton } from "app/components/link-buttons"
 import { Button, ButtonProps } from "app/components/ui/button"
 import { Text } from "app/components/ui/text"
 import { buildAssetUrl, getDMRoomId, shortString } from "app/lib/helpers"
 import { Room, User } from "app/lib/types"
 import directusStore from "app/store/directus"
-import { Dimensions, Image, Platform, View } from "react-native"
+import { Dimensions, FlatListProps, Image, Platform, View } from "react-native"
 import { ArrowUpRight, Rows2, Users } from "app/components/icons"
 import { ComponentType, useEffect, useState } from "react"
 import { FlatList } from "app/components/utils/virtual-lists"
@@ -79,8 +79,6 @@ export const SmallLocationCards = ({ flatListProps }: { flatListProps?: Omit<Hor
 }
 
 const MediumLocationCard = ({ item }: { item: MediumLocationCardProps }) => {
-    const cardWidth = Platform.OS === "web" ? "100%" : Dimensions.get("window").width - 24
-    const cardHeight = Platform.OS === "web" ? "auto" : (cardWidth as number) * (9 / 16)
     const [listingsCount, setListingsCount] = useState(0)
     const [membersCount, setMembersCount] = useState(0)
     const { authenticated } = directusStore()
@@ -90,62 +88,56 @@ const MediumLocationCard = ({ item }: { item: MediumLocationCardProps }) => {
         getListingsCountForLocation(item.id).then(setListingsCount)
     }, [])
 
-    return <GoToLocationListingsButton roomId={item.id} className="flex-row rounded-xl bg-card justify-start items-start mx-auto" style={{ width: cardWidth, height: cardHeight }}>
+    return <GoToLocationListingsButton roomId={item.id} className="flex-row rounded-xl bg-card justify-start items-start w-full aspect-video">
         <Image source={{ uri: buildAssetUrl(item.avatar) }} className="w-1/2 h-full rounded-tl-xl rounded-bl-xl" resizeMode="cover" />
         <View className="h-full flex-col justify-start gap-2 p-4 w-1/2">
             <Text className="font-medium">{item.title}</Text>
             <Text className="text-success">{listingsCount} leads available</Text>
             <MembersList locationId={item.id} members={item.members.slice(0, 5)} total={membersCount} />
-            <GoToRoomButton disabled={!authenticated} variant={"default"} roomId={item.id} className="mt-auto mb-0 flex-row" size={"sm"}>
-                <Text>Open group chat</Text>
-                <ArrowUpRight size={18} className="text-primary-foreground" />
-            </GoToRoomButton>
+            <Button disabled={!authenticated} className="mt-auto mb-0 flex-row">
+                <GoToRoomButton roomId={item.id} className="flex-row">
+                    <Text>Group chat</Text>
+                    <ArrowUpRight size={18} className="text-primary-foreground" />
+                </GoToRoomButton>
+            </Button>
         </View>
     </GoToLocationListingsButton>
 }
 
-export const MediumLocationCards = ({ limit = 5, searchText = "", infinite }: { limit?: number, infinite?: boolean, searchText?: string }) => {
+export const MediumLocationCards = ({ limit = 5, searchText = "", infinite, flatListProps }: { limit?: number, infinite?: boolean, searchText?: string, flatListProps?: Omit<FlatListProps<MediumLocationCardProps>, "data" | "renderItem"> }) => {
     const { rest } = directusStore()
-    const [data, setData] = useState<MediumLocationCardProps[]>([])
-    const [offset, setOffset] = useState(0)
-    const [endReached, setEndReached] = useState(false)
 
-    useEffect(() => {
-        async function fetchData() {
-            if (endReached) return
-            const res = await queryClient.fetchQuery<MediumLocationCardProps[]>({
-                queryKey: ["Fetching Locations for medium card", searchText, offset, limit],
-                queryFn: async () => await rest.request(readItems("rooms", {
-                    fields: ["id", "title", "avatar", "members.*", "members.directus_users_id.avatar"],
-                    filter: {
-                        type: {
-                            _eq: "group"
-                        }
-                    },
-                    search: searchText,
-                    limit: limit,
-                    offset: limit * offset
-                })) as MediumLocationCardProps[],
-                initialData: []
-            })
-            if (!res.length) {
-                setEndReached(true)
-            } else {
-                setData(p => [...p, ...res])
-            }
+    const { data, fetchNextPage, hasNextPage } = useInfiniteQuery<{ items: MediumLocationCardProps[], page: unknown }>({
+        queryKey: ["Fetching Locations for medium card", searchText, limit, infinite],
+        queryFn: async ({ pageParam }) => {
+            const res = await rest.request(readItems("rooms", {
+                fields: ["id", "title", "avatar", "members.*", "members.directus_users_id.avatar"],
+                filter: {
+                    type: {
+                        _eq: "group"
+                    }
+                },
+                search: searchText,
+                limit: limit,
+                offset: pageParam as number * limit
+            }))
+            return { items: res as MediumLocationCardProps[], page: pageParam }
+        },
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, allPages, lastPageParam) => {
+            if (lastPage.items.length < limit) return undefined
+            else return Number(lastPageParam) + 1
         }
-        fetchData()
-    }, [offset, endReached])
-
+    })
 
     return <FlatList
-        data={data}
+        data={data?.pages.map(page => page.items).flat() ?? []}
         renderItem={({ item }) => <MediumLocationCard item={item} />}
         ItemSeparatorComponent={() => <View className="w-4 h-4" />}
-        ListFooterComponent={infinite ? <BottomLoader endReached={endReached} /> : <ViewAllButton horizontal={false} button={(props) => <GoToLocationsListButton {...props} />} />}
-        ListFooterComponentClassName="p-4"
-        onEndReached={(infinite && !endReached) ? () => setOffset(p => p + 1) : undefined}
-        contentContainerClassName="p-4"
+        ListFooterComponent={infinite ?
+            <BottomLoader endReached={!hasNextPage} onEndReached={fetchNextPage} /> :
+            <ViewAllButton horizontal={false} button={(props) => <GoToLocationsListButton {...props} />} />}
+        {...flatListProps}
     />
 }
 

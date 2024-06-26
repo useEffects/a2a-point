@@ -10,7 +10,7 @@ import { Button } from "src/components/ui/button";
 import { Text } from "src/components/ui/text";
 import { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
-import { useIsSmallDevice } from '@/hooks/is-small-device';
+import { useIsSmallDevice } from 'app/hooks/is-small-device';
 import { FormInput } from 'app/components/formComponents';
 import { useRouter } from 'next/navigation';
 import { useLogin } from '@/hooks/login';

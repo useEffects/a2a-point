@@ -6,7 +6,7 @@ import RoomDetailedComponent from "app/screens/room-detailed"
 import directusStore from "app/store/directus"
 import { Separator } from "app/components/ui/separator"
 import ChatsProvider from "app/components/providers/chats"
-import { useIsSmallDevice } from "@/hooks/is-small-device"
+import { useIsSmallDevice } from "app/hooks/is-small-device"
 
 function ChatScreen() {
     const { room } = useParams()

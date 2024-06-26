@@ -60,7 +60,7 @@ export default function FullListingScreen() {
     return listing ? <View className="flex-1">
         <Header>
             <View>
-                <Text className="font-semibold text-xl">{shortString(listing.title)}</Text>
+                <Text className="font-bold text-xl">{shortString(listing.title)}</Text>
             </View>
         </Header>
         <ScrollView contentContainerClassName="flex-grow py-4">

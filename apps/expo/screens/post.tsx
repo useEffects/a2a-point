@@ -11,7 +11,7 @@ export default function PostScreen() {
 
     return <View className="flex-1">
         <Header>
-            <Text className="text-xl font-semibold">Post</Text>
+            <Text className="text-xl font-bold">Post</Text>
         </Header>
         {true ? <View className="p-4 flex-1">
             <PostScreenComponent />

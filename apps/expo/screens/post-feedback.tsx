@@ -22,8 +22,8 @@ export default function PostFeedback() {
         navigation.setOptions({
             header: () => (
                 <Header>
-                    {params.feedbackId ? <Text className="text-xl font-semibold">Edit Feedback</Text> :
-                        <Text className="text-xl font-semibold">Give Feedback</Text>}
+                    {params.feedbackId ? <Text className="text-xl font-bold">Edit Feedback</Text> :
+                        <Text className="text-xl font-bold">Give Feedback</Text>}
                 </Header>
             )
         });

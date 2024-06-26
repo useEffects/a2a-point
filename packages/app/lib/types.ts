@@ -152,6 +152,7 @@ export type Advertisement = {
     photo: string;
     caption: string;
     isActive: boolean;
+    link_to_open: string | null;
 }
 
 export type Notification = {

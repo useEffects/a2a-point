@@ -34,7 +34,7 @@ export default function LocationDetailed() {
         if (room?.title) {
             navigation.setOptions({
                 header: () => <Header>
-                    <Text className="text-xl font-semibold">{room.title}</Text>
+                    <Text className="text-xl font-bold">{room.title}</Text>
                 </Header>
             })
         }

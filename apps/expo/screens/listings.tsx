@@ -9,7 +9,7 @@ const ListingsScreen = () => {
         <View className="flex-1 flex-col">
             <Header className="items-center py-4" height={"auto"}>
                 <View className="flex-row flex-1 justify-between items-center">
-                    <Text className="text-xl font-semibold">Listings</Text>
+                    <Text className="text-xl font-bold">Listings</Text>
                     <GoToPostButtonUi />
                 </View>
             </Header>

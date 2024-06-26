@@ -4,7 +4,7 @@ import { TryLogin } from "@/components/try-login";
 import "@/styles/global.css";
 import "@/styles/main.css";
 import { PortalHost } from "app/components/primitives/portal";
-import ChatsProvider from "app/components/providers/chats";
+import { Providers } from "app/components/providers";
 import { directusWSUrl } from "app/lib/constants";
 import directusStore from "app/store/directus";
 import { ReactNode, useEffect } from "react";
@@ -29,7 +29,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         >
           <QueryClientProvider>
             <View>
-              {children}
+              <Providers>
+                {children}
+              </Providers>
               <TryLogin />
               <PortalHost />
             </View>

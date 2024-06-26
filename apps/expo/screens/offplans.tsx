@@ -6,7 +6,7 @@ import { View } from 'react-native';
 export default function OffPlansScreen() {
     return <View className='flex-1'>
         <Header>
-            <Text className='text-xl font-semibold'>Off Plans</Text>
+            <Text className='text-xl font-bold'>Off Plans</Text>
         </Header>
         <OffPlans />
     </View>;

@@ -28,7 +28,9 @@ const nextConfig = {
     'react-native-tab-view',
     'react-native-autocomplete-input',
     'react-native-collapsible',
-    '@idiosync/horizontal-flatlist'
+    '@idiosync/horizontal-flatlist',
+    'react-native-switch',
+    'react-native-lightweight-inview'
   ],
 }
 

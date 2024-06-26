@@ -7,7 +7,7 @@ import { View } from "react-native"
 export const MembershipScreen = () => {
     return <View className="flex-1">
         <Header>
-            <Text className="text-xl font-semibold">Membership</Text>
+            <Text className="text-xl font-bold">Membership</Text>
         </Header>
         <ScrollView contentContainerClassName="p-4 flex-grow">
             <MembershipApplyScreenComponent />

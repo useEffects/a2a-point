@@ -29,7 +29,7 @@ export const MembersList = () => {
 
     return <View className="flex-1 flex-col gap-4">
         <Header>
-            <Text className="text-xl font-semibold">{title}</Text>
+            <Text className="text-xl font-bold">{title}</Text>
         </Header>
         <MembersListScreenComponent locationId={params.locationId as string} />
     </View>

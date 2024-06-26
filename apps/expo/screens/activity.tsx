@@ -10,7 +10,7 @@ export default function ActivityScreen() {
     useEffect(() => {
         navigation.setOptions({
             header: () => <Header>
-                <Text className="text-xl font-semibold">Your activity</Text>
+                <Text className="text-xl font-bold">Your activity</Text>
             </Header>
         })
     }, [navigation])

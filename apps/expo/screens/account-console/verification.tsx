@@ -7,7 +7,7 @@ import { View } from "react-native"
 export const VerificationScreen = () => {
     return <View className="flex-1">
         <Header>
-            <Text className="text-xl font-semibold">Verification</Text>
+            <Text className="text-xl font-bold">Verification</Text>
         </Header>
         <ScrollView contentContainerClassName="p-4 flex-grow">
             <VerificationApplyScreenComponent />

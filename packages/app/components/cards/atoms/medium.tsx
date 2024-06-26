@@ -26,7 +26,6 @@ export const LockedChatButton = () => {
 export const MediumListingCard = (item: MediumListingCardProps) => {
     const { user } = userStore()
     const { authenticated } = directusStore()
-    const directusLocationUrl = `${directusUrl}/admin/contents/listings/${item.id}`
 
     return <View className="w-full flex-col gap-2 px-2 my-8">
         <View className="flex flex-wrap gap-4 flex-row items-center justify-between">

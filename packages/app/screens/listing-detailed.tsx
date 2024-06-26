@@ -22,7 +22,7 @@ export default function FullListingScreen({ listingId }: { listingId: string }) 
     }, [listingId, rest])
 
     useEffect(() => {
-        if (!listingId || !listing) return
+        if (!listingId || !listing || !authenticated) return
         async function addViewCount() {
             try {
                 const viewedBy = await queryClient.fetchQuery({
@@ -49,7 +49,7 @@ export default function FullListingScreen({ listingId }: { listingId: string }) 
             }
         }
         addViewCount()
-    }, [listingId, rest, user.id, listing])
+    }, [listingId, rest, user.id, listing, authenticated])
 
     return listing ? <>
         <View className="px-4">

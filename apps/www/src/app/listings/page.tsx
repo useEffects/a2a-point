@@ -1,13 +1,12 @@
 "use client"
 
-import { useIsSmallDevice } from "@/hooks/is-small-device";
-import { HomeScreenComponent, HomeScreenListing } from "app/screens/home";
+import { useIsSmallDevice } from "app/hooks/is-small-device";
+import { cn } from "app/lib/utils";
+import ListingsScreenComponent from "app/screens/listings";
 
 export default function Page() {
     const isSmallDevice = useIsSmallDevice()
-    return isSmallDevice ? <div>
-        <HomeScreenComponent />
-    </div> : <div className="p-2">
-        <HomeScreenListing className="max-w-none w-full md:max-w-xl md:w-auto" />
+    return <div className={cn(!isSmallDevice && "max-w-xl")}>
+        <ListingsScreenComponent />
     </div>
 }

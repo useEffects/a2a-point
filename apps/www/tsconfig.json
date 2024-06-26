@@ -37,7 +37,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "../../packages/app/hooks/is-small-device/index.web.tsx"  ],
   "exclude": [
     "node_modules"
   ]

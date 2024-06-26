@@ -8,6 +8,8 @@ import { queryClient } from "app/store/query"
 import { BottomLoader } from "./listings"
 import { GoToUsersListButton } from "app/components/link-buttons"
 import { ViewAllButton } from "app/components/utils/common-ui"
+import { uniqBy } from "lodash"
+import { useInfiniteQuery } from "@tanstack/react-query"
 
 export enum Mode {
     small = "small",
@@ -47,41 +49,33 @@ export const RenderUsers = <R,>({ mode, limit = 5, sort = [], filter, searchText
 
     const { token } = directusStore()
     const { fields, renderMethod: Component } = bodies[mode]
-    const [data, setData] = useState<R[]>([])
-    const [offset, setOffset] = useState(0)
-    const [endReached, setEndReached] = useState(false)
 
-    useEffect(() => {
-        async function fetchData() {
-            if (endReached) return
-            if (process.env.NODE_ENV === "development" && data.length) return
-            const url = `${directusUrl}/users/?fields=${fields.join(",")}&limit=${limit}&filter=${filter ? JSON.stringify(filter) : ""}&sort=${sort.join(",")}&offset=${offset * limit}&search=${searchText}`
-            const res = await queryClient.fetchQuery<R[]>({
-                queryKey: ["fetching users list", fields, filter, limit, offset],
-                queryFn: async () => await fetch(url, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }).then(res => res.json()).then(res => res.data) as R[],
-                initialData: []
-            })
-            if (!res.length) {
-                setEndReached(true)
+    const { data, fetchNextPage, hasNextPage } = useInfiniteQuery<{ items: R[], page: unknown }>({
+        queryKey: ["fetching users list", fields, filter, limit],
+        queryFn: async ({ pageParam = 0 }) => {
+            const url = `${directusUrl}/users/?fields=${fields.join(",")}&limit=${limit}&filter=${filter ? JSON.stringify(filter) : ""}&sort=${sort.join(",")}&offset=${Number(pageParam) * limit}&search=${searchText}`
+            const res = await fetch(url, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }).then(res => res.json()).then(res => res.data) as R[]
+            return {
+                items: res as R[],
+                page: pageParam
             }
-            else {
-                setData(p => [...p, ...res])
-            }
+        },
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, allPages, lastPageParam) => {
+            if (lastPage.items.length < limit) return undefined
+            else return Number(lastPageParam) + 1
         }
-        fetchData()
-    }, [offset, endReached])
-
+    })
 
     return <FlatList
-        data={data}
+        data={data?.pages.map(page => page.items).flat() ?? []}
         renderItem={({ item }) => <Component {...item} />}
         ItemSeparatorComponent={() => <View className="w-4 h-4" />}
-        onEndReached={(infinite && !endReached) ? () => setOffset(p => p + 1) : undefined}
-        ListFooterComponent={infinite ? <BottomLoader endReached={endReached} /> : <ViewAllButton horizontal={!!flatListProps.horizontal}
+        ListFooterComponent={infinite ? <BottomLoader endReached={!hasNextPage} onEndReached={fetchNextPage} /> : <ViewAllButton horizontal={!!flatListProps.horizontal}
             button={(props) => <GoToUsersListButton {...props} />}
         />}
         {...flatListProps}

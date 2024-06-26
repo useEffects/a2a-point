@@ -1,6 +1,6 @@
 "use client"
 
-import { useIsSmallDevice } from "@/hooks/is-small-device";
+import { useIsSmallDevice } from "app/hooks/is-small-device";
 import { Button } from "app/components/ui/button";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";

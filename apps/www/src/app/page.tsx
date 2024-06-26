@@ -51,7 +51,7 @@ export default function Home() {
             <p className="text-subtext">In the dynamic world of real estate, efficiency, transparency, and seamless collaboration are paramount. Introducing A2A POINT, a revolutionary portal designed exclusively for real estate agents, redefining the landscape of property transactions and deal management.</p>
           </div>
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex flex-col gap-4 [&>*]:full md:w-1/2 [&>*]:rounded-full">
+            <div className="flex flex-col gap-4 [&>*]:w-80 [&>*]:rounded-full">
               <Button variant={"outline"} size={"lg"}>
                 <Text>Browse Plans</Text>
               </Button>
@@ -59,7 +59,7 @@ export default function Home() {
                 <Text>View Testimonials</Text>
               </Button>
             </div>
-            <div className="flex flex-col gap-4 [&>*]:full md:w-1/2 [&>*]:items-start">
+            <div className="flex flex-col gap-4 [&>*]:w-80">
               <GooglePlayButton size={"lg"}>
                 <Text>Download on Google Play</Text>
               </GooglePlayButton>
@@ -93,12 +93,11 @@ export default function Home() {
         direction="right"
         className="p-4 gap-12"
         child1={
-          <div className="flex md:justify-end w-full">
-            <div className="w-full flex flex-col gap-8 md:items-center md:max-w-sm">
-              <p className="text-3xl md:text-5xl font-bold">What they <span className="text-primary">talk</span> about us</p>
-              <TestimonialCarousel testimonials={testimonials} />
-              <CompanyStats className="justify-evenly" />
-              <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nesciunt, numquam ea! Fugiat dolorum facilis consectetur dicta labore, quos vel atque?</p>
+          <div className="flex flex-col gap-12 w-full items-end md:pl-12">
+            <p className="text-3xl md:text-5xl font-extrabold text-right">Discover Your <span className="text-primary">Dream</span> Property</p>
+            <div className="max-w-80 flex flex-col gap-8 ml-auto mr-0 items-end">
+              <CompanyStats className="gap-12" right />
+              <p className="text-right">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nesciunt, numquam ea! Fugiat dolorum facilis consectetur dicta labore, quos vel atque?</p>
             </div>
           </div>
         }
