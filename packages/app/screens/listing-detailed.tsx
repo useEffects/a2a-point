@@ -1,5 +1,5 @@
 import { createItem, readItem, readItems } from "@directus/sdk"
-import { FullListingCard, FullListingCardFields, FullListingDetailed } from "app/components/cards/atoms/full"
+import { FullListingCard, FullListingCardFields, FullListingDetailedProps } from "app/components/cards/atoms/full"
 import { LoginPopover } from "app/screens/listings"
 import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"
@@ -10,13 +10,13 @@ import { View } from "react-native"
 export default function FullListingScreen({ listingId }: { listingId: string }) {
     const { rest, authenticated } = directusStore()
     const { user } = userStore()
-    const [listing, setListing] = useState<FullListingDetailed | null>(null)
+    const [listing, setListing] = useState<FullListingDetailedProps | null>(null)
 
     useEffect(() => {
         if (listingId) {
             rest.request(readItem("listings", listingId, {
                 fields: FullListingCardFields
-            })).then(res => setListing(res as FullListingDetailed))
+            })).then(res => setListing(res as FullListingDetailedProps))
         }
 
     }, [listingId, rest])

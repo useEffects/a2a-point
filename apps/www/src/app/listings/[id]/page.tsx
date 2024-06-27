@@ -1,25 +1,17 @@
-"use client"
+/** @jsxImportSource react */
 
-import { useParams } from "next/navigation"
-import ListingDetailed from "app/screens/listing-detailed"
-import { queryClient } from "app/store/query"
-import directusStore from "app/store/directus"
-import { readItems } from "@directus/sdk"
+import { fetchAllData } from "@/lib/helpers"
+import { ListingDetailedScreen } from "@/screens/listings"
 
-export default function ListingsPage() {
-    const { id } = useParams()
-    return id ? <div className="max-w-xl">
-        <ListingDetailed listingId={id as string} />
-    </div> : <></>
+export const revalidate = 60
+
+export default async function ({ params }: { params: { id: string } }) {
+    const { id } = params
+
+    return <ListingDetailedScreen listingId={id} />
+
 }
 
 export async function generateStaticParams() {
-    const { rest } = directusStore.getState()
-    const data = await queryClient.fetchQuery({
-        queryKey: ["listings static params"],
-        queryFn: async () => await rest.request(readItems("listings", {
-            fields: ["id"]
-        }))
-    })
-    return data
+    return fetchAllData<{ id: string }>("listings", {}, ["id"])
 }

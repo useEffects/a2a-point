@@ -25,19 +25,19 @@ import { GoToLoginButton } from "./locked-screens";
 import useRouting from 'app/hooks/use-routing';
 
 export enum FilterKeys {
-    Budget = "Budget",
-    Size = "Size",
-    Bedrooms = "Bedrooms",
-    Bathrooms = "Bathrooms",
-    Parking = "Parking",
-    Premium = "Premium",
-    Buy = "Buy",
-    Sale = "Sale",
-    GiveOnRent = "Give on rent",
-    TakeOnRent = "Take on rent",
-    Location = "Location",
-    Agent = "Agent",
-    Company = "Company"
+    Budget = "budget",
+    Size = "size",
+    Bedrooms = "bedrooms",
+    Bathrooms = "bathrooms",
+    Parking = "parking",
+    Premium = "premium",
+    Buy = "buy",
+    Sale = "sale",
+    GiveOnRent = "give on rent",
+    TakeOnRent = "take on rent",
+    Location = "location",
+    Agent = "agent",
+    Company = "company"
 }
 
 export type FilterValue = string | [number, number] | CommonFilters
@@ -100,7 +100,6 @@ export default function ListingsScreenComponent({ className }: { className?: str
                 .then(r => r.filter(r => r?.key && r?.value) as Filter[])
                 .then(r => {
                     setFilters(r)
-                    console.log(r)
                 })
         }
     }, [JSON.stringify(params), searchParams?.get("filters")])
@@ -306,13 +305,13 @@ const ComboBoxFilters = ({ filters, setFilters }: { filters: Filter[], setFilter
             item='users'
             label="Agent"
             currentItem={agent}
-            setCurrentItem={(item) => item && setFilters([...filters, { key: FilterKeys.Location, value: item.id }])}
+            setCurrentItem={(item) => item && setFilters([...filters, { key: FilterKeys.Agent, value: item.id }])}
         />
         <FormAutoSelect
             item='companies'
             label='Company'
             currentItem={company}
-            setCurrentItem={(item) => item && setFilters([...filters, { key: FilterKeys.Location, value: item.id }])}
+            setCurrentItem={(item) => item && setFilters([...filters, { key: FilterKeys.Company, value: item.id }])}
         />
     </View>
 }
@@ -479,7 +478,7 @@ const expandFilterValue = (key: FilterKeys, value: FilterValue): Record<string, 
     switch (key) {
         case FilterKeys.Agent: {
             return {
-                user_id: {
+                user_created: {
                     _eq: value
                 }
             }

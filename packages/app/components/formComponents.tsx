@@ -203,18 +203,18 @@ export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps 
     }
 
     return <View className="w-full">
-        <FormInput
-            label={props.label}
-            error={props.error}
-            value={searchText}
-            onChangeText={handleChange}
-            onFocus={() => setShowResults(true)}
-            className={cn(showResults && "rounded-b-none", props.className)}
-            autoSelect={showResults}
-            {...props}
-        />
-        <Collapsible collapsed={!showResults || !data.length}>
-            <OutsidePressHandler onOutsidePress={() => setShowResults(false)}>
+        <OutsidePressHandler onOutsidePress={() => setShowResults(false)}>
+            <FormInput
+                label={props.label}
+                error={props.error}
+                value={searchText}
+                onChangeText={handleChange}
+                onFocus={() => setShowResults(true)}
+                className={cn(showResults && "rounded-b-none", props.className)}
+                autoSelect={showResults}
+                {...props}
+            />
+            <Collapsible collapsed={!showResults || !data.length}>
                 <View className="p-1 bg-popover rounded rounded-t-none">
                     {data.map((item, index) => <View key={index}>
                         <Button className="flex-row justify-start" variant={"base"} size={"none"} onPress={() => {
@@ -227,9 +227,9 @@ export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps 
                         {index !== data.length - 1 && <Separator className="my-1" />}
                     </View>)}
                 </View>
-            </OutsidePressHandler>
-        </Collapsible>
-    </View>
+            </Collapsible>
+        </OutsidePressHandler>
+    </View >
 }
 
 export type RenderRoomTileProps = Pick<Room, "id" | "avatar" | "title">

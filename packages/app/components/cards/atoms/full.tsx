@@ -40,11 +40,11 @@ export const ListingIconTile = ({
 
 export type DetailedAmenity = ListingAmenity & { amenities_id: Amenity }
 
-export type FullListingDetailed = Listing & { user_created: MediumUsersCardProps } & { amenities: DetailedAmenity[] }
+export type FullListingDetailedProps = Listing & { user_created: MediumUsersCardProps } & { amenities: DetailedAmenity[] }
 
 export type ListingCardMetrics = { views: string | null, saves: string | null }
 
-export const FullListingCard = (props: FullListingDetailed) => {
+export const FullListingCard = (props: FullListingDetailedProps) => {
     const { views, saves, addBookmark, deleteBookmark, bookmarkId } = useListingMetrics(props.id)
     const { user } = userStore()
     const { colors } = useColorScheme()

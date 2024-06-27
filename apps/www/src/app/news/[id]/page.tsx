@@ -1,26 +1,24 @@
-"use client"
+/** @jsxImportSource react */
 
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { directusUrl } from "app/lib/constants"
-import { useQuery } from "@tanstack/react-query"
 import { News } from "src/lib/types"
 import directusStore from 'app/store/directus'
 import { readItem } from '@directus/sdk'
-import { useParams } from 'next/navigation'
+import { queryClient } from 'app/store/query'
 
-export default function NewsDetailed() {
-    const params = useParams()
-    const slug = params.slug as string
-    const fields = ["*", "categories.id", "categories.news_categories_id.*"]
-    const { rest } = directusStore()
-    const { data: news } = useQuery<News>({
-        queryKey: ["news", slug, { fields }],
-        queryFn: async () => await rest.request(readItem("news", slug, { fields })) as News,
+export default async function ({ params }: { params: { id: string } }) {
+    const { id } = params
+    const { rest } = directusStore.getState()
+
+    const news = await queryClient.fetchQuery<News>({
+        queryKey: ["news", id],
+        queryFn: async () => await rest.request(readItem("news", id, {
+            fields: ["*", "categories.id", "categories.news_categories_id.*"]
+        })) as News,
     })
 
-    console.log({ news })
-
-    return news && <div className="max-w-xl mx-4 md:mx-auto flex flex-col gap-4 md:gap-12" >
+    return <div className="max-w-xl mx-4 md:mx-auto flex flex-col gap-4 md:gap-12" >
         <div className="flex flex-col gap-2">
             <p className="text-2xl"> {news.title} </p>
             <p className="text-subtext"> {news.description} </p>
@@ -35,5 +33,5 @@ export default function NewsDetailed() {
                 }
             }} source={news.content} />
         </div>
-    </div >
+    </div>
 }

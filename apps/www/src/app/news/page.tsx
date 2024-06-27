@@ -1,34 +1,31 @@
-"use client"
+/** @jsxImportSource react */
 
 import { aggregate, readItems } from "@directus/sdk"
-import { useSearchParams } from "next/navigation"
 import { ListNews, MyPagination } from "src/components/client-components/news"
 import { NewsLetter } from "src/components/news-letter"
 import { News as NewsType } from "src/lib/types"
-import { useQuery } from "@tanstack/react-query"
 import directusStore from "app/store/directus"
-import { useEffect } from "react"
+import { queryClient } from "app/store/query"
 
-export default function News() {
-    const searchParams = useSearchParams()
-    const page = searchParams.get("page")
+export default async function News({ searchParams }: { searchParams: { page?: string } }) {
+    const { page = "1" } = searchParams
     const limit = 3
-    const offset = (parseInt(page ?? "1") - 1) * limit
+    const offset = (parseInt(page) - 1) * limit
     const fields = ["*", "categories.id", "categories.news_categories_id.*"]
-    const { rest } = directusStore()
+    const { rest } = directusStore.getState()
 
-    const { data: news } = useQuery<NewsType[]>({
+    const news = await queryClient.fetchQuery<NewsType[]>({
         queryKey: ["news", { fields, limit, offset }],
         queryFn: async () => await rest.request(readItems("news", { fields, limit, offset })) as NewsType[],
         initialData: [],
     })
 
-    const { data: count } = useQuery<{ count: number }[]>({
+    const count = await queryClient.fetchQuery<{ count: number }[]>({
         queryKey: ["news-count"],
         queryFn: async () => await rest.request(aggregate("news", { aggregate: { count: "*" } })) as { count: number }[],
     })
 
-    const { data: categories } = useQuery<{ id: number, name: string }[]>({
+    const categories = await queryClient.fetchQuery<{ id: number, name: string }[]>({
         queryKey: ["news-categories"],
         queryFn: async () => await rest.request(readItems("news_categories")) as { id: number, name: string }[],
         initialData: []

@@ -15,7 +15,7 @@ type LockedScreenProps = {
 }
 
 export default function LockedScreen(props: LockedScreenProps) {
-    return <View className={cn("p-4 flex-col gap-4 flex-1", props.className)}>
+    return <View className={cn("p-4 flex-col gap-4 flex-1 h-screen native:h-auto", props.className)}>
         <View className="flex-1 flex-col gap-12 native:my-12 my-0">
             <View className="flex-col">
                 <Text className="text-xl text-center font-medium">{props.title}</Text>

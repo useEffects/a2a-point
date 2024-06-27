@@ -11,9 +11,11 @@ export const View = ({ children }: { children: ReactNode }) => {
     const isSmallDevice = useIsSmallDevice()
     const pathname = usePathname()
 
-    return <div className={cn("flex flex-col", isSmallDevice ? "w-full" : "gap-12")}>
+    return <div className={cn("flex flex-col w-full", isSmallDevice ? "w-full" : "gap-12")}>
         <Navbar />
-        {children}
+        <div className="w-full flex flex-row justify-center">
+            {children}
+        </div>
         <Footer />
     </div>
 }

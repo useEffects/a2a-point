@@ -1,3 +1,5 @@
+/** @jsxImportSource react */
+
 import { Button } from "src/components/ui/button"
 import { Input } from "src/components/ui/input"
 import { Text } from "src/components/ui/text"

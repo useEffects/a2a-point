@@ -12,7 +12,6 @@ import { useColorScheme } from "app/hooks/color-scheme"
 import { CompanyChip } from "./company"
 import { Button } from "app/components/ui/button"
 import userStore from "app/store/user"
-import directusStore from "app/store/directus"
 import * as Linking from "expo-linking"
 import useRouting from "app/hooks/use-routing"
 
@@ -84,7 +83,7 @@ export const MediumUsersCard = (item: MediumUsersCardProps) => {
     return <Pressable onPress={() => goToProfile(item.id as any)} className="flex-col gap-4">
         <View className="w-full flex-row w-full justify-start">
             <View className="w-1/2 rounded-tl-xl">
-                <View className="relative flex-col items-start w-full">
+                <View className="relative flex-col items-start w-full h-16">
                     <View className="h-8 bg-background w-full pl-20 flex-row items-center gap-1">
                         <Text className="text-primary">{listingsCount}</Text>
                         <Text className="text-subtext">leads posted</Text>
@@ -92,7 +91,7 @@ export const MediumUsersCard = (item: MediumUsersCardProps) => {
                     <View className="absolute" style={{ elevation: 100, zIndex: 100 }}>
                         <Image className="w-16 h-16 rounded-full border border-background border-1" source={{ uri: buildAssetUrl(item.avatar) }} />
                     </View>
-                    <View className="bg-card w-full pl-20 flex-row items-center justify-between gap-4 pr-4 rounded-tl-xl">
+                    <View className="bg-card w-full pl-20 flex-row items-center justify-between gap-4 pr-4 rounded-tl-xl flex-grow">
                         <View className="flex-row gap-1 items-center">
                             <Star size={18} className="text-success" />
                             <Text className="text-success">{item.computed_rating}</Text>

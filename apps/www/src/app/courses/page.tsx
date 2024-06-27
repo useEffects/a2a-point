@@ -1,4 +1,4 @@
-"use client"
+/** @jsxImportSource react */
 
 import { readItems } from "@directus/sdk";
 import directusStore from "app/store/directus";
@@ -6,20 +6,20 @@ import StartButton from "src/components/client-components/course";
 import { NewsLetter } from "src/components/news-letter";
 import { directusUrl } from "app/lib/constants";
 import { Course } from "src/lib/types";
-import { useQuery } from "@tanstack/react-query";
+import { queryClient } from "app/store/query";
 
-export default function Courses() {
+export default async function () {
     const fields = ["id", "title", "description", "cover_image"]
-    const { rest } = directusStore()
+    const { rest } = directusStore.getState()
 
-    const { data: portfolio } = useQuery<{ featured_course: Course }>({
+    const portfolio = await queryClient.fetchQuery<{ featured_course: Course }>({
         queryKey: ["featured-course", { fields }],
         queryFn: async () => await rest.request(readItems("portfolio", {
             fields: fields.map(field => `featured_course.${field}`)
         })) as unknown as { featured_course: Course },
     })
 
-    const { data: courses } = useQuery<Course[]>({
+    const courses = await queryClient.fetchQuery<Course[]>({
         queryKey: ["courses", { fields }],
         queryFn: async () => await rest.request(readItems("courses", {
             fields,
@@ -29,7 +29,6 @@ export default function Courses() {
                 }
             }
         })) as Course[],
-        enabled: Boolean(portfolio)
     })
 
     if (!portfolio || !courses) return null

@@ -14,7 +14,7 @@ export const UsersListComponent = () => {
     }, [searchText])
 
     return <View className="flex-1 flex-col justify-start">
-        <View className="bg-card p-4 pt-0">
+        <View className="native:bg-card p-4 pt-0">
             <SearchBar
                 searchText={searchText}
                 setSearchText={setSearchText}

@@ -22,6 +22,7 @@ const nextConfig = {
     'solito',
     'moti',
     'react-native-reanimated',
+    'react-native-vector-icons',
     'react-native-svg',
     'nativewind',
     'react-native-gesture-handler',

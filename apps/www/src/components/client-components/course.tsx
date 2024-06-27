@@ -1,22 +1,22 @@
 "use client"
 
+import { useLogin } from '@/hooks/login'
+import directusStore from 'app/store/directus'
 import { useRouter } from 'next/navigation'
-import { useContext } from "react"
 import { Button } from "src/components/ui/button"
 import { Text } from "src/components/ui/text"
-import { AuthTokenContext } from "src/context/auth"
-import { login } from "src/lib/login"
 
 export default function StartButton({ courseId, className }: { courseId: string, className?: string }) {
-    const { token, setToken } = useContext(AuthTokenContext)
     const router = useRouter()
+    const { authenticated } = directusStore()
+    const handleLogin = useLogin()
 
     const handleClick = async () => {
-        if (!token) {
-            const token = await login()
-            setToken(token)
+        if (!authenticated) {
+            handleLogin()
+        } else {
+            router.push(`/courses/${courseId}`)
         }
-        router.push(`/courses/${courseId}`)
     }
 
     return <div className={className}>
