@@ -1,6 +1,5 @@
 import { readItems } from "@directus/sdk"
 import { useInfiniteQuery } from "@tanstack/react-query"
-import { GoToListingsListButton } from "app/components/link-buttons"
 import { Text } from "app/components/ui/text"
 import { ViewAllButton } from "app/components/utils/common-ui"
 import { FlatList } from "app/components/utils/virtual-lists"
@@ -16,6 +15,8 @@ import { ExtraSmallListingCard, ExtraSmallListingCardProps } from "../atoms/extr
 import { MediumListingCard, MediumListingCardProps } from "../atoms/medium"
 import { PhotoListingCard, PhotoListingProps } from "../atoms/photo"
 import { SmallListingCard, SmallListingCardProps } from "../atoms/small"
+import useRouting from "app/hooks/use-routing"
+import { Button } from "app/components/ui/button"
 
 type ListCardProps = SmallListingCardProps | ExtraSmallListingCardProps | MediumListingCardProps | PhotoListingProps
 
@@ -164,7 +165,7 @@ export const bodies = {
 
 type ConfirmedAdvertisementCardProps = AdvertisementCardProps & { isAdvertisement: true }
 
-export const RenderListings = <R extends ListCardProps>({ paramFilter, render, filter, flatListProps, limit = 5, searchText = "", noAds, infinite, viewAllButtonLink }: {
+export const RenderListings = <R extends ListCardProps>({ paramFilter: paramFilters, render, filter, flatListProps, limit = 5, searchText = "", noAds, infinite, viewAllButtonLink }: {
     render: RenderType<R>,
     filter?: ReturnType<typeof commonFilters[CommonFilters]>,
     searchText?: string,
@@ -176,6 +177,7 @@ export const RenderListings = <R extends ListCardProps>({ paramFilter, render, f
     paramFilter?: FilterParam[],
     viewAllButtonLink?: string
 }) => {
+    const goToListings = useRouting("listings")
 
     const isAdvertisementCard = (item: ConfirmedAdvertisementCardProps | R): item is ConfirmedAdvertisementCardProps => {
         return (item as ConfirmedAdvertisementCardProps).isAdvertisement !== undefined;
@@ -185,7 +187,7 @@ export const RenderListings = <R extends ListCardProps>({ paramFilter, render, f
     const isMedium = render === bodies.medium
 
 
-    const { data, hasNextPage, fetchNextPage } = useInfiniteQuery<{ items: (R | ConfirmedAdvertisementCardProps)[], page: unknown }>({
+    const { data, hasNextPage, fetchNextPage, isLoading } = useInfiniteQuery<{ items: (R | ConfirmedAdvertisementCardProps)[], page: unknown }>({
         queryKey: ["Fetching Listings with fields: ", render.fields, filter, searchText, limit],
         queryFn: async ({ pageParam = 0 }) => {
             const page = pageParam as number
@@ -240,8 +242,8 @@ export const RenderListings = <R extends ListCardProps>({ paramFilter, render, f
         ItemSeparatorComponent={flatListProps?.ItemSeparatorComponent ?? (() => <View className="w-4 h-4" />)}
         keyExtractor={(item) => item.id}
         ListFooterComponent={
-            infinite ? () => <BottomLoader endReached={!hasNextPage} onEndReached={fetchNextPage} /> :
-                <ViewAllButton horizontal={!!flatListProps?.horizontal} button={(props) => <GoToListingsListButton {...props} filters={paramFilter} />} />}
+            infinite ? () => <BottomLoader endReached={!isLoading && !hasNextPage} onEndReached={fetchNextPage} /> :
+                <ViewAllButton horizontal={!!flatListProps?.horizontal} button={(props) => <Button onPress={() => goToListings(paramFilters)} {...props} />} />}
     />
 }
 

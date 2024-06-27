@@ -1,32 +1,28 @@
-import { readItem } from '@directus/sdk';
 import { RangeSlider } from '@react-native-assets/slider';
 import BottomSheet from 'app/components/bottomsheet';
 import { MediumListingCardProps } from "app/components/cards/atoms/medium";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings";
-import { FormAutoSelect, RenderCompanyTileProps, RenderListingTileProps, RenderUserTileProps, autoCompleteFields, useAutoCompleteItem } from 'app/components/formComponents';
-import { Bath, BedDouble, CarFront, CreditCard, LandPlot, X } from 'app/components/icons';
-import { CloseButton } from "app/components/link-buttons";
+import { FormAutoSelect, RenderCompanyTileProps, RenderListingTileProps, RenderUserTileProps, useAutoCompleteItem } from 'app/components/formComponents';
+import { Bath, BedDouble, CarFront, CreditCard, LandPlot } from 'app/components/icons';
 import SearchBar from "app/components/searchbar";
 import { Button } from "app/components/ui/button";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
 import { useColorScheme } from "app/hooks/color-scheme";
-import { directusUrl } from 'app/lib/constants';
+import useNavigation from 'app/hooks/navigation';
 import { cn } from "app/lib/utils";
 import directusStore from "app/store/directus";
-import { queryClient } from 'app/store/query';
 import opacity from 'hex-color-opacity';
-import { Award, Filter, Handshake, HousePlus, ListFilter, LucideIcon, LucideProps, Sparkles } from "lucide-react-native";
-import { Dispatch, SetStateAction, use, useEffect, useMemo, useState } from "react";
+import { isArray, isNumber, isPlainObject, isString } from 'lodash';
+import { Award, Handshake, HousePlus, ListFilter, LucideIcon, LucideProps, Sparkles, X } from "lucide-react-native";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { Platform, View } from "react-native";
 import { Circle, Svg } from 'react-native-svg';
 import { NavigationState, Route, SceneRendererProps, TabView } from 'react-native-tab-view';
-import { useParams, usePathname, useRouter } from 'solito/navigation';
+import { useParams, usePathname, useRouter, useSearchParams } from 'solito/navigation';
 import { useDebounce } from "use-debounce";
 import { GoToLoginButton } from "./locked-screens";
-import { get, isArray, isNumber, isPlainObject, isString } from 'lodash';
-import useNavigation from 'app/hooks/navigation';
-import { useQuery } from '@tanstack/react-query';
+import useRouting from 'app/hooks/use-routing';
 
 export enum FilterKeys {
     Budget = "Budget",
@@ -56,6 +52,7 @@ const sizeRange: [number, number] = [0, 10000]
 
 export default function ListingsScreenComponent({ className }: { className?: string }) {
     const params = useParams()
+    const searchParams = useSearchParams()
 
     const [searchText, setSearchText] = useState("")
     const [debouncedSearchText] = useDebounce(searchText, 500)
@@ -77,7 +74,11 @@ export default function ListingsScreenComponent({ className }: { className?: str
     useEffect(() => {
         let parsedFilters: unknown
         if (Platform.OS === "web") {
-            parsedFilters = (params && params.filters) ? JSON.parse(params.filters.toString()) : []
+            try {
+                parsedFilters = JSON.parse(searchParams?.get("filters") ?? [].toString())
+            } catch (error) {
+                console.log(error)
+            }
         } else {
             parsedFilters = (params && params.filters) ? params.filters : []
         }
@@ -99,9 +100,10 @@ export default function ListingsScreenComponent({ className }: { className?: str
                 .then(r => r.filter(r => r?.key && r?.value) as Filter[])
                 .then(r => {
                     setFilters(r)
+                    console.log(r)
                 })
         }
-    }, [params])
+    }, [JSON.stringify(params), searchParams?.get("filters")])
 
     useEffect(() => {
         setKey(p => p + 1)
@@ -128,7 +130,6 @@ export default function ListingsScreenComponent({ className }: { className?: str
             render={bodies.medium}
             flatListProps={{
                 ItemSeparatorComponent: () => <Separator />,
-                contentContainerClassName: "px-4",
             }}
             filter={filters.length ? commonFilters[CommonFilters.Custom](finalFilters) : undefined}
             searchText={debouncedSearchText}
@@ -142,7 +143,9 @@ export default function ListingsScreenComponent({ className }: { className?: str
             <View className="py-4 flex-col gap-8 bg-card w-full">
                 <View className="flex-row items-center justify-between px-4">
                     <Text className="text-lg">Filter leads</Text>
-                    <CloseButton onPress={() => setBottomSheetVisible(false)} />
+                    <Button variant={"destructive"} size={"smallIcon"} onPress={() => setBottomSheetVisible(false)}>
+                        <X size={14} className='text-destructive-foreground' />
+                    </Button>
                 </View>
                 <View className='px-4'>
                     <ComboBoxFilters filters={filters} setFilters={updateParams} />
@@ -373,6 +376,7 @@ export const LoginPopover = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [canClose, setCanClose] = useState(true)
     const { colors } = useColorScheme()
+    const goToLogin = useRouting("login")
 
     useEffect(() => {
         if (process.env.NODE_ENV !== "production") return
@@ -401,11 +405,16 @@ export const LoginPopover = () => {
                         <Sparkles fill={colors.primary} className="text-primary" />
                         <Text className="text-xl font-semibold">Get Started</Text>
                     </View>
-                    {canClose ? <CloseButton onPress={() => setIsOpen(false)} /> : <></>}
+                    {canClose ? <Button variant={"destructive"} size={"icon"}>
+                        <X className='text-destructive-foreground' size={18} />
+                    </Button> : <></>}
                 </View>
                 <View className="flex-col gap-4">
                     <Text>Login to unlock the full application</Text>
-                    <GoToLoginButton additionalOnPress={() => setIsOpen(false)} />
+                    <GoToLoginButton onPress={() => {
+                        setIsOpen(false)
+                        goToLogin("")
+                    }} />
                 </View>
             </View>
         </View>
@@ -518,14 +527,8 @@ const useSetParams = () => {
     const router = useRouter()
 
     const setParams = (newFilters: { [key in FilterKeys]?: FilterValue }[]) => Platform.select({
-        native: () => {
-            return navigation.navigate("listings", { filters: newFilters })
-        },
-        web: () => {
-            const searchParams = new URLSearchParams(pathname)
-            searchParams.append("filters", JSON.stringify(newFilters))
-            router.push(`${pathname}/?${searchParams.toString()}`)
-        }
+        native: () => navigation.navigate("listings", { filters: newFilters }),
+        web: () => router.push(`${pathname}?filters=${JSON.stringify(newFilters)}`)
     })
 
     return setParams

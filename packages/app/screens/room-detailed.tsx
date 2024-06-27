@@ -17,12 +17,15 @@ import { Button, ButtonProps } from "app/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "app/components/ui/dropdown-menu"
 import { BottomSheet } from "@rneui/themed"
 import SearchBar from "app/components/searchbar"
-import { GoToLocationListingsButton, GoToLocationsListButton, GoToProfileButton, GoToRoomButton } from "app/components/link-buttons"
 import { ChevronDown, ChevronUp, EllipsisVertical, Search, X } from "app/components/icons"
+import useRouting from "app/hooks/use-routing"
 
 const ChatScreen = ({ roomDetails, receivers }: {
     roomDetails: { roomName: string, roomAvatar: string, roomId: string, isGroup: boolean }, receivers: Member[]
 }) => {
+    const goToLocationsDetailed = useRouting("location-detailed")
+    const goToProfileDetailed = useRouting("profile-detailed")
+
     const { roomName, roomAvatar, roomId, isGroup } = roomDetails
     const { messages, setMessage, loadMoreMessages } = useChats()
     const { rest } = directusStore()
@@ -36,7 +39,7 @@ const ChatScreen = ({ roomDetails, receivers }: {
     const [offset, setOffset] = useState(1)
     const [endReached, setEndReached] = useState(false)
 
-    const GoToButton = (props: ButtonProps) => isGroup ? <GoToLocationListingsButton roomId={roomId} {...props} /> : <GoToProfileButton userId={receivers[0]!.directus_users_id.id} {...props} />
+    const GoToButton = (props: ButtonProps) => isGroup ? <Button onPress={() => goToLocationsDetailed(roomId)} {...props} /> : <Button onPress={() => goToProfileDetailed(receivers[0]!.directus_users_id.id)} {...props} />
 
     const { data: scrollToMessages, isLoading: isScrollToMessagesLoading } = useQuery({
         queryKey: ["Search Messages", debouncedSearchText, roomId],

@@ -5,8 +5,8 @@ import { ArrowUpRight, Plus } from "app/components/icons"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
 import { View } from "react-native"
 import { Separator } from "../ui/separator"
-import { GoToPostButton } from "../link-buttons"
 import { cn } from "app/lib/utils"
+import useRouting from "app/hooks/use-routing"
 
 export const ViewAllButton = ({ button, horizontal }: { button: ComponentType<ButtonProps>, horizontal: boolean }) => {
     const Component = button
@@ -19,6 +19,7 @@ export const ViewAllButton = ({ button, horizontal }: { button: ComponentType<Bu
 export const GoToPostButtonUi = () => {
     const [key, setKey] = useState("Buy")
     const [open, setOpen] = useState(false)
+    const goToPost = useRouting("post")
 
     return <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
@@ -40,9 +41,9 @@ export const GoToPostButtonUi = () => {
             </View>
             <Separator />
             <DialogFooter>
-                <GoToPostButton additionalOnPress={() => setOpen(false)} type={key.toLowerCase() as any} className="self-start ml-auto mr-0" size={"sm"} variant={"ghost"}>
+                <Button onPress={() => goToPost(key.toLowerCase())} className="self-start ml-auto mr-0" size={"sm"} variant={"ghost"}>
                     <Text>Proceed</Text>
-                </GoToPostButton>
+                </Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>

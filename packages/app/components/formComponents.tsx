@@ -1,29 +1,24 @@
 /* eslint-disable react/display-name */
+import { readItem, readItems } from "@directus/sdk";
+import { useQuery } from "@tanstack/react-query";
 import { useColorScheme } from "app/hooks/color-scheme";
+import { directusUrl } from "app/lib/constants";
+import { buildAssetUrl } from "app/lib/helpers";
+import { Company, Listing, Room, User } from "app/lib/types";
 import { cn } from "app/lib/utils";
-import { Dispatch, ReactNode, SetStateAction, useEffect, useMemo, useState } from "react";
+import directusStore from "app/store/directus";
+import { ReactNode, useMemo, useState } from "react";
 import { DimensionValue, Image, Platform, TextInputProps, View } from "react-native";
+import Collapsible from "react-native-collapsible";
+import OutsidePressHandler from 'react-native-outside-press';
+import { useDebounce } from "use-debounce";
 import { SelectRootProps } from "./primitives/select/types";
+import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
-import { Text } from "./ui/text";
-import { Formik, FormikProps } from "formik";
-import AutoComplete from "react-native-autocomplete-input"
-import { useQuery } from "@tanstack/react-query";
-import directusStore from "app/store/directus";
-import { readItem, readItems } from "@directus/sdk";
-import { Company, Listing, Room, User } from "app/lib/types";
-import { buildAssetUrl } from "app/lib/helpers";
-import { UserChip } from "./user-chip";
-import { useDebounce } from "use-debounce";
-import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
-import { directusUrl } from "app/lib/constants";
-import OutsidePressHandler from 'react-native-outside-press';
-import Collapsible from "react-native-collapsible";
-import useNavigation from "app/hooks/navigation";
-import { usePathname, useRouter } from "solito/navigation";
-import { Filter } from "app/screens/listings";
+import { Text } from "./ui/text";
+import { UserChip } from "./user-chip";
 
 type AdditionalFormInputProps = {
     error?: string,

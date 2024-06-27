@@ -78,7 +78,7 @@ export const FullListingCard = (props: FullListingDetailed) => {
                     loop={false}
                     height={height}
                     data={photos}
-                    renderItem={({ item, index }) => <View style={{ width, height }} className='relative'>
+                    renderItem={({ item, index }: { item: string, index: number }) => <View style={{ width, height }} className='relative'>
                         <Image source={{ uri: buildAssetUrl(item) }} className='w-full h-full' />
                         <View className='absolute bottom-4 left-4 bg-dark rounded p-1'>
                             <Text className='text-light text-xs'>{index + 1} / {photos.length}</Text>

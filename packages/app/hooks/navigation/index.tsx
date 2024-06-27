@@ -1,7 +1,7 @@
 import { MaterialTopTabNavigationProp } from '@react-navigation/material-top-tabs';
 import { CompositeNavigationProp, useNavigation as useReactNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { MainTopTabParamList, RootStackParamList } from 'app/lib/misc/navigation';
+import { AccountConsoleParamList, MainTopTabParamList, RootStackParamList } from 'app/lib/misc/navigation';
 
 type AppNavigationProp = CompositeNavigationProp<
     StackNavigationProp<RootStackParamList>,

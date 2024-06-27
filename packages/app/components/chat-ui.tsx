@@ -20,7 +20,6 @@ import * as Yup from "yup"
 import BottomSheet from './bottomsheet'
 import { FormAutoSelect, FormInput, RenderListingTileProps } from './formComponents'
 import { ImageGroup } from './image-group'
-import { CloseButton } from './link-buttons'
 import { Button } from "./ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { Input } from "./ui/input"
@@ -259,7 +258,9 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
             <View className='p-4 bg-card flex-col gap-8'>
                 <View className='flex-row justify-between'>
                     <Text>Generate <Text className='text-primary'>Agent to Agent</Text> agreement form</Text>
-                    <CloseButton onPress={() => setOpenBottomSheet(false)} />
+                    <Button onPress={() => setOpenBottomSheet(false)} variant={"destructive"} size={"icon"}>
+                        <X size={18} className='text-destructive-primary' />
+                    </Button>
                 </View>
                 <Formik
                     initialValues={{

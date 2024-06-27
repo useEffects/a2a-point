@@ -1,4 +1,3 @@
-import { GoToFullListingButton } from "app/components/link-buttons"
 import { Button } from "app/components/ui/button"
 import { Separator } from "app/components/ui/separator"
 import { Text } from "app/components/ui/text"
@@ -10,9 +9,10 @@ import { Listing, Room, User } from "app/lib/types"
 import opacity from "hex-color-opacity"
 import { Bookmark, ExternalLink, Eye } from "lucide-react-native"
 import { useEffect, useState } from "react"
-import { Image, View } from "react-native"
+import { Image, Pressable, View } from "react-native"
 import { useRouter } from "solito/navigation"
 import { ListingCardMetrics } from "./full"
+import useRouting from "app/hooks/use-routing"
 
 export const OpenDetailsButton = ({ id, size = "sm" }: { id: string, size?: "default" | "sm" | "lg" | "icon" | null | undefined }) => {
     const router = useRouter()
@@ -54,7 +54,8 @@ export const RenderMetrics = ({ listingId }: { listingId: string }) => {
 
 export const SmallListingCard = (item: SmallListingCardProps) => {
     const { colors } = useColorScheme()
-    return <GoToFullListingButton listingId={item.id} variant={"base"} size={"none"} className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start rounded native:w-[400px]">
+    const goToListingDetailed = useRouting("listing-detailed")
+    return <Pressable onPress={() => goToListingDetailed(item.id)} className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start rounded native:w-[400px]">
         <Image source={{ uri: buildAssetUrl(item.user_created.avatar) }} className="w-8 h-8 rounded-full" />
         <View className="flex-col gap-4 flex-grow">
             <View className="flex-col gap-1">
@@ -76,5 +77,5 @@ export const SmallListingCard = (item: SmallListingCardProps) => {
                 </View>
             </View>
         </View>
-    </GoToFullListingButton>
+    </Pressable>
 }

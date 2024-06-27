@@ -16,7 +16,7 @@ import { useIsSmallDevice } from "app/hooks/is-small-device"
 import { useState } from "react"
 import { Menu } from "lucide-react"
 import BottomSheet from "app/components/bottomsheet"
-import { CloseButton } from "app/components/link-buttons"
+import { X } from "app/components/icons"
 
 const navItems = [
     {
@@ -141,7 +141,9 @@ const MobileNavbar = () => {
 
     return open ? <BottomSheet open={open} setOpen={setOpen} onBackdropPress={() => setOpen(false)}>
         <div className="p-4 flex flex-col gap-8 bg-popover items-start">
-            <CloseButton onPress={() => setOpen(false)} className="ml-auto mr-0" />
+            <Button variant={"destructive"} size={"smallIcon"} className="ml-auto mr-0">
+                <X className="text-foreground" size={14} />
+            </Button>
             {navItems.map((item, index) => <div key={index}>
                 <p className="text-lg text-foreground font-bold">{item.title}</p>
                 {item.items.map((subItem, subIndex) => <div key={subIndex}>

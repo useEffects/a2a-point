@@ -6,12 +6,12 @@ import { MessageCircleMore, Lock, Edit, Trash } from "app/components/icons"
 import { Button } from "../../ui/button"
 import { Text } from "../../ui/text"
 import { RenderMetrics } from "./small"
-import { View } from "react-native"
+import { Pressable, View } from "react-native"
 import { useColorScheme } from "app/hooks/color-scheme"
 import directusStore from "app/store/directus"
-import { GoToFullListingButton, GoToRoomButton } from "app/components/link-buttons"
 import { LocationChip } from "app/components/utils/chips"
 import { directusUrl } from "app/lib/constants"
+import useRouting from "app/hooks/use-routing"
 
 export type MediumListingCardProps = Pick<Listing, "id" | "title" | "budget" | "deal_type" | "description" | "date_created"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email" | "plan"> } & { location: Pick<Room, "id" | "title" | "avatar"> }
 
@@ -26,15 +26,17 @@ export const LockedChatButton = () => {
 export const MediumListingCard = (item: MediumListingCardProps) => {
     const { user } = userStore()
     const { authenticated } = directusStore()
+    const goToRoom = useRouting("room-detailed")
+    const goToListingDetailed = useRouting("listing-detailed")
 
-    return <View className="w-full flex-col gap-2 px-2 my-8">
+    return <View className="w-full flex-col gap-2 p-4 my-8">
         <View className="flex flex-wrap gap-4 flex-row items-center justify-between">
             <UserChip user={item.user_created} />
-            {authenticated ? user.id === item.user_created.id ? <></> : <GoToRoomButton roomId={getDMRoomId([user.id, item.user_created.id])}>
+            {authenticated ? user.id === item.user_created.id ? <></> : <Pressable onPress={() => getDMRoomId([item.user_created.id, user.id]).then(id => goToRoom(id))}>
                 <MessageCircleMore className="!text-foreground" />
-            </GoToRoomButton> : <LockedChatButton />}
+            </Pressable> : <LockedChatButton />}
         </View>
-        <GoToFullListingButton listingId={item.id} className="items-start flex-col gap-2 w-full" size={"none"} variant={"base"}>
+        <Pressable onPress={() => goToListingDetailed(item.id)} className="items-start flex-col gap-2 w-full">
             <Text className="text-lg text-primary">{item.title}</Text>
             <View className="flex-row justify-between w-full">
                 <LocationChip {...item.location} />
@@ -50,11 +52,11 @@ export const MediumListingCard = (item: MediumListingCardProps) => {
             <View className="flex-col gap-1 bg-card rounded-2xl p-4 mt-2 w-full">
                 <View className="flex-row justify-between">
                     <Text className="text-success">AED {Number(item.budget).toLocaleString()}</Text>
-                    <Text className="text-primary">{item.deal_type}</Text>
+                    <Text className="text-primary capitalize">{item.deal_type}</Text>
                 </View>
                 <Text>{shortString(item.description, 150)}</Text>
             </View>
-        </GoToFullListingButton>
+        </Pressable>
         <View className="m-0 p-0 px-2 flex-row justify-between w-full items-center">
             <RenderMetrics listingId={item.id} />
             <Text className="text-xs text-subtext">{timeAgo.format(new Date(item.date_created))}</Text>

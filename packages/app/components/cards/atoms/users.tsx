@@ -1,13 +1,12 @@
 import { Text } from "app/components/ui/text"
-import { DotSeparatedKeys, buildAssetUrl, isUserPro, isUserVerified, shortString, timeAgo } from "app/lib/helpers"
+import { buildAssetUrl, isUserPro, isUserVerified, shortString, timeAgo } from "app/lib/helpers"
 import { Company, Document, User } from "app/lib/types"
 import { cn } from "app/lib/utils"
-import { Image, View } from "react-native"
+import { Image, Pressable, View } from "react-native"
 import { AtSign, Award, Check, MessageCircleMore, Phone, Star } from "app/components/icons"
 import { useQuery } from "@tanstack/react-query"
 import { getFeedbacksCountForUser, getListingsCountForUser } from "app/lib/misc/get-counts"
 import { Separator } from "app/components/ui/separator"
-import { GoToProfileButton } from "app/components/link-buttons"
 import opacity from "hex-color-opacity"
 import { useColorScheme } from "app/hooks/color-scheme"
 import { CompanyChip } from "./company"
@@ -15,6 +14,7 @@ import { Button } from "app/components/ui/button"
 import userStore from "app/store/user"
 import directusStore from "app/store/directus"
 import * as Linking from "expo-linking"
+import useRouting from "app/hooks/use-routing"
 
 export type SmallUsersCardProps = Pick<User, "id" | "avatar" | "first_name" | "last_name" | "computed_rating"> & { company: Pick<Company, "title" | "avatar" | "id"> | null }
 
@@ -26,6 +26,7 @@ export const mediumUsersFields = ["id", "avatar", "first_name", "last_name", "co
 
 export const SmallUsersCard = (item: SmallUsersCardProps) => {
     const { colors } = useColorScheme()
+    const goToProfileDetailed = useRouting("profile-detailed")
     const { data: ratingsCount } = useQuery({
         queryKey: ["ratingsCount", item.id],
         queryFn: async () => await getFeedbacksCountForUser(item.id)
@@ -35,7 +36,7 @@ export const SmallUsersCard = (item: SmallUsersCardProps) => {
         queryFn: async () => await getListingsCountForUser(item.id)
     })
 
-    return <GoToProfileButton variant={"base"} size={"none"} userId={item.id} className={cn("rounded-xl relative w-44")}>
+    return <Pressable onPress={() => goToProfileDetailed(item.id)} className={cn("rounded-xl relative w-44")}>
         <View className="w-full h-10 flex-col justify-center items-start">
             <View className="flex-row items-center rounded p-1" style={{ backgroundColor: opacity(colors.primary, 0.1) }}>
                 <Award size={12} className="text-primary" />
@@ -63,7 +64,7 @@ export const SmallUsersCard = (item: SmallUsersCardProps) => {
                 <Text className="text-subtext">listings</Text>
             </View>
         </View>
-    </GoToProfileButton>
+    </Pressable>
 }
 
 export const MediumUsersCard = (item: MediumUsersCardProps) => {
@@ -77,11 +78,10 @@ export const MediumUsersCard = (item: MediumUsersCardProps) => {
         queryFn: async () => await getListingsCountForUser(item.id)
     })
     const { user } = userStore()
-    const { authenticated } = directusStore()
     const shouldShowEllipsis = item.tags?.length ? item.tags.length > 3 : false
-    const isPro = isUserPro(item.plan)
+    const goToProfile = useRouting("profile-detailed")
 
-    return <GoToProfileButton userId={item.id} className="flex-col gap-4">
+    return <Pressable onPress={() => goToProfile(item.id as any)} className="flex-col gap-4">
         <View className="w-full flex-row w-full justify-start">
             <View className="w-1/2 rounded-tl-xl">
                 <View className="relative flex-col items-start w-full">
@@ -92,7 +92,7 @@ export const MediumUsersCard = (item: MediumUsersCardProps) => {
                     <View className="absolute" style={{ elevation: 100, zIndex: 100 }}>
                         <Image className="w-16 h-16 rounded-full border border-background border-1" source={{ uri: buildAssetUrl(item.avatar) }} />
                     </View>
-                    <View className="h-8 bg-card w-full pl-20 flex-row items-center justify-between gap-4 pr-4 rounded-tl-xl">
+                    <View className="bg-card w-full pl-20 flex-row items-center justify-between gap-4 pr-4 rounded-tl-xl">
                         <View className="flex-row gap-1 items-center">
                             <Star size={18} className="text-success" />
                             <Text className="text-success">{item.computed_rating}</Text>
@@ -147,5 +147,5 @@ export const MediumUsersCard = (item: MediumUsersCardProps) => {
                 })}
             </View>
         </View>
-    </GoToProfileButton>
+    </Pressable>
 }

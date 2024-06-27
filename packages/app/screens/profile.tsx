@@ -8,7 +8,7 @@ import { useColorScheme } from "app/hooks/color-scheme";
 import { directusUrl } from "app/lib/constants";
 import { buildAssetUrl, timeAgo } from "app/lib/helpers";
 import { getListingsCountForUser } from "app/lib/misc/get-counts";
-import { Company, Feedback, User } from "app/lib/types";
+import { Company, Document, Feedback, User } from "app/lib/types";
 import { cn } from "app/lib/utils";
 import { StarIcon } from "app/screens/post-feedback";
 import directusStore from "app/store/directus";
@@ -24,22 +24,23 @@ import { Link } from "solito/link";
 import { ExtraSmallListingCardProps } from "../components/cards/atoms/extra-small";
 import { MediumListingCardProps } from "../components/cards/atoms/medium";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "../components/cards/molecules/listings";
-import { GoToActivityButton, GoToPostFeedbackButton } from "../components/link-buttons";
 import { Button } from "../components/ui/button";
 import { FilterKeys } from "./listings";
 import LockedScreen from "./locked-screens";
+import useRouting from "app/hooks/use-routing";
 
-export const ProfileScreen = (props: { user: User, company?: Company }) => {
+export const ProfileScreen = (props: { user: User, company?: Company | null, document?: Document | null }) => {
     const { authenticated } = directusStore()
+    const { user: currentUser } = userStore()
 
-    return authenticated ? <Profile {...props} /> : <LockedScreen
+    return (currentUser.id !== props.user.id || authenticated) ? <Profile {...props} /> : <LockedScreen
         SVGComponent={<ProfileSVG width={300} height={300} />}
         readMoreLink="https://a2apoint.com"
         title="Showcase your profile on A2APoint, attract more clients and grow your business"
     />
 }
 
-export function Profile({ user, company }: { user: User, company?: Company }) {
+export function Profile({ user, company, document }: { user: User, company?: Company | null, document?: Document | null }) {
     const [index, setIndex] = useState(0)
     const { colors } = useColorScheme()
     const [listingsCount, setListingsCount] = useState<number | null>(0)
@@ -58,6 +59,9 @@ export function Profile({ user, company }: { user: User, company?: Company }) {
             props.jumpTo(tabTitles[i]!)
         }
         const buttonWidth = (Platform.OS === "web" ? "calc(50% - 0.5rem)" : width / 2 - 14 - 8) as DimensionValue
+        const goToActivity = useRouting("activity")
+        const goToPostFeedback = useRouting("post-feedback")
+
         return <>
             <Collapsible duration={500} collapsed={collapsed}>
                 <View className="flex-col gap-8 my-8">
@@ -91,11 +95,11 @@ export function Profile({ user, company }: { user: User, company?: Company }) {
                             <Text>Open in dashboard</Text>
                         </Button>
                         {user.id === currentUser.id ?
-                            <GoToActivityButton variant={"default"} size="sm" style={{ width: buttonWidth }}>
+                            <Button onPress={goToActivity} variant={"default"} size="sm" style={{ width: buttonWidth }}>
                                 <Text>Your activity</Text>
-                            </GoToActivityButton> : <GoToPostFeedbackButton agentId={user.id} size={"sm"} style={{ width: buttonWidth }} variant={"default"}>
+                            </Button> : <Button onPress={() => goToPostFeedback({ id: user.id })} size={"sm"} style={{ width: buttonWidth }} variant={"default"}>
                                 <Text>Give feedback</Text>
-                            </GoToPostFeedbackButton>}
+                            </Button>}
                     </View>
                 </View>
             </Collapsible>
@@ -160,7 +164,7 @@ const TabIcons = ({ index, isActive }: { index: number, isActive: boolean }) => 
     return <Icon style={{ marginVertical: 4 }} size={18} color={isActive ? colors.primary : colors.foreground} />
 }
 
-const InfoTab = ({ user, company }: { user: User, company?: Company }) => {
+const InfoTab = ({ user, company }: { user: User, company?: Company | null }) => {
     return <View className="p-4 flex-col gap-4 w-full">
         {company ? <View className="rounded p-4 bg-card border border-border gap-4">
             <Text className="text-xl font-semibold">Company</Text>
@@ -255,10 +259,9 @@ const ListingTab = ({ user, big, setBig }: { user: User, big: boolean, setBig: D
             flatListProps={{
                 scrollEnabled: false,
             }}
-            paramFilter={{
-                key: FilterKeys.Agent,
-                id: user.id
-            }}
+            paramFilter={[{
+                [FilterKeys.Agent]: user.id
+            }]}
         /> :
             <RenderListings<ExtraSmallListingCardProps>
                 render={bodies.extraSmall}
@@ -266,10 +269,9 @@ const ListingTab = ({ user, big, setBig }: { user: User, big: boolean, setBig: D
                 flatListProps={{
                     scrollEnabled: false,
                 }}
-                paramFilter={{
-                    key: FilterKeys.Agent,
-                    id: user.id
-                }}
+                paramFilter={[
+                    { [FilterKeys.Agent]: user.id }
+                ]}
             />}
     </View>
 }
@@ -314,17 +316,17 @@ const ListingFeedbacks = ({ userId }: { userId: string }) => {
 }
 
 const RenderFeedbackCard = (props: UserFeedbacksProps & { handleDelete: (id: string) => void }) => {
-    const { rest } = directusStore()
     const { user } = userStore()
+    const goToPostFeedback = useRouting("post-feedback")
 
     return <View className="flex-col gap-4">
         <View className="flex-row items-center justify-between">
             <UserChip user={props.user_created} />
             {user.id === props.user_created.id ?
                 <View className="flex-row items-center gap-2">
-                    <GoToPostFeedbackButton agentId={props.agent} feedbackId={props.id} size={"sm"} variant={"outline"}>
+                    <Button onPress={() => goToPostFeedback({ id: props.agent, feedbackId: props.id })} size={"sm"} variant={"outline"}>
                         <Text>Edit</Text>
-                    </GoToPostFeedbackButton>
+                    </Button>
                     <Button onPress={() => props.handleDelete(props.id)} size={"sm"} variant={"outline"}>
                         <Text>Delete</Text>
                     </Button>

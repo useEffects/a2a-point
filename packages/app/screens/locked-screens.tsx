@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "app/components/icons";
-import { GoToLoginButtonProps, GoToLoginButton as LoginButton } from "app/components/link-buttons";
-import { Button } from "app/components/ui/button";
+import { Button, ButtonProps } from "app/components/ui/button";
 import { Text } from "app/components/ui/text";
+import useRouting from "app/hooks/use-routing";
 import { cn } from "app/lib/utils";
 import * as Linking from "expo-linking";
 import { ReactNode } from "react";
@@ -37,8 +37,12 @@ export default function LockedScreen(props: LockedScreenProps) {
     </View>
 }
 
-export const GoToLoginButton = (props: GoToLoginButtonProps) => <LoginButton variant={"default"} size={"default"} className="flex-row items-center" {...props}>
-    <Text>Take me to login screen</Text>
-    <ArrowUpRight className="text-primary-foreground" />
-</LoginButton>
+export const GoToLoginButton = (props: ButtonProps) => {
+    const goToLogin = useRouting("login")
+
+    return <Button onPress={goToLogin} variant={"default"} size={"default"} className="flex-row items-center" {...props}>
+        <Text>Take me to login screen</Text>
+        <ArrowUpRight className="text-primary-foreground" />
+    </Button>
+}
 

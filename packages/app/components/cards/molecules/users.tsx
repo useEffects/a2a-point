@@ -6,10 +6,11 @@ import { FlatList } from "app/components/utils/virtual-lists"
 import { FlatListProps, View } from "react-native"
 import { queryClient } from "app/store/query"
 import { BottomLoader } from "./listings"
-import { GoToUsersListButton } from "app/components/link-buttons"
 import { ViewAllButton } from "app/components/utils/common-ui"
 import { uniqBy } from "lodash"
 import { useInfiniteQuery } from "@tanstack/react-query"
+import useRouting from "app/hooks/use-routing"
+import { Button } from "app/components/ui/button"
 
 export enum Mode {
     small = "small",
@@ -49,6 +50,7 @@ export const RenderUsers = <R,>({ mode, limit = 5, sort = [], filter, searchText
 
     const { token } = directusStore()
     const { fields, renderMethod: Component } = bodies[mode]
+    const goToUsersList = useRouting("users-list")
 
     const { data, fetchNextPage, hasNextPage } = useInfiniteQuery<{ items: R[], page: unknown }>({
         queryKey: ["fetching users list", fields, filter, limit],
@@ -76,7 +78,7 @@ export const RenderUsers = <R,>({ mode, limit = 5, sort = [], filter, searchText
         renderItem={({ item }) => <Component {...item} />}
         ItemSeparatorComponent={() => <View className="w-4 h-4" />}
         ListFooterComponent={infinite ? <BottomLoader endReached={!hasNextPage} onEndReached={fetchNextPage} /> : <ViewAllButton horizontal={!!flatListProps.horizontal}
-            button={(props) => <GoToUsersListButton {...props} />}
+            button={(props) => <Button onPress={() => goToUsersList("")} {...props} />}
         />}
         {...flatListProps}
     />

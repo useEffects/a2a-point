@@ -6,6 +6,7 @@ import { SmallListingCardProps } from "app/components/cards/atoms/small";
 import { MediumLocationCards } from "app/components/cards/molecules/locations";
 import { Mode, RenderUsers } from "app/components/cards/molecules/users";
 import { MediumListingCardProps } from "app/components/cards/atoms/medium";
+import { FilterKeys } from "app/screens/listings";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
     return <div className="container mx-auto flex flex-row gap-12">
@@ -21,6 +22,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <RenderListings<SmallListingCardProps>
                     render={bodies.small}
                     filter={commonFilters[CommonFilters.Premium]()}
+                    paramFilter={[
+                        { [FilterKeys.Premium]: CommonFilters.Premium }
+                    ]}
                 />
             </div>
             <div className="flex-col flex gap-8">

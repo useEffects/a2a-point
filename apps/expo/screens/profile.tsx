@@ -1,10 +1,10 @@
 import { Header } from "app/components/header";
 import { Bell, EllipsisVertical, LogOut, UserCog2 } from "app/components/icons";
-import { useGoToRoute } from "app/components/link-buttons";
 import { ToggleTheme } from "app/components/toggle-theme";
 import { Button } from "app/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "app/components/ui/dropdown-menu";
 import { Text } from "app/components/ui/text";
+import useRouting from "app/hooks/use-routing";
 import { ProfileScreen as ProfileScreenComponent } from "app/screens/profile";
 import directusStore from "app/store/directus";
 import userStore from "app/store/user";
@@ -12,7 +12,7 @@ import { useState } from "react";
 import { View } from "react-native";
 
 export default function ProfileScreen() {
-    const { user } = userStore()
+    const { user, company, document } = userStore()
     const { authenticated, logout } = directusStore()
     return <View className="flex-1">
         <Header>
@@ -24,13 +24,13 @@ export default function ProfileScreen() {
                 </View>
             </View>
         </Header>
-        <ProfileScreenComponent user={user} />
+        <ProfileScreenComponent user={user} company={company} document={document} />
     </View>
 }
 
 const ProfileDropdown = () => {
-    const goToNotifications = useGoToRoute("notifications")
-    const goToAccountConsole = useGoToRoute("account-console")
+    const goToNotifications = useRouting("notifications")
+    const goToAccountConsole = useRouting("account-console")
 
     const [_, setOpen] = useState(false)
 
@@ -49,7 +49,7 @@ const ProfileDropdown = () => {
             </DropdownMenuItem>
             <DropdownMenuItem onPress={() => {
                 setOpen(false)
-                goToNotifications()
+                goToNotifications("")
             }}>
                 <View className="flex-row items-center gap-2">
                     <Bell size={18} className="text-foreground" />
@@ -58,7 +58,7 @@ const ProfileDropdown = () => {
             </DropdownMenuItem>
             <DropdownMenuItem onPress={() => {
                 setOpen(false)
-                goToAccountConsole()
+                goToAccountConsole("")
             }}>
                 <View className="flex-row items-center gap-2">
                     <UserCog2 size={18} className="text-foreground" />

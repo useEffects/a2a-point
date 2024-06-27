@@ -189,7 +189,6 @@ export default function AppLayout() {
         <Stack.Screen name="listing-detailed" component={FullListingScreen} />
         <Stack.Screen name="room-detailed" component={RoomDetailed} />
         <Stack.Screen name="profile-detailed" component={ProfileDetailed} />
-        <Stack.Screen name="location-listings" component={LocationListings} />
         <Stack.Screen name="members-list" component={MembersList} />
         <Stack.Screen name="post-feedback" component={PostFeedback} />
         <Stack.Screen name="activity" component={ActivityScreen} />

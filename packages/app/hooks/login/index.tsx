@@ -1,9 +1,8 @@
-import directusStore from "app/store/directus";
-import { useEffect } from "react";
-import useNavigation from "../navigation";
-import * as WebBrowser from 'expo-web-browser';
 import { directusUrl, portfolioUrl } from "app/lib/constants";
-import { parse } from "search-params"
+import directusStore from "app/store/directus";
+import * as WebBrowser from 'expo-web-browser';
+import { useEffect } from "react";
+import { parse } from "search-params";
 
 export const useLogin = (redirect?: string) => {
     const { initialize, authenticated } = directusStore();

@@ -10,13 +10,14 @@ import { useDebounce } from "use-debounce";
 import { RoomSubscribed } from "app/context/chats"
 import { useChats } from "app/hooks/chats"
 import { buildAssetUrl, getDMRoomId, timeAgo } from "app/lib/helpers";
-import { GoToRoomButton } from "app/components/link-buttons";
 import { Room, User } from "app/lib/types";
 import directusStore from "app/store/directus";
 import { useQuery } from "@tanstack/react-query"
 import { directusUrl } from "app/lib/constants";
 import { readItems } from "@directus/sdk";
 import { FlatList } from "app/components/utils/virtual-lists";
+import useRouting from "app/hooks/use-routing";
+import { Button } from "app/components/ui/button";
 
 export default function ChatScreen() {
     const { rest, token } = directusStore()
@@ -100,6 +101,7 @@ export default function ChatScreen() {
 const ChatListRow = (room: RoomSubscribed) => {
     const { user } = userStore();
     const { messages } = useChats()
+    const goToRoom = useRouting("room-detailed")
 
     const lastMessage = messages.find((message) => message.room === room.id);
     let lastMessageContent = lastMessage?.content.trim();
@@ -124,7 +126,7 @@ const ChatListRow = (room: RoomSubscribed) => {
             ),
         ];
 
-    return <GoToRoomButton roomId={room.id} variant={"ghost"}
+    return <Button onPress={() => goToRoom(room.id)} variant={"ghost"}
         className="flex-row gap-4 items-center w-full justify-start h-20 px-4">
         <Image className="w-12 h-12 rounded-full" source={{ uri: roomAvatar }} />
         <View className="flex-col justify-center flex-1">
@@ -134,7 +136,7 @@ const ChatListRow = (room: RoomSubscribed) => {
             </View>
             {lastMessage ? <Text className="!text-sm text-subtext !font-normal">{lastMessageContent}</Text> : <></>}
         </View>
-    </GoToRoomButton>
+    </Button>
 };
 
 type ContactListRowProp = Pick<User, "avatar" | "id" | "first_name" | "last_name">
@@ -142,17 +144,19 @@ type GroupListRowProp = Pick<Room, "avatar" | "id" | "type" | "title">
 
 const ContactListRow = (contact: ContactListRowProp) => {
     const { user } = userStore()
-    return <GoToRoomButton roomId={getDMRoomId([user.id, contact.id])} variant={"ghost"} size={"none"}
+    const goToRoom = useRouting("room-detailed")
+    return <Button onPress={() => getDMRoomId([contact.id, user.id]).then(id => goToRoom(id))} variant={"ghost"} size={"none"}
         className="flex-row gap-4 items-center w-full justify-start px-4 h-20">
         <Image className="w-12 h-12 rounded-full" source={{ uri: buildAssetUrl(contact.avatar) }} />
         <Text className="!text-base">{contact.first_name} {contact.last_name}</Text>
-    </GoToRoomButton>
+    </Button>
 }
 
 const GroupListRow = (group: GroupListRowProp) => {
-    return <GoToRoomButton roomId={group.id} variant={"ghost"} size={"none"}
+    const goToRoom = useRouting("room-detailed")
+    return <Button onPress={() => goToRoom(group.id)}
         className="flex-row gap-4 items-center w-full justify-start px-4 h-20">
         <Image className="w-12 h-12 rounded-full" source={{ uri: buildAssetUrl(group.avatar) }} />
         <Text className="!text-base">{group.title}</Text>
-    </GoToRoomButton>
+    </Button>
 }

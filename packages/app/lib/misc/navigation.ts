@@ -11,7 +11,7 @@ export type RootStackParamList = {
     "profile-detailed": {
         id: string
     },
-    "location-listings": {
+    "location-detailed": {
         id: string,
     },
     "post-feedback": {
@@ -36,7 +36,6 @@ export type RootStackParamList = {
 export type MainTopTabParamList = {
     "home": undefined,
     "listings": { filters: FilterParam[] } | undefined,
-    "search": undefined,
     "offPlans": undefined,
     "profile": undefined,
     "chat": undefined,
