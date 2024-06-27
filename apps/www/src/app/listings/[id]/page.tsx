@@ -6,7 +6,7 @@ import { queryClient } from "app/store/query"
 import directusStore from "app/store/directus"
 import { readItems } from "@directus/sdk"
 
-export default function Page() {
+export default function ListingsPage() {
     const { id } = useParams()
     return id ? <div className="max-w-xl">
         <ListingDetailed listingId={id as string} />

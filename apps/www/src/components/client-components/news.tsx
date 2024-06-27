@@ -1,15 +1,11 @@
 "use client"
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "src/components/ui/button";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "src/components/ui/pagination";
 import { Separator } from "src/components/ui/separator";
 import { Text } from "src/components/ui/text";
-import { directusUrl } from "src/lib/constants";
 import { News } from "src/lib/types";
-import { cn } from "app/lib/utils";
-import { timeAgo } from "app/lib/helpers";
 import { useIsSmallDevice } from "app/hooks/is-small-device";
 import { NewsCard } from "app/components/cards/atoms/news";
 

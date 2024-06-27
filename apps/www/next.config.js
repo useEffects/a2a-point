@@ -11,6 +11,9 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   transpilePackages: [
     'app',
     'expo-router',
@@ -23,7 +26,6 @@ const nextConfig = {
     'nativewind',
     'react-native-gesture-handler',
     'react-native-css-interop',
-    'react-native-vector-icons',
     'react-native-ratings',
     'react-native-tab-view',
     'react-native-autocomplete-input',

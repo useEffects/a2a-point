@@ -4,7 +4,7 @@ import { readItems } from "@directus/sdk";
 import directusStore from "app/store/directus";
 import StartButton from "src/components/client-components/course";
 import { NewsLetter } from "src/components/news-letter";
-import { directusUrl } from "src/lib/constants";
+import { directusUrl } from "app/lib/constants";
 import { Course } from "src/lib/types";
 import { useQuery } from "@tanstack/react-query";
 

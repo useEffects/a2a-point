@@ -1,9 +1,9 @@
-import { directusUrl, nextUrl } from "./constants";
+import { directusUrl, portfolioUrl } from "app/lib/constants";
 
 export const login = (): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
         if (typeof window !== "undefined") {
-            const popup = window.open(`${directusUrl}/auth/login/keycloak?redirect=${nextUrl}/api/callback`, "popup");
+            const popup = window.open(`${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/callback`, "popup");
 
             const intervalId = setInterval(() => {
                 if (popup?.closed) {

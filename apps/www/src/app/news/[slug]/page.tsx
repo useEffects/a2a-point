@@ -1,7 +1,7 @@
 "use client"
 
 import { MDXRemote } from 'next-mdx-remote/rsc'
-import { directusUrl } from "src/lib/constants"
+import { directusUrl } from "app/lib/constants"
 import { useQuery } from "@tanstack/react-query"
 import { News } from "src/lib/types"
 import directusStore from 'app/store/directus'
