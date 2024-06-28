@@ -4,22 +4,12 @@ import { LoginPopover } from "app/screens/listings"
 import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"
 import userStore from "app/store/user"
-import { useEffect, useState } from "react"
-import { View } from "react-native"
+import { useEffect } from "react"
 
-export default function FullListingScreen({ listingId }: { listingId: string }) {
+export default function FullListingScreen({ listing }: { listing: FullListingDetailedProps }) {
     const { rest, authenticated } = directusStore()
     const { user } = userStore()
-    const [listing, setListing] = useState<FullListingDetailedProps | null>(null)
-
-    useEffect(() => {
-        if (listingId) {
-            rest.request(readItem("listings", listingId, {
-                fields: FullListingCardFields
-            })).then(res => setListing(res as FullListingDetailedProps))
-        }
-
-    }, [listingId, rest])
+    const listingId = listing.id
 
     useEffect(() => {
         if (!listingId || !listing || !authenticated) return
@@ -52,9 +42,7 @@ export default function FullListingScreen({ listingId }: { listingId: string }) 
     }, [listingId, rest, user.id, listing, authenticated])
 
     return listing ? <>
-        <View className="px-4">
-            <FullListingCard {...listing} />
-        </View>
+        <FullListingCard {...listing} />
         {!authenticated ? <LoginPopover /> : <></>}
     </> : <></>
 }

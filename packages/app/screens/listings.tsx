@@ -19,10 +19,13 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { Platform, View } from "react-native";
 import { Circle, Svg } from 'react-native-svg';
 import { NavigationState, Route, SceneRendererProps, TabView } from 'react-native-tab-view';
-import { useParams, usePathname, useRouter, useSearchParams } from 'solito/navigation';
+import { useParams, usePathname, useRouter } from 'solito/navigation';
 import { useDebounce } from "use-debounce";
 import { GoToLoginButton } from "./locked-screens";
 import useRouting from 'app/hooks/use-routing';
+import { Header } from 'app/components/header';
+import { GoToPostButtonUi } from 'app/components/utils/common-ui';
+import { useSearchParams } from 'app/hooks/search-params';
 
 export enum FilterKeys {
     Budget = "budget",
@@ -109,6 +112,12 @@ export default function ListingsScreenComponent({ className }: { className?: str
     }, [JSON.stringify(filters), debouncedSearchText])
 
     return <View className={cn("flex-1", className)}>
+        <Header className="items-center py-4" height={"auto"}>
+            <View className="flex-row flex-1 justify-between items-center">
+                <Text className="text-xl font-bold">Listings</Text>
+                <GoToPostButtonUi />
+            </View>
+        </Header>
         <View className="flex-row items-center justify-between gap-4 w-full native:bg-card px-4">
             <SearchBar
                 searchText={searchText}

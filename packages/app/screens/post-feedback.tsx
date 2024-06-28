@@ -1,5 +1,5 @@
 import { useColorScheme } from "app/hooks/color-scheme";
-import { useUserDetails } from "app/hooks/user-details";
+import { SmallUser, useUserDetails } from "app/hooks/user-details";
 import { buildAssetUrl, wordCount } from "app/lib/helpers";
 import { Formik, FormikProps } from "formik";
 import { Star, StarHalf } from "lucide-react-native";
@@ -15,6 +15,9 @@ import { createItem, updateItem } from "@directus/sdk";
 import { useState } from "react";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "app/components/ui/dialog"
 import { useRouter } from "solito/navigation";
+import { Header } from "app/components/header";
+import { ScrollView } from "app/components/utils/virtual-lists";
+import { Separator } from "app/components/ui/separator";
 
 export const StarIcon = (props: StarIconProps) => {
     const { colors } = useColorScheme()
@@ -39,8 +42,59 @@ type FeedbackValues = {
     content: string
 }
 
-export function PostFeedback({ userId, feedback }: { userId: string, feedback?: Feedback }) {
-    const user = useUserDetails(userId)
+export default function PostFeedback({ user, feedback }: { user: SmallUser, feedback?: Feedback }) {
+    const guidelines = [
+        "Be Honest: Share your genuine experience to help others get a true sense of the agent.",
+        "Be Specific: Provide detailed information about your interaction.",
+        "Be Respectful: Even if the feedback is critical, maintain a respectful and polite tone."
+    ];
+
+    const examples = [
+        "Positive Feedback: \"Agent X was very friendly and reliable during our exchange.\"",
+        "Constructive Feedback: \"Agent Y could improve by responding more promptly to messages.\""
+    ];
+
+    return (
+        <View className="flex-1">
+            <Header>
+                {feedback ? <Text className="text-xl font-bold">Edit Feedback</Text> :
+                    <Text className="text-xl font-bold">Give Feedback</Text>}
+            </Header>
+            <ScrollView contentContainerClassName="flex-grow flex-col gap-8 p-4">
+                <PostFeedbackComponent user={user} feedback={feedback} />
+                <Separator className="my-8" />
+                <Text className="text-lg font-medium my-4 mt-0">Share Your Experience</Text>
+                <Text className="text-subtext">
+                    Thank you for sharing your feedback about
+                    <Text className="text-foreground">
+                        {` ${user?.first_name + " " + user?.last_name}`}
+                    </Text>
+                    . Your insights help others understand what to expect and make informed decisions.
+                </Text>
+                <Text className="text-lg font-medium my-4">Guidelines for Feedback</Text>
+                {guidelines.map((guideline, index) => (
+                    <View key={index} className="flex-row items-start gap-2">
+                        <Text className="text-lg text-primary">{'\u2022'}</Text>
+                        <Text className="text-base flex-shrink text-subtext">
+                            {guideline}
+                        </Text>
+                    </View>
+                ))}
+                <Text className="text-lg font-medium my-4">Examples:</Text>
+                {examples.map((example, index) => (
+                    <View key={index} className="flex-row items-start gap-2">
+                        <Text className="text-lg text-subtext">{'\u2022'}</Text>
+                        <Text className="text-base flex-shrink text-subtext">
+                            {example}
+                        </Text>
+                    </View>
+                ))}
+            </ScrollView>
+        </View>
+    );
+}
+
+export function PostFeedbackComponent({ user, feedback }: { user: SmallUser, feedback?: Feedback }) {
     const { rest } = directusStore()
     const [loading, setLoading] = useState(false)
     const [open, setOpen] = useState(false)
@@ -56,7 +110,7 @@ export function PostFeedback({ userId, feedback }: { userId: string, feedback?: 
             } else {
                 return await rest.request(createItem("feedbacks", {
                     ...values,
-                    agent: userId
+                    agent: user.id
                 }))
             }
         }

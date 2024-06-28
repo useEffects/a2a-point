@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Asset, withId, withUri } from "app/components/chat-ui";
 import { AutoCompleteRenderItemProps, FormAutoSelect, FormInput, FormSelect, RenderRoomTileProps } from "app/components/formComponents";
 import { FullWidthImage } from "app/components/full-width-image";
+import { Header } from "app/components/header";
 import { MaterialSymbolIcon } from "app/components/material-symbol-icon";
 import { SeparatorText } from "app/components/separator-text";
 import { Switch } from "app/components/switch";
@@ -555,10 +556,13 @@ export default function PostScreenComponent() {
         const res = await rest.request(createItem("listings", payload))
         console.log(res)
         setLoading(false)
-        // router.back()
+        router.back()
     }
 
     return <View className="flex-1 w-full flex-col gap-4">
+        <Header>
+            <Text className="text-xl font-bold">Post</Text>
+        </Header>
         <TabView
             swipeEnabled={false}
             renderTabBar={() => null}

@@ -1,50 +1,38 @@
-import { readItem } from "@directus/sdk";
-import { useQuery } from "@tanstack/react-query";
-import { Header } from "app/components/header";
-import { Text } from "app/components/ui/text";
-import { ScrollView, } from "app/components/utils/virtual-lists";
-import useNavigation from "app/hooks/navigation";
-import { Room, User } from "app/lib/types";
-import { LocationDetailed as LocationDetailedComponent } from "app/screens/location-detailed";
-import directusStore from "app/store/directus";
-import { useEffect } from "react";
+import { LocationDetailed as LocationDetailedComponent, LocationDetailedProps } from "app/screens/location-detailed";
 import { useParams } from "solito/navigation";
+import { useQuery } from "@tanstack/react-query"
+import directusStore from "app/store/directus";
+import { readItem } from "@directus/sdk";
+import { getMembersCountForLocation } from "app/lib/misc/get-counts";
 
 export default function LocationDetailed() {
-    const params = useParams<{ id: string }>()
+    const params = useParams<{ id?: string }>()
     const { id } = params
     const { rest } = directusStore()
-    const navigation = useNavigation()
 
     const { data: room } = useQuery({
-        queryKey: ["Fetching full details for room", id],
-        queryFn: async () => await rest.request(readItem("rooms", id, {
-            fields: ["id", "title", "avatar", "members.directus_users_id.id", "members.directus_users_id.avatar"]
-        })),
-        enabled: Boolean(id)
-    }) as {
-        data: Pick<Room, "id" | "avatar" | "title"> & {
-            members: {
-                directus_users_id: Pick<User, "id" | "avatar">
-            }[]
-        }
-    }
+        queryKey: ["LocationDetailed", id],
+        queryFn: async () => await rest.request(readItem("rooms", id!, {
+            fields: ["*", "members.*.directus_users_id.id", "members.*.directus_users_id.avatar"],
+            filter: {
+                type: {
+                    _eq: "group"
+                }
+            },
+            deep: {
+                members: {
+                    _limit: 10,
+                }
+            }
+        })) as LocationDetailedProps["room"],
+        enabled: !!id
+    })
 
-    useEffect(() => {
-        if (room?.title) {
-            navigation.setOptions({
-                header: () => <Header>
-                    <Text className="text-xl font-bold">{room.title}</Text>
-                </Header>
-            })
-        }
-    }, [room, navigation])
+    const { data: totalMembers } = useQuery({
+        queryKey: ["LocationDetailed", id, "totalMembers"],
+        queryFn: async () => getMembersCountForLocation(id!),
+        enabled: !!id
+    })
 
-    if (!room) {
-        return <></>
-    }
-
-    return <ScrollView>
-        <LocationDetailedComponent room={room} />
-    </ScrollView>
+    return (room && (totalMembers !== undefined && totalMembers !== null)) ? <LocationDetailedComponent room={room} totalMembers={totalMembers} /> : <></>
 }

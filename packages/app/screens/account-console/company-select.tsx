@@ -1,17 +1,15 @@
-import { updateItem } from "@directus/sdk"
 import { FormAutoSelect, RenderCompanyTileProps } from "app/components/formComponents"
+import { Header } from "app/components/header"
 import { Button } from "app/components/ui/button"
 import { Text } from "app/components/ui/text"
 import { portfolioUrl } from "app/lib/constants"
 import { getCompanyFromId } from "app/lib/misc/from-id"
-import directusStore from "app/store/directus"
 import userStore from "app/store/user"
 import { useEffect, useState } from "react"
 import { View } from "react-native"
 
 export const CompanySelectScreenComponent = () => {
     const { user } = userStore()
-    const { rest } = directusStore()
     const [company, setCompany] = useState<RenderCompanyTileProps | null>(null)
     const [key, setKey] = useState(0)
     const [loading, setLoading] = useState(false)
@@ -58,6 +56,9 @@ export const CompanySelectScreenComponent = () => {
     }
 
     return <View className="flex-col gap-8 flex-1">
+        <Header>
+            <Text className="text-xl font-bold">Company</Text>
+        </Header>
         <View className="flex-col gap-2">
             <Text className="text-xl text-primary">Choose your company</Text>
             <Text>Connect with other real estate agents to collaborate and close deals faster.</Text>

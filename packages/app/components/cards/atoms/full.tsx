@@ -3,7 +3,7 @@ import { Separator } from 'app/components/ui/separator';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { useListingMetrics } from "app/hooks/listing-metrics";
 import { directusUrl } from "app/lib/constants";
-import { buildAssetUrl, groupByN } from "app/lib/helpers";
+import { buildAssetUrl, groupByN, shortString } from "app/lib/helpers";
 import { Amenity, Listing, ListingAmenity } from "app/lib/types";
 import { RenderAmenity } from 'app/screens/post';
 import directusStore from 'app/store/directus';
@@ -15,6 +15,8 @@ import Carousel from 'react-native-reanimated-carousel';
 import { Button } from "../../ui/button";
 import { Text } from "../../ui/text";
 import { MediumUsersCard, MediumUsersCardProps, mediumUsersFields } from './users';
+import { Header } from "app/components/header";
+import { ScrollView } from "app/components/utils/virtual-lists";
 
 export const FullListingCardFields = ["*", "amenities.*", "photo1", "photo2", "photo3"].concat(mediumUsersFields.map(field => `user_created.${field}`))
 
@@ -57,97 +59,102 @@ export const FullListingCard = (props: FullListingDetailedProps) => {
         bookmarkId ? await deleteBookmark(props.id, bookmarkId) : await addBookmark({ id: props.id, title: props.title }, { email: props.user_created.email, id: props.user_created.id })
     }
 
-    return <View className="flex-col gap-8">
-        <View className='px-4 flex flex-col gap-4'>
-            <View className="flex-col gap-2">
-                <Text className="text-xl font-medium text-primary">{props.title}</Text>
-                <View className="flex-row gap-4 flex-wrap">
-                    <Text className="text-success">AED {Number(props.budget).toLocaleString()}</Text>
-                    <Text style={{ backgroundColor: opacity(colors.info, 0.1) }} className='p-1 rounded text-sm text-info'>Expected broker fees: {props.expected_broker_fees} % </Text>
-                    <Text className="border border-solid border-foreground px-2 rounded-full self-start capitalize">{props.deal_type}</Text>
+    return <View className="flex-col gap-8 flex-1">
+        <Header>
+            <Text className="font-bold text-xl">{shortString(props.title, 30)}</Text>
+        </Header>
+        <ScrollView contentContainerClassName="flex-col gap-8 flex-grow">
+            <View className='px-4 flex flex-col gap-4'>
+                <View className="flex-col gap-2">
+                    <Text className="text-xl font-medium text-primary">{props.title}</Text>
+                    <View className="flex-row gap-4 flex-wrap">
+                        <Text className="text-success">AED {Number(props.budget).toLocaleString()}</Text>
+                        <Text style={{ backgroundColor: opacity(colors.info, 0.1) }} className='p-1 rounded text-sm text-info'>Expected broker fees: {props.expected_broker_fees} % </Text>
+                        <Text className="border border-solid border-foreground px-2 rounded-full self-start capitalize">{props.deal_type}</Text>
+                    </View>
                 </View>
             </View>
-        </View>
-        <Text className='px-4'>{props.description}</Text>
-        <Separator className='px-4' />
-        {photos.length ?
-            <View>
-                <Separator />
-                <Carousel
-                    style={{ marginTop: -32 }}
-                    loop={false}
-                    height={height}
-                    data={photos}
-                    renderItem={({ item, index }: { item: string, index: number }) => <View style={{ width, height }} className='relative'>
-                        <Image source={{ uri: buildAssetUrl(item) }} className='w-full h-full' />
-                        <View className='absolute bottom-4 left-4 bg-dark rounded p-1'>
-                            <Text className='text-light text-xs'>{index + 1} / {photos.length}</Text>
-                        </View>
-                    </View>}
-                    width={width}
-                />
-                <Separator />
-            </View>
-            : <></>}
-        {props.tags.length ?
-            <View className="flex-row gap-4 px-4">
-                {props.tags.map((tag, index) => <Text className="text-sm bg-primary text-primary-foreground px-2 rounded" key={index}>{tag}</Text>)}
-            </View> : <></>}
-        <View className="flex flex-row justify-between px-4">
-            {<ListingIconTile
-                icon={<LandPlot className="!text-base !text-foreground" />}
-                text='Size'
-                value={`${props.size} sqft`}
-            />}
-            {props.bedrooms ? (
-                <ListingIconTile
-                    icon={<BedDouble className="!text-base !text-foreground" />}
-                    text="Beds"
-                    value={props.bedrooms}
-                />
-            ) : <></>}
-            {props.bathrooms ? (
-                <ListingIconTile
-                    icon={<Bath className="!text-base !text-foreground" />}
-                    text="Baths"
-                    value={props.bathrooms}
-                />
-            ) : <></>}
-            {props.parking ? (
-                <ListingIconTile
-                    icon={<CarFront className="!text-base !text-foreground" />}
-                    text="Parking"
-                    value={props.parking}
-                />
-            ) : <></>}
-        </View>
-        {props.amenities && props.amenities.length ? <View className="flex-col gap-4 px-4">
+            <Text className='px-4'>{props.description}</Text>
             <Separator />
-            <Text className="text-lg font-medium">Amenities</Text>
-            {groupByN(props.amenities).map((_amenities, i) => <View key={i} className="flex-row gap-4">
-                {_amenities.map((amenity, j) => <View className="flex-grow" key={j}>
-                    <RenderAmenity {...amenity} />
-                </View>)}
-            </View>)}
-        </View> : <></>}
-        <Separator className='px-4' />
-        <View className='p-4'>
-            <MediumUsersCard {...props.user_created} />
-        </View>
-        <Separator />
-        {(views !== null && saves !== null && views !== undefined && saves !== undefined) ? <View className="flex-row gap-4 justify-around px-4">
-            <View className="flex-col gap-2 items-center">
-                <Eye className="!text-foreground" size={18} />
-                <Text className="text-sm text-subtext">{views} Views</Text>
+            {photos.length ?
+                <View>
+                    <Separator />
+                    <Carousel
+                        style={{ marginTop: -32 }}
+                        loop={false}
+                        height={height}
+                        data={photos}
+                        renderItem={({ item, index }: { item: string, index: number }) => <View style={{ width, height }} className='relative'>
+                            <Image source={{ uri: buildAssetUrl(item) }} className='w-full h-full' />
+                            <View className='absolute bottom-4 left-4 bg-dark rounded p-1'>
+                                <Text className='text-light text-xs'>{index + 1} / {photos.length}</Text>
+                            </View>
+                        </View>}
+                        width={width}
+                    />
+                    <Separator />
+                </View>
+                : <></>}
+            {props.tags.length ?
+                <View className="flex-row gap-4 px-4">
+                    {props.tags.map((tag, index) => <Text className="text-sm bg-primary text-primary-foreground px-2 rounded" key={index}>{tag}</Text>)}
+                </View> : <></>}
+            <View className="flex flex-row justify-between px-4">
+                {<ListingIconTile
+                    icon={<LandPlot className="!text-base !text-foreground" />}
+                    text='Size'
+                    value={`${props.size} sqft`}
+                />}
+                {props.bedrooms ? (
+                    <ListingIconTile
+                        icon={<BedDouble className="!text-base !text-foreground" />}
+                        text="Beds"
+                        value={props.bedrooms}
+                    />
+                ) : <></>}
+                {props.bathrooms ? (
+                    <ListingIconTile
+                        icon={<Bath className="!text-base !text-foreground" />}
+                        text="Baths"
+                        value={props.bathrooms}
+                    />
+                ) : <></>}
+                {props.parking ? (
+                    <ListingIconTile
+                        icon={<CarFront className="!text-base !text-foreground" />}
+                        text="Parking"
+                        value={props.parking}
+                    />
+                ) : <></>}
             </View>
-            <Button disabled={!authenticated} variant={"base"} size={"none"} onPress={handleSave} className="flex-col gap-2 items-center">
-                <Bookmark fill={bookmarkId ? colors.foreground : "transparent"} className="!text-foreground" size={18} />
-                <Text className="text-sm text-subtext">{saves} Saves</Text>
-            </Button >
-            <Button variant={"base"} size={"none"} onPress={() => Linking.openURL(`${directusUrl}/admin/content/listings/${props.id}`)} className="flex-col gap-2 items-center">
-                <ExternalLink className="!text-foreground" size={18} />
-                <Text className="text-sm text-subtext">Dashboard</Text>
-            </Button >
-        </View> : <></>}
+            <Separator />
+            {props.amenities && props.amenities.length ? <View className="flex-col gap-4 px-4 -mt-4">
+                <Text className="text-lg font-medium">Amenities</Text>
+                {groupByN(props.amenities).map((_amenities, i) => <View key={i} className="flex-row gap-4">
+                    {_amenities.map((amenity, j) => <View className="flex-grow" key={j}>
+                        <RenderAmenity {...amenity} />
+                    </View>)}
+                </View>)}
+            </View> : <></>}
+            <Separator className='' />
+            <View className='p-4'>
+                <MediumUsersCard {...props.user_created} />
+            </View>
+            <Separator />
+            {(views !== null && saves !== null && views !== undefined && saves !== undefined) ? <View className="flex-row gap-4 justify-around px-4">
+                <View className="flex-col gap-2 items-center">
+                    <Eye className="!text-foreground" size={18} />
+                    <Text className="text-sm text-subtext">{views} Views</Text>
+                </View>
+                <Button disabled={!authenticated} variant={"base"} size={"none"} onPress={handleSave} className="flex-col gap-2 items-center">
+                    <Bookmark fill={bookmarkId ? colors.foreground : "transparent"} className="!text-foreground" size={18} />
+                    <Text className="text-sm text-subtext">{saves} Saves</Text>
+                </Button >
+                <Button variant={"base"} size={"none"} onPress={() => Linking.openURL(`${directusUrl}/admin/content/listings/${props.id}`)} className="flex-col gap-2 items-center">
+                    <ExternalLink className="!text-foreground" size={18} />
+                    <Text className="text-sm text-subtext">Dashboard</Text>
+                </Button >
+            </View> : <></>}
+        </ScrollView>
     </View>
 }

@@ -1,7 +1,9 @@
 import { MediumUsersCardProps } from "app/components/cards/atoms/users"
 import { Mode, RenderUsers } from "app/components/cards/molecules/users"
+import { Header } from "app/components/header"
 import SearchBar from "app/components/searchbar"
 import { Separator } from "app/components/ui/separator"
+import { Text } from "app/components/ui/text"
 import { useEffect, useState } from "react"
 import { View } from "react-native"
 
@@ -14,6 +16,9 @@ export const UsersListComponent = () => {
     }, [searchText])
 
     return <View className="flex-1 flex-col justify-start">
+        <Header>
+            <Text className="text-xl font-bold">Agents</Text>
+        </Header>
         <View className="native:bg-card p-4 pt-0">
             <SearchBar
                 searchText={searchText}

@@ -16,6 +16,7 @@ import directusStore from "app/store/directus"
 import * as Linking from "expo-linking"
 import { createItem } from "@directus/sdk"
 import { Document } from "app/lib/types"
+import { Header } from "app/components/header"
 
 export const VerificationApplyScreenComponent = () => {
     const { user, document } = userStore()
@@ -59,6 +60,9 @@ export const VerificationApplyScreenComponent = () => {
     }
 
     return (!attemptAgain && document) ? <View className="flex-grow">
+        <Header>
+            <Text className="text-xl font-bold">Verification</Text>
+        </Header>
         <Card className="mt-auto mb-0">
             <CardHeader>
                 {!document.verified ? <>

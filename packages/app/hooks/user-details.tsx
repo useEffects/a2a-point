@@ -17,3 +17,5 @@ export const useUserDetails = (id: string) => {
     })
     return data as Pick<User, "id" | "first_name" | "last_name" | "avatar" | "plan"> | undefined
 }
+
+export type SmallUser = Pick<User, "id" | "first_name" | "last_name" | "avatar" | "plan">;

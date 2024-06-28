@@ -71,10 +71,14 @@ const navItems = [
                 description: "Browse through our listings"
             },
             {
-                title: "Profile",
-                href: "/profile",
-                description: "View your profile",
-                locked: true
+                title: "Locations",
+                href: "/locations",
+                description: "View our locations"
+            },
+            {
+                title: "Agents",
+                href: "/agents",
+                description: "View our agents"
             },
             {
                 title: "Post",
@@ -157,7 +161,11 @@ const MobileNavbar = () => {
 
 export const Navbar = () => {
     const isSmallDevice = useIsSmallDevice()
-    return <div className="flex gap-4 items-center container p-4 md:pt-12 relative z-[9999]">
+    const pathName = usePathname()
+    const segments = pathName.split("/")
+    console.log(segments)
+    const isProductPathname = navItems.find(item => item.title === "Product")?.items.some(subItem => segments.length > 1 && subItem.href === `/${segments[1]}`)
+    return isProductPathname ? <></> : <div className="flex gap-4 items-center container p-4 md:pt-12 relative z-[9999]">
         <ToggleTheme />
         <Link href={"/"} className="text-primary font-bold">A2APoint</Link>
         <div className="ml-auto mr-0 md:m-auto flex items-center gap-4">

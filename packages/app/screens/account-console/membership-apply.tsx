@@ -12,6 +12,7 @@ import { SeparatorText } from "app/components/separator-text"
 import { Switch } from "app/components/ui/switch"
 import { cn } from "app/lib/utils"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "app/components/ui/card"
+import { Header } from "app/components/header"
 
 export const MembershipApplyScreenComponent = () => {
     const { user } = userStore()
@@ -38,55 +39,62 @@ export const MembershipApplyScreenComponent = () => {
         }
     }
 
-    return user.plan ? <View className="flex-col gap-2 flex-grow">
-        <Card className="mb-0 mt-auto">
-            <CardHeader>
-                <CardTitle className="text-lg text-success">
-                    Membership active
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <Text>You are currently subscribed to <Text className="text-info">{user.plan}</Text> plan</Text>
-            </CardContent>
-            <CardFooter>
-                <Text className="text-subtext">For invoice or billing details contact support</Text>
-            </CardFooter>
-        </Card>
-    </View> : <View className="flex-col gap-8">
-        <Text className="text-xl text-primary">Membership plan</Text>
-        <View className="flex-col gap-4">
-            <View>
-                <Text className="text-success">Have access code from your company?</Text>
-                <Link href={`${portfolioUrl}/membership`}>
-                    <Button variant={"base"} size={"none"} className="flex-row justify-start">
-                        <Text className="underline text-info">Learn more</Text>
-                    </Button>
-                </Link>
-            </View>
-            <View className="flex-row gap-4 w-full items-end">
-                <FormInput
-                    label="Access Code"
-                    placeholder="Enter your access code"
-                    value={code}
-                    onChangeText={(val) => setCode(val)}
-                    error={error}
-                    rightComponent={() => <Button onPress={checkoutWithCoupon} variant={"base"} size={"none"} className="rounded-full bg-primary p-1">
-                        <ArrowUpRight className="text-primary-foreground" />
-                    </Button>}
-                />
-            </View>
+    return <View className="flex-1">
+        <View className="mb-4 w-full">
+            <Header>
+                <Text className="text-xl font-bold">Membership</Text>
+            </Header>
         </View>
-        <SeparatorText>
-            <Text className="text-muted-foreground text-sm">OR</Text>
-        </SeparatorText>
-        <View className="flex-col gap-2 items-end">
-            <Button variant={"base"} size={"none"} className="flex-row gap-2 rounded-full border border-border p-1 bg-card items-center">
-                <Switch checked={yearly} onCheckedChange={setYearly} />
-                {yearly ? <Text className="text-primary"> Yearly </Text> : <Text className="text-muted-foreground text-sm"> Monthly </Text>}
-            </Button>
-            <Text className="text-info text-sm">Buy yearly plans at discounted prices</Text>
-        </View>
-        {membershipCardItems.map((membershipCardItem, i) => <MembershipCard key={i} {...membershipCardItem} isYearly={yearly} />)}
+        {user.plan ? <View className="flex-col gap-2 flex-grow">
+            <Card className="mb-0 mt-auto">
+                <CardHeader>
+                    <CardTitle className="text-lg text-success">
+                        Membership active
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Text>You are currently subscribed to <Text className="text-info">{user.plan}</Text> plan</Text>
+                </CardContent>
+                <CardFooter>
+                    <Text className="text-subtext">For invoice or billing details contact support</Text>
+                </CardFooter>
+            </Card>
+        </View> : <View className="flex-col gap-8">
+            <Text className="text-xl text-primary">Membership plan</Text>
+            <View className="flex-col gap-4">
+                <View>
+                    <Text className="text-success">Have access code from your company?</Text>
+                    <Link href={`${portfolioUrl}/membership`}>
+                        <Button variant={"base"} size={"none"} className="flex-row justify-start">
+                            <Text className="underline text-info">Learn more</Text>
+                        </Button>
+                    </Link>
+                </View>
+                <View className="flex-row gap-4 w-full items-end">
+                    <FormInput
+                        label="Access Code"
+                        placeholder="Enter your access code"
+                        value={code}
+                        onChangeText={(val) => setCode(val)}
+                        error={error}
+                        rightComponent={() => <Button onPress={checkoutWithCoupon} variant={"base"} size={"none"} className="rounded-full bg-primary p-1">
+                            <ArrowUpRight className="text-primary-foreground" />
+                        </Button>}
+                    />
+                </View>
+            </View>
+            <SeparatorText>
+                <Text className="text-muted-foreground text-sm">OR</Text>
+            </SeparatorText>
+            <View className="flex-col gap-2 items-end">
+                <Button variant={"base"} size={"none"} className="flex-row gap-2 rounded-full border border-border p-1 bg-card items-center">
+                    <Switch checked={yearly} onCheckedChange={setYearly} />
+                    {yearly ? <Text className="text-primary"> Yearly </Text> : <Text className="text-muted-foreground text-sm"> Monthly </Text>}
+                </Button>
+                <Text className="text-info text-sm">Buy yearly plans at discounted prices</Text>
+            </View>
+            {membershipCardItems.map((membershipCardItem, i) => <MembershipCard key={i} {...membershipCardItem} isYearly={yearly} />)}
+        </View>}
     </View>
 }
 

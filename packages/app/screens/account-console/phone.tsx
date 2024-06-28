@@ -1,5 +1,6 @@
 import { OtpInput } from "@syeda_mehwish/react-native-otp-entry"
 import { FormInput } from "app/components/formComponents"
+import { Header } from "app/components/header"
 import { SeparatorText } from "app/components/separator-text"
 import { Button } from "app/components/ui/button"
 import { Text } from "app/components/ui/text"
@@ -81,6 +82,9 @@ export const PhoneVerificationScreenComponent = () => {
     }
 
     return <View className="gap-12 flex-col flex-1">
+        <Header>
+            <Text className="text-xl font-bold">Phone</Text>
+        </Header>
         <View className="flex-col gap-8">
             <View className="flex-col gap-2">
                 <Text className="text-xl text-primary">Verify your phone number</Text>

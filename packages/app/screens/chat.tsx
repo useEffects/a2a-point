@@ -1,29 +1,40 @@
+import { readItems } from "@directus/sdk";
+import { useQuery } from "@tanstack/react-query";
 import { Header } from "app/components/header";
 import SearchBar from "app/components/searchbar";
+import { Button } from "app/components/ui/button";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
-import { useColorScheme } from "app/hooks/color-scheme";
-import userStore from "app/store/user";
-import { useMemo, useState } from "react";
-import { Image, Platform, ScrollView, View } from "react-native";
-import { useDebounce } from "use-debounce";
-import { RoomSubscribed } from "app/context/chats"
-import { useChats } from "app/hooks/chats"
+import { FlatList } from "app/components/utils/virtual-lists";
+import { RoomSubscribed } from "app/context/chats";
+import { useChats } from "app/hooks/chats";
+import useRouting from "app/hooks/use-routing";
+import { directusUrl } from "app/lib/constants";
 import { buildAssetUrl, getDMRoomId, timeAgo } from "app/lib/helpers";
 import { Room, User } from "app/lib/types";
 import directusStore from "app/store/directus";
-import { useQuery } from "@tanstack/react-query"
-import { directusUrl } from "app/lib/constants";
-import { readItems } from "@directus/sdk";
-import { FlatList } from "app/components/utils/virtual-lists";
-import useRouting from "app/hooks/use-routing";
-import { Button } from "app/components/ui/button";
+import userStore from "app/store/user";
+import { useMemo, useState } from "react";
+import { Image, View } from "react-native";
+import { useDebounce } from "use-debounce";
+import LockedScreen from "./locked-screens";
+import ChatSVG from "app/components/svg/chat";
+
+const ChatLocked = () => {
+    return <LockedScreen
+        SVGComponent={<ChatSVG width={300} height={300} />}
+        readMoreLink="https://a2apoint.com"
+        title="Chat with other users on A2APoint!"
+        header="Chat"
+    />
+}
 
 export default function ChatScreen() {
     const { rest, token } = directusStore()
     const [searchText, setSearchText] = useState("")
     const [debouncedSearchText] = useDebounce(searchText, 500)
     const { roomsSubscribed, messages } = useChats()
+    const { authenticated } = directusStore()
 
     const filteredRoomsSubscribed = useMemo(() => {
         return roomsSubscribed.sort((a, b) => {
@@ -65,7 +76,10 @@ export default function ChatScreen() {
         initialData: []
     }) as { data: GroupListRowProp[], isLoading: boolean }
 
-    return <View className="flex-col h-full native:pb-14">
+    return authenticated ? <View className="flex-col h-full">
+        <Header>
+            <Text className="text-xl font-bold">Chat</Text>
+        </Header>
         <View className="p-4 bg-card">
             <SearchBar
                 searchText={searchText}
@@ -95,7 +109,7 @@ export default function ChatScreen() {
                 bounces={false}
                 overScrollMode="never"
             />}
-    </View>
+    </View> : <ChatLocked />
 }
 
 const ChatListRow = (room: RoomSubscribed) => {
@@ -127,7 +141,7 @@ const ChatListRow = (room: RoomSubscribed) => {
         ];
 
     return <Button onPress={() => goToRoom(room.id)} variant={"ghost"}
-        className="flex-row gap-4 items-center w-full justify-start h-20 px-4">
+        className="flex-row gap-4 items-center w-full justify-start !h-20">
         <Image className="w-12 h-12 rounded-full" source={{ uri: roomAvatar }} />
         <View className="flex-col justify-center flex-1">
             <View className="flex-row justify-between items-center">
@@ -145,8 +159,7 @@ type GroupListRowProp = Pick<Room, "avatar" | "id" | "type" | "title">
 const ContactListRow = (contact: ContactListRowProp) => {
     const { user } = userStore()
     const goToRoom = useRouting("room-detailed")
-    return <Button onPress={() => getDMRoomId([contact.id, user.id]).then(id => goToRoom(id))} variant={"ghost"} size={"none"}
-        className="flex-row gap-4 items-center w-full justify-start px-4 h-20">
+    return <Button onPress={() => getDMRoomId([contact.id, user.id]).then(id => goToRoom(id))} variant={"ghost"} className="flex-row gap-4 items-center w-full justify-start !h-20">
         <Image className="w-12 h-12 rounded-full" source={{ uri: buildAssetUrl(contact.avatar) }} />
         <Text className="!text-base">{contact.first_name} {contact.last_name}</Text>
     </Button>
@@ -154,8 +167,7 @@ const ContactListRow = (contact: ContactListRowProp) => {
 
 const GroupListRow = (group: GroupListRowProp) => {
     const goToRoom = useRouting("room-detailed")
-    return <Button onPress={() => goToRoom(group.id)}
-        className="flex-row gap-4 items-center w-full justify-start px-4 h-20">
+    return <Button variant={"ghost"} onPress={() => goToRoom(group.id)} className="flex-row gap-4 items-center w-full justify-start !h-20">
         <Image className="w-12 h-12 rounded-full" source={{ uri: buildAssetUrl(group.avatar) }} />
         <Text className="!text-base">{group.title}</Text>
     </Button>

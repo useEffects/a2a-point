@@ -13,7 +13,7 @@ import { SeparatorText } from "app/components/separator-text";
 import { Button } from "app/components/ui/button";
 import { Text } from "app/components/ui/text";
 import { ViewAllButton } from "app/components/utils/common-ui";
-import { FlatList } from "app/components/utils/virtual-lists";
+import { FlatList, ScrollView } from "app/components/utils/virtual-lists";
 import { useColorScheme } from "app/hooks/color-scheme";
 import { directusUrl, portfolioUrl } from "app/lib/constants";
 import { News } from "app/lib/types";
@@ -25,6 +25,7 @@ import { View } from "react-native";
 import { Link } from "solito/link";
 import { FilterKeys, FilterParam } from "./listings";
 import useRouting from "app/hooks/use-routing";
+import { Header } from "app/components/header";
 
 export default function HomeScreen() {
     const { authenticated, token } = directusStore()
@@ -41,7 +42,10 @@ export default function HomeScreen() {
         initialData: []
     })
 
-    return <View className="flex-1 flex-col gap-8">
+    return <ScrollView contentContainerClassName="flex-grow flex-col gap-8 pb-8">
+        <Header>
+            <Text className="text-xl font-bold">A2APoint</Text>
+        </Header>
         <Text className="text-2xl font-bold text-wrap px-4">{authenticated ? `Welcome back ${user.first_name} ${user.last_name}` : "The one stop for all agents"}</Text>
         <RenderListings<PhotoListingProps>
             render={bodies.photo}
@@ -108,7 +112,7 @@ export default function HomeScreen() {
                 </Button>
             </Link>)}
         </View>
-    </View>
+    </ScrollView>
 }
 
 const externalLinks = [

@@ -1,4 +1,4 @@
-import { deleteItem, readItems } from "@directus/sdk";
+import { auth, deleteItem, readItems } from "@directus/sdk";
 import ProfileSVG from "app/components/svg/profile";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
@@ -14,7 +14,7 @@ import { StarIcon } from "app/screens/post-feedback";
 import directusStore from "app/store/directus";
 import { queryClient } from "app/store/query";
 import userStore from "app/store/user";
-import { ArrowUp, Expand, Info, MessageCircle, Rows2, Shrink } from "lucide-react-native";
+import { ArrowUp, Bell, EllipsisVertical, Expand, Info, LogOut, MessageCircle, Rows2, Shrink, UserCog2 } from "app/components/icons";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { DimensionValue, Image, Linking, NativeScrollEvent, NativeSyntheticEvent, Platform, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import Collapsible from 'react-native-collapsible';
@@ -28,16 +28,26 @@ import { Button } from "../components/ui/button";
 import { FilterKeys } from "./listings";
 import LockedScreen from "./locked-screens";
 import useRouting from "app/hooks/use-routing";
+import { RenderUserTileProps, useAutoCompleteItem } from "app/components/formComponents";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "app/components/ui/dropdown-menu";
+import { Header } from "app/components/header";
 
-export const ProfileScreen = (props: { user: User, company?: Company | null, document?: Document | null }) => {
-    const { authenticated } = directusStore()
-    const { user: currentUser } = userStore()
+const LockedProfileScreen = ({ userId }: { userId: string }) => {
+    const { user } = userStore()
+    const userDetails = useAutoCompleteItem("users", userId) as (RenderUserTileProps | null)
 
-    return (currentUser.id !== props.user.id || authenticated) ? <Profile {...props} /> : <LockedScreen
+    return <LockedScreen
         SVGComponent={<ProfileSVG width={300} height={300} />}
         readMoreLink="https://a2apoint.com"
         title="Showcase your profile on A2APoint, attract more clients and grow your business"
+        header={user.id !== userId ? `${userDetails?.first_name} ${userDetails?.last_name}` : "Profile"}
     />
+}
+
+export const ProfileScreen = (props: { user: User, company?: Company | null, document?: Document | null }) => {
+    const { authenticated } = directusStore()
+
+    return authenticated ? <Profile {...props} /> : <LockedProfileScreen userId={props.user.id} />
 }
 
 export function Profile({ user, company, document }: { user: User, company?: Company | null, document?: Document | null }) {
@@ -48,6 +58,7 @@ export function Profile({ user, company, document }: { user: User, company?: Com
     const [collapsed, setCollapsed] = useState(false)
     const [big, setBig] = useState(false)
     const { user: currentUser } = userStore()
+    const { authenticated } = directusStore()
 
     useEffect(() => {
         getListingsCountForUser(user.id).then(setListingsCount)
@@ -141,6 +152,12 @@ export function Profile({ user, company, document }: { user: User, company?: Com
         );
     };
     return <View className="relative flex-1">
+        <Header>
+            <View className="flex-row items-center justify-between flex-grow">
+                <Text className="text-xl font-bold">{currentUser.id !== user.id ? `${user.first_name} ${user.last_name}` : "Profile"}</Text>
+                {authenticated ? <ProfileDropdown /> : <></>}
+            </View>
+        </Header>
         <TabView
             style={{ height }}
             renderTabBar={TabBar}
@@ -342,4 +359,46 @@ const WithLabel = ({ label, children, className = "" }: { label: string, childre
         <Text className="text-subtext text-sm">{label}</Text>
         {children}
     </View>
+}
+
+const ProfileDropdown = () => {
+    const goToNotifications = useRouting("notifications")
+    const goToAccountConsole = useRouting("account-console")
+    const { logout } = directusStore()
+
+    const [_, setOpen] = useState(false)
+
+    return <DropdownMenu onOpenChange={setOpen}>
+        <DropdownMenuTrigger asChild>
+            <Button variant={"ghost"} size={"icon"}>
+                <EllipsisVertical size={24} className="text-foreground" />
+            </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent sideOffset={-40}>
+            <DropdownMenuItem onPress={logout}>
+                <View className="flex-row items-center gap-2">
+                    <LogOut size={18} className="text-foreground" />
+                    <Text>Logout</Text>
+                </View>
+            </DropdownMenuItem>
+            <DropdownMenuItem onPress={() => {
+                setOpen(false)
+                goToNotifications("")
+            }}>
+                <View className="flex-row items-center gap-2">
+                    <Bell size={18} className="text-foreground" />
+                    <Text>Notifications</Text>
+                </View>
+            </DropdownMenuItem>
+            <DropdownMenuItem onPress={() => {
+                setOpen(false)
+                goToAccountConsole("")
+            }}>
+                <View className="flex-row items-center gap-2">
+                    <UserCog2 size={18} className="text-foreground" />
+                    <Text>Account console</Text>
+                </View>
+            </DropdownMenuItem>
+        </DropdownMenuContent>
+    </DropdownMenu>
 }

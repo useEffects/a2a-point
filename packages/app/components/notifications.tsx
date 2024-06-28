@@ -15,6 +15,7 @@ import { queryStore } from "app/store/query";
 import { EllipsisVertical } from "lucide-react-native";
 import { timeAgo } from "app/lib/helpers";
 import userStore from "app/store/user";
+import { Header } from "./header";
 
 const fetchNotificationsQueryKey = ["Fetching Notifications"]
 
@@ -114,11 +115,16 @@ export default function NotificationsList() {
         fetchNotifications()
     }, [queryClient, rest])
 
-    return notifications.length ? <FlatList
-        data={notifications}
-        renderItem={({ item }) => <RenderNotifications {...item} setNotifications={setNotifications} />}
-        ItemSeparatorComponent={() => <Separator />}
-    /> : <View className="p-4 flex-row justify-center flex-1 items-center">
-        <Text>No notifications</Text>
+    return <View className="flex-1">
+        <Header>
+            <Text className="text-xl font-bold">Notifications</Text>
+        </Header>
+        {notifications.length ? <FlatList
+            data={notifications}
+            renderItem={({ item }) => <RenderNotifications {...item} setNotifications={setNotifications} />}
+            ItemSeparatorComponent={() => <Separator />}
+        /> : <View className="p-4 flex-row justify-center flex-1 items-center">
+            <Text>No notifications</Text>
+        </View>}
     </View>
 }

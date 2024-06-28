@@ -11,14 +11,14 @@ import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useState
 
 const roomsSubscribedQueryKey = ["Subscribed Rooms"]
 
-export const chatFields = ["*", "user_created.avatar", "user_created.id", "user_created.first_name", "user_created.last_name", "assets.directus_files_id.id", "assets.directus_files_id.type", "assets.directus_files_id.filename_download"]
+export const chatFields = ["*", "user_created.avatar", "user_created.id", "user_created.first_name", "user_created.last_name", "user_created.plan", "assets.directus_files_id.id", "assets.directus_files_id.type", "assets.directus_files_id.filename_download"]
 
 export const roomSubscribedFields = ["*", "members.directus_users_id.avatar", "members.directus_users_id.first_name", "members.directus_users_id.last_name", "members.directus_users_id.id"]
 
 export const limit = 30
 
 export type MessageDetailed = Pick<Message, "id" | "room" | "content" | "date_created"> &
-{ user_created: Pick<User, "id" | "first_name" | "avatar" | "last_name"> } &
+{ user_created: Pick<User, "id" | "first_name" | "avatar" | "last_name" | "plan"> } &
 {
     assets: { directus_files_id: Pick<File, "id" | "type" | "filename_download"> }[]
 }

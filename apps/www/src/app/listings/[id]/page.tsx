@@ -7,8 +7,9 @@ export const revalidate = 60
 
 export default async function ({ params }: { params: { id: string } }) {
     const { id } = params
-
-    return <ListingDetailedScreen listingId={id} />
+    return <div className="my-12">
+        <ListingDetailedScreen listingId={id} />
+    </div>
 
 }
 

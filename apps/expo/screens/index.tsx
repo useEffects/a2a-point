@@ -15,16 +15,16 @@ import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useKeyboardVisible } from '../hooks/keyboard';
 import ActivityScreen from './activity';
-import ChatScreen from './chat';
-import HomeScreen from './home';
-import FullListingScreen from './listing-detailed';
-import ListingsScreen from './listings';
+import ChatScreen from 'app/screens/chat';
+import HomeScreen from 'app/screens/home';
+import ListingDetailed from './listing-detailed';
+import ListingsScreen from 'app/screens/listings';
 import LocationListings from './location-detailed';
 import { LocationsListScreen } from './locations-list';
 import LoginScreen from './login';
 import { MembersList } from './members-list';
 import NotificationsScreen from './notifications';
-import OffPlansScreen from './offplans';
+import OffPlansScreen from 'app/screens/offplans';
 import PostScreen from './post';
 import PostFeedback from './post-feedback';
 import ProfileScreen from "./profile";
@@ -35,6 +35,7 @@ import { PhoneVerificationScreen } from './account-console/phone';
 import { CompanySelectScreen } from './account-console/company';
 import { MembershipScreen } from './account-console/membership';
 import { VerificationScreen } from './account-console/verification';
+import LocationDetailed from './location-detailed';
 
 const MainTab = createMaterialTopTabNavigator<MainTopTabParamList>();
 const AccountConsoleTab = createMaterialTopTabNavigator<AccountConsoleParamList>();
@@ -186,7 +187,8 @@ export default function AppLayout() {
     return <Stack.Navigator initialRouteName='app' screenOptions={{ header: () => null }}>
         <Stack.Screen name="app" component={ScreensLayout} />
         <Stack.Screen name="account-console" component={AccountConsoleLayout} />
-        <Stack.Screen name="listing-detailed" component={FullListingScreen} />
+        <Stack.Screen name="listing-detailed" component={ListingDetailed} />
+        <Stack.Screen name="location-detailed" component={LocationDetailed} />
         <Stack.Screen name="room-detailed" component={RoomDetailed} />
         <Stack.Screen name="profile-detailed" component={ProfileDetailed} />
         <Stack.Screen name="members-list" component={MembersList} />

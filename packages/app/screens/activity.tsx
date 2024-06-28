@@ -1,9 +1,9 @@
 import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings";
+import { Header } from "app/components/header";
 import { Bookmark, Eye } from "app/components/icons";
 import { Button } from "app/components/ui/button";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
-import { savedByMeUrl, viewedByMeUrl } from "app/lib/constants";
 import { cn } from "app/lib/utils";
 import { LucideIcon } from "lucide-react-native";
 import { useState } from "react";
@@ -18,15 +18,20 @@ export default function ActivityScreenComponent() {
             { key: "saved" }
         ]
     })
-    return <TabView
-        renderTabBar={props => <TabBar {...props} navigationState={navigationState} />}
-        navigationState={navigationState}
-        onIndexChange={index => setNavigationState({ ...navigationState, index })}
-        renderScene={SceneMap({
-            viewed: RenderViewed,
-            saved: RenderSaved
-        })}
-    />
+    return <View className="flex-1">
+        <Header>
+            <Text className="text-xl font-bold">Your activity</Text>
+        </Header>
+        <TabView
+            renderTabBar={props => <TabBar {...props} navigationState={navigationState} />}
+            navigationState={navigationState}
+            onIndexChange={index => setNavigationState({ ...navigationState, index })}
+            renderScene={SceneMap({
+                viewed: RenderViewed,
+                saved: RenderSaved
+            })}
+        />
+    </View>
 }
 
 const RenderViewed = () => <RenderListings
@@ -37,7 +42,7 @@ const RenderViewed = () => <RenderListings
         contentContainerClassName: "px-4",
         ItemSeparatorComponent: () => <Separator className="my-4" />
     }}
-    viewAllButtonLink={viewedByMeUrl}
+    infinite
 />
 
 const RenderSaved = () => <RenderListings
@@ -48,7 +53,7 @@ const RenderSaved = () => <RenderListings
         contentContainerClassName: "px-4",
         ItemSeparatorComponent: () => <Separator className="my-4" />
     }}
-    viewAllButtonLink={savedByMeUrl}
+    infinite
 />
 
 const TabBar = (props: SceneRendererProps & { navigationState: NavigationState<Route> }) => {

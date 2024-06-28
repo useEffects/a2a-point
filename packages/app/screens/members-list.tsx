@@ -1,12 +1,19 @@
 import { readItem } from "@directus/sdk"
 import { MediumUsersCardProps, mediumUsersFields } from "app/components/cards/atoms/users"
 import { Mode, RenderUsers } from "app/components/cards/molecules/users"
+import { RenderRoomTileProps, useAutoCompleteItem } from "app/components/formComponents"
+import { Header } from "app/components/header"
+import { Text } from "app/components/ui/text"
+import { shortString } from "app/lib/helpers"
 import directusStore from "app/store/directus"
 import { useEffect, useState } from "react"
+import { View } from "react-native"
 
 export const MembersListScreenComponent = ({ locationId }: { locationId: string }) => {
     const [members, setMembers] = useState<MediumUsersCardProps[]>([])
     const { rest } = directusStore()
+
+    const location = useAutoCompleteItem("rooms", locationId) as (RenderRoomTileProps | null)
 
     useEffect(() => {
         async function fetchMembers() {
@@ -23,10 +30,15 @@ export const MembersListScreenComponent = ({ locationId }: { locationId: string 
         fetchMembers()
     }, [])
 
-    return <RenderUsers<MediumUsersCardProps>
-        mode={Mode.medium}
-        flatListProps={{
-            contentContainerClassName: "p-4"
-        }}
-    />
+    return <View className="flex-1">
+        <Header>
+            <Text className="text-xl font-bold">Members in {shortString(location?.title ?? "")}</Text>
+        </Header>
+        <RenderUsers<MediumUsersCardProps>
+            mode={Mode.medium}
+            flatListProps={{
+                contentContainerClassName: "p-4"
+            }}
+        />
+    </View>
 }

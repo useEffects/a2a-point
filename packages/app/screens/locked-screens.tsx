@@ -1,3 +1,4 @@
+import { Header } from "app/components/header";
 import { ArrowUpRight } from "app/components/icons";
 import { Button, ButtonProps } from "app/components/ui/button";
 import { Text } from "app/components/ui/text";
@@ -12,11 +13,15 @@ type LockedScreenProps = {
     SVGComponent: ReactNode,
     title: string,
     readMoreLink: string,
+    header: string,
 }
 
 export default function LockedScreen(props: LockedScreenProps) {
-    return <View className={cn("p-4 flex-col gap-4 flex-1 h-screen native:h-auto", props.className)}>
-        <View className="flex-1 flex-col gap-12 native:my-12 my-0">
+    return <View className={cn("flex-col gap-4 flex-1 h-screen native:h-auto", props.className)}>
+        <Header>
+            <Text className="text-xl font-bold">{props.header}</Text>
+        </Header>
+        <View className="flex-1 flex-col gap-12 p-4">
             <View className="flex-col">
                 <Text className="text-xl text-center font-medium">{props.title}</Text>
                 <Button variant={"base"} size={"none"} className="flex-row" onPress={() => Linking.openURL(props.readMoreLink)}>
@@ -30,7 +35,7 @@ export default function LockedScreen(props: LockedScreenProps) {
                 </View>
             </View>
         </View>
-        <View className="flex-col gap-1">
+        <View className="flex-col gap-1 p-4">
             <Text className="text-destructive text-center">Locked screen! Login to unlock</Text>
             <GoToLoginButton />
         </View>
