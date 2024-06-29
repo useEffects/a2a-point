@@ -157,7 +157,7 @@ collections:
       color: null
       display_template: null
       group: null
-      hidden: true
+      hidden: false
       icon: null
       item_duplication_fields: null
       note: null
@@ -1408,30 +1408,6 @@ fields:
       validation_message: null
       width: full
   - collection: agency_packages
-    field: coupons
-    type: alias
-    meta:
-      collection: agency_packages
-      conditions: null
-      display: null
-      display_options: null
-      field: coupons
-      group: null
-      hidden: false
-      interface: list-o2m
-      note: null
-      options:
-        template: "{{agent_used.avatar.$thumbnail}}\_{{code}}"
-      readonly: false
-      required: false
-      sort: 8
-      special:
-        - o2m
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-  - collection: agency_packages
     field: discount
     type: integer
     meta:
@@ -1510,6 +1486,29 @@ fields:
       has_auto_increment: false
       foreign_key_table: companies
       foreign_key_column: id
+  - collection: agency_packages
+    field: coupons
+    type: alias
+    meta:
+      collection: agency_packages
+      conditions: null
+      display: null
+      display_options: null
+      field: coupons
+      group: null
+      hidden: false
+      interface: list-o2m
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 10
+      special:
+        - o2m
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
   - collection: amenities
     field: id
     type: integer
@@ -2727,6 +2726,44 @@ fields:
       foreign_key_table: null
       foreign_key_column: null
   - collection: coupons
+    field: code
+    type: string
+    meta:
+      collection: coupons
+      conditions: null
+      display: null
+      display_options: null
+      field: code
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 4
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: code
+      table: coupons
+      data_type: varchar
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: coupons
     field: agent_used
     type: string
     meta:
@@ -2742,7 +2779,7 @@ fields:
       options: null
       readonly: false
       required: false
-      sort: 4
+      sort: 6
       special:
         - m2o
       translations: null
@@ -2767,7 +2804,7 @@ fields:
       foreign_key_column: id
   - collection: coupons
     field: agency_package
-    type: string
+    type: uuid
     meta:
       collection: coupons
       conditions: null
@@ -2780,9 +2817,10 @@ fields:
       note: null
       options: null
       readonly: false
-      required: true
-      sort: 5
-      special: null
+      required: false
+      sort: 7
+      special:
+        - uuid
       translations: null
       validation: null
       validation_message: null
@@ -2790,9 +2828,9 @@ fields:
     schema:
       name: agency_package
       table: coupons
-      data_type: varchar
+      data_type: char
       default_value: null
-      max_length: 255
+      max_length: 36
       numeric_precision: null
       numeric_scale: null
       is_nullable: true
@@ -2803,44 +2841,6 @@ fields:
       has_auto_increment: false
       foreign_key_table: agency_packages
       foreign_key_column: id
-  - collection: coupons
-    field: code
-    type: string
-    meta:
-      collection: coupons
-      conditions: null
-      display: null
-      display_options: null
-      field: code
-      group: null
-      hidden: false
-      interface: input
-      note: null
-      options: null
-      readonly: false
-      required: true
-      sort: 6
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: code
-      table: coupons
-      data_type: varchar
-      default_value: null
-      max_length: 255
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: true
-      is_unique: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
   - collection: course_lessons
     field: id
     type: uuid
@@ -9981,7 +9981,7 @@ relations:
       foreign_key_column: id
       constraint_name: null
       on_update: NO ACTION
-      on_delete: SET NULL
+      on_delete: NO ACTION
   - collection: course_lessons
     field: user_created
     related_collection: directus_users
