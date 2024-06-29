@@ -4135,7 +4135,7 @@ fields:
       conditions: null
       display: null
       display_options: null
-      field: related_user
+      field: ruuidelated_user
       group: null
       hidden: false
       interface: select-dropdown-m2o
