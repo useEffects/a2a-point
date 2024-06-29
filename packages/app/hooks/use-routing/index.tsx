@@ -20,8 +20,9 @@ export default function useRouting(link: keyof (RootStackParamList & MainTopTabP
         case "login":
         case "notifications":
         case "users-list":
+            return () => navigation.navigate(link)
         case "post":
-            return () => navigation.push(link)
+            return (type: any) => navigation.push(link, { type })
         case "chat":
         case "home":
         case "offPlans":

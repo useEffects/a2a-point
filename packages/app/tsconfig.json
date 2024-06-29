@@ -6,4 +6,7 @@
     ".expo/types/**/*.ts",
     "**/*.d.ts"
   ],
+  "compilerOptions": {
+    "esModuleInterop": true
+  }
 }

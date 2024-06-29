@@ -31,8 +31,7 @@ export type Amenity = {
 }
 
 export type ListingAmenity = {
-    icon: string,
-    label: string,
+    amenity: number
     additional_detail: string | null
 };
 
@@ -59,7 +58,7 @@ export type Listing = {
     mode_of_payments: string[];
     comment_room: null;
     featured: boolean;
-    amenities: ListingAmenity[];
+    amenities: number;
     saved_by: any[];
     viewed_by: any[];
     photo_1: string | null;

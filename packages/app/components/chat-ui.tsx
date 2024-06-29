@@ -1,5 +1,5 @@
 import { createItem } from "@directus/sdk"
-import { Check, Clock, File as FileIcon, Image as ImageIcon, Paperclip, Send, WandSparkles, X } from 'app/components/icons'
+import { Check, Clock, File as FileIcon, Image as ImageIcon, Paperclip, Send, FileLock2, X } from 'app/components/icons'
 import { Separator } from 'app/components/ui/separator'
 import { useColorScheme } from "app/hooks/color-scheme"
 import { portfolioUrl } from 'app/lib/constants'
@@ -141,7 +141,8 @@ const FooterDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateAc
         </DropdownMenuContent>
     </DropdownMenu >
 }
-const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispatcher" | "onSend">) => {
+const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispatcher" | "onSend" |
+    "isGroup">) => {
     const { colors } = useColorScheme()
     const [open, setOpen] = useState(false)
     const [openBottomSheet, setOpenBottomSheet] = useState(false)
@@ -241,9 +242,9 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
         <View className="flex-row gap-4 native:h-16 h-14 w-full py-2 px-4 items-center bg-card">
             {disabled && <>
                 <FooterDropDownMenu open={open} setOpen={setOpen} currentMessageDispatcher={currentMessageDispatcher} />
-                <Button onPress={() => setOpenBottomSheet(true)} variant={"ghost"} size={"icon"}>
-                    <WandSparkles className='text-foreground' size={18} />
-                </Button>
+                {!props.isGroup ? <Button onPress={() => setOpenBottomSheet(true)} variant={"ghost"} size={"icon"}>
+                    <FileLock2 className='text-foreground' size={18} />
+                </Button> : <></>}
             </>}
             <Input
                 placeholder="Type ..."
@@ -261,8 +262,8 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
             <View className='p-4 bg-card flex-col gap-8'>
                 <View className='flex-row justify-between'>
                     <Text>Generate <Text className='text-primary'>Agent to Agent</Text> agreement form</Text>
-                    <Button onPress={() => setOpenBottomSheet(false)} variant={"destructive"} size={"icon"}>
-                        <X size={18} className='text-destructive-primary' />
+                    <Button onPress={() => setOpenBottomSheet(false)} variant={"destructive"} size={"smallIcon"}>
+                        <X size={16} className='text-destructive-foreground' />
                     </Button>
                 </View>
                 <Formik
@@ -367,6 +368,6 @@ export const ChatUi = (props: ChatUiProps) => {
                 overScrollMode='never'
             />
         </View>
-        <Footer currentMessage={props.currentMessage} currentMessageDispatcher={props.currentMessageDispatcher} onSend={props.onSend} />
+        <Footer currentMessage={props.currentMessage} currentMessageDispatcher={props.currentMessageDispatcher} onSend={props.onSend} isGroup={props.isGroup} />
     </View>
 }

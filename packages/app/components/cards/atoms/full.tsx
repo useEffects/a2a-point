@@ -53,7 +53,7 @@ export const FullListingCard = (props: FullListingDetailedProps) => {
         bookmarkId ? await deleteBookmark(props.id, bookmarkId) : await addBookmark({ id: props.id, title: props.title }, { email: props.user_created.email, id: props.user_created.id })
     }
 
-    return <View className="flex-col gap-8 flex-1">
+    return <View className="flex-col gap-4 flex-1 pb-4">
         <Header>
             <Text className="font-bold text-xl">{shortString(props.title, 30)}</Text>
         </Header>
@@ -124,8 +124,8 @@ export const FullListingCard = (props: FullListingDetailedProps) => {
             <Separator />
             {props.amenities && props.amenities.length ? <View className="flex-col gap-4 px-4 -mt-4">
                 <Text className="text-lg font-medium">Amenities</Text>
-                {groupByN(props.amenities).map((_amenities, i) => <View key={i} className="flex-row gap-4">
-                    {_amenities.map((amenity, j) => <View className="flex-grow" key={j}>
+                {groupByN(props.amenities).map((_amenities, i) => <View key={i} className="flex-row gap-4 w-full">
+                    {_amenities.map((amenity, j) => <View className="flex-1" key={j}>
                         <RenderAmenity {...amenity} />
                     </View>)}
                 </View>)}

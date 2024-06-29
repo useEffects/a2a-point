@@ -7,6 +7,7 @@ import { View } from "react-native"
 import { Separator } from "../ui/separator"
 import { cn } from "app/lib/utils"
 import useRouting from "app/hooks/use-routing"
+import { set } from "lodash"
 
 export const ViewAllButton = ({ button, horizontal }: { button: ComponentType<ButtonProps>, horizontal: boolean }) => {
     const Component = button
@@ -41,10 +42,13 @@ export const GoToPostButtonUi = () => {
             </View>
             <Separator />
             <DialogFooter>
-                <Button onPress={() => goToPost(key.toLowerCase())} className="self-start ml-auto mr-0" size={"sm"} variant={"ghost"}>
+                <Button onPress={() => {
+                    setOpen(false)
+                    goToPost({ key })
+                }} className="self-start ml-auto mr-0" size={"sm"} variant={"ghost"}>
                     <Text>Proceed</Text>
                 </Button>
             </DialogFooter>
         </DialogContent>
-    </Dialog>
+    </Dialog >
 }

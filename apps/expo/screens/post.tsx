@@ -8,9 +8,7 @@ export default function PostScreen() {
     const { authenticated } = directusStore();
 
     return <View className="flex-1">
-        {authenticated ? <View className="p-4 flex-1">
-            <PostScreenComponent />
-        </View> : <LockedScreen
+        {authenticated ? <PostScreenComponent /> : <LockedScreen
             SVGComponent={<PostSVG width={300} height={300} />}
             readMoreLink="https://a2apoint.com"
             title="Create and manage property listings on A2APoint"

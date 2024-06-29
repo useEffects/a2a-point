@@ -15,7 +15,8 @@ import { useColorScheme } from "app/hooks/color-scheme";
 import { listingsFolderId, portfolioUrl } from "app/lib/constants";
 import { uploadFileToDirectus } from "app/lib/file-upload";
 import { buildAssetUrl, groupByN, pickImages } from "app/lib/helpers";
-import { Listing, ListingAmenity } from "app/lib/types";
+import { DetailedAmenity } from "app/lib/props";
+import { Amenity, Listing, ListingAmenity } from "app/lib/types";
 import { cn } from "app/lib/utils";
 import directusStore from "app/store/directus";
 import userStore from "app/store/user";
@@ -45,7 +46,9 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
         budget: Yup.number()
             .when("deal_type", ([deal_type]) => {
                 if (deal_type === "buy" || deal_type === "take on rent") {
-                    return Yup.number().required("Budget is required")
+                    return Yup.number()
+                        .required("Budget is required")
+                        .typeError("Budget must be a valid number")
                 } else {
                     return Yup.number().notRequired()
                 }
@@ -98,37 +101,6 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
             }
         }, [type])
 
-        const RenderDealTypeSpecificComponent = () => {
-            switch (props.values.deal_type) {
-                case "sale":
-                    return <FormSelect
-                        options={["yes", "no", "dependent"].map(val => ({ label: val, value: val }))}
-                        label="Covered by seller"
-                        value={props.values.covered_by_seller ? { value: props.values.covered_by_seller, label: props.values.covered_by_seller } : undefined}
-                        onValueChange={(val) => props.setFieldValue("covered_by_seller", val?.value)}
-                    />
-                case "give on rent":
-                    return <FormSelect
-                        options={["furnished", "semi furnished", "unfurnished"].map(val => ({ label: val, value: val }))}
-                        label="Furnishing"
-                        value={props.values.furnishing ? { value: props.values.furnishing, label: props.values.furnishing } : undefined}
-                        onValueChange={(val) => props.setFieldValue("furnishing", val?.value)}
-                    />
-                case "buy":
-                case "take on rent":
-                    return <FormInput
-                        label="Budget (AED)"
-                        value={commaNumber(props.values.budget || "")}
-                        onChangeText={(val) => props.setFieldValue("budget", parseInt(val.replace(/,/g, "")))}
-                        error={props.touched.budget ? props.errors.budget : ""}
-                        keyboardType="number-pad"
-                        onBlur={props.handleBlur("budget")}
-                    />
-                default:
-                    return <></>
-            }
-        }
-
         return <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="flex-grow">
             <View className="flex-col gap-4">
                 <FormInput
@@ -159,7 +131,16 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
                     maxLines={8}
                     onBlur={props.handleBlur("description")}
                 />
-                <RenderDealTypeSpecificComponent />
+                <RenderDealTypeSpecificComponent
+                    budget={props.values.budget}
+                    covered_by_seller={props.values.covered_by_seller}
+                    deal_type={props.values.deal_type}
+                    errors={props.errors}
+                    furnishing={props.values.furnishing}
+                    handleBlur={props.handleBlur}
+                    setFieldValue={props.setFieldValue}
+                    touched={props.touched}
+                />
                 <FormInput
                     label="Expected Broker Fees (%)"
                     value={props.values.expectedBrokerFees?.toString() ?? ""}
@@ -243,81 +224,6 @@ function Form2({ formValues, setFormValues, setNavigationState }: { formValues: 
             </View>
         }
 
-        const AmenityInput = ({ amenities, setAmenities }: { amenities: ListingAmenity[], setAmenities: (newAmenities: ListingAmenity[]) => void }) => {
-            const [currentAmenity, setCurrentAmenity] = useState<ListingAmenity | null>(null)
-            const [searchText, setSearchText] = useState("")
-            const [debouncedSearchText] = useDebounce(searchText, 200)
-            const [dropDownIcons, setDropDownIcons] = useState<string[]>([])
-            const [shouldShowDropDown, setShouldShowDropDown] = useState(false)
-
-            const groupedAmenities = useMemo(() => groupByN(amenities), [amenities])
-
-            useEffect(() => {
-                if (debouncedSearchText.length) {
-                    fetch(`${portfolioUrl}/api/icons/search/${debouncedSearchText.toLocaleLowerCase()}`).then(res => res.json()).then(res => {
-                        setDropDownIcons(res)
-                        if (res.length) {
-                            setShouldShowDropDown(true)
-                        }
-                    })
-                }
-            }, [debouncedSearchText])
-
-            return <View className="flex-col gap-4">
-                <View className="flex-col gap-4">
-                    {groupedAmenities.map((_amenities, i) => <View key={i} className="flex-row gap-4">
-                        {_amenities.map((amenity, j) => <Button className="flex-grow" key={j} variant={"base"} size={"none"} onPress={() => setAmenities(amenities.filter((_, index) => index !== (i * 2 + j)))}>
-                            <RenderAmenity {...amenity} />
-                        </Button>)}
-                    </View>)}
-                </View>
-                <View>
-                    <FormInput
-                        label="icon"
-                        value={currentAmenity?.icon ?? searchText}
-                        onChangeText={(val) => {
-                            setSearchText(val)
-                            setCurrentAmenity(p => p ? ({ ...p, label: val }) : p)
-                        }}
-                        autoSelect={shouldShowDropDown}
-                    />
-                    <Collapsible collapsed={!shouldShowDropDown}>
-                        <OutsidePressHandler onOutsidePress={() => setShouldShowDropDown(false)}>
-                            <FlatList
-                                scrollEnabled={false}
-                                data={dropDownIcons}
-                                renderItem={({ item }: { item: string }) => <Button onPress={() => {
-                                    setCurrentAmenity(p => p ? ({ ...p, icon: item }) : ({ icon: item, label: "", additional_detail: "" }))
-                                    setShouldShowDropDown(false)
-                                }} variant={"ghost"} className="flex-row justify-start items-center gap-4 rounded-none">
-                                    <MaterialSymbolIcon name={item} />
-                                    <Text>{item}</Text>
-                                </Button>}
-                                contentContainerClassName="bg-popover rounded-br-xl rounded-bl-xl"
-                            />
-                        </OutsidePressHandler>
-                    </Collapsible>
-                </View>
-                <FormInput
-                    value={currentAmenity?.label}
-                    onChangeText={(val) => setCurrentAmenity(p => p ? ({ ...p, label: val }) : ({ label: val, icon: "", additional_detail: "" }))}
-                    label="label"
-                />
-                <FormInput
-                    value={currentAmenity?.additional_detail ?? ""}
-                    onChangeText={(val) => setCurrentAmenity(p => p ? ({ ...p, additional_detail: val }) : ({ additional_detail: val, icon: "", label: "" }))}
-                    label="additional detail"
-                />
-                <Button onPress={() => {
-                    if (!currentAmenity) return
-                    setAmenities([...amenities, currentAmenity!])
-                    setCurrentAmenity(null)
-                }} variant={"secondary"} size={"sm"}>
-                    <Text>Add</Text>
-                </Button>
-            </View>
-        }
-
         return <ScrollView contentContainerClassName="flex-grow">
             <View className={cn("flex-1 flex-col gap-4 justify-start")}>
                 <View className="flex-col gap-4">
@@ -350,7 +256,6 @@ function Form2({ formValues, setFormValues, setNavigationState }: { formValues: 
                     <SeparatorText wrapperClassName="my-8">
                         <Text className="text-subtext text-sm">Amenities (optional)</Text>
                     </SeparatorText>
-                    <AmenityInput amenities={props.values.amenities} setAmenities={(newAmenities: ListingAmenity[]) => props.setFieldValue("amenities", newAmenities)} />
                 </View>
                 <View className="mt-8 mb-0">
                     <Separator className="my-4" />
@@ -525,7 +430,12 @@ export default function PostScreenComponent() {
         const assets = [form3Values.photo_1, form3Values.photo_2, form3Values.photo_3].filter(asset => asset !== null) as Asset<withUri>[]
         const assetsId = await Promise.all(assets.map(asset => uploadFileToDirectus(asset, listingsFolderId)))
 
-        const payload: Partial<Listing> = {
+        const payload: Partial<Omit<Listing, "amenities"> & {
+            amenities: {
+                amenity: Omit<Amenity, "id">,
+                additional_detail: string,
+            }[]
+        }> = {
             deal_type: params.type?.toString(),
 
             title: form1Values.title,
@@ -553,7 +463,7 @@ export default function PostScreenComponent() {
         router.back()
     }
 
-    return <View className="flex-1 w-full flex-col gap-4">
+    return <View className="flex-1 w-full">
         <Header>
             <Text className="text-xl font-bold">Post</Text>
         </Header>
@@ -634,7 +544,7 @@ type Form1Values = {
 
 type Form2Values = {
     tags: string[];
-    amenities: ListingAmenity[];
+    amenities: { amenity: Omit<Amenity, "id">, additional_detail: string }[];
     bathrooms?: number;
     bedrooms?: number;
     parking?: number;
@@ -650,8 +560,9 @@ type Form4Values = {
     featured: boolean
 }
 
-export const RenderAmenity = ({ icon, label, additional_detail }: ListingAmenity) => {
+export const RenderAmenity = ({ amenity, additional_detail }: DetailedAmenity) => {
     const { colors } = useColorScheme()
+    const { icon, label } = amenity
 
     return <View className="w-full border border-border rounded-2xl flex-col gap-4 p-4 bg-card">
         <View className="flex-row gap-4">
@@ -660,4 +571,40 @@ export const RenderAmenity = ({ icon, label, additional_detail }: ListingAmenity
         </View>
         {additional_detail ? <Text className="text-subtext text-sm">{additional_detail}</Text> : <></>}
     </View>
+}
+
+const RenderDealTypeSpecificComponent = ({ deal_type, covered_by_seller, furnishing, budget, setFieldValue, handleBlur, touched, errors }: Pick<Form1Values, "deal_type" | "covered_by_seller" | "furnishing" | "budget"> & {
+    setFieldValue: FormikProps<Form1Values>["setFieldValue"],
+    handleBlur: FormikProps<Form1Values>["handleBlur"],
+    touched: FormikProps<Form1Values>["touched"],
+    errors: FormikProps<Form1Values>["errors"]
+}) => {
+    switch (deal_type) {
+        case "sale":
+            return <FormSelect
+                options={["yes", "no", "dependent"].map(val => ({ label: val, value: val }))}
+                label="Covered by seller"
+                value={covered_by_seller ? { value: covered_by_seller, label: covered_by_seller } : undefined}
+                onValueChange={(val) => setFieldValue("covered_by_seller", val?.value)}
+            />
+        case "give on rent":
+            return <FormSelect
+                options={["furnished", "semi furnished", "unfurnished"].map(val => ({ label: val, value: val }))}
+                label="Furnishing"
+                value={furnishing ? { value: furnishing, label: furnishing } : undefined}
+                onValueChange={(val) => setFieldValue("furnishing", val?.value)}
+            />
+        case "buy":
+        case "take on rent":
+            return <FormInput
+                label="Budget (AED)"
+                value={commaNumber(budget || "")}
+                onChangeText={(val) => setFieldValue("budget", parseInt(val.replace(/,/g, "")))}
+                error={touched.budget ? errors.budget : ""}
+                keyboardType="number-pad"
+                onBlur={handleBlur("budget")}
+            />
+        default:
+            return <></>
+    }
 }

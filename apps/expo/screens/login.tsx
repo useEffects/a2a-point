@@ -9,7 +9,8 @@ import { directusUrl, portfolioUrl } from "app/lib/constants";
 import directusStore from "app/store/directus";
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect } from "react";
-import { Image, Linking, ScrollView, View } from "react-native";
+import { Image, Linking, View } from "react-native";
+import { ScrollView } from "app/components/utils/virtual-lists";
 import { parse } from "search-params";
 
 const LoginScreen = () => {

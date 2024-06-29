@@ -8,8 +8,8 @@ export const smallUsersFields = ["id", "avatar", "first_name", "last_name", "com
 
 export const mediumUsersFields = ["id", "avatar", "first_name", "last_name", "computed_rating", "tags", "company.title", "company.avatar", "email", "last_access", "phone", "description", "plan", "document.verified"]
 
-export const fullListingCardFields = ["*", "amenities.*"].concat(mediumUsersFields.map(field => `user_created.${field}`))
+export const fullListingCardFields = ["*", "amenities.*, amenities.amenity.*"].concat(mediumUsersFields.map(field => `user_created.${field}`))
 
-export type DetailedAmenity = ListingAmenity & { amenities_id: Amenity }
+export type DetailedAmenity = { amenity: Amenity, additional_detail: string }
 
 export type FullListingDetailedProps = Listing & { user_created: MediumUsersCardProps } & { amenities: DetailedAmenity[] }

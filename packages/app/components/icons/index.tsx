@@ -1,5 +1,5 @@
 import { iconWithClassName } from "app/lib/iconsWithClassName";
-import { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot, Star, Badge, Award, Building2, Rocket, Plus, CreditCard, ChevronRight, AtSign, Rows2, Users, Edit, Delete, MessageCircleMore, Lock, Trash, LogIn, Phone, BriefcaseBusiness, Shield, UserCog2, Handshake, HousePlus, Group, TrendingUp, MapPin, ArrowUp, Info, Expand, MessageCircle, Shrink } from "lucide-react-native";
+import { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot, Star, Badge, Award, Building2, Rocket, Plus, CreditCard, ChevronRight, AtSign, Rows2, Users, Edit, Delete, MessageCircleMore, Lock, Trash, LogIn, Phone, BriefcaseBusiness, Shield, UserCog2, Handshake, HousePlus, Group, TrendingUp, MapPin, ArrowUp, Info, Expand, MessageCircle, Shrink, FileLock2 } from "lucide-react-native";
 
 iconWithClassName(Check);
 iconWithClassName(ChevronDown);
@@ -58,5 +58,6 @@ iconWithClassName(Info);
 iconWithClassName(Expand);
 iconWithClassName(MessageCircle);
 iconWithClassName(Shrink);
+iconWithClassName(FileLock2);
 
-export { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot, Star, Badge, Award, Building2, Rocket, Plus, CreditCard, ChevronRight, AtSign, Rows2, Users, Edit, Delete, MessageCircleMore, Lock, Trash, LogIn, Phone, BriefcaseBusiness, Shield, UserCog2, Handshake, HousePlus, Group, TrendingUp, MapPin, ArrowUp, Info, Expand, MessageCircle, Shrink };
+export { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot, Star, Badge, Award, Building2, Rocket, Plus, CreditCard, ChevronRight, AtSign, Rows2, Users, Edit, Delete, MessageCircleMore, Lock, Trash, LogIn, Phone, BriefcaseBusiness, Shield, UserCog2, Handshake, HousePlus, Group, TrendingUp, MapPin, ArrowUp, Info, Expand, MessageCircle, Shrink, FileLock2 };
