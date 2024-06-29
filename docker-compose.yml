@@ -49,18 +49,18 @@ services:
       KC_PASSWORD: ${KC_ADMIN_PASSWORD}
       KC_CLIENT_ID: ${KC_DIRECTUS_CLIENT_ID}
 
-  # webapp:
-  #   build:
-  #     context: .
-  #     dockerfile: apps/www/Dockerfile
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:3000/api/healthcheck"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-  #   depends_on:
-  #     dashboard:
-  #       condition: service_healthy
+  webapp:
+    build:
+      context: .
+      dockerfile: apps/www/Dockerfile
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      dashboard:
+        condition: service_healthy
 
   server:
     build:
