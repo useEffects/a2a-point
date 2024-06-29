@@ -7,24 +7,12 @@ import directusStore from "app/store/directus"
 import { Separator } from "app/components/ui/separator"
 import { useIsSmallDevice } from "app/hooks/is-small-device"
 
-function ChatScreen() {
-    const { room } = useParams()
-    const { authenticated } = directusStore()
-
-    return authenticated ? <div className="container flex h-screen">
-        <div className="w-1/3 h-full">
-            <ChatScreenComponent />
-        </div>
-        <Separator orientation="vertical" />
-        <div className="w-2/3 bg-card h-full p-4">
-            {room.length === 2 ? <RoomDetailedComponent roomId={room[1]} /> : <div>
-            </div>}
-        </div>
-    </div> : <></>
-}
-
 export default function Page() {
     const isSmallDevice = useIsSmallDevice()
-    return isSmallDevice ? <ChatScreenComponent /> : <div>
+    const { authenticated } = directusStore()
+    return isSmallDevice ? <ChatScreenComponent /> : authenticated && <div className="flex justify-center items-center">
+        <div>
+            <p>Click on a box to start chatting</p>
+        </div>
     </div>
 }

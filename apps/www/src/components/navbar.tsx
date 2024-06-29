@@ -8,7 +8,7 @@ import { Separator } from "./ui/separator"
 import { cn } from "@/lib/utils"
 import directusStore from "app/store/directus"
 import { Button } from "./ui/button"
-import { Lock } from "lucide-react"
+import { Construction, Contact, CreditCard, Home, Info, Lock, MapPin, MessageCircle, Newspaper, School, TrendingUp, Users } from "lucide-react"
 import { GooglePlayButton, AppStoreButton } from "./misc-buttons"
 import { ToggleTheme } from "./toggle-theme"
 import LoginButton from "./login-button"
@@ -18,39 +18,51 @@ import { Menu } from "lucide-react"
 import BottomSheet from "app/components/bottomsheet"
 import { X } from "app/components/icons"
 
-const navItems = [
+export const navItems = [
     {
         title: "Company",
         items: [
             {
                 title: "Home",
                 href: "/",
-                description: "Get started with A2A Point"
+                description: "Get started with A2A Point",
+                icon: Home,
+                locked: false
             },
             {
                 title: "About",
                 href: "/about",
-                description: "Learn more about us"
+                description: "Learn more about us",
+                icon: Info,
+                locked: false
             },
             {
                 title: "Contact",
                 href: "/contact",
-                description: "Get in touch with us"
+                description: "Get in touch with us",
+                icon: Contact,
+                locked: false
             },
             {
                 title: "News and Feeds",
                 href: "/news",
-                description: "Stay updated with our news and feeds"
+                description: "Stay updated with our news and feeds",
+                icon: Newspaper,
+                locked: false
             },
             {
                 title: "Membership",
                 href: "/membership",
-                description: "Join us today!"
+                description: "Join us today!",
+                icon: CreditCard,
+                locked: false
             },
             {
                 title: "Courses",
                 href: "/courses",
-                description: "Learn more about our courses"
+                description: "Learn more about our courses",
+                icon: School,
+                locked: false
             }
         ],
         component: <div className="bg-card bg-rounded px-4 py-12 flex flex-col w-1/2 gap-12 rounded-xl">
@@ -68,29 +80,34 @@ const navItems = [
             {
                 title: "Listings",
                 href: "/listings",
-                description: "Browse through our listings"
+                description: "Browse through our listings",
+                icon: TrendingUp
             },
             {
                 title: "Locations",
                 href: "/locations",
-                description: "View our locations"
+                description: "View our locations",
+                icon: MapPin
             },
             {
                 title: "Agents",
                 href: "/agents",
-                description: "View our agents"
+                description: "View our agents",
+                icon: Users
             },
             {
                 title: "Post",
                 href: "/post",
                 description: "Post a listing in our platform",
-                locked: true
+                icon: Construction,
+                locked: true,
             },
             {
                 title: "Chat",
                 href: "/chat",
                 description: "Chat with other agents",
-                locked: true
+                icon: MessageCircle,
+                locked: true,
             }
         ],
         component: <div className="w-1/2 flex flex-col gap-4 justify-center bg-card p-4 rounded-xl">
@@ -159,13 +176,22 @@ const MobileNavbar = () => {
     </BottomSheet> : <Menu onClick={() => setOpen(true)} />
 }
 
+const WebProductNavbar = () => {
+    return <div className="flex-grow flex flex-col items-center 2xl:items-end sticky top-0 px-4 py-6 h-screen justify-between">
+        <Link href={"/"} className="text-primary font-bold text-xl">A2APoint</Link>
+        <div className="-translate-y-12">
+            <ProductTabBar />
+        </div>
+        <LoginButton />
+    </div>
+}
+
 export const Navbar = () => {
     const isSmallDevice = useIsSmallDevice()
     const pathName = usePathname()
     const segments = pathName.split("/")
-    console.log(segments)
     const isProductPathname = navItems.find(item => item.title === "Product")?.items.some(subItem => segments.length > 1 && subItem.href === `/${segments[1]}`)
-    return isProductPathname ? <></> : <div className="flex gap-4 items-center container p-4 md:pt-12 relative z-[9999]">
+    return isProductPathname ? (isSmallDevice ? <></> : <WebProductNavbar />) : <div className="flex gap-4 items-center container p-4 md:pt-12 relative z-[9999]">
         <ToggleTheme />
         <Link href={"/"} className="text-primary font-bold">A2APoint</Link>
         <div className="ml-auto mr-0 md:m-auto flex items-center gap-4">
@@ -173,4 +199,27 @@ export const Navbar = () => {
             <LoginButton />
         </div>
     </div>
+}
+
+const ProductTabBar = () => {
+    const isSmallDevice = useIsSmallDevice()
+    const inProductRoute = useInProductRoute()
+    const router = useRouter()
+
+    const productNavItems = navItems.find(item => item.title === "Product")?.items!
+    return <div className={cn("flex justify-between h-[250px] p-4 gap-4", isSmallDevice ? "flex-row" : "flex-col")}>
+        {productNavItems.map((item, index) => {
+            const Icon = item.icon
+            const _inProductRoute = inProductRoute(item.href)
+            return <Button onPress={() => router.push(item.href)} key={index} variant={_inProductRoute ? "default" : "outline"} size={"icon"} className="rounded-full">
+                <Icon className={_inProductRoute ? "text-primary-foreground" : "text-foreground"} size={18} />
+            </Button>
+        })}
+    </div>
+}
+
+const useInProductRoute = () => {
+    const pathname = usePathname()
+    const segments = pathname.split("/")
+    return (href: string) => !!navItems.find(item => item.title === "Product")?.items.some(subItem => segments.length > 1 && href === `/${segments[1]}`)
 }

@@ -9,15 +9,17 @@ import { cn } from "app/lib/utils"
 export default function ChatLayout({ children }: { children: ReactNode }) {
     const isSmallDevice = useIsSmallDevice()
 
-    return <div className="md:container flex h-screen">
+    return <div className="flex h-screen">
         {!isSmallDevice && <>
+            <Separator orientation="vertical" />
             <div className="w-1/3 h-full">
                 <ChatScreenComponent />
             </div>
             <Separator orientation="vertical" />
         </>}
-        <div className={cn(isSmallDevice ? "w-full" : "w-2/3 bg-card h-full p-4")}>
+        <div className={cn(isSmallDevice ? "w-full" : "w-2/3 bg-card h-full")}>
             {children}
         </div>
+        <Separator orientation="vertical" />
     </div>
 }

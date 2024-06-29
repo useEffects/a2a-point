@@ -1,11 +1,11 @@
 /** @jsxImportSource react */
 
-import { MDXRemote } from 'next-mdx-remote/rsc'
-import { directusUrl } from "app/lib/constants"
-import { News } from "src/lib/types"
-import directusStore from 'app/store/directus'
 import { readItem } from '@directus/sdk'
+import { directusUrl } from "app/lib/constants"
+import directusStore from 'app/store/directus'
 import { queryClient } from 'app/store/query'
+import { MDXRemote } from 'next-mdx-remote/rsc'
+import { News } from "src/lib/types"
 
 export default async function ({ params }: { params: { id: string } }) {
     const { id } = params

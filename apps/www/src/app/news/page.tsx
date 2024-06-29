@@ -1,11 +1,11 @@
 /** @jsxImportSource react */
 
 import { aggregate, readItems } from "@directus/sdk"
+import directusStore from "app/store/directus"
+import { queryClient } from "app/store/query"
 import { ListNews, MyPagination } from "src/components/client-components/news"
 import { NewsLetter } from "src/components/news-letter"
 import { News as NewsType } from "src/lib/types"
-import directusStore from "app/store/directus"
-import { queryClient } from "app/store/query"
 
 export default async function News({ searchParams }: { searchParams: { page?: string } }) {
     const { page = "1" } = searchParams
@@ -34,7 +34,7 @@ export default async function News({ searchParams }: { searchParams: { page?: st
     return <div className="container mx-auto flex flex-col gap-12 md:gap-40 p-4">
         <div className="flex flex-col gap-4 items-center">
             <p className="text-4xl font-semibold"> News and insights </p>
-            <p className="max-w-lg">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Neque, minima. Voluptates suscipit iste quo aliquid repudiandae! Aliquam dicta quas in.</p>
+            <p className="max-w-xl">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Neque, minima. Voluptates suscipit iste quo aliquid repudiandae! Aliquam dicta quas in.</p>
             {(news?.length && categories.length) && <ListNews news={news} categories={categories} />}
         </div>
         {count?.length &&
