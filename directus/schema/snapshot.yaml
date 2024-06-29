@@ -4723,7 +4723,7 @@ fields:
       foreign_key_column: id
   - collection: directus_users
     field: company
-    type: string
+    type: uuid
     meta:
       collection: directus_users
       conditions: null
