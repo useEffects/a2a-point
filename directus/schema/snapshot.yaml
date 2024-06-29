@@ -4129,7 +4129,7 @@ fields:
       foreign_key_column: null
   - collection: directus_notifications
     field: related_user
-    type: string
+    type: uuid
     meta:
       collection: directus_notifications
       conditions: null
@@ -4168,7 +4168,7 @@ fields:
       foreign_key_column: id
   - collection: directus_notifications
     field: related_listing
-    type: string
+    type: uuid
     meta:
       collection: directus_notifications
       conditions: null
@@ -4207,7 +4207,7 @@ fields:
       foreign_key_column: id
   - collection: directus_notifications
     field: related_room
-    type: string
+    type: uuid
     meta:
       collection: directus_notifications
       conditions: null
