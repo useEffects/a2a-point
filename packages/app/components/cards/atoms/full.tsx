@@ -1,10 +1,12 @@
+import { Header } from "app/components/header";
 import { Bath, BedDouble, Bookmark, CarFront, ExternalLink, Eye, LandPlot } from "app/components/icons";
 import { Separator } from 'app/components/ui/separator';
+import { ScrollView } from "app/components/utils/virtual-lists";
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { useListingMetrics } from "app/hooks/listing-metrics";
 import { directusUrl } from "app/lib/constants";
 import { buildAssetUrl, groupByN, shortString } from "app/lib/helpers";
-import { Amenity, Listing, ListingAmenity } from "app/lib/types";
+import { FullListingDetailedProps } from "app/lib/props";
 import { RenderAmenity } from 'app/screens/post';
 import directusStore from 'app/store/directus';
 import userStore from "app/store/user";
@@ -14,11 +16,7 @@ import { Dimensions, Image, Linking, View } from "react-native";
 import Carousel from 'react-native-reanimated-carousel';
 import { Button } from "../../ui/button";
 import { Text } from "../../ui/text";
-import { MediumUsersCard, MediumUsersCardProps, mediumUsersFields } from './users';
-import { Header } from "app/components/header";
-import { ScrollView } from "app/components/utils/virtual-lists";
-
-export const FullListingCardFields = ["*", "amenities.*", "photo1", "photo2", "photo3"].concat(mediumUsersFields.map(field => `user_created.${field}`))
+import { MediumUsersCard } from './users';
 
 export const ListingIconTile = ({
     icon,
@@ -40,10 +38,6 @@ export const ListingIconTile = ({
     );
 };
 
-export type DetailedAmenity = ListingAmenity & { amenities_id: Amenity }
-
-export type FullListingDetailedProps = Listing & { user_created: MediumUsersCardProps } & { amenities: DetailedAmenity[] }
-
 export type ListingCardMetrics = { views: string | null, saves: string | null }
 
 export const FullListingCard = (props: FullListingDetailedProps) => {
@@ -63,7 +57,7 @@ export const FullListingCard = (props: FullListingDetailedProps) => {
         <Header>
             <Text className="font-bold text-xl">{shortString(props.title, 30)}</Text>
         </Header>
-        <ScrollView contentContainerClassName="flex-col gap-8 flex-grow">
+        <ScrollView contentContainerClassName="flex-col gap-8 flex-grow max-w-xl">
             <View className='px-4 flex flex-col gap-4'>
                 <View className="flex-col gap-2">
                     <Text className="text-xl font-medium text-primary">{props.title}</Text>
@@ -95,7 +89,7 @@ export const FullListingCard = (props: FullListingDetailedProps) => {
                     <Separator />
                 </View>
                 : <></>}
-            {props.tags.length ?
+            {props.tags?.length ?
                 <View className="flex-row gap-4 px-4">
                     {props.tags.map((tag, index) => <Text className="text-sm bg-primary text-primary-foreground px-2 rounded" key={index}>{tag}</Text>)}
                 </View> : <></>}

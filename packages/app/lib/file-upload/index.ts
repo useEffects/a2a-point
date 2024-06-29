@@ -3,7 +3,7 @@ import directusStore from "app/store/directus"
 import * as FileSystem from "expo-file-system"
 import { directusUrl } from "../constants"
 
-export async function fileUpload(asset: Asset<withUri>, folderId: string): Promise<string> {
+export async function uploadFileToDirectus(asset: Asset<withUri>, folderId: string): Promise<string> {
     const { token } = directusStore.getState()
     const fileInfo = await FileSystem.getInfoAsync(asset.uri)
     if (!fileInfo.exists) {
@@ -21,4 +21,12 @@ export async function fileUpload(asset: Asset<withUri>, folderId: string): Promi
         }
     })
     return JSON.parse(res.body).data.id
+}
+
+export async function getFileSize(asset: Asset<withUri>): Promise<number> {
+    const fileInfo = await FileSystem.getInfoAsync(asset.uri, { size: true })
+    if (!fileInfo.exists) {
+        throw new Error("File does not exist")
+    }
+    return fileInfo.size
 }

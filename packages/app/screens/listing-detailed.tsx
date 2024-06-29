@@ -1,5 +1,6 @@
-import { createItem, readItem, readItems } from "@directus/sdk"
-import { FullListingCard, FullListingCardFields, FullListingDetailedProps } from "app/components/cards/atoms/full"
+import { createItem, readItems } from "@directus/sdk"
+import { FullListingCard } from "app/components/cards/atoms/full"
+import { FullListingDetailedProps } from "app/lib/props"
 import { LoginPopover } from "app/screens/listings"
 import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"

@@ -10,7 +10,6 @@ import TimeAgo from 'javascript-time-ago';
 import en from "javascript-time-ago/locale/en";
 import { Alert, Linking, Platform } from "react-native";
 import { ProductType, appName, directusUrl, products } from "./constants";
-import { Image } from "react-native-svg";
 import { Document } from "./types";
 
 TimeAgo.addLocale(en)
@@ -206,7 +205,8 @@ export function uriToBlob(uri: string): Promise<Blob> {
   });
 };
 
-export const shortString = (str: string, maxLength = 20) => {
+export const shortString = (str: string | undefined | null, maxLength = 20) => {
+  if (!str) return ""
   return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
 }
 

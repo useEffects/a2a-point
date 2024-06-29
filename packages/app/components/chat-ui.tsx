@@ -9,7 +9,6 @@ import { cn } from "app/lib/utils"
 import directusStore from 'app/store/directus'
 import userStore from 'app/store/user'
 import * as DocumentPicker from 'expo-document-picker'
-import * as FileSystem from "expo-file-system"
 import * as ImagePicker from "expo-image-picker"
 import * as Linking from "expo-linking"
 import { Formik, FormikProps } from 'formik'
@@ -26,6 +25,9 @@ import { Input } from "./ui/input"
 import { Text } from "./ui/text"
 import { UserChip } from './user-chip'
 import { ScrollView } from "./utils/virtual-lists"
+import { getFileSize } from "app/lib/file-upload"
+import { filesize } from "filesize"
+import { uniqBy } from "lodash"
 
 export type withId = { id: string }
 export type withUri = { uri: string }
@@ -68,7 +70,7 @@ export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserI
     const infoPositioning = renderRight ? "ml-auto mr-0" : "mr-auto ml-0"
     const textColor = renderRight ? "!text-primary-foreground" : "text-background"
 
-    return <View className={cn(toHighlight && "bg-accent", "mt-[1px]", props.isGroup && "flex-col gap-1", props.isFirst && "mb-2", props.isLast && "mt-2")}>
+    return <View className={cn("px-4 native:px-0", toHighlight && "bg-accent", "mt-[1px]", props.isGroup && "flex-col gap-1", props.isFirst && "mb-2", props.isLast && "mt-2")}>
         {(props.isGroup && props.isLast && props.user_created.id !== user.id) ?
             <View className='items-start'>
                 <UserChip user={props.user_created} />
@@ -106,9 +108,9 @@ const FooterDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateAc
                     name: type === "document" ? (asset as DocumentPicker.DocumentPickerAsset).name : (asset as ImagePicker.ImagePickerAsset).fileName ?? "pancakes"
                 }
             }).filter(async asset => {
-                const fileInfo = await FileSystem.getInfoAsync(asset.uri, { size: true }) as FileSystem.FileInfo & { size: number }
-                if (fileInfo.size > 1 * 1024 * 1024) {
-                    alert(`File size exceeds 1MB limit for ${asset.name} (${fileInfo.size / 1000 / 1000}MB)`)
+                const fileSize = await getFileSize(asset)
+                if (fileSize > 1 * 1024 * 1024) {
+                    alert(`File size exceeds 1MB limit for ${asset.name} (${filesize(fileSize)})`)
                     return false
                 }
                 return true
@@ -228,7 +230,8 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
         </View>
     }
 
-    return <View className='flex-col mt-1'>
+    return <View className='flex-col'>
+        <Separator />
         {currentMessage.assets && currentMessage.assets.length ? <View className='border-solid border-0 border-l-4 border-primary bg-accent p-2 flex-row justify-between items-center'>
             <Text>Selected {currentMessage.assets.length} {currentMessage.assets.length === 1 ? "asset" : "assets"}</Text>
             <Button onPress={() => currentMessageDispatcher(p => ({ text: p.text }))} size={"icon"} className='w-5 h-5 bg-destructive'>
@@ -320,12 +323,21 @@ const generateSections = (messages: ChatMessage<withId | withUri>[]) => {
 
 export const ChatUi = (props: ChatUiProps) => {
     const listRef = useRef<SectionList>(null)
-    const sections = useMemo(() => generateSections(props.messages), [props.messages])
+    const sections = useMemo(() => generateSections(uniqBy(props.messages, "id")), [props.messages])
 
     useEffect(() => {
         if (props.goToId) {
-            const foundItemIndex = props.messages.findIndex(m => m.id === props.goToId)
-            const foundSectionIndex = sections.findIndex(section => section.data.findIndex(m => m.id === props.goToId) !== -1)
+            const { foundItemIndex, foundSectionIndex } = sections.reduce((acc, section, sectionIndex) => {
+                const foundItemIndex = section.data.findIndex(item => item.id === props.goToId)
+                if (foundItemIndex !== -1) {
+                    acc.foundItemIndex = foundItemIndex
+                    acc.foundSectionIndex = sectionIndex
+                }
+                return acc
+            }, {
+                foundItemIndex: -1,
+                foundSectionIndex: -1
+            })
             if (foundItemIndex === -1 || foundSectionIndex === -1) return
             listRef.current?.scrollToLocation({ itemIndex: foundItemIndex, sectionIndex: foundSectionIndex, animated: true, viewPosition: 0.5 })
         }

@@ -138,7 +138,7 @@ export const commonFilters = {
 
 const extraSmallFields: DotSeparatedKeys<ExtraSmallListingCardProps>[] = ["id", "title", "budget"];
 
-const smallFields: DotSeparatedKeys<SmallListingCardProps>[] = ["id", "title", "budget", "address", "deal_type", "user_created.id", "user_created.avatar", "date_created", "location.id", "location.title", "location.avatar", "tags"];
+const smallFields: DotSeparatedKeys<SmallListingCardProps>[] = ["id", "title", "budget", "deal_type", "user_created.id", "user_created.avatar", "date_created", "location.id", "location.title", "location.avatar", "tags"];
 
 const mediumFields: DotSeparatedKeys<MediumListingCardProps>[] = ["id", "title", "deal_type", "date_created", "budget", "description", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "location.avatar", "location.avatar", "location.id", "location.title"];
 
@@ -188,8 +188,9 @@ export const RenderListings = <R extends ListCardProps>({ paramFilter: paramFilt
 
 
     const { data, hasNextPage, fetchNextPage, isLoading } = useInfiniteQuery<{ items: (R | ConfirmedAdvertisementCardProps)[], page: unknown }>({
+        initialPageParam: 0,
         queryKey: ["Fetching Listings with fields: ", render.fields, filter, searchText, limit],
-        queryFn: async ({ pageParam = 0 }) => {
+        queryFn: async ({ pageParam }) => {
             const page = pageParam as number
             let items: (R | ConfirmedAdvertisementCardProps)[] = []
             const listings = await rest.request(readItems("listings", {
@@ -222,7 +223,6 @@ export const RenderListings = <R extends ListCardProps>({ paramFilter: paramFilt
                 page: pageParam
             }
         },
-        initialPageParam: 0,
         getNextPageParam: (lastPage, allPages, lastPageParam) => {
             if (lastPage.items.length < limit) {
                 return null

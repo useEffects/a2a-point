@@ -19,6 +19,8 @@ import { Image, View } from "react-native";
 import { useDebounce } from "use-debounce";
 import LockedScreen from "./locked-screens";
 import ChatSVG from "app/components/svg/chat";
+import { uniqBy } from "lodash";
+import { NavigationState, Route, SceneMap, TabView } from "react-native-tab-view";
 
 const ChatLocked = () => {
     return <LockedScreen
@@ -90,26 +92,65 @@ export default function ChatScreen() {
             {contacts?.length ? <View>
                 <Text className="p-4 text-info">Contacts</Text>
                 <FlatList
-                    data={contacts}
+                    data={uniqBy(contacts, "id")}
                     renderItem={({ item }) => <ContactListRow {...item} />}
                 />
             </View> : <></>}
             {groups?.length ? <View>
                 <Text className="p-4 text-info">Groups</Text>
                 <FlatList
-                    data={groups}
+                    data={uniqBy(groups, "id")}
                     renderItem={({ item }) => <GroupListRow {...item} />}
                 />
             </View> : <></>}
         </View> :
-            <FlatList
-                data={filteredRoomsSubscribed}
-                renderItem={({ item }) => <ChatListRow {...item} />}
-                ItemSeparatorComponent={() => <Separator />}
-                bounces={false}
-                overScrollMode="never"
-            />}
+            <ChatsTabView data={filteredRoomsSubscribed} />}
     </View> : <ChatLocked />
+}
+
+const ChatsTabView = ({ data }: { data: RoomSubscribed[] }) => {
+    const routes = [
+        { key: "chats", title: "Chats" },
+        { key: "dm", title: "DM" },
+        { key: "groups", title: "Groups" }
+    ]
+    const [navigationState, setNavigationState] = useState<NavigationState<Route>>({
+        index: 0,
+        routes: routes
+    })
+    const dms = useMemo(() => data.filter((room) => room.type === "dm"), [data])
+    const groups = useMemo(() => data.filter((room) => room.type === "group"), [data])
+
+    return <TabView
+        navigationState={navigationState}
+        renderTabBar={() => <View className="w-full flex-row gap-4 items-center p-4">
+            {routes.map(({ title }, index) => <Button
+                key={index}
+                variant={index === navigationState.index ? "default" : "outline"}
+                size={"sm"}
+                className="rounded-full"
+                onPress={() => setNavigationState(p => ({ ...p, index }))}
+            >
+                <Text>{title}</Text>
+            </Button>)}
+        </View>}
+        renderScene={SceneMap({
+            chats: () => <ChatList data={data} />,
+            dm: () => <ChatList data={dms} />,
+            groups: () => <ChatList data={groups} />
+        })}
+        onIndexChange={index => setNavigationState({ ...navigationState, index })}
+    />
+}
+
+const ChatList = ({ data }: { data: RoomSubscribed[] }) => {
+    return <FlatList
+        data={uniqBy(data, "id")}
+        renderItem={({ item }) => <ChatListRow {...item} />}
+        ItemSeparatorComponent={() => <Separator />}
+        bounces={false}
+        overScrollMode="never"
+    />
 }
 
 const ChatListRow = (room: RoomSubscribed) => {

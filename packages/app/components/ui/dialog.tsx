@@ -1,9 +1,9 @@
+import { X } from 'app/components/icons';
 import * as DialogPrimitive from 'app/components/primitives/dialog';
+import { cn } from 'app/lib/utils';
 import * as React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
-import { X } from 'app/components/icons';
-import { cn } from 'app/lib/utils';
 
 const Dialog = DialogPrimitive.Root;
 
@@ -70,7 +70,7 @@ const DialogContent = React.forwardRef<
                 <DialogPrimitive.Content
                     ref={ref}
                     className={cn(
-                        'z-50 max-w-lg gap-4 border border-border web:cursor-default bg-background p-6 web:duration-200 rounded-lg',
+                        'z-50 max-w-xl gap-4 border border-border web:cursor-default bg-background p-6 web:duration-200 rounded-lg',
                         open
                             ? 'web:animate-in web:fade-in-0 web:zoom-in-95'
                             : 'web:animate-out web:fade-out-0 web:zoom-out-95',
@@ -146,5 +146,5 @@ export {
     DialogOverlay,
     DialogPortal,
     DialogTitle,
-    DialogTrigger,
+    DialogTrigger
 };

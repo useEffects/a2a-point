@@ -1,5 +1,4 @@
 import { createItem } from "@directus/sdk";
-import { useQuery } from "@tanstack/react-query";
 import { Asset, withId, withUri } from "app/components/chat-ui";
 import { AutoCompleteRenderItemProps, FormAutoSelect, FormInput, FormSelect, RenderRoomTileProps } from "app/components/formComponents";
 import { FullWidthImage } from "app/components/full-width-image";
@@ -14,7 +13,7 @@ import { Text } from "app/components/ui/text";
 import { FlatList, ScrollView } from "app/components/utils/virtual-lists";
 import { useColorScheme } from "app/hooks/color-scheme";
 import { listingsFolderId, portfolioUrl } from "app/lib/constants";
-import { fileUpload } from "app/lib/file-upload";
+import { uploadFileToDirectus } from "app/lib/file-upload";
 import { buildAssetUrl, groupByN, pickImages } from "app/lib/helpers";
 import { Listing, ListingAmenity } from "app/lib/types";
 import { cn } from "app/lib/utils";
@@ -27,7 +26,6 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 import Collapsible from "react-native-collapsible";
 import OutsidePressHandler from "react-native-outside-press";
-import { SvgXml, XmlProps } from "react-native-svg";
 import { NavigationState, Route, SceneMap, TabView } from "react-native-tab-view";
 import { useParams, useRouter } from "solito/navigation";
 import { useDebounce } from "use-debounce";
@@ -132,58 +130,56 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
         }
 
         return <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="flex-grow">
-            <View className="flex-1 flex-col gap-4">
-                <View className="flex-col gap-4">
-                    <FormInput
-                        label="Title"
-                        value={props.values.title}
-                        onChangeText={props.handleChange("title")}
-                        error={props.touched.title ? props.errors.title : ""}
-                        onBlur={props.handleBlur("title")}
-                    />
-                    <FormAutoSelect
-                        currentItem={props.values.location as RenderRoomTileProps}
-                        setCurrentItem={(item) => props.setFieldValue("location", item)}
-                        label="Location"
-                        error={props.touched.location ? props.errors.location : ""}
-                        item="rooms"
-                        filter={{
-                            type: {
-                                _eq: "group"
-                            }
-                        }}
-                        onBlur={props.handleBlur("location")}
-                    />
-                    <FormInput
-                        label="Description"
-                        value={props.values.description}
-                        onChangeText={props.handleChange("description")}
-                        error={props.touched.description ? props.errors.description : ""}
-                        maxLines={8}
-                        onBlur={props.handleBlur("description")}
-                    />
-                    <RenderDealTypeSpecificComponent />
-                    <FormInput
-                        label="Expected Broker Fees (%)"
-                        value={props.values.expectedBrokerFees?.toString() ?? ""}
-                        onChangeText={props.handleChange("expectedBrokerFees")}
-                        onBlur={props.handleBlur("expectedBrokerFees")}
-                        keyboardType="number-pad"
-                        error={props.touched.expectedBrokerFees ? props.errors.expectedBrokerFees : ""}
-                    />
-                    <FormInput
-                        label="Size (sq.ft)"
-                        value={commaNumber(props.values.size || "")}
-                        onChangeText={val => props.setFieldValue("size", parseInt(val.replace(/,/g, "")))}
-                        error={props.touched.size ? props.errors.size : ""}
-                        keyboardType="number-pad"
-                        onBlur={props.handleBlur("size")}
-                    />
-                </View>
-                <Button onPress={() => props.handleSubmit()} className="mt-auto mb-0">
-                    <Text>Next</Text>
-                </Button>
+            <View className="flex-col gap-4">
+                <FormInput
+                    label="Title"
+                    value={props.values.title}
+                    onChangeText={props.handleChange("title")}
+                    error={props.touched.title ? props.errors.title : ""}
+                    onBlur={props.handleBlur("title")}
+                />
+                <FormAutoSelect
+                    currentItem={props.values.location as RenderRoomTileProps}
+                    setCurrentItem={(item) => props.setFieldValue("location", item)}
+                    label="Location"
+                    error={props.touched.location ? props.errors.location : ""}
+                    item="rooms"
+                    filter={{
+                        type: {
+                            _eq: "group"
+                        }
+                    }}
+                    onBlur={props.handleBlur("location")}
+                />
+                <FormInput
+                    label="Description"
+                    value={props.values.description}
+                    onChangeText={props.handleChange("description")}
+                    error={props.touched.description ? props.errors.description : ""}
+                    maxLines={8}
+                    onBlur={props.handleBlur("description")}
+                />
+                <RenderDealTypeSpecificComponent />
+                <FormInput
+                    label="Expected Broker Fees (%)"
+                    value={props.values.expectedBrokerFees?.toString() ?? ""}
+                    onChangeText={props.handleChange("expectedBrokerFees")}
+                    onBlur={props.handleBlur("expectedBrokerFees")}
+                    keyboardType="number-pad"
+                    error={props.touched.expectedBrokerFees ? props.errors.expectedBrokerFees : ""}
+                />
+                <FormInput
+                    label="Size (sq.ft)"
+                    value={commaNumber(props.values.size || "")}
+                    onChangeText={val => props.setFieldValue("size", parseInt(val.replace(/,/g, "")))}
+                    error={props.touched.size ? props.errors.size : ""}
+                    keyboardType="number-pad"
+                    onBlur={props.handleBlur("size")}
+                />
             </View>
+            <Button onPress={() => props.handleSubmit()} className="mt-auto mb-0">
+                <Text>Next</Text>
+            </Button>
         </ScrollView>
     }
     return <Formik
@@ -527,7 +523,7 @@ export default function PostScreenComponent() {
         setLoading(true)
 
         const assets = [form3Values.photo_1, form3Values.photo_2, form3Values.photo_3].filter(asset => asset !== null) as Asset<withUri>[]
-        const assetsId = await Promise.all(assets.map(asset => fileUpload(asset, listingsFolderId)))
+        const assetsId = await Promise.all(assets.map(asset => uploadFileToDirectus(asset, listingsFolderId)))
 
         const payload: Partial<Listing> = {
             deal_type: params.type?.toString(),
@@ -552,9 +548,7 @@ export default function PostScreenComponent() {
 
             featured: form4Values.featured,
         }
-        console.log(payload)
         const res = await rest.request(createItem("listings", payload))
-        console.log(res)
         setLoading(false)
         router.back()
     }
@@ -563,35 +557,37 @@ export default function PostScreenComponent() {
         <Header>
             <Text className="text-xl font-bold">Post</Text>
         </Header>
-        <TabView
-            swipeEnabled={false}
-            renderTabBar={() => null}
-            navigationState={navigationState}
-            onIndexChange={index => setNavigationState({ ...navigationState, index })}
-            renderScene={SceneMap({
-                form1: () => <Form1
-                    formValues={form1Values}
-                    setFormValues={setForm1Values}
-                    setNavigationState={setNavigationState}
-                />,
-                form2: () => <Form2
-                    formValues={form2Values}
-                    setFormValues={setForm2Values}
-                    setNavigationState={setNavigationState}
-                />,
-                form3: () => <Form3
-                    formValues={form3Values}
-                    setFormValues={setForm3Values}
-                    setNavigationState={setNavigationState}
-                />,
-                form4: () => <Form4
-                    formValues={form4Values}
-                    setFormValues={setForm4Values}
-                    handleSubmit={handleSubmit}
-                    loading={loading}
-                />
-            })}
-        />
+        <View className="flex-grow p-4 max-w-xl">
+            <TabView
+                swipeEnabled={false}
+                renderTabBar={() => null}
+                navigationState={navigationState}
+                onIndexChange={index => setNavigationState({ ...navigationState, index })}
+                renderScene={SceneMap({
+                    form1: () => <Form1
+                        formValues={form1Values}
+                        setFormValues={setForm1Values}
+                        setNavigationState={setNavigationState}
+                    />,
+                    form2: () => <Form2
+                        formValues={form2Values}
+                        setFormValues={setForm2Values}
+                        setNavigationState={setNavigationState}
+                    />,
+                    form3: () => <Form3
+                        formValues={form3Values}
+                        setFormValues={setForm3Values}
+                        setNavigationState={setNavigationState}
+                    />,
+                    form4: () => <Form4
+                        formValues={form4Values}
+                        setFormValues={setForm4Values}
+                        handleSubmit={handleSubmit}
+                        loading={loading}
+                    />
+                })}
+            />
+        </View>
     </View>
 }
 

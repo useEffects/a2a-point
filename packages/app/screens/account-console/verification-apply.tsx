@@ -1,22 +1,22 @@
 /* eslint-disable react/no-unescaped-entities */
+import { createItem } from "@directus/sdk"
+import { Asset, withUri } from "app/components/chat-ui"
 import { FormInput } from "app/components/formComponents"
-import { ArrowUpRight, X } from "app/components/icons"
+import { Header } from "app/components/header"
+import { X } from "app/components/icons"
 import { SeparatorText } from "app/components/separator-text"
 import { Button } from "app/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "app/components/ui/card"
 import { Text } from "app/components/ui/text"
+import { directusUrl, documentsFolderId } from "app/lib/constants"
+import { uploadFileToDirectus } from "app/lib/file-upload"
+import { buildAssetUrl, pickDocuments } from "app/lib/helpers"
+import { Document } from "app/lib/types"
+import directusStore from "app/store/directus"
+import userStore from "app/store/user"
+import * as Linking from "expo-linking"
 import { useState } from "react"
 import { View } from "react-native"
-import { Asset, withUri } from "app/components/chat-ui"
-import { buildAssetUrl, pickDocuments } from "app/lib/helpers"
-import userStore from "app/store/user"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "app/components/ui/card"
-import { fileUpload } from "app/lib/file-upload"
-import { directusUrl, documentsFolderId } from "app/lib/constants"
-import directusStore from "app/store/directus"
-import * as Linking from "expo-linking"
-import { createItem } from "@directus/sdk"
-import { Document } from "app/lib/types"
-import { Header } from "app/components/header"
 
 export const VerificationApplyScreenComponent = () => {
     const { user, document } = userStore()
@@ -36,7 +36,7 @@ export const VerificationApplyScreenComponent = () => {
         setLoading(true)
         let fileId = ""
         if (asset) {
-            fileId = await fileUpload(asset, documentsFolderId)
+            fileId = await uploadFileToDirectus(asset, documentsFolderId)
         }
 
         const newDocument = await rest.request(createItem("documents", {

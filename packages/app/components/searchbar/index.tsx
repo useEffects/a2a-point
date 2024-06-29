@@ -4,7 +4,7 @@ import { useColorScheme } from "app/hooks/color-scheme";
 import { Dispatch, SetStateAction } from "react";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { X, Search } from "lucide-react-native"
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import opacity from "hex-color-opacity";
 
 export default function SearchBar({ searchText, setSearchText, searchBarProps }: { searchText: string, setSearchText: Dispatch<SetStateAction<string>>, searchBarProps?: SearchBarProps }) {

@@ -121,11 +121,16 @@ export const MediumLocationCards = ({ limit = 5, searchText = "", infinite, flat
                 filter: {
                     type: {
                         _eq: "group"
-                    }
+                    },
                 },
                 search: searchText,
                 limit: limit,
-                offset: pageParam as number * limit
+                offset: pageParam as number * limit,
+                deep: {
+                    members: {
+                        _limit: 5,
+                    }
+                }
             }))
             return { items: res as MediumLocationCardProps[], page: pageParam }
         },

@@ -3,13 +3,17 @@ import BottomSheet from 'app/components/bottomsheet';
 import { MediumListingCardProps } from "app/components/cards/atoms/medium";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings";
 import { FormAutoSelect, RenderCompanyTileProps, RenderListingTileProps, RenderUserTileProps, useAutoCompleteItem } from 'app/components/formComponents';
+import { Header } from 'app/components/header';
 import { Bath, BedDouble, CarFront, CreditCard, LandPlot } from 'app/components/icons';
 import SearchBar from "app/components/searchbar";
 import { Button } from "app/components/ui/button";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
+import { GoToPostButtonUi } from 'app/components/utils/common-ui';
 import { useColorScheme } from "app/hooks/color-scheme";
 import useNavigation from 'app/hooks/navigation';
+import { useSearchParams } from 'app/hooks/search-params';
+import useRouting from 'app/hooks/use-routing';
 import { cn } from "app/lib/utils";
 import directusStore from "app/store/directus";
 import opacity from 'hex-color-opacity';
@@ -22,10 +26,6 @@ import { NavigationState, Route, SceneRendererProps, TabView } from 'react-nativ
 import { useParams, usePathname, useRouter } from 'solito/navigation';
 import { useDebounce } from "use-debounce";
 import { GoToLoginButton } from "./locked-screens";
-import useRouting from 'app/hooks/use-routing';
-import { Header } from 'app/components/header';
-import { GoToPostButtonUi } from 'app/components/utils/common-ui';
-import { useSearchParams } from 'app/hooks/search-params';
 
 export enum FilterKeys {
     Budget = "budget",
@@ -118,7 +118,7 @@ export default function ListingsScreenComponent({ className }: { className?: str
                 <GoToPostButtonUi />
             </View>
         </Header>
-        <View className="flex-row items-center justify-between gap-4 w-full native:bg-card px-4">
+        <View className="flex-row items-center justify-between gap-4 w-full bg-card px-4">
             <SearchBar
                 searchText={searchText}
                 setSearchText={setSearchText}
@@ -132,12 +132,13 @@ export default function ListingsScreenComponent({ className }: { className?: str
                 <ListFilter size={18} color={filters.length ? colors.card : colors.info} />
             </Button>
         </View>
-        {filters.length ? <RenderChips filters={filters} setFilters={updateParams} /> : <View className='h-4 w-full native:bg-card' />}
+        {filters.length ? <RenderChips filters={filters} setFilters={updateParams} /> : <View className='h-4 w-full bg-card' />}
         <RenderListings<MediumListingCardProps>
             key={key}
             render={bodies.medium}
             flatListProps={{
                 ItemSeparatorComponent: () => <Separator />,
+                contentContainerClassName: "max-w-xl"
             }}
             filter={filters.length ? commonFilters[CommonFilters.Custom](finalFilters) : undefined}
             searchText={debouncedSearchText}
@@ -476,7 +477,7 @@ const RenderChips = ({ filters, setFilters }: { filters: Filter[], setFilters: (
         setFilters(filters.filter(f => f.key !== key));
     }
 
-    return <View className='flex-row gap-2 flex-wrap w-full px-4 py-2 native:bg-card'>
+    return <View className='flex-row gap-2 flex-wrap w-full px-4 py-2 bg-card'>
         {filters.sort((a, b) => a.key.localeCompare(b.key)).map(((filter, index) => <Button onPress={() => handlePress(filter.key)} variant={"base"} size={"none"} style={{ backgroundColor: opacity(colors.info, 0.1) }} className='flex-row gap-1 p-1' key={index}>
             <Text className='text-xs text-info'>{getLabel(filter)}</Text>
         </Button>))}

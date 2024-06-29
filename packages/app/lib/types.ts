@@ -45,7 +45,7 @@ export type Listing = {
     date_updated: string;
     title: string;
     deal_type: string;
-    tags: string[];
+    tags: string[] | null;
     bathrooms: number | null;
     bedrooms: number | null;
     parking: number | null;
@@ -98,7 +98,7 @@ export type User = {
     status: string;
     role: string;
     token: string;
-    last_access: string;
+    last_access: string | null;
     last_page: string;
     provider: string;
     external_identifier: string;

@@ -1,16 +1,15 @@
-import { MediumUsersCard, SmallUsersCard, mediumUsersFields, smallUsersFields } from "../atoms/users"
+import { MediumUsersCard, SmallUsersCard } from "../atoms/users"
 import directusStore from "app/store/directus"
 import { directusUrl } from "app/lib/constants"
-import { ComponentType, useEffect, useState } from "react"
+import { ComponentType } from "react"
 import { FlatList } from "app/components/utils/virtual-lists"
 import { FlatListProps, View } from "react-native"
-import { queryClient } from "app/store/query"
 import { BottomLoader } from "./listings"
 import { ViewAllButton } from "app/components/utils/common-ui"
-import { uniqBy } from "lodash"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import useRouting from "app/hooks/use-routing"
 import { Button } from "app/components/ui/button"
+import { mediumUsersFields, smallUsersFields } from "app/lib/props"
 
 export enum Mode {
     small = "small",

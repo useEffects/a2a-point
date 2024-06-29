@@ -14,13 +14,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useKeyboardVisible } from '../hooks/keyboard';
-import ActivityScreen from './activity';
+import ActivityScreen from 'app/screens/activity';
 import ChatScreen from 'app/screens/chat';
 import HomeScreen from 'app/screens/home';
 import ListingDetailed from './listing-detailed';
 import ListingsScreen from 'app/screens/listings';
-import LocationListings from './location-detailed';
-import { LocationsListScreen } from './locations-list';
+import { LocationsList } from 'app/screens/locations-list';
 import LoginScreen from './login';
 import { MembersList } from './members-list';
 import NotificationsScreen from './notifications';
@@ -197,7 +196,7 @@ export default function AppLayout() {
         <Stack.Screen name="notifications" component={NotificationsScreen} />
         <Stack.Screen name="login" component={LoginScreen} />
         <Stack.Screen name="post" component={PostScreen} />
-        <Stack.Screen name="locations-list" component={LocationsListScreen} />
+        <Stack.Screen name="locations-list" component={LocationsList} />
         <Stack.Screen name="users-list" component={UsersListScreen} />
     </Stack.Navigator>
 };

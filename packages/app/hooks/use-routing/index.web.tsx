@@ -13,7 +13,7 @@ export default function useRouting(link: keyof (RootStackParamList & MainTopTabP
         case "post-feedback":
             return (id: string) => router.push(`post-feedback/${id}`)
         case "room-detailed":
-            return (id: string) => router.push(`/chats/${id}`)
+            return (id: string) => router.push(`/chat/${id}`)
         case "location-detailed":
             return (id: string) => router.push(`/locations/${id}`)
         case "members-list":

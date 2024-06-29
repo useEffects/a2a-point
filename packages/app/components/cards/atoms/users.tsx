@@ -14,14 +14,7 @@ import { Button } from "app/components/ui/button"
 import userStore from "app/store/user"
 import * as Linking from "expo-linking"
 import useRouting from "app/hooks/use-routing"
-
-export type SmallUsersCardProps = Pick<User, "id" | "avatar" | "first_name" | "last_name" | "computed_rating"> & { company: Pick<Company, "title" | "avatar" | "id"> | null }
-
-export type MediumUsersCardProps = Pick<User, "id" | "avatar" | "first_name" | "last_name" | "computed_rating" | "tags" | "email" | "last_access" | "phone" | "description" | "plan"> & { company: Pick<Company, "title" | "avatar" | "id"> | null } & { document: Pick<Document, "verified"> | null }
-
-export const smallUsersFields = ["id", "avatar", "first_name", "last_name", "computed_rating", "company.title", "company.avatar", "company.id"]
-
-export const mediumUsersFields = ["id", "avatar", "first_name", "last_name", "computed_rating", "tags", "company.title", "company.avatar", "email", "last_access", "phone", "description", "plan", "document.verified"]
+import { MediumUsersCardProps, SmallUsersCardProps } from "app/lib/props"
 
 export const SmallUsersCard = (item: SmallUsersCardProps) => {
     const { colors } = useColorScheme()
@@ -120,7 +113,7 @@ export const MediumUsersCard = (item: MediumUsersCardProps) => {
                     </View>}
                 </View>
                 <View className="p-4 pt-2 flex-1 flex-col justify-evenly gap-2 items-start rounded-tr-xl rounded-br-xl bg-card">
-                    <Text className="text-sm text-subtext">last seen {timeAgo.format(new Date(item.last_access))}</Text>
+                    {item.last_access ? <Text className="text-sm text-subtext">last seen {timeAgo.format(new Date(item.last_access))}</Text> : <></>}
                     <View className="flex-row gap-2 items-center flex-wrap">
                         {item.tags?.slice(0, 3)?.map((tag, i) => <Text key={i} className="text-sm text-info bg-info/10 px-1 rounded">{tag}</Text>)}
                         {shouldShowEllipsis && <Text className="text-sm text-subtext">...</Text>}

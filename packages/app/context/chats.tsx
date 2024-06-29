@@ -2,7 +2,7 @@ import { createItem, createNotifications, readItem, readItems } from "@directus/
 import { useQueryClient } from "@tanstack/react-query";
 import { ChatMessage, withId, withUri } from "app/components/chat-ui";
 import { directusWSUrl, messagesFolderId } from "app/lib/constants";
-import { fileUpload } from "app/lib/file-upload";
+import { uploadFileToDirectus } from "app/lib/file-upload";
 import { File, Message, Room, User } from "app/lib/types";
 import directusStore, { MyDirectusClient } from "app/store/directus";
 import { queryClient } from "app/store/query";
@@ -109,7 +109,6 @@ export const ChatsProvider = ({ children, rest, token }: { children: ReactNode, 
                 setMessages(messages => [...data.map(message => transformMessage(message, true)), ...messages])
             }
         })
-        console.log("here")
         const _ws = initializeWebSocket()
         setWs(_ws)
         return () => {
@@ -123,7 +122,7 @@ export const ChatsProvider = ({ children, rest, token }: { children: ReactNode, 
         async function sendMessages() {
             const unsentMessages = messages.filter(m => !m.sent) as ChatMessage<withUri>[]
             unsentMessages.forEach(async message => {
-                const fileIds = await Promise.all(message.assets?.map(asset => fileUpload(asset, messagesFolderId)) ?? [])
+                const fileIds = await Promise.all(message.assets?.map(asset => uploadFileToDirectus(asset, messagesFolderId)) ?? [])
                 const payload = {
                     id: message.id,
                     content: message.content,
