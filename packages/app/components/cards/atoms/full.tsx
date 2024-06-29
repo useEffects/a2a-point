@@ -6,7 +6,7 @@ import { useColorScheme } from 'app/hooks/color-scheme';
 import { useListingMetrics } from "app/hooks/listing-metrics";
 import { directusUrl } from "app/lib/constants";
 import { buildAssetUrl, groupByN, shortString } from "app/lib/helpers";
-import { FullListingDetailedProps } from "app/lib/props";
+import { DetailedAmenity, FullListingDetailedProps } from "app/lib/props";
 import { RenderAmenity } from 'app/screens/post';
 import directusStore from 'app/store/directus';
 import userStore from "app/store/user";
@@ -121,15 +121,8 @@ export const FullListingCard = (props: FullListingDetailedProps) => {
                     />
                 ) : <></>}
             </View>
-            <Separator />
-            {props.amenities && props.amenities.length ? <View className="flex-col gap-4 px-4 -mt-4">
-                <Text className="text-lg font-medium">Amenities</Text>
-                {groupByN(props.amenities).map((_amenities, i) => <View key={i} className="flex-row gap-4 w-full">
-                    {_amenities.map((amenity, j) => <View className="flex-1" key={j}>
-                        <RenderAmenity {...amenity} />
-                    </View>)}
-                </View>)}
-            </View> : <></>}
+            {props.amenities && props.amenities.length ? <Separator /> : <></>}
+            {props.amenities && props.amenities.length ? <RenderAmenities amenities={props.amenities} /> : <></>}
             <Separator className='' />
             <View className='p-4'>
                 <MediumUsersCard {...props.user_created} />
@@ -150,5 +143,15 @@ export const FullListingCard = (props: FullListingDetailedProps) => {
                 </Button >
             </View> : <></>}
         </ScrollView>
+    </View>
+}
+
+export const RenderAmenities = ({ amenities }: { amenities: DetailedAmenity[] }) => {
+    return <View className="">
+        {groupByN(amenities).map((_amenities, i) => <View key={i} className="flex-row gap-4 w-full">
+            {_amenities.map((amenity, j) => <View className="flex-1" key={j}>
+                <RenderAmenity {...amenity} />
+            </View>)}
+        </View>)}
     </View>
 }

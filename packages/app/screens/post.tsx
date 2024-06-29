@@ -1,4 +1,5 @@
 import { createItem } from "@directus/sdk";
+import { RenderAmenities } from "app/components/cards/atoms/full";
 import { Asset, withId, withUri } from "app/components/chat-ui";
 import { AutoCompleteRenderItemProps, FormAutoSelect, FormInput, FormSelect, RenderRoomTileProps } from "app/components/formComponents";
 import { FullWidthImage } from "app/components/full-width-image";
@@ -217,10 +218,44 @@ function Form2({ formValues, setFormValues, setNavigationState }: { formValues: 
                     error={error}
                 />
                 {tags.length ? <View className="flex-row flex-wrap gap-1">
-                    {tags.map((tag, index) => <Button className="self-start bg-secondary" variant={"base"} size={"none"} onPress={() => setTags(tags.filter((t, i) => i !== index))} key={index}>
-                        <Text className="text-secondary-background text-xs rounded p-1">{tag}</Text>
+                    {tags.map((tag, index) => <Button disabled={!Boolean(currentTag) || Boolean(error)} className="self-start bg-secondary" variant={"base"} size={"none"} onPress={() => setTags(tags.filter((t, i) => i !== index))} key={index}>
+                        <Text className="text-secondary-foreground text-xs rounded p-1">{tag}</Text>
                     </Button>)}
                 </View> : <></>}
+            </View>
+        }
+
+        const AmenitiesInput = ({ detailedAmenities, setDetailedAmenities }: { detailedAmenities: DetailedAmenity[], setDetailedAmenities: (newDetailedAmenities: DetailedAmenity[]) => void }) => {
+            const [currentAmenity, setCurrentAmenity] = useState<Amenity | null>(null)
+            const [currentAdditionalDetail, setCurrentAdditionalDetail] = useState("")
+
+            return <View className="flex-col gap-8">
+                <RenderAmenities amenities={detailedAmenities} />
+                <View className="flex-col gap-4">
+                    <FormAutoSelect
+                        currentItem={currentAmenity}
+                        setCurrentItem={(item) => setCurrentAmenity(item as Amenity)}
+                        item="amenities_base"
+                        label="Amenity"
+                        className="flex-1"
+                    />
+                    <FormInput
+                        label="Additional Detail"
+                        value={currentAdditionalDetail}
+                        onChangeText={setCurrentAdditionalDetail}
+                        className="flex-1"
+                        rightComponent={() => <Button disabled={!Boolean(currentAmenity)} onPress={() => {
+                            setDetailedAmenities([...detailedAmenities, {
+                                amenity: currentAmenity!,
+                                additional_detail: currentAdditionalDetail
+                            }])
+                            setCurrentAdditionalDetail("")
+                            setCurrentAmenity(null)
+                        }} variant={"secondary"} size={"icon"} className="rounded-full">
+                            <Plus className="text-secondary-foreground" />
+                        </Button>}
+                    />
+                </View>
             </View>
         }
 
@@ -256,8 +291,9 @@ function Form2({ formValues, setFormValues, setNavigationState }: { formValues: 
                     <SeparatorText wrapperClassName="my-8">
                         <Text className="text-subtext text-sm">Amenities (optional)</Text>
                     </SeparatorText>
+                    <AmenitiesInput detailedAmenities={props.values.amenities} setDetailedAmenities={(newDetailedAmenities: DetailedAmenity[]) => props.setFieldValue("amenities", newDetailedAmenities)} />
                 </View>
-                <View className="mt-8 mb-0">
+                <View className="mt-auto mb-0 pt-8">
                     <Separator className="my-4" />
                     <View className="flex-row gap-4">
                         <Button className="flex-1" onPress={() => setNavigationState(p => ({ ...p, index: p.index - 1 }))}>
@@ -414,7 +450,7 @@ export default function PostScreenComponent() {
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const [navigationState, setNavigationState] = useState<NavigationState<Route>>({
-        index: 0,
+        index: 1,
         routes: [
             { key: "form1" },
             { key: "form2" },
@@ -441,7 +477,7 @@ export default function PostScreenComponent() {
             title: form1Values.title,
             expected_broker_fees: form1Values.expectedBrokerFees!,
             size: form1Values.size!,
-            location: form1Values.location?.id!,
+            location: form1Values.location?.id! as string | undefined,
             budget: form1Values.budget!,
             description: form1Values.description,
 
@@ -544,7 +580,7 @@ type Form1Values = {
 
 type Form2Values = {
     tags: string[];
-    amenities: { amenity: Omit<Amenity, "id">, additional_detail: string }[];
+    amenities: DetailedAmenity[];
     bathrooms?: number;
     bedrooms?: number;
     parking?: number;

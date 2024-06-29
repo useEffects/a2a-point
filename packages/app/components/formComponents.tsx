@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useColorScheme } from "app/hooks/color-scheme";
 import { directusUrl } from "app/lib/constants";
 import { buildAssetUrl } from "app/lib/helpers";
-import { Company, Listing, Room, User } from "app/lib/types";
+import { Amenity, Company, Listing, Room, User } from "app/lib/types";
 import { cn } from "app/lib/utils";
 import directusStore from "app/store/directus";
 import { ReactNode, useMemo, useState } from "react";
@@ -19,6 +19,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Separator } from "./ui/separator";
 import { Text } from "./ui/text";
 import { UserChip } from "./user-chip";
+import { MaterialSymbolIcon } from "./material-symbol-icon";
 
 type AdditionalFormInputProps = {
     error?: string,
@@ -93,9 +94,10 @@ export const FormSelect = (props: SelectRootProps & AdditionalFormSelectProps) =
     </View>
 }
 
-export type AutoCompleteRenderItemProps = RenderListingTileProps | RenderRoomTileProps | RenderUserTileProps | RenderCompanyTileProps
+export type AutoCompleteRenderItemProps = RenderListingTileProps | RenderRoomTileProps | RenderUserTileProps | RenderCompanyTileProps | Amenity
 
 export const autoCompleteFields = {
+    "amenities_base": ["id", "label", "icon"],
     "rooms": ["id", "title", "avatar"],
     "listings": ["id", "title", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name"],
     "users": ["id", "avatar", "first_name", "last_name"],
@@ -114,10 +116,16 @@ export const isRenderUserTile = (item: AutoCompleteRenderItemProps | undefined):
     return !!item && "first_name" in item && "last_name" in item
 }
 
+export const isAmenity = (item: AutoCompleteRenderItemProps | undefined): item is Amenity => {
+    return !!item && "label" in item && "icon" in item
+}
+
 export const getTitle = (item: AutoCompleteRenderItemProps | null) => {
     if (!item) return ""
     if (isRenderUserTile(item)) {
         return `${item.first_name} ${item.last_name}`
+    } else if (isAmenity(item)) {
+        return item.label
     } else {
         return item.title!
     }
@@ -189,16 +197,19 @@ export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps 
 
     const RenderItem = (item: AutoCompleteRenderItemProps) => {
         if (isRenderUserTile(item)) {
-            return <RenderUserTile {...item} currentId={props.currentItem?.id} />
+            return <RenderUserTile {...item} currentId={props.currentItem?.id as string | undefined} />
         }
         if (isRenderCompanyTile(item)) {
-            return <RenderCompanyTile {...item} currentId={props.currentItem?.id} />
+            return <RenderCompanyTile {...item} currentId={props.currentItem?.id as string | undefined} />
         }
         if (isRenderRoomTile(item)) {
-            return <RenderRoomTile {...item} currentId={props.currentItem?.id} />
+            return <RenderRoomTile {...item} currentId={props.currentItem?.id as string | undefined} />
         }
         if (isRenderListingTile(item)) {
-            return <RenderListingTile {...item} currentId={props.currentItem?.id} />
+            return <RenderListingTile {...item} currentId={props.currentItem?.id as string | undefined} />
+        }
+        if (isAmenity(item)) {
+            return <RenderAmenityTile {...item} currentId={props.currentItem?.id as number | undefined} />
         }
     }
 
@@ -219,7 +230,7 @@ export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps 
                     {data.map((item, index) => <View key={index}>
                         <Button className="flex-row justify-start" variant={"base"} size={"none"} onPress={() => {
                             props.setCurrentItem(item)
-                            setSearchText(isRenderUserTile(item) ? `${item.first_name} ${item.last_name}` : item.title!)
+                            setSearchText(getTitle(item))
                             setShowResults(false)
                         }}>
                             <RenderItem {...item} />
@@ -262,5 +273,14 @@ const RenderCompanyTile = (props: RenderCompanyTileProps & { currentId: string |
     return <View className={cn("flex-row p-2 rounded gap-4 items-center", props.currentId === props.id && "bg-popover flex-1 w-full")}>
         <Image source={{ uri: buildAssetUrl(props.avatar) }} className="w-6 h-6 rounded-full" />
         <Text className="font-normal text-sm">{props.title}</Text>
+    </View>
+}
+
+const RenderAmenityTile = (props: Amenity & { currentId: number | undefined }) => {
+    const { colors } = useColorScheme()
+
+    return <View className={cn("flex-row p-2 rounded gap-4 items-center", props.currentId === props.id && "bg-popover flex-1 w-full")}>
+        <MaterialSymbolIcon name={props.icon} fill={colors.foreground} width={24} height={24} />
+        <Text className="font-normal text-sm">{props.label}</Text>
     </View>
 }
