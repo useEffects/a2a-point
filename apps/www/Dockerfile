@@ -30,6 +30,7 @@ WORKDIR /app
 COPY . .
 
 WORKDIR /app/apps/www
+RUN yarn install
 RUN yarn build
 # RUN yarn start
 CMD ["yarn", "start"]
