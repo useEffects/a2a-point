@@ -15,17 +15,17 @@ type DirectusStore = {
     logout: () => Promise<void>,
 }
 
-export const token = "mtEQL7OqngCVDsN2-ncCnKgVccJ_ZI_R"
+export const publicToken = process.env.NODE_ENV === "production" ? process.env.DIRECTUS_SYSTEM_TOKEN! : "mtEQL7OqngCVDsN2-ncCnKgVccJ_ZI_R"
 const initialClient = createDirectus(directusUrl)
     .with(rest())
     .with(authentication())
-    .with(staticToken(token))
+    .with(staticToken(publicToken))
 
 const directusStore = create<DirectusStore>((set, get) => ({
     authenticated: false,
-    token: token,
+    token: publicToken,
     refreshToken: "",
-    rest: createDirectus(directusUrl).with(rest()).with(staticToken(token)) as MyDirectusClient,
+    rest: createDirectus(directusUrl).with(rest()).with(staticToken(publicToken)) as MyDirectusClient,
     initialize: async (accessToken: string, refreshToken: string) => {
         const resetDirectus = async () => {
             set({ ...reset })
@@ -152,7 +152,7 @@ export const reqNewTokens = async (refreshToken: string) => {
 
 const reset = {
     authenticated: false,
-    token: token,
+    token: publicToken,
     refreshToken: "",
     rest: initialClient as MyDirectusClient,
 }

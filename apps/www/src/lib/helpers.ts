@@ -1,5 +1,5 @@
 import { directusUrl } from "app/lib/constants"
-import { token } from "app/store/directus"
+import { publicToken } from "app/store/directus"
 
 export const fetchAllData = async <R>(collection: string, filter: Record<string, any> = {}, fields: string[] = []) => {
     const promises: Promise<R[]>[] = []
@@ -9,16 +9,18 @@ export const fetchAllData = async <R>(collection: string, filter: Record<string,
 
     const totalItems = await fetch(`${directusUrl}/${finalCollection}/?aggregate[count]=*&fields=`, {
         headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${publicToken}`
         }
-    }).then(res => res.json()).then(res => res.data[0].count)
+    }).then(res => res.json()).then(res => {
+        return res.data[0]
+    })
 
     const totalPages = Math.ceil(totalItems / 100)
 
     for (let i = 1; i <= totalPages; i++) {
         const res = fetch(`${directusUrl}/${finalCollection}/?filter=${JSON.stringify(filter)}&fields=${fields.join(",")}&page=${i}`, {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${publicToken}`
             }
         })
             .then(res => res.json())

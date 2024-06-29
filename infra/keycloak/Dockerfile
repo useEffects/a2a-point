@@ -49,6 +49,5 @@ ENV KC_METRICS_ENABLED=true
 WORKDIR /opt/keycloak
 RUN /opt/keycloak/bin/kc.sh build
 COPY --from=builder /app/apps/keywind/out/keywind.jar /opt/keycloak/providers/
-COPY scripts/docker-scripts/keycloak-init.sh /usr/local/bin/
 
 CMD [ "start" ]

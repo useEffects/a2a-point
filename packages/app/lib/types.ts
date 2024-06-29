@@ -98,7 +98,7 @@ export type User = {
     status: string;
     role: string;
     token: string;
-    last_access: string | null;
+    last_access: string;
     last_page: string;
     provider: string;
     external_identifier: string;

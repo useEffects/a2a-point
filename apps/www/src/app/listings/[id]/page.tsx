@@ -23,6 +23,6 @@ export default async function ({ params }: { params: { id: string } }) {
     return <ListingDetailedScreen listing={listing} />
 }
 
-export async function generateStaticParams() {
-    return fetchAllData<{ id: string }>("listings", {}, ["id"])
-}
+// export async function generateStaticParams() {
+//     return fetchAllData<{ id: string }>("listings", {}, ["id"])
+// }

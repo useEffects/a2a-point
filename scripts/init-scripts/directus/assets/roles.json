@@ -1,0 +1,68 @@
+
+{
+
+    "data": [
+          {
+                "id": "06f58342-253b-4eb0-9671-75070b9cb1b7",
+                "name": "Administrator",
+                "icon": "verified",
+                "description": "$t:admin_description",
+                "ip_access": null,
+                "enforce_tfa": false,
+                "admin_access": true,
+                "app_access": true,
+                "users": [
+                      "6edfd603-267b-4a92-a5d6-2c73fe7a3234"
+                ]
+          },
+          {
+                "id": "32a760bb-3a33-44c4-a5cb-affe376399d3",
+                "name": "resource update manager",
+                "icon": "supervised_user_circle",
+                "description": null,
+                "ip_access": null,
+                "enforce_tfa": false,
+                "admin_access": false,
+                "app_access": true,
+                "users": [
+                      "0c0f475e-ac7d-4cee-b984-f500f70e674e"
+                ]
+          },
+          {
+                "id": "a2ca2001-588f-4ddf-9f03-6bb64fc5a29f",
+                "name": "system",
+                "icon": "supervised_user_circle",
+                "description": null,
+                "ip_access": null,
+                "enforce_tfa": false,
+                "admin_access": false,
+                "app_access": true,
+                "users": [
+                      "067d1b6f-a09a-4eaf-934c-73e7fc9f9058"
+                ]
+          },
+          {
+                "id": "d880f42a-09e6-401c-8bee-7be133b0d2fe",
+                "name": "Member",
+                "icon": "supervised_user_circle",
+                "description": null,
+                "ip_access": null,
+                "enforce_tfa": false,
+                "admin_access": false,
+                "app_access": true,
+                "users": [
+                      "05d0fbf6-6313-4fbf-8f31-4bafe3229ba0",
+                      "09ee6474-7a0a-45d1-bd7f-c5c3753ff28b",
+                      "2620df4e-183d-41fb-a0c3-a6e197911c0a",
+                      "51068d17-4889-4e87-b560-701169b6f1ca",
+                      "673a9aac-7a3a-48ab-96b2-d6f296fcc130",
+                      "82144678-e47d-4fe3-b0b3-78f70d397eef",
+                      "ccdce1fc-00a1-4515-9acb-bb06179ac213",
+                      "d7177e05-457e-4136-9b3b-8b004c779168",
+                      "df1eef47-1f84-4985-8c71-f1ed3684a210",
+                      "f2b74266-161f-4710-ac9b-2a05207f616c"
+                ]
+          }
+    ]
+
+}

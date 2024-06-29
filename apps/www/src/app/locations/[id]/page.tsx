@@ -3,6 +3,7 @@
 import { fetchAllData } from "@/lib/helpers"
 import { LocationDetailedScreen } from "@/screens/location"
 import { readItem } from "@directus/sdk"
+import { getMembersCountForLocation } from "app/lib/misc/get-counts"
 import { LocationListingProps } from "app/screens/location-detailed"
 import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"
@@ -19,16 +20,19 @@ export default async function ({ params }: { params: { id: string } }) {
             fields: ["id", "title", "avatar", "members.directus_users_id.id", "members.directus_users_id.avatar"]
         })) as Promise<LocationListingProps>
     })
+
+    const totalMembersForLocation = await getMembersCountForLocation(id)
+
     return data ? <div className="flex flex-col gap-4 py-4">
         <p className="text-xl font-bold px-4">{data.title}</p>
-        <LocationDetailedScreen room={data} />
+        <LocationDetailedScreen room={data} totalMembers={totalMembersForLocation} />
     </div> : <></>
 }
 
-export async function generateStaticParams() {
-    return fetchAllData<{ id: string }>("rooms", {
-        type: {
-            _eq: "group"
-        }
-    }, ["id"])
-}
+// export async function generateStaticParams() {
+//     return fetchAllData<{ id: string }>("rooms", {
+//         type: {
+//             _eq: "group"
+//         }
+//     }, ["id"])
+// }

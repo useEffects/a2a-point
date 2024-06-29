@@ -12,7 +12,7 @@ export default async function () {
         queryKey: ["testimonials"],
         queryFn: async () => await rest.request(readItems("portfolio", {
             fields: ["featured_testimonials.feedbacks_id.*", "featured_testimonials.feedbacks_id.user_created.avatar", "featured_testimonials.feedbacks_id.user_created.first_name", "featured_testimonials.feedbacks_id.user_created.last_name", "featured_testimonials.feedbacks_id.user_created.title"],
-        })).then(data => (data as unknown as { featured_testimonials: { feedbacks_id: Testimonial }[] }).featured_testimonials.map(({ feedbacks_id }) => feedbacks_id))
-    })
+        })).then(data => (data as unknown as { featured_testimonials: { feedbacks_id: Testimonial }[] }).featured_testimonials?.map(({ feedbacks_id }) => feedbacks_id))
+    }) ?? []
     return <Home testimonials={testimonials} />
 }

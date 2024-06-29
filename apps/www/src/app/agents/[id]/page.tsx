@@ -2,7 +2,7 @@
 
 import { ProfileScreen } from "@/screens/profile"
 import { Company, User, Document } from "app/lib/types"
-import { directusUrl } from "app/lib/constants"
+import { directusUrl, memberRole } from "app/lib/constants"
 import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"
 import { fetchAllData } from "@/lib/helpers"
@@ -27,6 +27,10 @@ export default async function ({ params }: { params: { id: string } }) {
     return <ProfileScreen user={data} company={data.company} document={data.document} />
 }
 
-export async function generateStaticParams() {
-    return fetchAllData<{ id: string }>("users", {}, ["id"])
-}
+// export async function generateStaticParams() {
+//     return fetchAllData<{ id: string }>("users", {
+//         role: {
+//             _eq: memberRole
+//         }
+//     }, ["id"])
+// }

@@ -1,14 +1,19 @@
 import Stripe from "stripe";
 
-export const directusUrl = "https://dev.dashboard.a2apoint.com";
-export const directusWSUrl = "wss://dev.dashboard.a2apoint.com/websocket";
-export const portfolioUrl = "https://dev.a2apoint.com"
+export const directusOrigin = process.env.NODE_ENV === "production" ? "dashboard.a2apoint" : "dev.dashboard.a2apoint"
+export const portfolioOrigin = process.env.NODE_ENV === "production" ? "a2apoint" : "dev.a2apoint"
+
+export const directusUrl = `https://${directusOrigin}.com`;
+export const directusWSUrl = `wss://${directusOrigin}.com/websocket`;
+export const portfolioUrl = `https://${portfolioOrigin}.com`
 export const appName = "a2apoint"
 export const messagesFolderId = "4006910f-be8d-43b0-acff-7fe83ed90b43"
 export const documentsFolderId = "2e080305-7ca1-4652-8903-d3deab11f5b1"
 export const listingsFolderId = "3c995bad-8d9b-4330-a38a-3bad6412a853"
 export const savedByMeUrl = `${directusUrl}/admin/content/listings?bookmark=6`
 export const viewedByMeUrl = `${directusUrl}/admin/content/listings?bookmark=7`
+
+export const memberRole = "d880f42a-09e6-401c-8bee-7be133b0d2fe"
 
 export const basicPlanStripeCodes = {
     monthly: "price_1POIoQCXSPTRj2Wj7dkgRn4d",

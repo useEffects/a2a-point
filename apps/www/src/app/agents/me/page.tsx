@@ -1,4 +1,4 @@
-/** @jsxImportSource react */
+"use client"
 
 import { ProfileScreen } from "app/screens/profile";
 import userStore from "app/store/user";
