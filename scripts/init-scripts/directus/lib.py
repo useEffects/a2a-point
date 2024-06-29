@@ -4,9 +4,9 @@ import json
 import secrets
 import string
 
-directus_url = os.environ.get("DIRECTUS_URL")
-email = os.environ.get("DIRECTUS_ADMIN_EMAIL")
-password = os.environ.get("DIRECTUS_ADMIN_PASSWORD")
+directus_url = "https://dashboard.a2apoint.com"
+email = "admin@a2apoint.com"
+password = "admin"
 
 
 def get_access_token():

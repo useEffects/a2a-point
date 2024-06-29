@@ -3,6 +3,35 @@ import json
 import lib
 import os
 
+
+def post_users(role):
+    access_token = lib.get_access_token()
+    with open("assets/users.json") as f:
+        users = json.loads(f.read())["data"]
+        user = [user for user in users if user["role"] == role["id"]][0]
+        print(user)
+        res = requests.get(
+            f"{lib.directus_url}/users/{user['id']}",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+        if res.status_code != 200:
+            res = requests.post(
+                f"{lib.directus_url}/users",
+                json=user,
+                headers={"Authorization": f"Bearer {access_token}"},
+            )
+        token = lib.generate_token()
+        res = requests.patch(
+            f"{lib.directus_url}/users/{user['id']}",
+            json={"token": token},
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+        with open(".env", "a") as f:
+            f.write(
+                f"\nDIRECTUS_{role['name'].upper().replace(' ', '_')}_TOKEN={token}"
+            )
+
+
 def post_roles():
     access_token = lib.get_access_token()
     with open("assets/roles.json", "r") as f:
@@ -21,33 +50,20 @@ def post_roles():
             role["name"] == existing_role["name"] for existing_role in existing_roles
         ):
             if role["name"] not in ["Administrator", "Member"]:
-                with open("assets/users.json") as f:
-                    users = json.loads(f.read())["data"]
-                    user = [user for user in users if user["role"] == role["id"]][0]
-                    res = requests.post(  ## would fail if user already exists and thats ok
-                        f"{lib.directus_url}/users",
-                        json=user,
-                        headers={"Authorization": f"Bearer {access_token}"},
-                    )
-                    token = lib.generate_token()
-                    res = requests.patch(
-                        f"{lib.directus_url}/users/{user['id']}",
-                        json={"token": token},
-                        headers={"Authorization": f"Bearer {access_token}"},
-                    )
-                    with open(".env", "a") as f:
-                        f.write(
-                            f"\nDIRECTUS_{role['name'].upper().replace(' ', '_')}_TOKEN={token}"
-                        )
+                post_users(role)
 
         else:
-            res = requests.post(
-                f"{lib.directus_url}/roles",
-                json=role,
+            res = requests.get(
+                f"{lib.directus_url}/roles/{role['id']}",
                 headers={"Authorization": f"Bearer {access_token}"},
             )
-            print(res)
-            print(role["name"])
+            if res.status_code != 200:
+                res = requests.post(
+                    f"{lib.directus_url}/roles",
+                    json=role,
+                    headers={"Authorization": f"Bearer {access_token}"},
+                )
+            post_users(role)
 
 
 post_roles()
