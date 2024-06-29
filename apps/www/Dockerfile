@@ -30,6 +30,6 @@ WORKDIR /app
 COPY . .
 
 WORKDIR /app/apps/www
-# RUN yarn build
+RUN yarn build
 # RUN yarn start
-CMD ["yarn", "dev"]
+CMD ["yarn", "start"]
