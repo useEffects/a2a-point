@@ -7,7 +7,7 @@ import { useListingMetrics } from "app/hooks/listing-metrics";
 import { directusUrl } from "app/lib/constants";
 import { buildAssetUrl, groupByN, shortString } from "app/lib/helpers";
 import { DetailedAmenity, FullListingDetailedProps } from "app/lib/props";
-import { RenderAmenity } from 'app/screens/post';
+import { RenderAmenities, RenderAmenity } from 'app/screens/post';
 import directusStore from 'app/store/directus';
 import userStore from "app/store/user";
 import opacity from 'hex-color-opacity';
@@ -143,15 +143,5 @@ export const FullListingCard = (props: FullListingDetailedProps) => {
                 </Button >
             </View> : <></>}
         </ScrollView>
-    </View>
-}
-
-export const RenderAmenities = ({ amenities }: { amenities: DetailedAmenity[] }) => {
-    return <View className="">
-        {groupByN(amenities).map((_amenities, i) => <View key={i} className="flex-row gap-4 w-full">
-            {_amenities.map((amenity, j) => <View className="flex-1" key={j}>
-                <RenderAmenity {...amenity} />
-            </View>)}
-        </View>)}
     </View>
 }

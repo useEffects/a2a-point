@@ -1,5 +1,4 @@
 import { createItem } from "@directus/sdk";
-import { RenderAmenities } from "app/components/cards/atoms/full";
 import { Asset, withId, withUri } from "app/components/chat-ui";
 import { AutoCompleteRenderItemProps, FormAutoSelect, FormInput, FormSelect, RenderRoomTileProps } from "app/components/formComponents";
 import { FullWidthImage } from "app/components/full-width-image";
@@ -643,4 +642,14 @@ const RenderDealTypeSpecificComponent = ({ deal_type, covered_by_seller, furnish
         default:
             return <></>
     }
+}
+
+export const RenderAmenities = ({ amenities }: { amenities: DetailedAmenity[] }) => {
+    return <View className="">
+        {groupByN(amenities).map((_amenities, i) => <View key={i} className="flex-row gap-4 w-full">
+            {_amenities.map((amenity, j) => <View className="flex-1" key={j}>
+                <RenderAmenity {...amenity} />
+            </View>)}
+        </View>)}
+    </View>
 }

@@ -15,7 +15,8 @@ type DirectusStore = {
     logout: () => Promise<void>,
 }
 
-export const publicToken = process.env.NODE_ENV === "production" ? process.env.DIRECTUS_SYSTEM_TOKEN! : "mtEQL7OqngCVDsN2-ncCnKgVccJ_ZI_R"
+export const publicToken = process.env.NODE_ENV === "production" ? "Mnh7gFAmU4QeNRt_TQhTBrDDBxFdjPNu" : "mtEQL7OqngCVDsN2-ncCnKgVccJ_ZI_R"
+
 const initialClient = createDirectus(directusUrl)
     .with(rest())
     .with(authentication())

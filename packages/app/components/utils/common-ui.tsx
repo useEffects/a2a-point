@@ -8,6 +8,9 @@ import { Separator } from "../ui/separator"
 import { cn } from "app/lib/utils"
 import useRouting from "app/hooks/use-routing"
 import { set } from "lodash"
+import { DetailedAmenity } from "app/lib/props"
+import { groupByN } from "app/lib/helpers"
+import { RenderAmenity } from "app/screens/post"
 
 export const ViewAllButton = ({ button, horizontal }: { button: ComponentType<ButtonProps>, horizontal: boolean }) => {
     const Component = button

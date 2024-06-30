@@ -9,7 +9,7 @@ import * as ImagePicker from "expo-image-picker"
 import TimeAgo from 'javascript-time-ago';
 import en from "javascript-time-ago/locale/en";
 import { Alert, Linking, Platform } from "react-native";
-import { ProductType, appName, directusUrl, products } from "./constants";
+import { ProductType, appName, directusUrl, portfolioUrl, products } from "./constants";
 import { Document } from "./types";
 
 TimeAgo.addLocale(en)
@@ -18,7 +18,7 @@ export const timeAgo = new TimeAgo('ar-AE')
 
 export const buildAssetUrl = (id: string | null) => {
   if (!id) {
-    return "https://dev.a2apoint.com/no-image-available.png"
+    return `${portfolioUrl}/no-image-available.png`
   }
   const { token } = directusStore.getState()
   return `${directusUrl}/assets/${id}?access_token=${token}`;
