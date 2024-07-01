@@ -304,7 +304,7 @@ const ComboBoxFilters = ({ filters, setFilters }: { filters: Filter[], setFilter
             item='rooms'
             label='Location'
             currentItem={location}
-            setCurrentItem={(item) => item && setFilters([...filters, { key: FilterKeys.Location, value: item.id }])}
+            setCurrentItem={(item) => item && setFilters([...filters, { key: FilterKeys.Location, value: item.id as string }])}
             filter={{
                 type: {
                     _eq: "group"
@@ -315,13 +315,13 @@ const ComboBoxFilters = ({ filters, setFilters }: { filters: Filter[], setFilter
             item='users'
             label="Agent"
             currentItem={agent}
-            setCurrentItem={(item) => item && setFilters([...filters, { key: FilterKeys.Agent, value: item.id }])}
+            setCurrentItem={(item) => item && setFilters([...filters, { key: FilterKeys.Agent, value: item.id as string }])}
         />
         <FormAutoSelect
             item='companies'
             label='Company'
             currentItem={company}
-            setCurrentItem={(item) => item && setFilters([...filters, { key: FilterKeys.Company, value: item.id }])}
+            setCurrentItem={(item) => item && setFilters([...filters, { key: FilterKeys.Company, value: item.id as string }])}
         />
     </View>
 }

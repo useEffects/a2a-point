@@ -57,7 +57,6 @@ function Form1({ initialValues = form1InitialValues }: { initialValues?: Form1Va
     })
 
     const onSubmit = (values: Form1Values) => {
-        console.log(values, "here1")
     }
     const dealTypeOptions = Object.entries(dealTypeLabels).map(([value, label]) => ({ value, label }))
     const typeOptions = Object.entries(typeLabels).map(([value, label]) => ({ value, label }))
@@ -136,7 +135,6 @@ function Form2({ className, initialValues = form2InitialValues }: { initialValue
         garage: Yup.number(),
     })
     const onSubmit = (values: Form2Values) => {
-        console.log(values, "here2")
     }
     const Form = (props: FormikProps<Form2Values>) => {
         return <ScrollView contentContainerClassName="flex-grow">
@@ -192,7 +190,6 @@ function Form3({ initialValues = { featured: false } }: { initialValues?: { feat
         featured: boolean
     }
     const onSubmit = (values: Form3Values) => {
-        console.log(values, "here3")
     }
 
     const Form = (props: FormikProps<Form3Values>) => {

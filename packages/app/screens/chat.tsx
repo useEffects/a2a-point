@@ -20,9 +20,7 @@ import { useDebounce } from "use-debounce";
 import { uniqBy } from "lodash";
 import { NavigationState, Route, SceneMap, TabView } from "react-native-tab-view";
 import ChatSVG from "app/components/svg/chat";
-import LockedScreen, { GoToLoginButton, GoToLoginComponent } from "./locked-screens";
-import { cn } from "app/lib/utils";
-import { useColorScheme } from "app/hooks/color-scheme";
+import LockedScreen from "./locked-screens";
 
 const ChatLocked = () => {
     return <LockedScreen
@@ -39,6 +37,7 @@ export default function ChatScreen() {
     const [debouncedSearchText] = useDebounce(searchText, 500)
     const { roomsSubscribed, messages } = useChats()
     const { authenticated } = directusStore()
+    const { user } = userStore()
 
     const filteredRoomsSubscribed = useMemo(() => {
         return roomsSubscribed.sort((a, b) => {
@@ -56,7 +55,7 @@ export default function ChatScreen() {
 
     const { data: contacts } = useQuery({
         queryKey: ["Fetch Contacts", debouncedSearchText],
-        queryFn: async () => await fetch(`${directusUrl}/users/?fields=${["id", "first_name", "last_name", "avatar"].join(",")}&search=${encodeURIComponent(debouncedSearchText)}`, {
+        queryFn: async () => await fetch(`${directusUrl}/users/?fields=${["id", "first_name", "last_name", "avatar"].join(",")}&search=${encodeURIComponent(debouncedSearchText)}&filter=${JSON.stringify({ user: { _neq: user.id } })}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -174,6 +173,7 @@ const ChatListRow = (room: RoomSubscribed) => {
     const receiver = room.members.find(
         (member) => member.directus_users_id.id !== user?.id,
     );
+
     const [roomName, roomAvatar] = room.type === "group"
         ? [room.title, buildAssetUrl(room.avatar)]
         : [

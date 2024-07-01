@@ -16,9 +16,9 @@ export const PhotoListingCard = (item: PhotoListingProps) => {
     const imageHeight = (9 / 16) * imageWidth
     return <Pressable onPress={() => goToListingDetailed(item.id)} className="rounded-xl bg-card text-wrap">
         <Image source={{ uri: buildAssetUrl(photo) }} width={imageWidth} height={imageHeight} className="rounded-tl-xl rounded-tr-xl" />
-        <View className="bg-card flex-col gap-2 px-2 py-4 items-start" style={{ width: imageWidth - 8 }}>
+        <View className="bg-card flex-col gap-2 px-2 py-4 items-start w-full" style={{ width: imageWidth }}>
             <UserChip user={item.user_created} />
-            <Text className="text-wrap" style={{ width: imageWidth }}>{item.title}</Text>
+            <Text className="text-wrap">{item.title}</Text>
             <View className="flex-row gap-4 justify-between w-full">
                 <Text className="text-success">AED {item.budget.toLocaleString()}</Text>
                 <Text className="capitalize text-info">{item.deal_type}</Text>

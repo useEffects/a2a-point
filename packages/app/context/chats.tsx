@@ -247,7 +247,6 @@ async function _setRoomsSubscribed(setRoomsSubscribed: Dispatch<SetStateAction<R
                     fields: roomSubscribedFields
                 })),
             }) as RoomSubscribed
-            console.log({ room })
             setRoomsSubscribed(rooms => [room, ...rooms])
             queryClient.setQueryData(roomsSubscribedQueryKey, (rooms: RoomSubscribed[]) => [room, ...rooms])
             return room

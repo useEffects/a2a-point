@@ -18,7 +18,7 @@ export const timeAgo = new TimeAgo('ar-AE')
 
 export const buildAssetUrl = (id: string | null) => {
   if (!id) {
-    return `${portfolioUrl}/no-image-available.png`
+    return "https://a2apoint-misc.nyc3.digitaloceanspaces.com/app/no-image-available.png"
   }
   const { token } = directusStore.getState()
   return `${directusUrl}/assets/${id}?access_token=${token}`;

@@ -64,6 +64,6 @@ ENV DB_PASSWORD=${DB_PASSWORD}
 
 EXPOSE 8055
 
-RUN npx --yes directus bootstrap
-RUN npx --yes directus schema apply --yes ./schema/snapshot.yaml
+# RUN npx --yes directus bootstrap
+# RUN npx --yes directus schema apply --yes ./schema/snapshot.yaml
 ENTRYPOINT [ "sh", "-c", "npx --yes directus start" ]

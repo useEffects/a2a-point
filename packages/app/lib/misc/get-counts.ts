@@ -1,5 +1,6 @@
 import directusStore from "app/store/directus"
 import { aggregate } from "@directus/sdk"
+import { memberRole } from "../constants"
 
 export const getListingsCountForUser = async (userId: string) => {
     const { rest } = directusStore.getState()
@@ -110,6 +111,13 @@ export const getUsersCount = async () => {
     const usersCount = await rest.request(aggregate("directus_users", {
         aggregate: {
             count: ["*"]
+        },
+        query: {
+            filter: {
+                role: {
+                    _eq: memberRole
+                }
+            }
         }
     }))
     return usersCount?.[0]!.count as unknown as number
