@@ -55,7 +55,7 @@ export default function ChatScreen() {
 
     const { data: contacts } = useQuery({
         queryKey: ["Fetch Contacts", debouncedSearchText],
-        queryFn: async () => await fetch(`${directusUrl}/users/?fields=${["id", "first_name", "last_name", "avatar"].join(",")}&search=${encodeURIComponent(debouncedSearchText)}&filter=${JSON.stringify({ user: { _neq: user.id } })}`, {
+        queryFn: async () => await fetch(`${directusUrl}/users/?fields=${["id", "first_name", "last_name", "avatar"].join(",")}&search=${encodeURIComponent(debouncedSearchText)}&filter=${JSON.stringify({ id: { _neq: user.id } })}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

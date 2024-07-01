@@ -33,4 +33,7 @@ WORKDIR /app/apps/www
 RUN yarn install
 # RUN yarn build
 # RUN yarn start
+
+EXPOSE 3000
+
 CMD ["sh", "-c", "yarn build && yarn start"]

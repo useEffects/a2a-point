@@ -1,7 +1,7 @@
 import { DirectusClient, RestClient, logout, WebSocketClient, createDirectus, rest, staticToken, AuthenticationClient, authentication, refresh } from "@directus/sdk";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
-import { directusUrl } from "app/lib/constants";
+import { directusUrl, isDevBuild } from "app/lib/constants";
 import userStore from "./user";
 
 export type MyDirectusClient = DirectusClient<any> & RestClient<any> & AuthenticationClient<any> & WebSocketClient<any>
@@ -15,7 +15,7 @@ type DirectusStore = {
     logout: () => Promise<void>,
 }
 
-export const publicToken = true ? "Mnh7gFAmU4QeNRt_TQhTBrDDBxFdjPNu" : "mtEQL7OqngCVDsN2-ncCnKgVccJ_ZI_R"
+export const publicToken = isDevBuild ? "mtEQL7OqngCVDsN2-ncCnKgVccJ_ZI_R": "Mnh7gFAmU4QeNRt_TQhTBrDDBxFdjPNu"
 
 const initialClient = createDirectus(directusUrl)
     .with(rest())

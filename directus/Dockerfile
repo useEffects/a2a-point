@@ -1,69 +1,55 @@
-FROM node:18.20.3-bullseye
+FROM node:18-slim AS builder
 
-RUN apt-get update && \
-    apt-get install -y curl jq openssl python3 python3-pip wget && \
-    apt-get clean
-RUN pip3 install requests
+WORKDIR /app
+COPY package.json .
+RUN yarn install
 
-WORKDIR /directus
+RUN mkdir -p apps/keywind
+COPY apps/keywind/package.json /app/apps/keywind
+RUN yarn install
 
-# RUN yarn install
-# RUN yarn add sharp --ignore-engines --ignore-workspace-root-check
-COPY directus .
-RUN mv prod.env .env
+RUN mkdir -p packages/tailwind-theme
+COPY packages/tailwind-theme/package.json /app/packages/tailwind-theme
+RUN yarn install
 
-ARG PUBLIC_URL
-ARG ADMIN_EMAIL
-ARG ADMIN_PASSWORD
-ARG DB_CLIENT
-ARG DB_FILENAME
+COPY . .
+
+WORKDIR /app/apps/keywind
+RUN yarn build
+RUN yarn build:jar
+
+FROM keycloak/keycloak:25.0
+
 ARG DB_HOST
 ARG DB_PORT
-ARG DB_DATABASE
-ARG DB_USER
+ARG DB_USERNAME
 ARG DB_PASSWORD
-ARG KEY
-ARG SECRET
-ARG CLIENT_ID
-ARG CLIENT_SECRET
+ARG DB_DATABASE
+ARG KC_ADMIN_USERNAME
+ARG KC_ADMIN_PASSWORD
 
-ENV WEBSOCKETS_ENABLED=true
-ENV WEBSOCKETS_REST_AUTH="strict"
-# ENV LOG_LEVEL="warn"
-ENV CACHE_ENABLED=true
-ENV SESSION_COOKIE_NAME="directus_session_token"
-ENV SESSION_COOKIE_DOMAIN="a2apoint.com"
-ENV CORS_ENABLED=true
-ENV CORS_ORIGIN="https://a2apoint.com/api/auth-redirect,https://dev.a2apoint.com/api/auth-redirect"
-ENV EXTENSIONS_AUTO_RELOAD=true
-ENV EMAIL_FROM="info@a2apoint.com"
-ENV AUTH_PROVIDERS="keycloak"
-ENV AUTH_KEYCLOAK_DRIVER="openid"
-ENV AUTH_KEYCLOAK_MODE="session"
-ENV AUTH_KEYCLOAK_IDENTIFIER_KEY="email"
-ENV AUTH_KEYCLOAK_ALLOW_PUBLIC_REGISTRATION=true
-ENV AUTH_KEYCLOAK_CLIENT_ID=${CLIENT_ID}
-ENV AUTH_KEYCLOAK_CLIENT_SECRET=${CLIENT_SECRET}
-ENV AUTH_KEYCLOAK_DEFAULT_ROLE_ID=d880f42a-09e6-401c-8bee-7be133b0d2fe
-ENV AUTH_KEYCLOAK_ISSUER_URL=https://auth.a2apoint.com/realms/master/.well-known/openid-configuration
-ENV AUTH_KEYCLOAK_REDIRECT_ALLOW_LIST="https://a2apoint.com/api/auth-redirect,https://dev.a2apoint.com/api/auth-redirect"
-ENV DB_CLIENT=postgres
-ENV DB_SSL__REJECT_UNAUTHORIZED=false
+ENV KC_DB=postgres
+ENV KC_DB_URL_HOST=${DB_HOST}
+ENV KC_DB_URL_PORT=${DB_PORT}
+ENV KC_DB_URL_DATABASE=${DB_DATABASE}
+ENV KC_DB_USERNAME=${DB_USERNAME}
+ENV KC_DB_PASSWORD=${DB_PASSWORD}
+ENV KC_ADMIN_USERNAME=${KC_ADMIN_USERNAME}
+ENV KC_ADMIN_PASSWORD=${KC_ADMIN_PASSWORD}
 
-# added from args
-ENV PUBLIC_URL=${PUBLIC_URL}
-ENV ADMIN_EMAIL=${ADMIN_EMAIL}
-ENV ADMIN_PASSWORD=${ADMIN_PASSWORD}
-ENV SECRET=${SECRET}
-ENV DB_CLIENT=${DB_CLIENT}
-ENV DB_HOST=${DB_HOST}
-ENV DB_PORT=${DB_PORT}
-ENV DB_DATABASE=${DB_DATABASE}
-ENV DB_USER=${DB_USER}
-ENV DB_PASSWORD=${DB_PASSWORD}
+ENV KC_HOSTNAME_URL=https://auth.a2apoint.com
+ENV KC_PROXY_HEADERS=xforwarded
+ENV KC_HOSTNAME_STRICT=false
+ENV KC_HOSTNAME_STRICT_HTTPS=false
+ENV KC_HTTP_ENABLED=true
+ENV KC_HOSTNAME_DEBUG=true
+ENV KC_HEALTH_ENABLED=true
+ENV KC_METRICS_ENABLED=true
 
-EXPOSE 8055
+WORKDIR /opt/keycloak
+RUN /opt/keycloak/bin/kc.sh build
+COPY --from=builder /app/apps/keywind/out/keywind.jar /opt/keycloak/providers/
 
-# RUN npx --yes directus bootstrap
-# RUN npx --yes directus schema apply --yes ./schema/snapshot.yaml
-ENTRYPOINT [ "sh", "-c", "npx --yes directus start" ]
+EXPOSE 8080
+
+CMD [ "start" ]

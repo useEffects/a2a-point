@@ -1,7 +1,9 @@
 import Stripe from "stripe";
 
-export const directusOrigin = true ? "dashboard.a2apoint" : "dev.dashboard.a2apoint"
-export const portfolioOrigin = true ? "a2apoint" : "dev.a2apoint"
+export const isDevBuild = true
+
+export const directusOrigin = isDevBuild ? "dashboard.a2apoint" : "dev.dashboard.a2apoint"
+export const portfolioOrigin = isDevBuild ? "dev.a2apoint" : "a2apoint"
 
 export const directusUrl = `https://${directusOrigin}.com`;
 export const directusWSUrl = `wss://${directusOrigin}.com/websocket`;
