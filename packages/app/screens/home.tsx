@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { NewsCard } from "app/components/cards/atoms/news";
 import { PhotoListingProps } from "app/components/cards/atoms/photo";
 import { SmallListingCardProps } from "app/components/cards/atoms/small";
-import { SmallUsersCardProps } from "app/components/cards/atoms/users";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings";
 import { SmallLocationCards } from "app/components/cards/molecules/locations";
 import { RenderUsers, Mode as UsersRenderMode } from "app/components/cards/molecules/users";
@@ -26,6 +25,7 @@ import { Link } from "solito/link";
 import { FilterKeys, FilterParam } from "./listings";
 import useRouting from "app/hooks/use-routing";
 import { Header } from "app/components/header";
+import { SmallUsersCardProps } from "app/lib/props";
 
 export default function HomeScreen() {
     const { authenticated, token } = directusStore()

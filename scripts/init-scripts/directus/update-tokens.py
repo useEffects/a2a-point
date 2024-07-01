@@ -25,3 +25,4 @@ for user in users:
         json={"token": user["token"]},
         headers={"Authorization": f"Bearer {access_token}"},
     )
+    res.raise_for_status()

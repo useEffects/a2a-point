@@ -1,5 +1,4 @@
 import { auth, deleteItem, readItems } from "@directus/sdk";
-import ProfileSVG from "app/components/svg/profile";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
 import { UserChip } from "app/components/user-chip";
@@ -16,7 +15,7 @@ import { queryClient } from "app/store/query";
 import userStore from "app/store/user";
 import { ArrowUp, Bell, EllipsisVertical, Expand, Info, LogOut, MessageCircle, Rows2, Shrink, UserCog2 } from "app/components/icons";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { DimensionValue, Image, Linking, NativeScrollEvent, NativeSyntheticEvent, Platform, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import { DimensionValue, Dimensions, Image, Linking, NativeScrollEvent, NativeSyntheticEvent, Platform, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import Collapsible from 'react-native-collapsible';
 import StarRating, { StarIconProps } from "react-native-star-rating-widget";
 import { NavigationState, SceneMap, SceneRendererProps, TabView } from 'react-native-tab-view';
@@ -26,21 +25,30 @@ import { MediumListingCardProps } from "../components/cards/atoms/medium";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "../components/cards/molecules/listings";
 import { Button } from "../components/ui/button";
 import { FilterKeys } from "./listings";
-import LockedScreen from "./locked-screens";
+import LockedScreen, { GoToLoginButton, GoToLoginComponent } from "./locked-screens";
 import useRouting from "app/hooks/use-routing";
 import { RenderUserTileProps, useAutoCompleteItem } from "app/components/formComponents";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "app/components/ui/dropdown-menu";
-import { Header } from "app/components/header";
+import { Header, HeaderTitle } from "app/components/header";
+import ProfileSVG from "app/components/svg/profile";
+import { ToggleTheme } from "app/components/toggle-theme";
 
 const LockedProfileScreen = ({ userId }: { userId: string }) => {
-    const { user } = userStore()
+
     const userDetails = useAutoCompleteItem("users", userId) as (RenderUserTileProps | null)
+    const title = userDetails ? `${userDetails.first_name} ${userDetails.last_name}` : "Profile"
 
     return <LockedScreen
-        SVGComponent={<ProfileSVG width={300} height={300} />}
-        readMoreLink="https://a2apoint.com"
-        title="Showcase your profile on A2APoint, attract more clients and grow your business"
-        header={user.id !== userId ? `${userDetails?.first_name} ${userDetails?.last_name}` : "Profile"}
+        SVGComponent={ProfileSVG}
+        description="Showcase your expertise, recent transactions, and client testimonials to other agents. Build trust and credibility within the real estate community."
+        headerTitle={""}
+        title="Build your profile!"
+        header={() => <Header>
+            <View className="flex-row flex-grow items-center justify-between">
+                <HeaderTitle>{title}</HeaderTitle>
+                <ToggleTheme />
+            </View>
+        </Header>}
     />
 }
 

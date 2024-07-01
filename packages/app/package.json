@@ -4,10 +4,12 @@
   "main": "index.ts",
   "dependencies": {
     "@backpackapp-io/react-native-toast": "^0.10.0",
+    "@charmy.tech/react-native-stroke-text": "^1.2.2",
     "@directus/sdk": "16.0.2",
     "@expo-google-fonts/inter": "^0.2.3",
     "@expo/vector-icons": "^14.0.2",
     "@idiosync/horizontal-flatlist": "^1.0.18",
+    "@kdn0325/react-native-outlined-text": "^1.1.0",
     "@kevinsperrine/react-native-inviewport": "^1.1.4",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-dialog": "^1.1.1",

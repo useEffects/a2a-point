@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 
-export const directusOrigin = process.env.NODE_ENV === "production" ? "dashboard.a2apoint" : "dev.dashboard.a2apoint"
-export const portfolioOrigin = process.env.NODE_ENV === "production" ? "a2apoint" : "dev.a2apoint"
+export const directusOrigin = true ? "dashboard.a2apoint" : "dev.dashboard.a2apoint"
+export const portfolioOrigin = true ? "a2apoint" : "dev.a2apoint"
 
 export const directusUrl = `https://${directusOrigin}.com`;
 export const directusWSUrl = `wss://${directusOrigin}.com/websocket`;

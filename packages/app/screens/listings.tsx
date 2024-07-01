@@ -408,23 +408,21 @@ export const LoginPopover = () => {
 
     return <BottomSheet open={isOpen} setOpen={setIsOpen} onBackdropPress={handleClose}>
         <View className="p-4 bg-card gap-4 flex flex-row justify-center">
-            <View className="md:w-[600px]">
-                <View className="flex-row justify-between w-full">
-                    <View className="flex-row gap-2">
-                        <Sparkles fill={colors.primary} className="text-primary" />
-                        <Text className="text-xl font-semibold">Get Started</Text>
-                    </View>
-                    {canClose ? <Button variant={"destructive"} size={"icon"}>
-                        <X className='text-destructive-foreground' size={18} />
-                    </Button> : <></>}
+            <View className="flex-row justify-between w-full">
+                <View className="flex-row gap-2">
+                    <Sparkles fill={colors.primary} className="text-primary" />
+                    <Text className="text-xl font-semibold">Get Started</Text>
                 </View>
-                <View className="flex-col gap-4">
-                    <Text>Login to unlock the full application</Text>
-                    <GoToLoginButton onPress={() => {
-                        setIsOpen(false)
-                        goToLogin("")
-                    }} />
-                </View>
+                {canClose ? <Button variant={"destructive"} size={"smallIcon"}>
+                    <X className='text-destructive-foreground' size={14} />
+                </Button> : <></>}
+            </View>
+            <View className="flex-col gap-4">
+                <Text>Login to unlock the full application</Text>
+                <GoToLoginButton onPress={() => {
+                    setIsOpen(false)
+                    goToLogin("")
+                }} />
             </View>
         </View>
     </BottomSheet>

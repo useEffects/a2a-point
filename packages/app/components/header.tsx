@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 import { DimensionValue, Platform, View } from "react-native";
 import { useRouter } from "solito/navigation";
 import { Button } from "./ui/button";
+import { Text } from "./ui/text";
 
 export const headerHeight = 48
 
@@ -24,4 +25,8 @@ export const Header = ({ children, height = headerHeight, className }: { childre
         {Platform.OS === "web" ? <></> : <BackButton />}
         {children}
     </View>
+}
+
+export const HeaderTitle = ({ children, className }: { children: ReactNode, className?: string }) => {
+    return <Text className={cn("text-xl font-bold", className)}>{children}</Text>
 }

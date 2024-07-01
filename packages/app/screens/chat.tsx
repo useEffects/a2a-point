@@ -1,6 +1,6 @@
 import { readItems } from "@directus/sdk";
 import { useQuery } from "@tanstack/react-query";
-import { Header } from "app/components/header";
+import { Header, HeaderTitle } from "app/components/header";
 import SearchBar from "app/components/searchbar";
 import { Button } from "app/components/ui/button";
 import { Separator } from "app/components/ui/separator";
@@ -15,19 +15,21 @@ import { Room, User } from "app/lib/types";
 import directusStore from "app/store/directus";
 import userStore from "app/store/user";
 import { useMemo, useState } from "react";
-import { Image, View } from "react-native";
+import { Dimensions, Image, View } from "react-native";
 import { useDebounce } from "use-debounce";
-import LockedScreen from "./locked-screens";
-import ChatSVG from "app/components/svg/chat";
 import { uniqBy } from "lodash";
 import { NavigationState, Route, SceneMap, TabView } from "react-native-tab-view";
+import ChatSVG from "app/components/svg/chat";
+import LockedScreen, { GoToLoginButton, GoToLoginComponent } from "./locked-screens";
+import { cn } from "app/lib/utils";
+import { useColorScheme } from "app/hooks/color-scheme";
 
 const ChatLocked = () => {
     return <LockedScreen
-        SVGComponent={<ChatSVG width={300} height={300} />}
-        readMoreLink="https://a2apoint.com"
-        title="Chat with other users on A2APoint!"
-        header="Chat"
+        SVGComponent={ChatSVG}
+        headerTitle="Chat"
+        title="Chat with other agents!"
+        description="Gain access to seamless communication with other agents, real-time updates, and the ability to share property details and documents instantly."
     />
 }
 

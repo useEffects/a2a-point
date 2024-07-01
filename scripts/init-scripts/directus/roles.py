@@ -9,7 +9,6 @@ def post_users(role):
     with open("assets/users.json") as f:
         users = json.loads(f.read())["data"]
         user = [user for user in users if user["role"] == role["id"]][0]
-        print(user)
         res = requests.get(
             f"{lib.directus_url}/users/{user['id']}",
             headers={"Authorization": f"Bearer {access_token}"},
@@ -26,6 +25,7 @@ def post_users(role):
             json={"token": token},
             headers={"Authorization": f"Bearer {access_token}"},
         )
+        print(res.raise_for_status())
         with open(".env", "a") as f:
             f.write(
                 f"\nDIRECTUS_{role['name'].upper().replace(' ', '_')}_TOKEN={token}"
