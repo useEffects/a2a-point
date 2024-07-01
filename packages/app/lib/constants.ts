@@ -1,8 +1,8 @@
 import Stripe from "stripe";
 
-export const isDevBuild = true
+export const isDevBuild = Boolean(process.env.STAGING)
 
-export const directusOrigin = isDevBuild ? "dashboard.a2apoint" : "dev.dashboard.a2apoint"
+export const directusOrigin = isDevBuild ? "dev.dashboard.a2apoint" : "dashboard.a2apoint"
 export const portfolioOrigin = isDevBuild ? "dev.a2apoint" : "a2apoint"
 
 export const directusUrl = `https://${directusOrigin}.com`;
