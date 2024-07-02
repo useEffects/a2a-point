@@ -13,8 +13,6 @@ export default async function ({ params }: { params: { id: string } }) {
     const { id } = params
     const { token } = directusStore.getState()
 
-    fetchAllData("users", {}, ["id"])
-
     const data = await queryClient.fetchQuery({
         queryKey: ["Fetch Profile Data", id],
         queryFn: async () => await fetch(`${directusUrl}/users/${id}/?fields=${["*", "company.*", "document.*"].join(",")}`, {
