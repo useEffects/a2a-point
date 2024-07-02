@@ -1,3 +1,5 @@
+"use client"
+
 import { readItems } from "@directus/sdk"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { Button } from "app/components/ui/button"
@@ -138,6 +140,11 @@ export const commonFilters = {
     [CommonFilters.None]: () => ({})
 };
 
+export const smallListingBody = {
+    fields: smallListingsFields,
+    renderMethod: SmallListingCard
+}
+
 export const bodies = {
     extraSmall: {
         fields: extraSmallListingsFields,
@@ -189,6 +196,7 @@ export const RenderListings = <R extends ListCardProps>({
     const [startedScrolling, setStartedScrolling] = useState(false)
     const isMedium = render === bodies.medium
 
+
     const { data, hasNextPage, fetchNextPage, isLoading } = useInfiniteQuery<{ items: (R | ConfirmedAdvertisementCardProps)[], page: unknown }>({
         initialPageParam: initialData.length ? 1 : 0,
         queryKey: ["Fetching Listings with fields: ", render.fields, filter, searchText, limit],
@@ -231,7 +239,7 @@ export const RenderListings = <R extends ListCardProps>({
             }
             return Number(lastPageParam) + 1
         },
-        enabled: startedScrolling
+        enabled: startedScrolling && infinite
     })
 
     const items = data?.pages.map(page => page.items).flat() ?? []

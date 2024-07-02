@@ -1,4 +1,5 @@
-import { readItems } from "@directus/sdk"
+"use client"
+
 import { HorizontalFlatList } from "@idiosync/horizontal-flatlist"
 import { HorizontalFlatListProps } from "@idiosync/horizontal-flatlist/dist/horizontal-flat-list"
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
@@ -120,6 +121,7 @@ export const MediumLocationCards = ({ initialData, limit = 5, searchText = "", i
             if (lastPage.items.length < limit) return undefined
             else return Number(lastPageParam) + 1
         },
+        enabled: startedScrolling && infinite
     })
 
     const onEndReached = () => {

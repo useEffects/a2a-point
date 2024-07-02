@@ -12,6 +12,7 @@ import directusStore from "app/store/directus"
 import { LocationChip } from "app/components/utils/chips"
 import { directusUrl } from "app/lib/constants"
 import useRouting from "app/hooks/use-routing"
+import { useLocaleString } from "app/hooks/locale-string"
 
 export type MediumListingCardProps = Pick<Listing, "id" | "title" | "budget" | "deal_type" | "description" | "date_created"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email" | "plan"> } & { location: Pick<Room, "id" | "title" | "avatar"> }
 
@@ -28,6 +29,7 @@ export const MediumListingCard = (item: MediumListingCardProps) => {
     const { authenticated } = directusStore()
     const goToRoom = useRouting("room-detailed")
     const goToListingDetailed = useRouting("listing-detailed")
+    const localizedBudget = useLocaleString(item.budget)
 
     return <View className="w-full flex-col gap-2 p-4 my-8">
         <View className="flex flex-wrap gap-4 flex-row items-center justify-between">
@@ -51,7 +53,7 @@ export const MediumListingCard = (item: MediumListingCardProps) => {
             </View>
             <View className="flex-col gap-1 bg-card rounded-2xl p-4 mt-2 w-full">
                 <View className="flex-row justify-between">
-                    <Text className="text-success">AED {Number(item.budget).toLocaleString()}</Text>
+                    <Text className="text-success">AED {localizedBudget}</Text>
                     <Text className="text-primary capitalize">{item.deal_type}</Text>
                 </View>
                 <Text>{shortString(item.description, 150)}</Text>

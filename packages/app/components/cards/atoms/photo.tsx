@@ -1,5 +1,6 @@
 import { Text } from "app/components/ui/text";
 import { UserChip } from "app/components/user-chip";
+import { useLocaleString } from "app/hooks/locale-string";
 import useRouting from "app/hooks/use-routing";
 import { buildAssetUrl } from "app/lib/helpers";
 import { Listing, User } from "app/lib/types";
@@ -14,13 +15,15 @@ export const PhotoListingCard = (item: PhotoListingProps) => {
     const windowWidth = Dimensions.get('window').width
     const imageWidth = windowWidth / 2
     const imageHeight = (9 / 16) * imageWidth
+    const localizedBudget = useLocaleString(item.budget)
+
     return <Pressable onPress={() => goToListingDetailed(item.id)} className="rounded-xl bg-card text-wrap">
         <Image source={{ uri: buildAssetUrl(photo) }} width={imageWidth} height={imageHeight} className="rounded-tl-xl rounded-tr-xl" />
         <View className="bg-card flex-col gap-2 px-2 py-4 items-start w-full" style={{ width: imageWidth }}>
             <UserChip user={item.user_created} />
             <Text className="text-wrap">{item.title}</Text>
             <View className="flex-row gap-4 justify-between w-full">
-                <Text className="text-success">AED {item.budget.toLocaleString()}</Text>
+                <Text className="text-success">AED {localizedBudget}</Text>
                 <Text className="capitalize text-info">{item.deal_type}</Text>
             </View>
         </View>

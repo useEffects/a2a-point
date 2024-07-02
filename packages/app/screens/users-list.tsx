@@ -12,12 +12,12 @@ import { useDebounce } from "use-debounce"
 export const UsersListComponent = ({ data }: { data: MediumUsersCardProps[] }) => {
     const [searchText, setSearchText] = useState("")
     const [debouncedSearchText] = useDebounce(searchText, 500)
-    const [showInitialData, setShowInitialData] = useState(true)
+    const [initialData, setInitialData] = useState<MediumUsersCardProps[]>(data)
     const [key, setKey] = useState(0)
 
     useEffect(() => {
         setKey(p => p + 1)
-        setShowInitialData(!Boolean(searchText))
+        setInitialData(Boolean(debouncedSearchText) ? [] : data)
     }, [debouncedSearchText])
 
     return <View className="flex-1 flex-col justify-start">
@@ -46,7 +46,6 @@ export const UsersListComponent = ({ data }: { data: MediumUsersCardProps[] }) =
                     }
                 }}
                 initialData={data}
-                showInitialData={showInitialData}
             />
         </View>
     </View>

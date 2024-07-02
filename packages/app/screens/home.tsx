@@ -127,7 +127,6 @@ export default function HomeScreen() {
                 ListHeaderComponent: () => <View className="w-4 h-4" />
             }}
             initialData={users}
-            showInitialData
         />
         <SeparatorText hideLeft wrapperClassName="px-4">
             <Text className="font-medium">News and feeds</Text>

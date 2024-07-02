@@ -17,6 +17,7 @@ import Carousel from 'react-native-reanimated-carousel';
 import { Button } from "../../ui/button";
 import { Text } from "../../ui/text";
 import { MediumUsersCard } from './users';
+import { useLocaleString } from "app/hooks/locale-string";
 
 export const ListingIconTile = ({
     icon,
@@ -42,12 +43,12 @@ export type ListingCardMetrics = { views: string | null, saves: string | null }
 
 export const FullListingCard = (props: FullListingDetailedProps) => {
     const { views, saves, addBookmark, deleteBookmark, bookmarkId } = useListingMetrics(props.id)
-    const { user } = userStore()
     const { colors } = useColorScheme()
     const { authenticated } = directusStore()
     const photos = useMemo(() => [props.photo_1, props.photo_2, props.photo_3].filter(photo => photo) as string[], [props.photo_1, props.photo_2, props.photo_3])
     const width = Dimensions.get('window').width
     const height = width * (9 / 16)
+    const localizedBudged = useLocaleString(props.budget)
 
     const handleSave = async () => {
         bookmarkId ? await deleteBookmark(props.id, bookmarkId) : await addBookmark({ id: props.id, title: props.title }, { email: props.user_created.email, id: props.user_created.id })
@@ -62,7 +63,7 @@ export const FullListingCard = (props: FullListingDetailedProps) => {
                 <View className="flex-col gap-2">
                     <Text className="text-xl font-medium text-primary">{props.title}</Text>
                     <View className="flex-row gap-4 flex-wrap">
-                        <Text className="text-success">AED {Number(props.budget).toLocaleString()}</Text>
+                        <Text className="text-success">AED {localizedBudged}</Text>
                         <Text style={{ backgroundColor: opacity(colors.info, 0.1) }} className='p-1 rounded text-sm text-info'>Expected broker fees: {props.expected_broker_fees} % </Text>
                         <Text className="border border-solid border-foreground px-2 rounded-full self-start capitalize">{props.deal_type}</Text>
                     </View>

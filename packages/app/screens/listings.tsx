@@ -1,3 +1,5 @@
+"use client"
+
 import { RangeSlider } from '@react-native-assets/slider';
 import BottomSheet from 'app/components/bottomsheet';
 import { MediumListingCardProps } from "app/components/cards/atoms/medium";
@@ -26,6 +28,7 @@ import { NavigationState, Route, SceneRendererProps, TabView } from 'react-nativ
 import { useParams, usePathname, useRouter } from 'solito/navigation';
 import { useDebounce } from "use-debounce";
 import { GoToLoginButton } from "./locked-screens";
+import { useLocaleString } from 'app/hooks/locale-string';
 
 export enum FilterKeys {
     Budget = "budget",
@@ -142,7 +145,7 @@ export default function ListingsScreenComponent({ className, data }: { className
         <RenderListings<MediumListingCardProps>
             key={key}
             render={bodies.medium}
-            initialData={[]}
+            initialData={initialData}
             flatListProps={{
                 ItemSeparatorComponent: () => <Separator />,
                 contentContainerClassName: "max-w-xl"
@@ -273,11 +276,14 @@ const RangeFilter = ({ value, setValue, range, label }: { value: [number, number
     const [minRange, maxRange] = range
     const [min, max] = value
     const isAtMax = max === maxRange
+    const localizedMin = useLocaleString(min)
+    const localizedMax = useLocaleString(max)
+
 
     return <View className="flex-col gap-2 w-full h-full justify-center">
         <View className='flex-row gap-2 items-center justify-between'>
             <Text>{label}</Text>
-            <Text className='text-info'>{min.toLocaleString()} - {max.toLocaleString()}{isAtMax ? "+" : ""}</Text>
+            <Text className='text-info'>{localizedMin} - {localizedMax}{isAtMax ? "+" : ""}</Text>
         </View>
         <RangeSlider
             style={{ paddingHorizontal: 8 }}

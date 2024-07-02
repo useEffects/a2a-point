@@ -1,8 +1,11 @@
 /** @jsxImportSource react */
 
+import { fetchAllData } from "@/lib/helpers"
 import { LocationDetailedScreen } from "@/screens/location"
 import { readItem } from "@directus/sdk"
-import { getMembersCountForLocation } from "app/lib/misc/queries"
+import { MediumListingCardProps } from "app/components/cards/atoms/medium"
+import { getMembersCountForLocation, renderCardsQuery } from "app/lib/misc/queries"
+import { mediumListingsFields } from "app/lib/props"
 import { LocationListingProps } from "app/screens/location-detailed"
 import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"
@@ -22,16 +25,26 @@ export default async function ({ params }: { params: { id: string } }) {
 
     const totalMembersForLocation = await getMembersCountForLocation(id)
 
+    const listings = await renderCardsQuery<MediumListingCardProps>({
+        collection: "listings",
+        fields: mediumListingsFields,
+        filter: {
+            location: {
+                _eq: id
+            }
+        }
+    })
+
     return data ? <div className="flex flex-col gap-4 py-4">
         <p className="text-xl font-bold px-4">{data.title}</p>
-        <LocationDetailedScreen room={data} totalMembers={totalMembersForLocation} />
+        <LocationDetailedScreen room={data} totalMembers={totalMembersForLocation} listings={listings} />
     </div> : <></>
 }
 
-// export async function generateStaticParams() {
-//     return fetchAllData<{ id: string }>("rooms", {
-//         type: {
-//             _eq: "group"
-//         }
-//     }, ["id"])
-// }
+export async function generateStaticParams() {
+    return fetchAllData<{ id: string }>("rooms", {
+        type: {
+            _eq: "group"
+        }
+    }, ["id"])
+}

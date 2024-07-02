@@ -1,3 +1,5 @@
+"use client"
+
 import { MediumUsersCard, SmallUsersCard } from "../atoms/users"
 import { ComponentType, useMemo, useState } from "react"
 import { FlatList } from "app/components/utils/virtual-lists"
@@ -20,6 +22,11 @@ export enum Mode {
 export enum CommonFilters {
     Location = "location",
     Company = "company",
+}
+
+export const mediumUserBody = {
+    fields: mediumUsersFields,
+    renderMethod: MediumUsersCard
 }
 
 const bodies = {
@@ -47,7 +54,7 @@ const commonFilters = {
 }
 
 export type RenderUserProps<R> = {
-    mode: Mode,
+    mode: Mode | "small" | "medium",
     initialData: R[],
     showInitialData?: boolean,
     limit?: number,
@@ -60,7 +67,6 @@ export type RenderUserProps<R> = {
 export const RenderUsers = <R,>({
     mode,
     initialData,
-    showInitialData = false,
     limit = 5,
     sort = [],
     filter = {
@@ -78,7 +84,7 @@ export const RenderUsers = <R,>({
     const [startedScrolling, setStartedScrolling] = useState(false)
 
     const { data, fetchNextPage, hasNextPage } = useInfiniteQuery<{ items: R[], page: unknown }>({
-        queryKey: ["fetching users list", fields, filter, limit, showInitialData],
+        queryKey: ["fetching users list", fields, filter, limit],
         queryFn: async ({ pageParam }) => renderCardsQuery<R>({
             collection: "users",
             fields,
@@ -88,20 +94,17 @@ export const RenderUsers = <R,>({
             offset: Number(pageParam) * limit,
             searchText
         }).then(res => ({ items: res, page: pageParam })),
-        initialPageParam: showInitialData ? 1 : 0,
+        initialPageParam: initialData.length ? 1 : 0,
         getNextPageParam: (lastPage, allPages, lastPageParam) => {
             if (lastPage.items.length < limit) return undefined
             else return Number(lastPageParam) + 1
         },
-        enabled: startedScrolling
+        enabled: startedScrolling && infinite
     })
 
     const items = data?.pages.map(page => page.items).flat() ?? []
 
-    const finalData = useMemo(() => {
-        if (!showInitialData) return items
-        return [...initialData, ...items]
-    }, [startedScrolling, data, initialData])
+    const finalData = useMemo(() => initialData.length ? [...initialData, ...items] : initialData, [startedScrolling, data, initialData])
 
     const onEndReached = () => {
         setStartedScrolling(true)
