@@ -1,4 +1,9 @@
-import { Amenity, Company, Document, Listing, ListingAmenity, Room, User } from "./types"
+import { ExtraSmallListingCardProps } from "app/components/cards/atoms/extra-small"
+import { MediumListingCardProps } from "app/components/cards/atoms/medium"
+import { PhotoListingProps } from "app/components/cards/atoms/photo"
+import { SmallListingCardProps } from "app/components/cards/atoms/small"
+import { DotSeparatedKeys } from "./helpers"
+import { Amenity, Company, Document, Listing, Room, User } from "./types"
 
 // Users
 
@@ -15,6 +20,13 @@ export const mediumUsersFields = ["id", "avatar", "first_name", "last_name", "co
 
 export const fullListingCardFields = ["*", "amenities.*, amenities.amenity.*"].concat(mediumUsersFields.map(field => `user_created.${field}`))
 
+export const extraSmallListingsFields: DotSeparatedKeys<ExtraSmallListingCardProps>[] = ["id", "title", "budget"];
+
+export const smallListingsFields: DotSeparatedKeys<SmallListingCardProps>[] = ["id", "title", "budget", "deal_type", "user_created.id", "user_created.avatar", "date_created", "location.id", "location.title", "location.avatar", "tags"];
+
+export const mediumListingsFields: DotSeparatedKeys<MediumListingCardProps>[] = ["id", "title", "deal_type", "date_created", "budget", "description", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "location.avatar", "location.avatar", "location.id", "location.title"];
+
+export const photoListingsFields: DotSeparatedKeys<PhotoListingProps>[] = ["id", "title", "budget", "photo_1", "photo_2", "photo_3", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name"];
 export type DetailedAmenity = { amenity: Amenity, additional_detail: string }
 
 export type FullListingDetailedProps = Listing & { user_created: MediumUsersCardProps } & { amenities: DetailedAmenity[] }

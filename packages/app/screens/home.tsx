@@ -19,8 +19,8 @@ import { FlatList, ScrollView } from "app/components/utils/virtual-lists";
 import { useColorScheme } from "app/hooks/color-scheme";
 import useRouting from "app/hooks/use-routing";
 import { directusUrl, portfolioUrl } from "app/lib/constants";
-import { getCompaniesCount, getListingsCount, getLocationsCount, getUsersCount } from "app/lib/misc/queries";
-import { SmallUsersCardProps } from "app/lib/props";
+import { getCompaniesCount, getListingsCount, getLocationsCount, getUsersCount, renderCardsQuery, useRenderCardQuery } from "app/lib/misc/queries";
+import { photoListingsFields, smallListingsFields, SmallUsersCardProps } from "app/lib/props";
 import { News } from "app/lib/types";
 import directusStore from "app/store/directus";
 import userStore from "app/store/user";
@@ -29,6 +29,7 @@ import opacity from "hex-color-opacity";
 import { View } from "react-native";
 import { Link } from "solito/link";
 import { FilterKeys, FilterParam } from "./listings";
+import { usePhotoListingsQuery } from "app/components/cards/utils/listings";
 
 export default function HomeScreen() {
     const { authenticated, token } = directusStore()
@@ -64,6 +65,18 @@ export default function HomeScreen() {
         }
     })
 
+    const { data: photoListingsInitialData } = useRenderCardQuery<PhotoListingProps>({
+        collection: "listings",
+        fields: photoListingsFields,
+        filter: commonFilters[CommonFilters.Photo](),
+    })
+
+    const { data: premiumSmallListingsInitialData } = useRenderCardQuery<SmallListingCardProps>({
+        collection: "listings",
+        fields: smallListingsFields,
+        filter: commonFilters[CommonFilters.Premium](),
+    })
+
     return <ScrollView contentContainerClassName="flex-grow flex-col gap-8 pb-8">
         <Header>
             <Text className="text-xl font-bold">A2APoint</Text>
@@ -71,6 +84,7 @@ export default function HomeScreen() {
         <Text className="text-2xl font-bold text-wrap px-4">{authenticated ? `Welcome back ${user.first_name} ${user.last_name}` : "The one stop for all agents"}</Text>
         <RenderListings<PhotoListingProps>
             render={bodies.photo}
+            initialData={photoListingsInitialData}
             filter={commonFilters[CommonFilters.Photo]()}
             flatListProps={{
                 horizontal: true,
@@ -89,12 +103,13 @@ export default function HomeScreen() {
         </SeparatorText>
         <RenderListings<SmallListingCardProps>
             render={bodies.small}
+            initialData={premiumSmallListingsInitialData}
             flatListProps={{
                 horizontal: true,
                 ListHeaderComponent: () => <View className="w-4 h-4" />
             }}
             filter={commonFilters[CommonFilters.Premium]()}
-            paramFilter={[{ [FilterKeys.Premium]: CommonFilters.Premium }]}
+            paramFilters={[{ [FilterKeys.Premium]: CommonFilters.Premium }]}
         />
         <SeparatorText hideLeft wrapperClassName="px-4">
             <Text className="font-medium">Browse popular locations</Text>
@@ -112,6 +127,7 @@ export default function HomeScreen() {
                 ListHeaderComponent: () => <View className="w-4 h-4" />
             }}
             initialData={users}
+            showInitialData
         />
         <SeparatorText hideLeft wrapperClassName="px-4">
             <Text className="font-medium">News and feeds</Text>

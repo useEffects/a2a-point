@@ -53,7 +53,7 @@ const bathRoomsRange: [number, number] = [0, 8]
 const parkingRange: [number, number] = [0, 8]
 const sizeRange: [number, number] = [0, 10000]
 
-export default function ListingsScreenComponent({ className }: { className?: string }) {
+export default function ListingsScreenComponent({ className, data }: { className?: string, data: MediumListingCardProps[] }) {
     const params = useParams()
     const searchParams = useSearchParams()
 
@@ -65,6 +65,7 @@ export default function ListingsScreenComponent({ className }: { className?: str
     const [key, setKey] = useState(0)
     const [filters, setFilters] = useState([] as Filter[])
     const setParams = useSetParams()
+    const [initialData, setInitialData] = useState(data)
 
     const updateParams = function (filters: Filter[]) {
         const newFilters = filters.reduce<{ [key in FilterKeys]?: FilterValue }[]>((acc, filter) => [...acc, { [filter.key]: filter.value }], [])
@@ -109,6 +110,11 @@ export default function ListingsScreenComponent({ className }: { className?: str
 
     useEffect(() => {
         setKey(p => p + 1)
+        if (Boolean(filters.length) || Boolean(debouncedSearchText)) {
+            setInitialData([])
+        } else {
+            setInitialData(data)
+        }
     }, [JSON.stringify(filters), debouncedSearchText])
 
     return <View className={cn("flex-1", className)}>
@@ -136,13 +142,14 @@ export default function ListingsScreenComponent({ className }: { className?: str
         <RenderListings<MediumListingCardProps>
             key={key}
             render={bodies.medium}
+            initialData={[]}
             flatListProps={{
                 ItemSeparatorComponent: () => <Separator />,
                 contentContainerClassName: "max-w-xl"
             }}
             filter={filters.length ? commonFilters[CommonFilters.Custom](finalFilters) : undefined}
             searchText={debouncedSearchText}
-            infinite={true}
+            infinite
         />
         <BottomSheet
             open={bottomSheetVisible}

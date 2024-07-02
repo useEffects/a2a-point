@@ -42,6 +42,7 @@ const RenderViewed = () => <RenderListings
         contentContainerClassName: "px-4",
         ItemSeparatorComponent: () => <Separator className="my-4" />
     }}
+    initialData={[]}
     infinite
 />
 
@@ -53,6 +54,7 @@ const RenderSaved = () => <RenderListings
         contentContainerClassName: "px-4",
         ItemSeparatorComponent: () => <Separator className="my-4" />
     }}
+    initialData={[]}
     infinite
 />
 

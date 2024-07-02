@@ -10,7 +10,7 @@ import { cn } from 'app/lib/utils';
 import ActivityScreen from 'app/screens/activity';
 import ChatScreen from 'app/screens/chat';
 import HomeScreen from 'app/screens/home';
-import ListingsScreen from 'app/screens/listings';
+import ListingsScreen from './listings';
 import LocationsScreen from "./locations"
 import OffPlansScreen from 'app/screens/offplans';
 import directusStore from 'app/store/directus';

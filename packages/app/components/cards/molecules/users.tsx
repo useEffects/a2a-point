@@ -9,6 +9,8 @@ import useRouting from "app/hooks/use-routing"
 import { Button } from "app/components/ui/button"
 import { mediumUsersFields, smallUsersFields } from "app/lib/props"
 import { renderCardsQuery } from "app/lib/misc/queries"
+import { uniqBy } from "lodash"
+import { memberRole } from "app/lib/constants"
 
 export enum Mode {
     small = "small",
@@ -47,19 +49,25 @@ const commonFilters = {
 export type RenderUserProps<R> = {
     mode: Mode,
     initialData: R[],
+    showInitialData?: boolean,
     limit?: number,
     filter?: Record<string, any>,
     sort?: string[], searchText?: string,
     infinite?: boolean,
-    flatListProps?: Omit<FlatListProps<R>, "data" | "renderItem">
+    flatListProps?: Omit<FlatListProps<R>, "data" | "renderItem">,
 }
 
 export const RenderUsers = <R,>({
     mode,
     initialData,
+    showInitialData = false,
     limit = 5,
     sort = [],
-    filter,
+    filter = {
+        role: {
+            _eq: memberRole
+        }
+    },
     searchText = "",
     infinite,
     flatListProps = {},
@@ -70,17 +78,17 @@ export const RenderUsers = <R,>({
     const [startedScrolling, setStartedScrolling] = useState(false)
 
     const { data, fetchNextPage, hasNextPage } = useInfiniteQuery<{ items: R[], page: unknown }>({
-        queryKey: ["fetching users list", fields, filter, limit],
+        queryKey: ["fetching users list", fields, filter, limit, showInitialData],
         queryFn: async ({ pageParam }) => renderCardsQuery<R>({
             collection: "users",
             fields,
             filter,
             sort,
             limit,
-            offset: Number(pageParam),
+            offset: Number(pageParam) * limit,
             searchText
         }).then(res => ({ items: res, page: pageParam })),
-        initialPageParam: 1,
+        initialPageParam: showInitialData ? 1 : 0,
         getNextPageParam: (lastPage, allPages, lastPageParam) => {
             if (lastPage.items.length < limit) return undefined
             else return Number(lastPageParam) + 1
@@ -89,7 +97,11 @@ export const RenderUsers = <R,>({
     })
 
     const items = data?.pages.map(page => page.items).flat() ?? []
-    const finalData = useMemo(() => startedScrolling ? [...initialData, ...items] : initialData, [startedScrolling, data, initialData])
+
+    const finalData = useMemo(() => {
+        if (!showInitialData) return items
+        return [...initialData, ...items]
+    }, [startedScrolling, data, initialData])
 
     const onEndReached = () => {
         setStartedScrolling(true)
@@ -97,10 +109,10 @@ export const RenderUsers = <R,>({
     }
 
     return <FlatList
-        data={finalData}
+        data={uniqBy(finalData, "id")}
         renderItem={({ item }) => <Component {...item} />}
         ItemSeparatorComponent={() => <View className="w-4 h-4" />}
-        onEndReached={() => Platform.OS !== "web" && onEndReached()}
+        onEndReached={() => Platform.OS !== "web" && infinite && onEndReached()}
         ListFooterComponent={infinite ? <BottomLoader endReached={!hasNextPage} onEndReached={() => Platform.OS === "web" && onEndReached()} /> : <ViewAllButton horizontal={!!flatListProps.horizontal}
             button={(props) => <Button onPress={() => goToUsersList("")} {...props} />}
         />}

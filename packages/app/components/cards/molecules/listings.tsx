@@ -1,22 +1,24 @@
 import { readItems } from "@directus/sdk"
 import { useInfiniteQuery } from "@tanstack/react-query"
+import { Button } from "app/components/ui/button"
 import { Text } from "app/components/ui/text"
 import { ViewAllButton } from "app/components/utils/common-ui"
 import { FlatList } from "app/components/utils/virtual-lists"
 import { useColorScheme } from "app/hooks/color-scheme"
+import useRouting from "app/hooks/use-routing"
 import { InViewPort } from "app/lib/detect-viewport"
-import { DotSeparatedKeys } from "app/lib/helpers"
-import { Filter, FilterParam } from "app/screens/listings"
+import { extraSmallListingsFields, mediumListingsFields, photoListingsFields, smallListingsFields } from "app/lib/props"
+import { FilterParam } from "app/screens/listings"
 import directusStore from "app/store/directus"
 import userStore from "app/store/user"
-import { ActivityIndicator, FlatListProps, View } from "react-native"
+import { uniqBy } from "lodash"
+import { useMemo, useState } from "react"
+import { ActivityIndicator, FlatListProps, Platform, View } from "react-native"
 import { AdvertisementCard, AdvertisementCardProps } from "../atoms/advertisements"
 import { ExtraSmallListingCard, ExtraSmallListingCardProps } from "../atoms/extra-small"
 import { MediumListingCard, MediumListingCardProps } from "../atoms/medium"
 import { PhotoListingCard, PhotoListingProps } from "../atoms/photo"
 import { SmallListingCard, SmallListingCardProps } from "../atoms/small"
-import useRouting from "app/hooks/use-routing"
-import { Button } from "app/components/ui/button"
 
 type ListCardProps = SmallListingCardProps | ExtraSmallListingCardProps | MediumListingCardProps | PhotoListingProps
 
@@ -136,47 +138,47 @@ export const commonFilters = {
     [CommonFilters.None]: () => ({})
 };
 
-const extraSmallFields: DotSeparatedKeys<ExtraSmallListingCardProps>[] = ["id", "title", "budget"];
-
-const smallFields: DotSeparatedKeys<SmallListingCardProps>[] = ["id", "title", "budget", "deal_type", "user_created.id", "user_created.avatar", "date_created", "location.id", "location.title", "location.avatar", "tags"];
-
-const mediumFields: DotSeparatedKeys<MediumListingCardProps>[] = ["id", "title", "deal_type", "date_created", "budget", "description", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "location.avatar", "location.avatar", "location.id", "location.title"];
-
-const photoFields: DotSeparatedKeys<PhotoListingProps>[] = ["id", "title", "budget", "photo_1", "photo_2", "photo_3", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name"];
-
 export const bodies = {
     extraSmall: {
-        fields: extraSmallFields,
+        fields: extraSmallListingsFields,
         renderMethod: ExtraSmallListingCard
     },
     small: {
-        fields: smallFields,
+        fields: smallListingsFields,
         renderMethod: SmallListingCard
     },
     medium: {
-        fields: mediumFields,
+        fields: mediumListingsFields,
         renderMethod: MediumListingCard
     },
     photo: {
-        fields: photoFields,
+        fields: photoListingsFields,
         renderMethod: PhotoListingCard
     }
 }
 
 type ConfirmedAdvertisementCardProps = AdvertisementCardProps & { isAdvertisement: true }
 
-export const RenderListings = <R extends ListCardProps>({ paramFilter: paramFilters, render, filter, flatListProps, limit = 5, searchText = "", noAds, infinite, viewAllButtonLink }: {
-    render: RenderType<R>,
-    filter?: ReturnType<typeof commonFilters[CommonFilters]>,
-    searchText?: string,
-    noAds?: boolean,
-    flatListProps?: Omit<FlatListProps<ConfirmedAdvertisementCardProps | R>,
-        "data" | "renderItem">,
-    limit?: number,
-    infinite?: boolean,
-    paramFilter?: FilterParam[],
-    viewAllButtonLink?: string
-}) => {
+export const RenderListings = <R extends ListCardProps>({
+    initialData,
+    paramFilters,
+    render,
+    filter,
+    flatListProps, limit = 5,
+    searchText = "", noAds,
+    infinite }: {
+        render: RenderType<R>,
+        initialData: R[],
+        filter?: ReturnType<typeof commonFilters[CommonFilters]>,
+        searchText?: string,
+        noAds?: boolean,
+        flatListProps?: Omit<FlatListProps<ConfirmedAdvertisementCardProps | R>,
+            "data" | "renderItem">,
+        limit?: number,
+        infinite?: boolean,
+        paramFilters?: FilterParam[],
+        viewAllButtonLink?: string
+    }) => {
     const goToListings = useRouting("listings")
 
     const isAdvertisementCard = (item: ConfirmedAdvertisementCardProps | R): item is ConfirmedAdvertisementCardProps => {
@@ -184,11 +186,11 @@ export const RenderListings = <R extends ListCardProps>({ paramFilter: paramFilt
     }
 
     const { rest } = directusStore()
+    const [startedScrolling, setStartedScrolling] = useState(false)
     const isMedium = render === bodies.medium
 
-
     const { data, hasNextPage, fetchNextPage, isLoading } = useInfiniteQuery<{ items: (R | ConfirmedAdvertisementCardProps)[], page: unknown }>({
-        initialPageParam: 0,
+        initialPageParam: initialData.length ? 1 : 0,
         queryKey: ["Fetching Listings with fields: ", render.fields, filter, searchText, limit],
         queryFn: async ({ pageParam }) => {
             const page = pageParam as number
@@ -228,12 +230,22 @@ export const RenderListings = <R extends ListCardProps>({ paramFilter: paramFilt
                 return null
             }
             return Number(lastPageParam) + 1
-        }
+        },
+        enabled: startedScrolling
     })
+
+    const items = data?.pages.map(page => page.items).flat() ?? []
+
+    const finalData = useMemo(() => [...initialData, ...items], [data, initialData, startedScrolling])
+
+    const onEndReached = () => {
+        setStartedScrolling(true)
+        fetchNextPage()
+    }
 
     return <FlatList
         {...flatListProps}
-        data={data?.pages.map(page => page.items).flat() ?? []}
+        data={uniqBy(finalData, "id")}
         renderItem={({ item }) => {
             if (isAdvertisementCard(item)) {
                 return <AdvertisementCard {...item} />
@@ -241,8 +253,9 @@ export const RenderListings = <R extends ListCardProps>({ paramFilter: paramFilt
         }}
         ItemSeparatorComponent={flatListProps?.ItemSeparatorComponent ?? (() => <View className="w-4 h-4" />)}
         keyExtractor={(item) => item.id}
+        onEndReached={() => infinite && Platform.OS !== "web" && onEndReached()}
         ListFooterComponent={
-            infinite ? () => <BottomLoader endReached={!isLoading && !hasNextPage} onEndReached={fetchNextPage} /> :
+            infinite ? () => <BottomLoader endReached={!isLoading && !hasNextPage} onEndReached={() => Platform.OS === "web" && fetchNextPage()} /> :
                 <ViewAllButton horizontal={!!flatListProps?.horizontal} button={(props) => <Button onPress={() => goToListings(paramFilters)} {...props} />} />}
     />
 }

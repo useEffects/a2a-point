@@ -3,17 +3,22 @@ import { Header } from "app/components/header"
 import SearchBar from "app/components/searchbar"
 import { Separator } from "app/components/ui/separator"
 import { Text } from "app/components/ui/text"
+import { memberRole } from "app/lib/constants"
 import { MediumUsersCardProps } from "app/lib/props"
 import { useEffect, useState } from "react"
 import { View } from "react-native"
+import { useDebounce } from "use-debounce"
 
-export const UsersListComponent = () => {
+export const UsersListComponent = ({ data }: { data: MediumUsersCardProps[] }) => {
     const [searchText, setSearchText] = useState("")
+    const [debouncedSearchText] = useDebounce(searchText, 500)
+    const [showInitialData, setShowInitialData] = useState(true)
     const [key, setKey] = useState(0)
 
     useEffect(() => {
         setKey(p => p + 1)
-    }, [searchText])
+        setShowInitialData(!Boolean(searchText))
+    }, [debouncedSearchText])
 
     return <View className="flex-1 flex-col justify-start">
         <Header className="py-8 native:py-0">
@@ -25,22 +30,24 @@ export const UsersListComponent = () => {
                 setSearchText={setSearchText}
             />
         </View>
-        <RenderUsers<MediumUsersCardProps>
-            key={key}
-            mode={Mode.medium}
-            infinite={!searchText}
-            searchText={searchText}
-            flatListProps={{
-                ItemSeparatorComponent: () => <Separator className="my-8" />,
-                contentContainerClassName: "p-4 max-w-xl"
-            }}
-            filter={{
-                role: {
-                    name: {
-                        _eq: "Member"
+        <View className="flex-grow">
+            <RenderUsers<MediumUsersCardProps>
+                key={key}
+                mode={Mode.medium}
+                infinite
+                searchText={debouncedSearchText}
+                flatListProps={{
+                    ItemSeparatorComponent: () => <Separator className="my-8" />,
+                    contentContainerClassName: "p-4 max-w-xl flex-grow"
+                }}
+                filter={{
+                    role: {
+                        _eq: memberRole
                     }
-                }
-            }}
-        />
+                }}
+                initialData={data}
+                showInitialData={showInitialData}
+            />
+        </View>
     </View>
 }

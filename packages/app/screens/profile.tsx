@@ -284,9 +284,10 @@ const ListingTab = ({ user, big, setBig }: { user: User, big: boolean, setBig: D
             flatListProps={{
                 scrollEnabled: false,
             }}
-            paramFilter={[{
+            paramFilters={[{
                 [FilterKeys.Agent]: user.id
             }]}
+            initialData={[]}
         /> :
             <RenderListings<ExtraSmallListingCardProps>
                 render={bodies.extraSmall}
@@ -294,9 +295,10 @@ const ListingTab = ({ user, big, setBig }: { user: User, big: boolean, setBig: D
                 flatListProps={{
                     scrollEnabled: false,
                 }}
-                paramFilter={[
+                paramFilters={[
                     { [FilterKeys.Agent]: user.id }
                 ]}
+                initialData={[]}
             />}
     </View>
 }

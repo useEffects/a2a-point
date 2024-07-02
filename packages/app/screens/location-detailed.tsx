@@ -1,20 +1,20 @@
 import { MediumListingCardProps } from "app/components/cards/atoms/medium";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings";
+import { MembersList } from "app/components/cards/molecules/locations";
 import { FullWidthImage } from "app/components/full-width-image";
+import { Header } from "app/components/header";
+import { SeparatorText } from "app/components/separator-text";
+import { Button } from "app/components/ui/button";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
+import { ScrollView } from "app/components/utils/virtual-lists";
+import useRouting from "app/hooks/use-routing";
 import { buildAssetUrl } from "app/lib/helpers";
 import { Room, User } from "app/lib/types";
+import directusStore from "app/store/directus";
 import { ArrowUpRight } from "lucide-react-native";
 import { Platform, View } from "react-native";
 import { FilterKeys } from "./listings";
-import { SeparatorText } from "app/components/separator-text";
-import { MembersList } from "app/components/cards/molecules/locations";
-import directusStore from "app/store/directus";
-import { Button } from "app/components/ui/button";
-import useRouting from "app/hooks/use-routing";
-import { Header } from "app/components/header";
-import { ScrollView } from "app/components/utils/virtual-lists";
 
 export type LocationListingProps = Pick<Room, "id" | "avatar" | "title"> & {
     members: {
@@ -27,8 +27,10 @@ export type LocationDetailedProps = {
         members: {
             directus_users_id: Pick<User, "id" | "avatar">
         }[]
-    }
-} & { totalMembers: number }
+    },
+    totalMembers: number,
+    listings: MediumListingCardProps[]
+}
 
 export function LocationDetailed(props: LocationDetailedProps) {
     const { authenticated } = directusStore()
@@ -60,9 +62,10 @@ export function LocationDetailed(props: LocationDetailedProps) {
                         scrollEnabled: Platform.OS === "web",
                         ItemSeparatorComponent: () => <Separator className="my-2" />,
                     }}
-                    paramFilter={[{
+                    paramFilters={[{
                         [FilterKeys.Location]: room.id,
                     }]}
+                    initialData={props.listings}
                 />
             </View>
         </ScrollView>

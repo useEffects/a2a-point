@@ -137,7 +137,7 @@ export const MediumLocationCards = ({ initialData, limit = 5, searchText = "", i
         data={uniqBy(finalData, "id")}
         renderItem={({ item }) => <MediumLocationCard item={item} />}
         ItemSeparatorComponent={() => <View className="w-4 h-4" />}
-        onEndReached={() => Platform.OS !== "web" && onEndReached()}
+        onEndReached={() => Platform.OS !== "web" && infinite && onEndReached()}
         ListFooterComponent={infinite ?
             <BottomLoader endReached={startedScrolling && !hasNextPage} onEndReached={() => Platform.OS === "web" && onEndReached()} /> :
             <ViewAllButton horizontal={false} button={(props) => <Button onPress={() => goToLocationsList("" as any)} {...props} />} />}
