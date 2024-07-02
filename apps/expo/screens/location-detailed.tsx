@@ -1,9 +1,9 @@
-import { LocationDetailed as LocationDetailedComponent, LocationDetailedProps } from "app/screens/location-detailed";
-import { useParams } from "solito/navigation";
-import { useQuery } from "@tanstack/react-query"
-import directusStore from "app/store/directus";
 import { readItem } from "@directus/sdk";
-import { getMembersCountForLocation } from "app/lib/misc/get-counts";
+import { useQuery } from "@tanstack/react-query";
+import { getMembersCountForLocation } from "app/lib/misc/queries";
+import { LocationDetailed as LocationDetailedComponent, LocationDetailedProps } from "app/screens/location-detailed";
+import directusStore from "app/store/directus";
+import { useParams } from "solito/navigation";
 
 export default function LocationDetailed() {
     const params = useParams<{ id?: string }>()

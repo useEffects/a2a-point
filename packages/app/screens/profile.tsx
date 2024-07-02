@@ -1,21 +1,27 @@
-import { auth, deleteItem, readItems } from "@directus/sdk";
+import { deleteItem, readItems } from "@directus/sdk";
+import { RenderUserTileProps, useAutoCompleteItem } from "app/components/formComponents";
+import { Header, HeaderTitle } from "app/components/header";
+import { ArrowUp, Bell, EllipsisVertical, Expand, Info, LogOut, MessageCircle, Rows2, Shrink, UserCog2 } from "app/components/icons";
+import ProfileSVG from "app/components/svg/profile";
+import { ToggleTheme } from "app/components/toggle-theme";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "app/components/ui/dropdown-menu";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
 import { UserChip } from "app/components/user-chip";
 import { FlatList, ScrollView } from "app/components/utils/virtual-lists";
 import { useColorScheme } from "app/hooks/color-scheme";
+import useRouting from "app/hooks/use-routing";
 import { directusUrl } from "app/lib/constants";
 import { buildAssetUrl, timeAgo } from "app/lib/helpers";
-import { getListingsCountForUser } from "app/lib/misc/get-counts";
+import { getListingsCountForUser } from "app/lib/misc/queries";
 import { Company, Document, Feedback, User } from "app/lib/types";
 import { cn } from "app/lib/utils";
 import { StarIcon } from "app/screens/post-feedback";
 import directusStore from "app/store/directus";
 import { queryClient } from "app/store/query";
 import userStore from "app/store/user";
-import { ArrowUp, Bell, EllipsisVertical, Expand, Info, LogOut, MessageCircle, Rows2, Shrink, UserCog2 } from "app/components/icons";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { DimensionValue, Dimensions, Image, Linking, NativeScrollEvent, NativeSyntheticEvent, Platform, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import { DimensionValue, Image, Linking, NativeScrollEvent, NativeSyntheticEvent, Platform, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import Collapsible from 'react-native-collapsible';
 import StarRating, { StarIconProps } from "react-native-star-rating-widget";
 import { NavigationState, SceneMap, SceneRendererProps, TabView } from 'react-native-tab-view';
@@ -25,13 +31,7 @@ import { MediumListingCardProps } from "../components/cards/atoms/medium";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "../components/cards/molecules/listings";
 import { Button } from "../components/ui/button";
 import { FilterKeys } from "./listings";
-import LockedScreen, { GoToLoginButton, GoToLoginComponent } from "./locked-screens";
-import useRouting from "app/hooks/use-routing";
-import { RenderUserTileProps, useAutoCompleteItem } from "app/components/formComponents";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "app/components/ui/dropdown-menu";
-import { Header, HeaderTitle } from "app/components/header";
-import ProfileSVG from "app/components/svg/profile";
-import { ToggleTheme } from "app/components/toggle-theme";
+import LockedScreen from "./locked-screens";
 
 const LockedProfileScreen = ({ userId }: { userId: string }) => {
 

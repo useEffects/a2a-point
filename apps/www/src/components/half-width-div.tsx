@@ -1,3 +1,5 @@
+"use client"
+
 import { useIsSmallDevice } from "app/hooks/is-small-device"
 import { ReactNode } from "react"
 import { cn } from "src/lib/utils"

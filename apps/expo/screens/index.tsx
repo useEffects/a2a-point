@@ -4,9 +4,15 @@ import { Separator } from 'app/components/ui/separator';
 import { Text } from 'app/components/ui/text';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { shortString } from 'app/lib/helpers';
-import { getListingsCount } from 'app/lib/misc/get-counts';
 import { AccountConsoleParamList, MainTopTabParamList } from 'app/lib/misc/navigation';
+import { getListingsCount } from 'app/lib/misc/queries';
 import { cn } from 'app/lib/utils';
+import ActivityScreen from 'app/screens/activity';
+import ChatScreen from 'app/screens/chat';
+import HomeScreen from 'app/screens/home';
+import ListingsScreen from 'app/screens/listings';
+import LocationsScreen from "./locations"
+import OffPlansScreen from 'app/screens/offplans';
 import directusStore from 'app/store/directus';
 import opacity from "hex-color-opacity";
 import { BriefcaseBusiness, Building2, Construction, Home, Lock, LucideIcon, MessageCircleMore, Phone, Shield, TrendingUp, User } from "lucide-react-native";
@@ -14,27 +20,21 @@ import { useEffect, useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useKeyboardVisible } from '../hooks/keyboard';
-import ActivityScreen from 'app/screens/activity';
-import ChatScreen from 'app/screens/chat';
-import HomeScreen from 'app/screens/home';
+import { CompanySelectScreen } from './account-console/company';
+import { MembershipScreen } from './account-console/membership';
+import { PhoneVerificationScreen } from './account-console/phone';
+import { VerificationScreen } from './account-console/verification';
 import ListingDetailed from './listing-detailed';
-import ListingsScreen from 'app/screens/listings';
-import { LocationsList } from 'app/screens/locations-list';
+import LocationDetailed from './location-detailed';
 import LoginScreen from './login';
 import { MembersList } from './members-list';
 import NotificationsScreen from './notifications';
-import OffPlansScreen from 'app/screens/offplans';
 import PostScreen from './post';
 import PostFeedback from './post-feedback';
 import ProfileScreen from "./profile";
 import ProfileDetailed from './profile-detailed';
 import RoomDetailed from './room-detailed';
 import { UsersListScreen } from './users-list';
-import { PhoneVerificationScreen } from './account-console/phone';
-import { CompanySelectScreen } from './account-console/company';
-import { MembershipScreen } from './account-console/membership';
-import { VerificationScreen } from './account-console/verification';
-import LocationDetailed from './location-detailed';
 
 const MainTab = createMaterialTopTabNavigator<MainTopTabParamList>();
 const AccountConsoleTab = createMaterialTopTabNavigator<AccountConsoleParamList>();
@@ -196,7 +196,7 @@ export default function AppLayout() {
         <Stack.Screen name="notifications" component={NotificationsScreen} />
         <Stack.Screen name="login" component={LoginScreen} />
         <Stack.Screen name="post" component={PostScreen} />
-        <Stack.Screen name="locations-list" component={LocationsList} />
+        <Stack.Screen name="locations-list" component={LocationsScreen} />
         <Stack.Screen name="users-list" component={UsersListScreen} />
     </Stack.Navigator>
 };

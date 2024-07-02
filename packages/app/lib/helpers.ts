@@ -9,7 +9,7 @@ import * as ImagePicker from "expo-image-picker"
 import TimeAgo from 'javascript-time-ago';
 import en from "javascript-time-ago/locale/en";
 import { Alert, Linking, Platform } from "react-native";
-import { ProductType, appName, directusUrl, portfolioUrl, products } from "./constants";
+import { ProductType, appName, directusUrl, products } from "./constants";
 import { Document } from "./types";
 
 TimeAgo.addLocale(en)

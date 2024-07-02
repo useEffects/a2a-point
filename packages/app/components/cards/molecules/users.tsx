@@ -1,15 +1,14 @@
 import { MediumUsersCard, SmallUsersCard } from "../atoms/users"
-import directusStore from "app/store/directus"
-import { directusUrl } from "app/lib/constants"
-import { ComponentType } from "react"
+import { ComponentType, useMemo, useState } from "react"
 import { FlatList } from "app/components/utils/virtual-lists"
-import { FlatListProps, View } from "react-native"
+import { FlatListProps, Platform, View } from "react-native"
 import { BottomLoader } from "./listings"
 import { ViewAllButton } from "app/components/utils/common-ui"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import useRouting from "app/hooks/use-routing"
 import { Button } from "app/components/ui/button"
 import { mediumUsersFields, smallUsersFields } from "app/lib/props"
+import { renderCardsQuery } from "app/lib/misc/queries"
 
 export enum Mode {
     small = "small",
@@ -45,38 +44,64 @@ const commonFilters = {
     })
 }
 
-export const RenderUsers = <R,>({ mode, limit = 5, sort = [], filter, searchText = "", infinite, flatListProps = {} }: { mode: Mode, limit?: number, filter?: Record<string, any>, sort?: string[], searchText?: string, infinite?: boolean, flatListProps?: Omit<FlatListProps<R>, "data" | "renderItem"> }) => {
+export type RenderUserProps<R> = {
+    mode: Mode,
+    initialData: R[],
+    limit?: number,
+    filter?: Record<string, any>,
+    sort?: string[], searchText?: string,
+    infinite?: boolean,
+    flatListProps?: Omit<FlatListProps<R>, "data" | "renderItem">
+}
 
-    const { token } = directusStore()
+export const RenderUsers = <R,>({
+    mode,
+    initialData,
+    limit = 5,
+    sort = [],
+    filter,
+    searchText = "",
+    infinite,
+    flatListProps = {},
+}: RenderUserProps<R>) => {
+
     const { fields, renderMethod: Component } = bodies[mode]
     const goToUsersList = useRouting("users-list")
+    const [startedScrolling, setStartedScrolling] = useState(false)
 
     const { data, fetchNextPage, hasNextPage } = useInfiniteQuery<{ items: R[], page: unknown }>({
         queryKey: ["fetching users list", fields, filter, limit],
-        queryFn: async ({ pageParam = 0 }) => {
-            const url = `${directusUrl}/users/?fields=${fields.join(",")}&limit=${limit}&filter=${filter ? JSON.stringify(filter) : ""}&sort=${sort.join(",")}&offset=${Number(pageParam) * limit}&search=${searchText}`
-            const res = await fetch(url, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }).then(res => res.json()).then(res => res.data) as R[]
-            return {
-                items: res as R[],
-                page: pageParam
-            }
-        },
-        initialPageParam: 0,
+        queryFn: async ({ pageParam }) => renderCardsQuery<R>({
+            collection: "users",
+            fields,
+            filter,
+            sort,
+            limit,
+            offset: Number(pageParam),
+            searchText
+        }).then(res => ({ items: res, page: pageParam })),
+        initialPageParam: 1,
         getNextPageParam: (lastPage, allPages, lastPageParam) => {
             if (lastPage.items.length < limit) return undefined
             else return Number(lastPageParam) + 1
-        }
+        },
+        enabled: startedScrolling
     })
 
+    const items = data?.pages.map(page => page.items).flat() ?? []
+    const finalData = useMemo(() => startedScrolling ? [...initialData, ...items] : initialData, [startedScrolling, data, initialData])
+
+    const onEndReached = () => {
+        setStartedScrolling(true)
+        fetchNextPage()
+    }
+
     return <FlatList
-        data={data?.pages.map(page => page.items).flat() ?? []}
+        data={finalData}
         renderItem={({ item }) => <Component {...item} />}
         ItemSeparatorComponent={() => <View className="w-4 h-4" />}
-        ListFooterComponent={infinite ? <BottomLoader endReached={!hasNextPage} onEndReached={fetchNextPage} /> : <ViewAllButton horizontal={!!flatListProps.horizontal}
+        onEndReached={() => Platform.OS !== "web" && onEndReached()}
+        ListFooterComponent={infinite ? <BottomLoader endReached={!hasNextPage} onEndReached={() => Platform.OS === "web" && onEndReached()} /> : <ViewAllButton horizontal={!!flatListProps.horizontal}
             button={(props) => <Button onPress={() => goToUsersList("")} {...props} />}
         />}
         {...flatListProps}

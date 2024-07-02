@@ -1,9 +1,8 @@
 /** @jsxImportSource react */
 
-import { fetchAllData } from "@/lib/helpers"
 import { LocationDetailedScreen } from "@/screens/location"
 import { readItem } from "@directus/sdk"
-import { getMembersCountForLocation } from "app/lib/misc/get-counts"
+import { getMembersCountForLocation } from "app/lib/misc/queries"
 import { LocationListingProps } from "app/screens/location-detailed"
 import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"

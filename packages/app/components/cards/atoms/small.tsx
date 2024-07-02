@@ -57,16 +57,16 @@ export const SmallListingCard = (item: SmallListingCardProps) => {
     const goToListingDetailed = useRouting("listing-detailed")
     return <Pressable onPress={() => goToListingDetailed(item.id)} className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start rounded native:w-[400px]">
         <Image source={{ uri: buildAssetUrl(item.user_created.avatar) }} className="w-8 h-8 rounded-full" />
-        <View className="flex-col gap-4 flex-grow">
+        <View className="flex-col gap-4 flex-1">
             <View className="flex-col gap-1">
-                <Text className="text-lg font-semibold">{item.title}</Text>
+                <Text className="text-lg font-semibold text-wrap">{item.title}</Text>
                 <View className="flex-row justify-between gap-4 items-center">
                     <Text className="!text-success">AED {Number(item.budget).toLocaleString()}</Text>
                     <Text style={{ backgroundColor: opacity(colors.success, 0.1) }} className="text-success px-1 rounded">{item.deal_type}</Text>
                 </View>
-                <View className="flex-row gap-1 flex-wrap items-center">
+                {item.tags && <View className="flex-row gap-1 flex-wrap items-center">
                     {item.tags.map((tag, i) => <Text className="text-info text-sm px-1 rounded" style={{ backgroundColor: opacity(colors.info, 0.1) }} key={i}>{tag}</Text>)}
-                </View>
+                </View>}
             </View>
             <Separator />
             <View className="flex-row justify-between items-center">

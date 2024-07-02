@@ -1,3 +1,5 @@
+"use client"
+
 import { Button, ButtonProps } from "./ui/button"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faGooglePlay, faAppStore, IconDefinition } from "@fortawesome/free-brands-svg-icons"

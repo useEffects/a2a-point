@@ -1,6 +1,7 @@
 import directusStore from "app/store/directus"
 import { aggregate } from "@directus/sdk"
-import { memberRole } from "../constants"
+import { directusUrl, memberRole } from "../constants"
+import { useQuery } from "@tanstack/react-query"
 
 export const getListingsCountForUser = async (userId: string) => {
     const { rest } = directusStore.getState()
@@ -121,4 +122,39 @@ export const getUsersCount = async () => {
         }
     }))
     return usersCount?.[0]!.count as unknown as number
+}
+
+export type RenderCardsType = {
+    collection: string,
+    fields?: string[],
+    filter?: Record<string, any>,
+    sort?: string[],
+    offset?: number,
+    limit?: number,
+    searchText?: string,
+    deep?: Record<string, any>
+}
+
+export const renderCardsQuery = async <R>(props: RenderCardsType) => {
+
+    const { token } = directusStore.getState()
+    const { collection, fields = [], filter = {}, sort = [], limit = 5, offset = 0, searchText = "", deep = {} } = props
+
+    const finalCollection = ["users"].includes(collection) ? collection : `items/${collection}`
+
+    const url = `${directusUrl}/${finalCollection}/?fields=${fields.join(",")}&limit=${limit}&filter=${JSON.stringify(filter)}&sort=${sort.join(",")}&offset=${offset}&search=${searchText}&deep=${JSON.stringify(deep)}`
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }).then(res => res.json()).then(res => res.data) as R[]
+    return res
+}
+
+export const useRenderCardQuery = <R>(props: RenderCardsType) => {
+    return useQuery<R[]>({
+        queryKey: ["fetching cards list", props],
+        queryFn: async () => renderCardsQuery<R>({ ...props }),
+        initialData: []
+    })
 }

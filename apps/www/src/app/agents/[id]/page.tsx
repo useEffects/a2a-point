@@ -27,10 +27,10 @@ export default async function ({ params }: { params: { id: string } }) {
     return <ProfileScreen user={data} company={data.company} document={data.document} />
 }
 
-// export async function generateStaticParams() {
-//     return fetchAllData<{ id: string }>("users", {
-//         role: {
-//             _eq: memberRole
-//         }
-//     }, ["id"])
-// }
+export async function generateStaticParams() {
+    return fetchAllData<{ id: string }>("users", {
+        role: {
+            _eq: memberRole
+        }
+    }, ["id"])
+}

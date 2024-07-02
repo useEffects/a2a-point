@@ -6,7 +6,10 @@ import { SmallListingCardProps } from "app/components/cards/atoms/small";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings";
 import { SmallLocationCards } from "app/components/cards/molecules/locations";
 import { RenderUsers, Mode as UsersRenderMode } from "app/components/cards/molecules/users";
+import { useSmallLocationsQuery } from "app/components/cards/utils/locations";
+import { useSmallUsersQuery } from "app/components/cards/utils/users";
 import { CompanyStats } from "app/components/company-stats";
+import { Header } from "app/components/header";
 import { ArrowUpRight, ExternalLink } from "app/components/icons";
 import { SeparatorText } from "app/components/separator-text";
 import { Button } from "app/components/ui/button";
@@ -14,7 +17,10 @@ import { Text } from "app/components/ui/text";
 import { ViewAllButton } from "app/components/utils/common-ui";
 import { FlatList, ScrollView } from "app/components/utils/virtual-lists";
 import { useColorScheme } from "app/hooks/color-scheme";
+import useRouting from "app/hooks/use-routing";
 import { directusUrl, portfolioUrl } from "app/lib/constants";
+import { getCompaniesCount, getListingsCount, getLocationsCount, getUsersCount } from "app/lib/misc/queries";
+import { SmallUsersCardProps } from "app/lib/props";
 import { News } from "app/lib/types";
 import directusStore from "app/store/directus";
 import userStore from "app/store/user";
@@ -23,9 +29,6 @@ import opacity from "hex-color-opacity";
 import { View } from "react-native";
 import { Link } from "solito/link";
 import { FilterKeys, FilterParam } from "./listings";
-import useRouting from "app/hooks/use-routing";
-import { Header } from "app/components/header";
-import { SmallUsersCardProps } from "app/lib/props";
 
 export default function HomeScreen() {
     const { authenticated, token } = directusStore()
@@ -42,6 +45,25 @@ export default function HomeScreen() {
         initialData: []
     })
 
+    const { data: users } = useSmallUsersQuery()
+    const { data: locations } = useSmallLocationsQuery()
+
+    const { data: counts } = useQuery<{ listingsCount: number, usersCount: number, locationsCount: number, companiesCount: number }>({
+        queryKey: ["Fetch counts"],
+        queryFn: async () => await Promise.all([getListingsCount(), getUsersCount(), getLocationsCount(), getCompaniesCount()]).then(([listingsCount, usersCount, locationsCount, companiesCount]) => ({
+            listingsCount,
+            usersCount,
+            locationsCount,
+            companiesCount
+        })),
+        initialData: {
+            listingsCount: 0,
+            usersCount: 0,
+            locationsCount: 0,
+            companiesCount: 0
+        }
+    })
+
     return <ScrollView contentContainerClassName="flex-grow flex-col gap-8 pb-8">
         <Header>
             <Text className="text-xl font-bold">A2APoint</Text>
@@ -56,7 +78,7 @@ export default function HomeScreen() {
                 ListHeaderComponent: () => <View className="w-4 h-4" />
             }}
         />
-        <CompanyStats className="justify-start gap-12 px-4" />
+        <CompanyStats counts={counts} className="justify-start gap-12 px-4" />
         <SeparatorText hideRight>
             <Button onPress={() => goToListings([{
                 [FilterKeys.Premium]: CommonFilters.Premium
@@ -77,7 +99,7 @@ export default function HomeScreen() {
         <SeparatorText hideLeft wrapperClassName="px-4">
             <Text className="font-medium">Browse popular locations</Text>
         </SeparatorText>
-        <SmallLocationCards />
+        <SmallLocationCards data={locations} />
         <SeparatorText hideLeft wrapperClassName="px-4">
             <Text className="font-medium">Top rated agents</Text>
         </SeparatorText>
@@ -89,6 +111,7 @@ export default function HomeScreen() {
                 horizontal: true,
                 ListHeaderComponent: () => <View className="w-4 h-4" />
             }}
+            initialData={users}
         />
         <SeparatorText hideLeft wrapperClassName="px-4">
             <Text className="font-medium">News and feeds</Text>
