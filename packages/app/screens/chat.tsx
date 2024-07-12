@@ -111,7 +111,7 @@ export default function ChatScreen() {
 
 const ChatsTabView = ({ data }: { data: RoomSubscribed[] }) => {
     const routes = [
-        { key: "chats", title: "Chats" },
+        { key: "all", title: "All" },
         { key: "dm", title: "DM" },
         { key: "groups", title: "Groups" }
     ]
@@ -136,7 +136,7 @@ const ChatsTabView = ({ data }: { data: RoomSubscribed[] }) => {
             </Button>)}
         </View>}
         renderScene={SceneMap({
-            chats: () => <ChatList data={data} />,
+            all: () => <ChatList data={data} />,
             dm: () => <ChatList data={dms} />,
             groups: () => <ChatList data={groups} />
         })}

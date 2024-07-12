@@ -7,7 +7,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
     const token = cookies().get("directus_session_token")?.value
     cookies().delete("directus_session_token")
-    console.log(cookies().getAll())
     const appUrl = req.nextUrl.searchParams.get("appUrl")
     if (token) {
         const decoded = jwtDecode<JWTTokenPayload>(token)
@@ -25,6 +24,8 @@ export async function GET(req: NextRequest) {
         }).then(res => res.json())
 
         const { access_token, refresh_token } = data.data
+
+        console.log(access_token, refresh_token)
 
         const url = new URL(appUrl!)
         url.searchParams.append("access_token", access_token)
