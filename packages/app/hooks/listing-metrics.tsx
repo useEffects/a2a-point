@@ -15,38 +15,6 @@ export const useListingMetrics = (listingId: string) => {
     const { rest } = directusStore()
     const { user } = userStore()
 
-    const { data: viewsRes } = useQuery({
-        queryKey: viewsCountKey(listingId),
-        queryFn: async () => await rest.request(aggregate("listings_directus_users_1", {
-            aggregate: {
-                count: ["directus_users_id"],
-            },
-            query: {
-                filter: {
-                    listings_id: {
-                        _eq: listingId
-                    }
-                }
-            }
-        }))
-    })
-
-    const { data: savesRes } = useQuery({
-        queryKey: savesCountKey(listingId),
-        queryFn: async () => await rest.request(aggregate("listings_directus_users", {
-            aggregate: {
-                count: ["directus_users_id"],
-            },
-            query: {
-                filter: {
-                    listings_id: {
-                        _eq: listingId
-                    }
-                }
-            }
-        }))
-    })
-
     const { data: checkSavedRes } = useQuery({
         queryKey: ["check-saved", listingId],
         queryFn: async () => await rest.request(readItems("listings_directus_users", {
@@ -103,8 +71,6 @@ export const useListingMetrics = (listingId: string) => {
     }
 
     return {
-        views: (viewsRes && viewsRes.length) ? viewsRes[0]!.count["directus_users_id"] : undefined,
-        saves: (savesRes && savesRes.length) ? savesRes[0]!.count["directus_users_id"] : undefined,
         deleteBookmark,
         addBookmark,
         bookmarkId: (checkSavedRes && checkSavedRes.length) ? checkSavedRes[0]!.id : undefined

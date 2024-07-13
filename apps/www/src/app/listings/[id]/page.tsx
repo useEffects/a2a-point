@@ -3,6 +3,7 @@
 import { fetchAllData } from "@/lib/helpers"
 import { ListingDetailedScreen } from "@/screens/listings"
 import { readItem } from "@directus/sdk"
+import { getFeedbacksCountForUser, getListingMetrics, getListingsCountForUser } from "app/lib/misc/queries"
 import { fullListingCardFields, FullListingDetailedProps } from "app/lib/props"
 import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"
@@ -18,6 +19,11 @@ export default async function ({ params }: { params: { id: string } }) {
         queryFn: async () => await rest.request(readItem("listings", id, {
             fields: fullListingCardFields
         })) as FullListingDetailedProps,
+    }).then(async res => {
+        const metrics = await getListingMetrics(id)
+        const listingsCount = await getListingsCountForUser(res.user_created.id)
+        const ratingsCount = await getFeedbacksCountForUser(res.user_created.id)
+        return { ...res, ...metrics, listingsCount, ratingsCount }
     })
 
     return <ListingDetailedScreen listing={listing} />

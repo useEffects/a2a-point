@@ -1,13 +1,13 @@
 import { createItem, readItems } from "@directus/sdk"
 import { FullListingCard } from "app/components/cards/atoms/full"
-import { FullListingDetailedProps } from "app/lib/props"
+import { FullListingDetailedProps, ListingCardMetrics, UsersCardMetrics } from "app/lib/props"
 import { LoginPopover } from "app/screens/listings"
 import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"
 import userStore from "app/store/user"
 import { useEffect } from "react"
 
-export default function FullListingScreen({ listing }: { listing: FullListingDetailedProps }) {
+export default function FullListingScreen({ listing }: { listing: FullListingDetailedProps & UsersCardMetrics & ListingCardMetrics }) {
     const { rest, authenticated } = directusStore()
     const { user } = userStore()
     const listingId = listing.id

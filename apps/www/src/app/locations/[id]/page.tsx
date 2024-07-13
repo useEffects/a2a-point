@@ -4,7 +4,7 @@ import { fetchAllData } from "@/lib/helpers"
 import { LocationDetailedScreen } from "@/screens/location"
 import { readItem } from "@directus/sdk"
 import { MediumListingCardProps } from "app/components/cards/atoms/medium"
-import { getMembersCountForLocation, renderCardsQuery } from "app/lib/misc/queries"
+import { getListingMetrics, getMembersCountForLocation, renderCardsQuery } from "app/lib/misc/queries"
 import { mediumListingsFields } from "app/lib/props"
 import { LocationListingProps } from "app/screens/location-detailed"
 import directusStore from "app/store/directus"
@@ -33,10 +33,12 @@ export default async function ({ params }: { params: { id: string } }) {
                 _eq: id
             }
         }
-    })
+    }).then(res => Promise.all(res.map(async listing => {
+        const metrics = await getListingMetrics(listing.id)
+        return { ...listing, ...metrics }
+    })))
 
-    return data ? <div className="flex flex-col gap-4 py-4">
-        <p className="text-xl font-bold px-4">{data.title}</p>
+    return data ? <div className="w-full">
         <LocationDetailedScreen room={data} totalMembers={totalMembersForLocation} listings={listings} />
     </div> : <></>
 }

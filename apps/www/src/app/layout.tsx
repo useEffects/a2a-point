@@ -10,7 +10,26 @@ import { ThemeProvider } from "src/components/providers/theme";
 import { View } from "src/components/view";
 import { QueryClientProvider } from "src/context/query";
 import "tailwind-theme/theme.css";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  metadataBase: new URL("https://a2apoint.com"),
+  title: "A2A Point | The one stop for all agents",
+  description: "In the dynamic world of real estate, efficiency, transparency, and seamless collaboration are paramount. Introducing A2A POINT, a revolutionary portal designed exclusively for real estate agents, redefining the landscape of property transactions and deal management.",
+  icons: ["/favicon.svg", "/favicon.ico"],
+  openGraph: {
+    title: "A2A Point | The one stop for all agents",
+    description: "In the dynamic world of real estate, efficiency, transparency, and seamless collaboration are paramount. Introducing A2A POINT, a revolutionary portal designed exclusively for real estate agents, redefining the landscape of property transactions and deal management.",
+    type: "website",
+    url: "https://a2apoint.com",
+    locale: "en_US",
+  },
+  keywords: ["real estate", "agents", "property", "transactions", "deal management", "UAE", "dubai"],
+  twitter: {
+    title: "A2A Point | The one stop for all agents",
+    images: ["https://a2apoint-misc.nyc3.digitaloceanspaces.com/app/logo.svg"]
+  }
+}
 
 export default function RootLayout({ children }: { children: ReactNode }) {
 

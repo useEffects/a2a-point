@@ -15,6 +15,7 @@ import directusStore from "app/store/directus";
 import { ArrowUpRight } from "lucide-react-native";
 import { Platform, View } from "react-native";
 import { FilterKeys } from "./listings";
+import { ListingCardMetrics } from "app/lib/props";
 
 export type LocationListingProps = Pick<Room, "id" | "avatar" | "title"> & {
     members: {
@@ -29,7 +30,7 @@ export type LocationDetailedProps = {
         }[]
     },
     totalMembers: number,
-    listings: MediumListingCardProps[]
+    listings: (MediumListingCardProps & ListingCardMetrics)[]
 }
 
 export function LocationDetailed(props: LocationDetailedProps) {
@@ -42,7 +43,7 @@ export function LocationDetailed(props: LocationDetailedProps) {
         <Header>
             <Text className="text-xl font-bold">{room.title}</Text>
         </Header>
-        <ScrollView contentContainerClassName="flex-grow">
+        <ScrollView contentContainerClassName="flex-grow max-w-xl p-4">
             <FullWidthImage source={{ uri: buildAssetUrl(room.avatar) }} />
             <View className="flex-1 p-4 flex-col gap-4">
                 <View className="flex-row items-center justify-between pr-4">
@@ -55,7 +56,7 @@ export function LocationDetailed(props: LocationDetailedProps) {
                 <SeparatorText hideLeft>
                     <Text>Listings Posted</Text>
                 </SeparatorText>
-                <RenderListings<MediumListingCardProps>
+                <RenderListings<MediumListingCardProps & ListingCardMetrics>
                     render={bodies.medium}
                     filter={commonFilters[CommonFilters.GroupId](room.id)}
                     flatListProps={{

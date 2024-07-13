@@ -6,7 +6,7 @@ import { useColorScheme } from 'app/hooks/color-scheme';
 import { useListingMetrics } from "app/hooks/listing-metrics";
 import { directusUrl } from "app/lib/constants";
 import { buildAssetUrl, groupByN, shortString } from "app/lib/helpers";
-import { DetailedAmenity, FullListingDetailedProps } from "app/lib/props";
+import { DetailedAmenity, FullListingDetailedProps, ListingCardMetrics, UsersCardMetrics } from "app/lib/props";
 import { RenderAmenities, RenderAmenity } from 'app/screens/post';
 import directusStore from 'app/store/directus';
 import userStore from "app/store/user";
@@ -39,8 +39,8 @@ export const ListingIconTile = ({
     );
 };
 
-export const FullListingCard = (props: FullListingDetailedProps) => {
-    const { views, saves, addBookmark, deleteBookmark, bookmarkId } = useListingMetrics(props.id)
+export const FullListingCard = (props: FullListingDetailedProps & UsersCardMetrics & ListingCardMetrics) => {
+    const { addBookmark, deleteBookmark, bookmarkId } = useListingMetrics(props.id)
     const { colors } = useColorScheme()
     const { authenticated } = directusStore()
     const photos = useMemo(() => [props.photo_1, props.photo_2, props.photo_3].filter(photo => photo) as string[], [props.photo_1, props.photo_2, props.photo_3])
@@ -120,21 +120,25 @@ export const FullListingCard = (props: FullListingDetailedProps) => {
                     />
                 ) : <></>}
             </View>
-            {props.amenities && props.amenities.length ? <Separator /> : <></>}
-            {props.amenities && props.amenities.length ? <RenderAmenities amenities={props.amenities} /> : <></>}
+            {props.amenities && props.amenities.length ? <View>
+                <Separator />
+                <View className="p-4">
+                    <RenderAmenities amenities={props.amenities} />
+                </View>
+            </View> : <></>}
             <Separator className='' />
             <View className='p-4'>
-                <MediumUsersCard {...props.user_created} />
+                <MediumUsersCard {...props} {...props.user_created} />
             </View>
             <Separator />
-            {(views !== null && saves !== null && views !== undefined && saves !== undefined) ? <View className="flex-row gap-4 justify-around px-4">
+            {(props.views !== null && props.saves !== null && props.views !== undefined && props.saves !== undefined) ? <View className="flex-row gap-4 justify-around px-4">
                 <View className="flex-col gap-2 items-center">
                     <Eye className="!text-foreground" size={18} />
-                    <Text className="text-sm text-subtext">{views} Views</Text>
+                    <Text className="text-sm text-subtext">{props.views} views</Text>
                 </View>
                 <Button disabled={!authenticated} variant={"base"} size={"none"} onPress={handleSave} className="flex-col gap-2 items-center">
                     <Bookmark fill={bookmarkId ? colors.foreground : "transparent"} className="!text-foreground" size={18} />
-                    <Text className="text-sm text-subtext">{saves} Saves</Text>
+                    <Text className="text-sm text-subtext">{props.saves} saves</Text>
                 </Button >
                 <Button variant={"base"} size={"none"} onPress={() => Linking.openURL(`${directusUrl}/admin/content/listings/${props.id}`)} className="flex-col gap-2 items-center">
                     <ExternalLink className="!text-foreground" size={18} />
