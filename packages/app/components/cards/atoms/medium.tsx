@@ -10,9 +10,9 @@ import { Pressable, View } from "react-native"
 import { useColorScheme } from "app/hooks/color-scheme"
 import directusStore from "app/store/directus"
 import { LocationChip } from "app/components/utils/chips"
-import { directusUrl } from "app/lib/constants"
 import useRouting from "app/hooks/use-routing"
 import { useLocaleString } from "app/hooks/locale-string"
+import { ListingCardMetrics } from "app/lib/props"
 
 export type MediumListingCardProps = Pick<Listing, "id" | "title" | "budget" | "deal_type" | "description" | "date_created"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email" | "plan"> } & { location: Pick<Room, "id" | "title" | "avatar"> }
 
@@ -24,7 +24,7 @@ export const LockedChatButton = () => {
     </Button>
 }
 
-export const MediumListingCard = (item: MediumListingCardProps) => {
+export const MediumListingCard = (item: MediumListingCardProps & ListingCardMetrics) => {
     const { user } = userStore()
     const { authenticated } = directusStore()
     const goToRoom = useRouting("room-detailed")
@@ -60,7 +60,7 @@ export const MediumListingCard = (item: MediumListingCardProps) => {
             </View>
         </Pressable>
         <View className="m-0 p-0 px-2 flex-row justify-between w-full items-center">
-            <RenderMetrics listingId={item.id} />
+            <RenderMetrics metrics={{ saves: item.saves, views: item.views }} />
             <Text className="text-xs text-subtext">{timeAgo.format(new Date(item.date_created))}</Text>
         </View>
     </View>

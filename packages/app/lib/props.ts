@@ -7,6 +7,8 @@ import { Amenity, Company, Document, Listing, Room, User } from "./types"
 
 // Users
 
+export type UsersCardMetrics = { ratingsCount: number, listingsCount: number }
+
 export type SmallUsersCardProps = Pick<User, "id" | "avatar" | "first_name" | "last_name" | "computed_rating"> & { company: Pick<Company, "title" | "avatar" | "id"> | null }
 
 export type MediumUsersCardProps = Pick<User, "id" | "avatar" | "first_name" | "last_name" | "computed_rating" | "tags" | "email" | "last_access" | "phone" | "description" | "plan"> & { company: Pick<Company, "title" | "avatar" | "id"> | null } & { document: Pick<Document, "verified"> | null }
@@ -17,6 +19,8 @@ export const mediumUsersFields = ["id", "avatar", "first_name", "last_name", "co
 
 
 // Listings
+
+export type ListingCardMetrics = { views: string | null, saves: string | null }
 
 export const fullListingCardFields = ["*", "amenities.*, amenities.amenity.*"].concat(mediumUsersFields.map(field => `user_created.${field}`))
 
@@ -44,6 +48,7 @@ export type MediumLocationCardProps = Pick<Room, "id" | "avatar" | "title"> & {
         }
     }[]
 }
+export type LocationCardMetrics = { membersCount: number, listingsCount: number }
 
 export const smallLocationFields = ["id", "avatar", "title"]
 export const mediumLocationFields = ["id", "avatar", "title", "members.id", "members.rooms_id", "members.directus_users_id.id", "members.directus_users_id.avatar"]

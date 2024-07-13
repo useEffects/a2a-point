@@ -29,6 +29,7 @@ import { useParams, usePathname, useRouter } from 'solito/navigation';
 import { useDebounce } from "use-debounce";
 import { GoToLoginButton } from "./locked-screens";
 import { useLocaleString } from 'app/hooks/locale-string';
+import { ListingCardMetrics } from 'app/lib/props';
 
 export enum FilterKeys {
     Budget = "budget",
@@ -56,7 +57,7 @@ const bathRoomsRange: [number, number] = [0, 8]
 const parkingRange: [number, number] = [0, 8]
 const sizeRange: [number, number] = [0, 10000]
 
-export default function ListingsScreenComponent({ className, data }: { className?: string, data: MediumListingCardProps[] }) {
+export default function ListingsScreenComponent({ className, data }: { className?: string, data: (MediumListingCardProps & ListingCardMetrics)[] }) {
     const params = useParams()
     const searchParams = useSearchParams()
 
@@ -142,7 +143,7 @@ export default function ListingsScreenComponent({ className, data }: { className
             </Button>
         </View>
         {filters.length ? <RenderChips filters={filters} setFilters={updateParams} /> : <View className='h-4 w-full bg-card' />}
-        <RenderListings<MediumListingCardProps>
+        <RenderListings<MediumListingCardProps & ListingCardMetrics>
             key={key}
             render={bodies.medium}
             initialData={initialData}

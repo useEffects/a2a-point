@@ -1,5 +1,4 @@
 import { aggregate, createItem, deleteItems, readItems } from "@directus/sdk";
-import { ListingCardMetrics } from "app/components/cards/atoms/full";
 import { Asset, withUri } from "app/components/chat-ui";
 import directusStore from "app/store/directus";
 import { queryClient } from "app/store/query";
@@ -11,6 +10,8 @@ import en from "javascript-time-ago/locale/en";
 import { Alert, Linking, Platform } from "react-native";
 import { ProductType, appName, directusUrl, products } from "./constants";
 import { Document } from "./types";
+import { ListingCardMetrics } from "./props";
+import { savesCountKey } from "./misc/queries";
 
 TimeAgo.addLocale(en)
 
@@ -33,48 +34,7 @@ export const openUrl = async (url: string) => {
   }
 }
 
-export const viewsCountKey = (listingId: string) => ["views-count", listingId]
-export const savesCountKey = (listingId: string) => ["saves-count", listingId]
-
 export type UserCount = { count: { directus_users_id: string } }
-
-export const getListingMetrics = async (listingId: string): Promise<ListingCardMetrics> => {
-  const { rest } = directusStore.getState()
-  const [viewsRes] = await queryClient.fetchQuery({
-    queryKey: viewsCountKey(listingId),
-    queryFn: async () => await rest.request(aggregate("listings_directus_users_1", {
-      aggregate: {
-        count: ["directus_users_id"],
-      },
-      query: {
-        filter: {
-          listings_id: {
-            _eq: listingId
-          }
-        }
-      }
-    }))
-  })
-  const [savesRes] = await queryClient.fetchQuery({
-    queryKey: savesCountKey(listingId),
-    queryFn: async () => await rest.request(aggregate("listings_directus_users", {
-      aggregate: {
-        count: ["directus_users_id"],
-      },
-      query: {
-        filter: {
-          listings_id: {
-            _eq: listingId
-          }
-        }
-      }
-    }))
-  })
-  return {
-    views: viewsRes!.count["directus_users_id"],
-    saves: savesRes!.count["directus_users_id"],
-  }
-}
 
 export const deleteBookmark = async (listingId: string, savedId: string) => {
   const { rest } = directusStore.getState()

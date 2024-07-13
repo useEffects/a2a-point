@@ -9,7 +9,7 @@ import { ViewAllButton } from "app/components/utils/common-ui"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import useRouting from "app/hooks/use-routing"
 import { Button } from "app/components/ui/button"
-import { mediumUsersFields, smallUsersFields } from "app/lib/props"
+import { mediumUsersFields, smallUsersFields, UsersCardMetrics } from "app/lib/props"
 import { renderCardsQuery } from "app/lib/misc/queries"
 import { uniqBy } from "lodash"
 import { memberRole } from "app/lib/constants"
@@ -55,7 +55,7 @@ const commonFilters = {
 
 export type RenderUserProps<R> = {
     mode: Mode | "small" | "medium",
-    initialData: R[],
+    initialData: (R & UsersCardMetrics)[],
     showInitialData?: boolean,
     limit?: number,
     filter?: Record<string, any>,

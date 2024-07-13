@@ -7,7 +7,7 @@ import { useColorScheme } from "app/hooks/color-scheme"
 import useRouting from "app/hooks/use-routing"
 import { buildAssetUrl, isUserPro, isUserVerified, shortString, timeAgo } from "app/lib/helpers"
 import { getFeedbacksCountForUser, getListingsCountForUser } from "app/lib/misc/queries"
-import { MediumUsersCardProps, SmallUsersCardProps } from "app/lib/props"
+import { MediumUsersCardProps, SmallUsersCardProps, UsersCardMetrics } from "app/lib/props"
 import { cn } from "app/lib/utils"
 import userStore from "app/store/user"
 import * as Linking from "expo-linking"
@@ -58,16 +58,7 @@ export const SmallUsersCard = (item: SmallUsersCardProps) => {
     </Pressable>
 }
 
-export const MediumUsersCard = (item: MediumUsersCardProps) => {
-    const { colors } = useColorScheme()
-    const { data: ratingsCount } = useQuery({
-        queryKey: ["ratingsCount", item.id],
-        queryFn: async () => await getFeedbacksCountForUser(item.id)
-    })
-    const { data: listingsCount } = useQuery({
-        queryKey: ["listingsCount", item.id],
-        queryFn: async () => await getListingsCountForUser(item.id)
-    })
+export const MediumUsersCard = (item: MediumUsersCardProps & UsersCardMetrics) => {
     const { user } = userStore()
     const shouldShowEllipsis = item.tags?.length ? item.tags.length > 3 : false
     const goToProfile = useRouting("profile-detailed")
@@ -77,7 +68,7 @@ export const MediumUsersCard = (item: MediumUsersCardProps) => {
             <View className="w-1/2 rounded-tl-xl">
                 <View className="relative flex-col items-start w-full h-16">
                     <View className="h-8 bg-background w-full pl-20 flex-row items-center gap-1">
-                        <Text className="text-primary">{listingsCount}</Text>
+                        <Text className="text-primary">{item.listingsCount}</Text>
                         <Text className="text-subtext">leads posted</Text>
                     </View>
                     <View className="absolute" style={{ elevation: 100, zIndex: 100 }}>
@@ -90,7 +81,7 @@ export const MediumUsersCard = (item: MediumUsersCardProps) => {
                         </View>
                         <View className="flex-row gap-1 items-center">
                             <Text className="text-sm text-subtext">Ratings</Text>
-                            <Text className="text-sm text-subtext">{ratingsCount}</Text>
+                            <Text className="text-sm text-subtext">{item.ratingsCount}</Text>
                         </View>
                     </View>
                 </View>

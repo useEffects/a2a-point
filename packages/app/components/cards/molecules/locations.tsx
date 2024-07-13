@@ -2,7 +2,7 @@
 
 import { HorizontalFlatList } from "@idiosync/horizontal-flatlist"
 import { HorizontalFlatListProps } from "@idiosync/horizontal-flatlist/dist/horizontal-flat-list"
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery } from "@tanstack/react-query"
 import { ArrowUpRight } from "app/components/icons"
 import { Button, ButtonProps } from "app/components/ui/button"
 import { Text } from "app/components/ui/text"
@@ -11,15 +11,15 @@ import { FlatList } from "app/components/utils/virtual-lists"
 import { useColorScheme } from "app/hooks/color-scheme"
 import useRouting from "app/hooks/use-routing"
 import { buildAssetUrl, shortString } from "app/lib/helpers"
-import { getListingsCountForLocation, getMembersCountForLocation, renderCardsQuery } from "app/lib/misc/queries"
-import { Room, User } from "app/lib/types"
+import { getListingsCountForLocation, renderCardsQuery } from "app/lib/misc/queries"
+import { LocationCardMetrics, MediumLocationCardProps, mediumLocationFields, SmallLocationCardProps } from "app/lib/props"
+import { User } from "app/lib/types"
 import directusStore from "app/store/directus"
 import opacity from "hex-color-opacity"
+import { uniqBy } from "lodash"
 import { useEffect, useMemo, useState } from "react"
 import { FlatListProps, Image, Platform, Pressable, View } from "react-native"
 import { BottomLoader } from "./listings"
-import { MediumLocationCardProps, mediumLocationFields, SmallLocationCardProps } from "app/lib/props"
-import { uniqBy } from "lodash"
 
 const SmallLocationCard = ({ item }: { item: SmallLocationCardProps }) => {
     const [count, setCount] = useState(0)
@@ -60,24 +60,17 @@ export const SmallLocationCards = ({ flatListProps, data }: { flatListProps?: Om
     />
 }
 
-const MediumLocationCard = ({ item }: { item: MediumLocationCardProps }) => {
-    const [listingsCount, setListingsCount] = useState(0)
-    const [membersCount, setMembersCount] = useState(0)
+const MediumLocationCard = ({ item }: { item: MediumLocationCardProps & LocationCardMetrics }) => {
     const { authenticated } = directusStore()
     const goToLocationDetailed = useRouting("location-detailed")
     const goToRoom = useRouting("room-detailed")
-
-    useEffect(() => {
-        getMembersCountForLocation(item.id).then(setMembersCount)
-        getListingsCountForLocation(item.id).then(setListingsCount)
-    }, [])
 
     return <Pressable onPress={() => goToLocationDetailed(item.id as any)} className="flex-row rounded-xl bg-card justify-start items-start w-full aspect-video">
         <Image source={{ uri: buildAssetUrl(item.avatar) }} className="w-1/2 h-full rounded-tl-xl rounded-bl-xl" resizeMode="cover" />
         <View className="h-full flex-col justify-start gap-2 p-4 w-1/2">
             <Text className="font-medium">{item.title}</Text>
-            <Text className="text-success">{listingsCount} leads available</Text>
-            <MembersList locationId={item.id} members={item.members.slice(0, 5)} total={membersCount} />
+            <Text className="text-success">{item.listingsCount} leads available</Text>
+            <MembersList locationId={item.id} members={item.members.slice(0, 5)} total={item.membersCount} />
             <Button onPress={() => goToRoom(item.id)} disabled={!authenticated} className="mt-auto mb-0 flex-row">
                 <View className="flex-row">
                     <Text>Group chat</Text>
@@ -88,7 +81,7 @@ const MediumLocationCard = ({ item }: { item: MediumLocationCardProps }) => {
     </Pressable>
 }
 
-export const MediumLocationCards = ({ initialData, limit = 5, searchText = "", infinite, flatListProps }: { initialData: MediumLocationCardProps[], limit?: number, infinite?: boolean, searchText?: string, flatListProps?: Omit<FlatListProps<MediumLocationCardProps>, "data" | "renderItem"> }) => {
+export const MediumLocationCards = ({ initialData, limit = 5, searchText = "", infinite, flatListProps }: { initialData: (MediumLocationCardProps & LocationCardMetrics)[], limit?: number, infinite?: boolean, searchText?: string, flatListProps?: Omit<FlatListProps<MediumLocationCardProps>, "data" | "renderItem"> }) => {
     const goToLocationsList = useRouting("locations-list")
     const [startedScrolling, setStartedScrolling] = useState(false)
 

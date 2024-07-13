@@ -3,17 +3,15 @@ import { Separator } from "app/components/ui/separator"
 import { Text } from "app/components/ui/text"
 import { LocationChip } from "app/components/utils/chips"
 import { useColorScheme } from "app/hooks/color-scheme"
-import { useIsFocused } from "app/hooks/is-focused"
-import { buildAssetUrl, getListingMetrics, timeAgo } from "app/lib/helpers"
+import { buildAssetUrl, timeAgo } from "app/lib/helpers"
 import { Listing, Room, User } from "app/lib/types"
 import opacity from "hex-color-opacity"
 import { Bookmark, ExternalLink, Eye } from "lucide-react-native"
-import { useEffect, useState } from "react"
 import { Image, Pressable, View } from "react-native"
 import { useRouter } from "solito/navigation"
-import { ListingCardMetrics } from "./full"
 import useRouting from "app/hooks/use-routing"
 import { useLocaleString } from "app/hooks/locale-string"
+import { ListingCardMetrics } from "app/lib/props"
 
 export const OpenDetailsButton = ({ id, size = "sm" }: { id: string, size?: "default" | "sm" | "lg" | "icon" | null | undefined }) => {
     const router = useRouter()
@@ -26,18 +24,8 @@ export const OpenDetailsButton = ({ id, size = "sm" }: { id: string, size?: "def
 
 export type SmallListingCardProps = Pick<Listing, "id" | "title" | "budget" | "deal_type" | "tags" | "date_created"> & { user_created: Pick<User, "id" | "avatar"> } & { location: Pick<Room, "id" | "title" | "avatar"> }
 
-export const RenderMetrics = ({ listingId }: { listingId: string }) => {
-    const [metrics, setMetrics] = useState<ListingCardMetrics | null>(null)
+export const RenderMetrics = ({ metrics }: { metrics: ListingCardMetrics }) => {
     const { colors } = useColorScheme()
-    const isFocused = useIsFocused()
-
-    useEffect(() => {
-        async function fetchMetrics() {
-            const metrics = await getListingMetrics(listingId)
-            setMetrics(metrics)
-        }
-        fetchMetrics()
-    }, [isFocused, listingId])
 
     return <View className="flex flex-row gap-4">
         {metrics ? <>
@@ -53,7 +41,7 @@ export const RenderMetrics = ({ listingId }: { listingId: string }) => {
     </View>
 }
 
-export const SmallListingCard = (item: SmallListingCardProps) => {
+export const SmallListingCard = (item: SmallListingCardProps & ListingCardMetrics) => {
     const { colors } = useColorScheme()
     const goToListingDetailed = useRouting("listing-detailed")
     const localizedBudget = useLocaleString(item.budget)
@@ -73,7 +61,7 @@ export const SmallListingCard = (item: SmallListingCardProps) => {
             </View>
             <Separator />
             <View className="flex-row justify-between items-center">
-                <RenderMetrics listingId={item.id} />
+                <RenderMetrics metrics={{ saves: item.saves, views: item.views }} />
                 <View className="ml-auto mr-0 flex-col gap-2">
                     <Text className="text-xs text-subtext text-right">Posted {timeAgo.format(new Date(item.date_created))} in</Text>
                     <LocationChip {...item.location} />

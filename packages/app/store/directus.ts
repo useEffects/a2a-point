@@ -15,7 +15,8 @@ type DirectusStore = {
     logout: () => Promise<void>,
 }
 
-export const publicToken = isDevBuild ? "e7KhchQTdEjDaoqHtJ9rCV4wtuf7-l8K": "Mnh7gFAmU4QeNRt_TQhTBrDDBxFdjPNu"
+// export const publicToken = isDevBuild ? "e7KhchQTdEjDaoqHtJ9rCV4wtuf7-l8K": "Mnh7gFAmU4QeNRt_TQhTBrDDBxFdjPNu"
+export const publicToken = "Mnh7gFAmU4QeNRt_TQhTBrDDBxFdjPNu"
 
 const initialClient = createDirectus(directusUrl)
     .with(rest())

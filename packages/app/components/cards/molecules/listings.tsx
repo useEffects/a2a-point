@@ -172,7 +172,8 @@ export const RenderListings = <R extends ListCardProps>({
     render,
     filter,
     flatListProps, limit = 5,
-    searchText = "", noAds,
+    searchText = "",
+    noAds,
     infinite }: {
         render: RenderType<R>,
         initialData: R[],
@@ -194,7 +195,7 @@ export const RenderListings = <R extends ListCardProps>({
 
     const { rest } = directusStore()
     const [startedScrolling, setStartedScrolling] = useState(false)
-    const isMedium = render === bodies.medium
+    const isMedium = render.fields === bodies.medium.fields
 
 
     const { data, hasNextPage, fetchNextPage, isLoading } = useInfiniteQuery<{ items: (R | ConfirmedAdvertisementCardProps)[], page: unknown }>({

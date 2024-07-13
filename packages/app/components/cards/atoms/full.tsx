@@ -39,8 +39,6 @@ export const ListingIconTile = ({
     );
 };
 
-export type ListingCardMetrics = { views: string | null, saves: string | null }
-
 export const FullListingCard = (props: FullListingDetailedProps) => {
     const { views, saves, addBookmark, deleteBookmark, bookmarkId } = useListingMetrics(props.id)
     const { colors } = useColorScheme()
