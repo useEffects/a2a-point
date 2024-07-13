@@ -16,7 +16,6 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://a2apoint.com"),
   title: "A2A Point | The one stop for all agents",
   description: "In the dynamic world of real estate, efficiency, transparency, and seamless collaboration are paramount. Introducing A2A POINT, a revolutionary portal designed exclusively for real estate agents, redefining the landscape of property transactions and deal management.",
-  icons: ["https://a2apoint-misc.nyc3.digitaloceanspaces.com/app/favicon.svg"],
   openGraph: {
     title: "A2A Point | The one stop for all agents",
     description: "In the dynamic world of real estate, efficiency, transparency, and seamless collaboration are paramount. Introducing A2A POINT, a revolutionary portal designed exclusively for real estate agents, redefining the landscape of property transactions and deal management.",
