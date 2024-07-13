@@ -7,6 +7,7 @@ import { RenderUsers } from "app/components/cards/molecules/users";
 import { Separator } from "./ui/separator";
 import { getFeedbacksCountForUser, getListingMetrics, getListingsCountForLocation, getListingsCountForUser, getMembersCountForLocation, renderCardsQuery } from "app/lib/misc/queries";
 import { ListingCardMetrics, MediumLocationCardProps, mediumLocationFields, MediumUsersCardProps, mediumUsersFields, smallListingsFields } from "app/lib/props";
+import { memberRole } from "app/lib/constants";
 
 export async function AppLayout({ children }: { children: React.ReactNode }) {
 
@@ -19,7 +20,8 @@ export async function AppLayout({ children }: { children: React.ReactNode }) {
     const listings = await renderCardsQuery<SmallListingCardProps>({
         collection: "listings",
         fields: smallListingsFields,
-        filter: premiumFilter
+        filter: premiumFilter,
+        limit: 3
     }).then(res =>
         Promise.all(res.map(async listing => {
             const metrics = await getListingMetrics(listing.id);
@@ -30,7 +32,13 @@ export async function AppLayout({ children }: { children: React.ReactNode }) {
     const users = await renderCardsQuery<MediumUsersCardProps>({
         collection: "users",
         fields: mediumUsersFields,
-        sort: ["score"]
+        sort: ["score"],
+        limit: 3,
+        filter: {
+            role: {
+                _eq: memberRole
+            }
+        }
     }).then(res => Promise.all(res.map(async user => {
         const ratingsCount = await getFeedbacksCountForUser(user.id);
         const listingsCount = await getListingsCountForUser(user.id);
@@ -40,6 +48,12 @@ export async function AppLayout({ children }: { children: React.ReactNode }) {
     const locations = await renderCardsQuery<MediumLocationCardProps>({
         collection: "rooms",
         fields: mediumLocationFields,
+        limit: 3,
+        filter: {
+            type: {
+                _eq: "group"
+            }
+        }
     }).then(res => Promise.all(res.map(async location => {
         const membersCount = await getMembersCountForLocation(location.id);
         const listingsCount = await getListingsCountForLocation(location.id);

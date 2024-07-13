@@ -32,6 +32,7 @@ import { CommonFilters, RenderListings, bodies, commonFilters } from "../compone
 import { Button } from "../components/ui/button";
 import { FilterKeys } from "./listings";
 import LockedScreen from "./locked-screens";
+import { ListingCardMetrics } from "app/lib/props";
 
 const LockedProfileScreen = ({ userId }: { userId: string }) => {
 
@@ -277,7 +278,7 @@ const ListingTab = ({ user, big, setBig }: { user: User, big: boolean, setBig: D
                 {big ? <Shrink size={18} color={colors.secondary} /> : <Expand size={18} color={colors.secondary} />}
             </Button>
         </View>
-        {big ? <RenderListings<MediumListingCardProps>
+        {big ? <RenderListings<MediumListingCardProps & ListingCardMetrics>
             render={bodies.medium}
             filter={commonFilters[CommonFilters.User](user.id)}
             noAds={true}
