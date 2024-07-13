@@ -12,7 +12,7 @@ export const fetchAllData = async <R>(collection: string, filter: Record<string,
             Authorization: `Bearer ${publicToken}`
         }
     }).then(res => res.json()).then(res => {
-        return res.data[0]
+        return res.data[0].count
     })
 
     const totalPages = Math.ceil(totalItems / 100)
