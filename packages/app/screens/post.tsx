@@ -31,6 +31,8 @@ import { NavigationState, Route, SceneMap, TabView } from "react-native-tab-view
 import { useParams, useRouter } from "solito/navigation";
 import { useDebounce } from "use-debounce";
 import * as Yup from "yup";
+import LockedScreen from "./locked-screens";
+import PostSVG from "app/components/svg/post";
 
 function Form1({ formValues, setFormValues, setNavigationState }: { formValues: Form1Values, setFormValues: Dispatch<SetStateAction<Form1Values>>, setNavigationState: Dispatch<SetStateAction<NavigationState<Route>>> }) {
     const Form1Schema = Yup.object().shape({
@@ -440,7 +442,7 @@ function Form4({ formValues, setFormValues, handleSubmit, loading }: { formValue
 }
 
 
-export default function PostScreenComponent() {
+function PostScreenComponent() {
     const params = useParams()
     const [form1Values, setForm1Values] = useState<Form1Values>(form1InitialValues)
     const [form2Values, setForm2Values] = useState<Form2Values>(form2InitialValues)
@@ -533,6 +535,19 @@ export default function PostScreenComponent() {
                 })}
             />
         </View>
+    </View>
+}
+
+export default function PostScreen() {
+    const { authenticated } = directusStore();
+
+    return <View className="flex-1 flex-grow h-full">
+        {authenticated ? <PostScreenComponent /> : <LockedScreen
+            SVGComponent={PostSVG}
+            title="Create and manage property listings on A2APoint"
+            description="Access exclusive features to create, update, and manage your property listings."
+            headerTitle="Post"
+        />}
     </View>
 }
 

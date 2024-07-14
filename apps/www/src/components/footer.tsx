@@ -148,7 +148,8 @@ const policyItems = [
 ]
 
 export const Footer = () => {
-    return <div className="bg-card py-12 relative z-[999]">
+    return <div className="bg-card pb-12 relative z-[999]">
+        <Separator className="mb-12" />
         <div className="flex flex-col gap-8 container p-4 items-center">
             <div className="flex flex-col gap-8 md:flex-row w-full items-start">
                 {footerItems.map((item, index) => <div key={index} className="w-full md:w-1/4 flex flex-col md:items-center gap-4">
@@ -165,7 +166,8 @@ export const Footer = () => {
                 <div className="w-20 h-20 p-2 rounded-full bg-white">
                     <img className="w-full h-full" src="/logo.svg" alt="" />
                 </div>
-                <p className="max-w-md text-sm text-primary text-center"> A2APoint is a Lorem ipsum dolor sit amet consectetur adipisicing elit. Non, inventore. </p>
+                <p className="text-primary">A2A Point</p>
+                <p className="max-w-md text-sm text-primary text-center"> Elevate your Real Estate Game </p>
             </div>
             <div className="flex justify-center gap-4">
                 {socialMediaItems.map((item, index) => <Link key={index} href={item.href} className="group">

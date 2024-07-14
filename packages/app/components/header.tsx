@@ -21,12 +21,15 @@ export const BackButton = () => {
 }
 
 export const Header = ({ children, height = headerHeight, className }: { children: ReactNode, height?: DimensionValue, className?: string }) => {
-    return <View className={cn("flex-row items-center px-4 gap-2 bg-card", className)} style={{ height }}>
+    return <View className={cn("flex-row items-center px-4 gap-2 bg-card", className)} style={{ height: Platform.select({
+        native: height,
+        default: 72
+    }) }}>
         {Platform.OS === "web" ? <></> : <BackButton />}
         {children}
     </View>
 }
 
 export const HeaderTitle = ({ children, className }: { children: ReactNode, className?: string }) => {
-    return <Text className={cn("text-xl font-bold", className)}>{children}</Text>
+    return <Text className={cn("md:text-3xl text-xl font-bold", className)}>{children}</Text>
 }

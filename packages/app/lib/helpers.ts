@@ -10,7 +10,6 @@ import en from "javascript-time-ago/locale/en";
 import { Alert, Linking, Platform } from "react-native";
 import { ProductType, appName, directusUrl, products } from "./constants";
 import { Document } from "./types";
-import { ListingCardMetrics } from "./props";
 import { savesCountKey } from "./misc/queries";
 
 TimeAgo.addLocale(en)

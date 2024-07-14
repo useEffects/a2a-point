@@ -3,13 +3,16 @@ import directusStore from "app/store/directus";
 import { ReactNode } from "react";
 import { EventProvider } from "react-native-outside-press";
 import { PortalHost } from "../primitives/portal";
+import { QueryClientProvider } from "app/context/query";
 
 export const Providers = ({ children }: { children: ReactNode }) => {
     return <EventProvider>
-        <ChatsProviderComponent>
-            {children}
-            <PortalHost />
-        </ChatsProviderComponent>
+        <QueryClientProvider>
+            <ChatsProviderComponent>
+                {children}
+                <PortalHost />
+            </ChatsProviderComponent>
+        </QueryClientProvider>
     </EventProvider>
 }
 

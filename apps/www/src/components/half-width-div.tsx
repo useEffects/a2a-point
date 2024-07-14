@@ -14,14 +14,14 @@ export const HalfWidthDiv = ({ className, direction = "left", child1, child2 }: 
             {child2}
         </div>
     </div> : <div className={cn("w-full grid", className)}>
-        <div className="container flex h-full col-start-1 row-start-1">
-            <div className={cn("w-1/2 h-full flex", direction === "left" ? "ml-0 mr-auto" : "ml-auto mr-0")}>
-                {child1}
-            </div>
-        </div>
         <div className="w-full h-full col-start-1 row-start-1">
             <div className={cn("w-1/2 h-full flex", direction === "left" ? "ml-auto mr-0" : "ml-0 mr-auto")}>
                 {child2}
+            </div>
+        </div>
+        <div className="container flex h-full col-start-1 row-start-1">
+            <div className={cn("w-1/2 h-full flex", direction === "left" ? "ml-0 mr-auto" : "ml-auto mr-0")}>
+                {child1}
             </div>
         </div>
     </div>

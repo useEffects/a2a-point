@@ -3,7 +3,8 @@ import ListingDetailed from "app/screens/listing-detailed"
 import { useQuery } from "@tanstack/react-query"
 import directusStore from "app/store/directus"
 import { readItem } from "@directus/sdk"
-import { fullListingCardFields, FullListingDetailedProps } from "app/lib/props"
+import { fullListingCardFields, FullListingDetailedProps, ListingCardMetrics } from "app/lib/props"
+import { getFeedbacksCountForUser, getListingMetrics, getListingsCountForUser } from "app/lib/misc/queries"
 
 export default function ListingDetailedScreen() {
     const { id } = useParams()
@@ -17,5 +18,26 @@ export default function ListingDetailedScreen() {
         enabled: !!id
     })
 
-    return data ? <ListingDetailed listing={data} /> : <></>
+    const { data: metrics } = useQuery({
+        queryKey: ["ListingMetrics", id],
+        queryFn: async () => await getListingMetrics(id! as string),
+        enabled: !!id,
+        staleTime: 0,
+        gcTime: 0
+    })
+
+    const { data: usersMetrics } = useQuery({
+        queryKey: ["UserMetrics", id],
+        queryFn: async () => Promise.all([getListingsCountForUser(data!.user_created.id), getFeedbacksCountForUser(data!.user_created.id)]),
+        enabled: !!data,
+        staleTime: 0,
+        gcTime: 0
+    })
+
+    return (data && metrics && usersMetrics) ? <ListingDetailed listing={{
+        ...data,
+        ...metrics,
+        listingsCount: usersMetrics![0],
+        ratingsCount: usersMetrics![1]
+    }} /> : <></>
 }

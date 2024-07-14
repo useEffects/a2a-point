@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { directusUrl, isDevBuild } from "app/lib/constants";
 import userStore from "./user";
+import jwt from "expo-jwt"
 
 export type MyDirectusClient = DirectusClient<any> & RestClient<any> & AuthenticationClient<any> & WebSocketClient<any>
 
@@ -17,6 +18,8 @@ type DirectusStore = {
 
 // export const publicToken = isDevBuild ? "e7KhchQTdEjDaoqHtJ9rCV4wtuf7-l8K": "Mnh7gFAmU4QeNRt_TQhTBrDDBxFdjPNu"
 export const publicToken = "Mnh7gFAmU4QeNRt_TQhTBrDDBxFdjPNu"
+
+const refreshTokenExpiration = 60 * 60 * 24 * 7
 
 const initialClient = createDirectus(directusUrl)
     .with(rest())
@@ -89,9 +92,9 @@ const directusStore = create<DirectusStore>((set, get) => ({
         });
         setInterval(async () => {
             if (get().authenticated && get().refreshToken) {
-                const newTokens = await reqNewTokens(get().refreshToken)
-                // console.log(newTokens, get().refreshToken)
-                get().refreshToken
+                const existingRefreshToken = get().refreshToken
+                if (!shouldRefresh(existingRefreshToken)) return
+                const newTokens = await reqNewTokens(existingRefreshToken)
                 if (!newTokens || !newTokens.accessToken || !newTokens.refreshToken) {
                     await AsyncStorage.removeItem("accessToken");
                     await AsyncStorage.removeItem("refreshToken");
@@ -109,7 +112,7 @@ const directusStore = create<DirectusStore>((set, get) => ({
                 await AsyncStorage.setItem("accessToken", newTokens.accessToken!);
                 await AsyncStorage.setItem("refreshToken", newTokens.refreshToken!);
             }
-        }, 1000 * 60 * 5)
+        }, 1000 * 60 * 60)
         await AsyncStorage.setItem("accessToken", accessToken!);
         await AsyncStorage.setItem("refreshToken", refreshToken!);
     },
@@ -145,6 +148,8 @@ export const reqNewTokens = async (refreshToken: string) => {
         }
     })
     if (res.status !== 200) {
+        await AsyncStorage.removeItem("accessToken");
+        await AsyncStorage.removeItem("refreshToken");
         return null
     } else {
         const { data } = await res.json()
@@ -157,6 +162,21 @@ const reset = {
     token: publicToken,
     refreshToken: "",
     rest: initialClient as MyDirectusClient,
+}
+
+export const shouldRefresh = (token: string) => {
+    try {
+        const decoded = jwt.decode(token, "")
+        console.log(decoded)
+        if (decoded && typeof decoded === "object") {
+            const exp = decoded.exp as number
+            const now = new Date().getTime() / 1000
+            return exp - now < (refreshTokenExpiration / 7)
+        }
+    } catch (error) {
+        console.error("An error occurred:", error);
+    }
+    return false
 }
 
 export default directusStore

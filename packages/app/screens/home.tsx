@@ -19,8 +19,8 @@ import { FlatList, ScrollView } from "app/components/utils/virtual-lists";
 import { useColorScheme } from "app/hooks/color-scheme";
 import useRouting from "app/hooks/use-routing";
 import { directusUrl, portfolioUrl } from "app/lib/constants";
-import { getCompaniesCount, getListingsCount, getLocationsCount, getUsersCount, renderCardsQuery, useRenderCardQuery } from "app/lib/misc/queries";
-import { photoListingsFields, smallListingsFields, SmallUsersCardProps } from "app/lib/props";
+import { getCompaniesCount, getListingMetrics, getListingsCount, getLocationsCount, getUsersCount, renderCardsQuery } from "app/lib/misc/queries";
+import { ListingCardMetrics, photoListingsFields, smallListingsFields, SmallUsersCardProps, UsersCardMetrics } from "app/lib/props";
 import { News } from "app/lib/types";
 import directusStore from "app/store/directus";
 import userStore from "app/store/user";
@@ -29,10 +29,9 @@ import opacity from "hex-color-opacity";
 import { View } from "react-native";
 import { Link } from "solito/link";
 import { FilterKeys, FilterParam } from "./listings";
-import { usePhotoListingsQuery } from "app/components/cards/utils/listings";
 
 export default function HomeScreen() {
-    const { authenticated, token } = directusStore()
+    const { authenticated } = directusStore()
     const { user } = userStore()
     const { colors } = useColorScheme()
     const { rest } = directusStore()
@@ -62,19 +61,37 @@ export default function HomeScreen() {
             usersCount: 0,
             locationsCount: 0,
             companiesCount: 0
-        }
+        },
+        staleTime: Number.MAX_SAFE_INTEGER,
     })
 
-    const { data: photoListingsInitialData } = useRenderCardQuery<PhotoListingProps>({
-        collection: "listings",
-        fields: photoListingsFields,
-        filter: commonFilters[CommonFilters.Photo](),
+    const { data: photoListingsInitialData } = useQuery({
+        queryKey: ["Fetch photo listings"],
+        queryFn: async () => await renderCardsQuery<PhotoListingProps>({
+            collection: "listings",
+            fields: photoListingsFields,
+            filter: commonFilters[CommonFilters.Photo](),
+            limit: 5
+        }).then(res => Promise.all(res.map(async listing => {
+            const metrics = await getListingMetrics(listing.id)
+            return { ...metrics, ...listing }
+        }))),
+        initialData: []
     })
 
-    const { data: premiumSmallListingsInitialData } = useRenderCardQuery<SmallListingCardProps>({
-        collection: "listings",
-        fields: smallListingsFields,
-        filter: commonFilters[CommonFilters.Premium](),
+    const { data: premiumSmallListingsInitialData } = useQuery({
+        queryKey: ["Fetch small listings"],
+        queryFn: async () => await renderCardsQuery<SmallListingCardProps>({
+            collection: "listings",
+            fields: smallListingsFields,
+            filter: commonFilters[CommonFilters.Premium](),
+            limit: 5
+        }).then(res => Promise.all(res.map(async listing => {
+            const metrics = await getListingMetrics(listing.id)
+            return { ...metrics, ...listing }
+        }))
+        ),
+        initialData: []
     })
 
     return <ScrollView contentContainerClassName="flex-grow flex-col gap-8 pb-8">
@@ -82,7 +99,7 @@ export default function HomeScreen() {
             <Text className="text-xl font-bold">A2APoint</Text>
         </Header>
         <Text className="text-2xl font-bold text-wrap px-4">{authenticated ? `Welcome back ${user.first_name} ${user.last_name}` : "The one stop for all agents"}</Text>
-        <RenderListings<PhotoListingProps>
+        <RenderListings<PhotoListingProps & ListingCardMetrics>
             render={bodies.photo}
             initialData={photoListingsInitialData}
             filter={commonFilters[CommonFilters.Photo]()}
@@ -101,7 +118,7 @@ export default function HomeScreen() {
                 <ArrowUpRight size={24} className="text-info" />
             </Button>
         </SeparatorText>
-        <RenderListings<SmallListingCardProps>
+        <RenderListings<SmallListingCardProps & ListingCardMetrics>
             render={bodies.small}
             initialData={premiumSmallListingsInitialData}
             flatListProps={{
@@ -118,7 +135,7 @@ export default function HomeScreen() {
         <SeparatorText hideLeft wrapperClassName="px-4">
             <Text className="font-medium">Top rated agents</Text>
         </SeparatorText>
-        <RenderUsers<SmallUsersCardProps>
+        <RenderUsers<SmallUsersCardProps & UsersCardMetrics>
             mode={UsersRenderMode.small}
             limit={5}
             sort={["score"]}

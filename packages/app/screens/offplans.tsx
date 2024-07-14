@@ -25,8 +25,8 @@ export default function OffPlans() {
                     <Text>Streamline your property sales with A2A POINT. Find curated UAE off-plan listings (global coming soon!) and craft personalized presentations in one click. Boost efficiency, impress clients, and close more deals.</Text>
                 </CardContent>
             </Card>
-            <View className="mt-auto bg-info h-10 native:h-12 rounded flex-col justify-center">
-                <Text className="text-info-foreground text-center font-medium">Coming soon</Text>
+            <View className="mt-auto bg-success h-10 native:h-12 rounded flex-col justify-center">
+                <Text className="text-success-foreground text-center font-medium">Coming soon</Text>
             </View>
         </View>
     </View>

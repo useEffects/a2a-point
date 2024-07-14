@@ -7,17 +7,17 @@ import * as React from 'react';
 import { Pressable } from 'react-native';
 
 const buttonVariants = cva(
-  'group flex items-center justify-center rounded-md web:ring-offset-background web:transition-colors web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2',
+  'group flex items-center justify-center rounded-md ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
   {
     variants: {
       variant: {
-        default: 'bg-primary web:hover:opacity-90 active:opacity-90',
-        destructive: 'bg-destructive web:hover:opacity-90 active:opacity-90',
+        default: 'bg-primary hover:opacity-90 active:opacity-90',
+        destructive: 'bg-destructive hover:opacity-90 active:opacity-90',
         outline:
-          'border border-input bg-background web:hover:bg-accent web:hover:text-accent-foreground active:bg-accent',
-        secondary: 'bg-secondary web:hover:opacity-80 active:opacity-80',
-        ghost: 'web:hover:bg-accent web:hover:text-accent-foreground active:bg-accent',
-        link: 'web:underline-offset-4 web:hover:underline web:focus:underline ',
+          'border border-input bg-background hover:bg-accent hover:text-accent-foreground active:bg-accent',
+        secondary: 'bg-secondary hover:opacity-80 active:opacity-80',
+        ghost: 'hover:bg-accent hover:text-accent-foreground active:bg-accent',
+        link: 'underline-offset-4 hover:underline focus:underline ',
         base: ""
       },
       size: {
@@ -37,7 +37,7 @@ const buttonVariants = cva(
 );
 
 const buttonTextVariants = cva(
-  'web:whitespace-nowrap text-base font-medium text-foreground web:transition-colors',
+  'whitespace-nowrap text-base font-medium text-foreground transition-colors',
   {
     variants: {
       variant: {
@@ -73,13 +73,13 @@ const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>
     return (
       <TextClassContext.Provider
         value={cn(
-          props.disabled && 'web:pointer-events-none',
+          props.disabled && 'pointer-events-none',
           buttonTextVariants({ variant, size })
         )}
       >
         <Pressable
           className={cn(
-            props.disabled && 'opacity-50 web:pointer-events-none',
+            props.disabled && 'opacity-50 pointer-events-none',
             buttonVariants({ variant, size, className })
           )}
           ref={ref}

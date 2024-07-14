@@ -5,7 +5,7 @@ import BottomSheet from 'app/components/bottomsheet';
 import { MediumListingCardProps } from "app/components/cards/atoms/medium";
 import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings";
 import { FormAutoSelect, RenderCompanyTileProps, RenderListingTileProps, RenderUserTileProps, useAutoCompleteItem } from 'app/components/formComponents';
-import { Header } from 'app/components/header';
+import { Header, HeaderTitle } from 'app/components/header';
 import { Bath, BedDouble, CarFront, CreditCard, LandPlot } from 'app/components/icons';
 import SearchBar from "app/components/searchbar";
 import { Button } from "app/components/ui/button";
@@ -124,7 +124,7 @@ export default function ListingsScreenComponent({ className, data }: { className
     return <View className={cn("flex-1", className)}>
         <Header className="items-center py-4" height={"auto"}>
             <View className="flex-row flex-1 justify-between items-center">
-                <Text className="text-xl font-bold">Listings</Text>
+                <HeaderTitle>Listings</HeaderTitle>
                 <GoToPostButtonUi />
             </View>
         </Header>

@@ -21,6 +21,7 @@ import { ExtraSmallListingCard, ExtraSmallListingCardProps } from "../atoms/extr
 import { MediumListingCard, MediumListingCardProps } from "../atoms/medium"
 import { PhotoListingCard, PhotoListingProps } from "../atoms/photo"
 import { SmallListingCard, SmallListingCardProps } from "../atoms/small"
+import { getListingMetrics } from "app/lib/misc/queries"
 
 type ListCardProps = SmallListingCardProps | ExtraSmallListingCardProps | MediumListingCardProps | PhotoListingProps
 
@@ -211,7 +212,10 @@ export const RenderListings = <R extends ListCardProps>({
                 sort: ["-date_created"],
                 search: searchText,
                 filter: filter ?? {},
-            })) as R[]
+            })).then(res => Promise.all(res.map(async listing => {
+                const metrics = await getListingMetrics(listing.id)
+                return { ...listing, ...metrics }
+            }))) as R[]
 
             items.push(...listings)
 

@@ -10,16 +10,16 @@ import { ReactNode } from "react";
 export default function PostLayout({ children }: { children: ReactNode }) {
     const isSmallDevice = useIsSmallDevice()
 
-    return <div className="container min-h-screen flex">
+    return <div className="container min-h-screen flex px-0">
         <div className="flex">
             <Separator orientation="vertical" className="h-full" />
         </div>
-        <div className="flex-grow w-full">
+        <div className="flex-grow w-full max-w-xl">
             {children}
         </div>
-        {!isSmallDevice && <div className="max-w-lg flex gap-8">
+        {!isSmallDevice && <div className="flex-grow flex gap-8">
             <Separator orientation="vertical" />
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-grow justify-center">
                 <div className="flex gap-4 max-w-lg items-start justify-start p-4">
                     <div>
                         <Info className="w-12 h-12 text-info" />
@@ -31,9 +31,6 @@ export default function PostLayout({ children }: { children: ReactNode }) {
                         </p>
                     </div>
                 </div>
-                <Button>
-                    <Text>Know more</Text>
-                </Button>
             </div>
         </div>}
     </div>

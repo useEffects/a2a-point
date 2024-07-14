@@ -57,9 +57,9 @@ const LoginScreen = () => {
             <Button onPress={handleLogin} className="w-full">
                 <Text>Login or create account</Text>
             </Button>
-            <View className="flex-col w-full items-center">
-                <View className="p-4 bg-card rounded-full">
-                    <Logo width={60} height={60} />
+            <View className="flex-col gap-2 w-full items-center">
+                <View className="p-4 bg-light rounded-full">
+                    <Logo width={40} height={40} />
                 </View>
                 <Text className="text-sm text-subtext text-center">By continuing, you agree to our <Text className="text-sm text-info underline">Terms of Service</Text> and that you have read our <Text className="text-sm text-info underline">Privacy Policy</Text></Text>
             </View>

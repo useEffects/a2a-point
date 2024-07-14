@@ -43,7 +43,7 @@ export default function useRouting(link: keyof (RootStackParamList & MainTopTabP
         case "offPlans":
             return () => router.push("/off-plans")
         case "profile":
-            return () => router.push("/profile")
+            return () => router.push("/agents/me")
         case "listings":
             return (filters: FilterParam[]) => {
                 const searchParams = new URLSearchParams(pathname)

@@ -65,7 +65,7 @@ export default function RootLayout() {
     }
 
     const promises = Promise.all([initializeDirectus(), initializeApp()])
-    promises.then(() => SplashScreen.hideAsync())
+    promises.then(() => setTimeout(() => SplashScreen.hideAsync(), 3000))
 
   }, [ready, colorScheme, colors, initialize, setColorScheme, authenticated]);
 

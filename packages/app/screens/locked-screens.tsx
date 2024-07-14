@@ -30,8 +30,8 @@ export default function LockedScreen(props: LockedScreenProps) {
 
     const dimensions = Platform.select({
         web: {
-            width: "calc((100vh) * (9 / 16))",
-            height: "calc(100vh)"
+            width: "56.25vh",
+            height: "100vh"
         },
         default: {
             width: width,
@@ -39,10 +39,11 @@ export default function LockedScreen(props: LockedScreenProps) {
         }
     })
 
-    // @ts-ignore
-    return <View className="flex-1 relative" style={{ ...dimensions }}>
-        <View className="absolute top-0 left-0 bottom-0 right-0">
-            <SVG {...dimensions} />
+    {/** @ts-ignore */ }
+    return <View className="flex-1 relative h-screen">
+        {/** @ts-ignore */}
+        <View className="absolute top-0 left-0 bottom-0 right-0" style={dimensions}>
+            <SVG width={Platform.OS !== "web" ? "100%" : "calc(100% - 1rem)"} height={"100%"} />
         </View>
         <View style={{ opacity: 0.9 }} className={cn("absolute top-0 left-0 bottom-0 right-0", isDarkColorScheme ? "bg-black" : "bg-white")} />
         {FinalHeader ? <FinalHeader /> : <Header>
@@ -55,7 +56,7 @@ export default function LockedScreen(props: LockedScreenProps) {
                 <Text className="text-subtext text-center">{props.description}</Text>
             </View>
         </View>
-        {Bottom ? <Bottom /> : <View className="p-4 w-full max-w-sm mx-auto">
+        {Bottom ? <Bottom /> : <View className="p-4 w-full md:max-w-sm mx-auto native:max-w-none">
             <GoToLoginComponent />
         </View>}
     </View>

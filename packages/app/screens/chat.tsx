@@ -22,7 +22,7 @@ import { NavigationState, Route, SceneMap, TabView } from "react-native-tab-view
 import ChatSVG from "app/components/svg/chat";
 import LockedScreen from "./locked-screens";
 
-const ChatLocked = () => {
+export const ChatLocked = () => {
     return <LockedScreen
         SVGComponent={ChatSVG}
         headerTitle="Chat"
@@ -32,11 +32,17 @@ const ChatLocked = () => {
 }
 
 export default function ChatScreen() {
+    const { authenticated } = directusStore()
+
+    return authenticated ? <ChatScreenComponent /> : <ChatLocked />
+
+}
+
+function ChatScreenComponent() {
     const { rest, token } = directusStore()
     const [searchText, setSearchText] = useState("")
     const [debouncedSearchText] = useDebounce(searchText, 500)
     const { roomsSubscribed, messages } = useChats()
-    const { authenticated } = directusStore()
     const { user } = userStore()
 
     const filteredRoomsSubscribed = useMemo(() => {
@@ -79,7 +85,7 @@ export default function ChatScreen() {
         initialData: []
     }) as { data: GroupListRowProp[], isLoading: boolean }
 
-    return authenticated ? <View className="flex-col h-full">
+    return <View className="flex-col h-full">
         <Header>
             <Text className="text-xl font-bold">Chat</Text>
         </Header>
@@ -106,7 +112,7 @@ export default function ChatScreen() {
             </View> : <></>}
         </View> :
             <ChatsTabView data={filteredRoomsSubscribed} />}
-    </View> : <ChatLocked />
+    </View>
 }
 
 const ChatsTabView = ({ data }: { data: RoomSubscribed[] }) => {

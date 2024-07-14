@@ -1,28 +1,21 @@
 import { Mode, RenderUsers } from "app/components/cards/molecules/users"
-import { Header } from "app/components/header"
+import { Header, HeaderTitle } from "app/components/header"
 import SearchBar from "app/components/searchbar"
 import { Separator } from "app/components/ui/separator"
 import { Text } from "app/components/ui/text"
 import { memberRole } from "app/lib/constants"
-import { MediumUsersCardProps } from "app/lib/props"
+import { MediumUsersCardProps, UsersCardMetrics } from "app/lib/props"
 import { useEffect, useState } from "react"
 import { View } from "react-native"
 import { useDebounce } from "use-debounce"
 
-export const UsersListComponent = ({ data }: { data: MediumUsersCardProps[] }) => {
+export const UsersListComponent = ({ data }: { data: (MediumUsersCardProps & UsersCardMetrics)[] }) => {
     const [searchText, setSearchText] = useState("")
     const [debouncedSearchText] = useDebounce(searchText, 500)
-    const [initialData, setInitialData] = useState<MediumUsersCardProps[]>(data)
-    const [key, setKey] = useState(0)
-
-    useEffect(() => {
-        setKey(p => p + 1)
-        setInitialData(Boolean(debouncedSearchText) ? [] : data)
-    }, [debouncedSearchText])
 
     return <View className="flex-1 flex-col justify-start">
-        <Header className="py-8 native:py-0">
-            <Text className="text-xl font-bold">Agents</Text>
+        <Header className="">
+            <HeaderTitle>Agents</HeaderTitle>
         </Header>
         <View className="bg-card p-4 pt-0">
             <SearchBar
@@ -32,7 +25,6 @@ export const UsersListComponent = ({ data }: { data: MediumUsersCardProps[] }) =
         </View>
         <View className="flex-grow">
             <RenderUsers<MediumUsersCardProps>
-                key={key}
                 mode={Mode.medium}
                 infinite
                 searchText={debouncedSearchText}

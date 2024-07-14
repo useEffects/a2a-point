@@ -12,10 +12,8 @@ export const LocationsList = ({ data }: { data: (MediumLocationCardProps & Locat
     const [debouncedSearchText] = useDebounce(searchText, 500)
 
     return <View className="flex-1">
-        <Header className="md:py-8 native:py-0 py-0 w-full">
-            <HeaderTitle>
-                <Text>Locations List</Text>
-            </HeaderTitle>
+        <Header className="w-full">
+            <HeaderTitle>Locations</HeaderTitle>
         </Header>
         <View className="p-4 pt-0 bg-card">
             <SearchBar searchText={searchText} setSearchText={setSearchText} />

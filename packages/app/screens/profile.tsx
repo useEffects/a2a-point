@@ -385,7 +385,7 @@ const ProfileDropdown = () => {
                 <EllipsisVertical size={24} className="text-foreground" />
             </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent sideOffset={-40}>
+        <DropdownMenuContent sideOffset={Platform.OS !== "web" ? -40 : undefined}>
             <DropdownMenuItem onPress={logout}>
                 <View className="flex-row items-center gap-2">
                     <LogOut size={18} className="text-foreground" />

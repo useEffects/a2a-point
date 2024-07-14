@@ -31,7 +31,6 @@ const ChatScreen = ({ roomDetails, receivers }: {
     const [searchText, setSearchText] = useState("")
     const [scrollToIndex, setScrollToIndex] = useState<number>(0)
     const [debouncedSearchText] = useDebounce(searchText, 500);
-    const [openDropdown, setOpenDropdown] = useState(false)
     const [currentMessage, setCurrentMessage] = useState<CurrentMessage>({ text: "" })
     const [offset, setOffset] = useState(1)
     const [endReached, setEndReached] = useState(false)

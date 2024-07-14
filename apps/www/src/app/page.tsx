@@ -16,7 +16,7 @@ import HeroGirl from "@/assets/hero-girl.png";
 import { getCompaniesCount, getListingsCount, getLocationsCount, getUsersCount } from "app/lib/misc/queries"
 import { CompanyStats } from "@/components/company-stats"
 
-export default async function () {
+export default async function HomePage() {
     const { rest } = directusStore.getState()
     const testimonials = await queryClient.fetchQuery<Testimonial[]>({
         queryKey: ["testimonials"],
@@ -61,7 +61,7 @@ export default async function () {
                 </div>
             }
             child2={
-                <div className="w-full relative">
+                <div className="w-full relative -z-10">
                     <HeroImage className="w-full h-full" />
                     <img src={HeroGirl.src} alt="hero-image" className="w-full h-full object-contain absolute top-0 bottom-0 right-0 left-0" />
                 </div>
@@ -96,19 +96,19 @@ export default async function () {
                                     locationsCount
                                 }}
                             />
-                            <p className="text-right">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nesciunt, numquam ea! Fugiat dolorum facilis consectetur dicta labore, quos vel atque?</p>
+                            <p className="text-right">At A2A Point, we offer exceptional properties that exceed your expectations. Join us and explore a world of possibilities!</p>
                         </div>
                     </div>
                 }
                 child2={
-                    <div className="md:h-[calc((50vw*9/16)+200px)]">
+                    <div className="md:h-[calc((50vw*9/16)+250px)]">
                         <video controls className="w-full" src="https://videos.pexels.com/video-files/3254200/3254200-uhd_3840_2160_25fps.mp4" />
                         <div className="hidden md:block absolute left-0 right-0">
-                            <div className="absolute h-[200px] left-0 right-auto w-1/2 bg-card"></div>
+                            <div className="absolute h-[250px] left-0 right-auto w-1/2 bg-card"></div>
                             <div className="container">
-                                <div className="w-1/2 h-[200px] relative z-10 flex flex-col justify-evenly py-4">
+                                <div className="w-1/2 h-[250px] relative z-10 flex flex-col justify-evenly py-4 gap-4">
                                     <p className="text-3xl md:text-5xl font-bold"> We are <span className="text-primary">bigger</span> than you think </p>
-                                    <p className="">Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui, delectus.</p>
+                                    <p className="">At A2A Point, our expertise and dedication far exceed expectations. We thrive on innovation and quality.</p>
                                 </div>
                             </div>
                         </div>
@@ -179,16 +179,16 @@ const whyChooseUs = [
 const steps = [
     {
         title: "Create a Lead or Inquiry",
-        content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam animi fugiat molestias laborum deleniti natus. Voluptatum omnis aliquid accusantium tempora."
+        content: "At A2A Point, initiate a lead or inquiry effortlessly. Our platform ensures a smooth start, connecting you with potential clients seamlessly."
     }, {
         title: "Manage Leads and Inquiries",
-        content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam animi fugiat molestias laborum deleniti natus. Voluptatum omnis aliquid accusantium tempora."
+        content: "Efficiently manage all your leads and inquiries with our comprehensive tools. Stay organized and never miss a follow-up or update."
     }, {
         title: "Collaborate with Clients and Stakeholders",
-        content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam animi fugiat molestias laborum deleniti natus. Voluptatum omnis aliquid accusantium tempora."
+        content: "Engage and collaborate with clients and stakeholders effectively. Our platform facilitates clear communication and productive interactions."
     }, {
         title: "Close the Deal",
-        content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam animi fugiat molestias laborum deleniti natus. Voluptatum omnis aliquid accusantium tempora."
+        content: "Seal the deal with confidence using our robust closing tools. Ensure every transaction is smooth, secure, and successful."
     }
 ]
 

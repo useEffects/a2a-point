@@ -41,15 +41,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         enableSystem
         disableTransitionOnChange
       >
-        <QueryClientProvider>
-          <View>
-            <Providers>
-              {children}
-            </Providers>
-            <TryLogin />
-            <PortalHost />
-          </View>
-        </QueryClientProvider>
+        <View>
+          <Providers>
+            {children}
+          </Providers>
+          <TryLogin />
+        </View>
       </ThemeProvider>
     </body>
   </html>);

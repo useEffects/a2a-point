@@ -2,7 +2,7 @@
 
 import { Agents } from "@/components/client-components/agents";
 import { memberRole } from "app/lib/constants";
-import { renderCardsQuery } from "app/lib/misc/queries";
+import { getFeedbacksCountForUser, getListingsCountForUser, renderCardsQuery } from "app/lib/misc/queries";
 import { MediumUsersCardProps, mediumUsersFields } from "app/lib/props";
 
 export default async function () {
@@ -14,7 +14,11 @@ export default async function () {
                 _eq: memberRole
             }
         }
-    })
+    }).then(res => Promise.all(res.map(async (user) => {
+        const listingsCount = await getListingsCountForUser(user.id)
+        const ratingsCount = await getFeedbacksCountForUser(user.id)
+        return { ...user, listingsCount, ratingsCount }
+    })))
 
     return <Agents data={data} />
 }
