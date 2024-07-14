@@ -112,7 +112,7 @@ type MembershipCardProps = {
     yearlyPriceId: string
 }
 
-const membershipCardItems = [
+export const membershipCardItems = [
     {
         monthlyAmount: 59.98,
         yearlyAmount: 539.8,

@@ -17,6 +17,7 @@ import { useLogin } from '@/hooks/login';
 import userStore from 'app/store/user';
 import directusStore from 'app/store/directus';
 import { basicPlanStripeCodes, proPlanStripeCodes } from 'app/lib/constants';
+import { membershipCardItems } from 'app/screens/account-console/membership-apply';
 
 export default function Membership() {
     const handleLogin = useLogin()
@@ -64,7 +65,7 @@ export default function Membership() {
                     </div>
                 </div>
                 <div className="flex flex-col md:flex-row gap-12 items-stretch w-full min-h-[300px] h-full">
-                    {items.map((item, key) => <div key={key} className={cn("flex flex-col gap-6 justify-center  w-full md:w-1/2 px-8 rounded-xl relative z-10 md:max-w-xs border", item.isPro ? "bg-primary text-primary-foreground" : "bg-card")}>
+                    {membershipCardItems.map((item, key) => <div key={key} className={cn("flex flex-col gap-6 justify-center  w-full md:w-1/2 px-8 rounded-xl relative z-10 md:max-w-xs border", item.isPro ? "bg-primary text-primary-foreground" : "bg-card")}>
                         <div className={cn("text-3xl font-bold", item.isPro ? "text-primary-foreground" : "text-primary")}>
                             {yearly ? <StrikeThrough amount={item.yearlyAmount} discount={item.yearlyDiscount} discountReason={item.discountReason} /> : <StrikeThrough amount={item.monthlyAmount} discount={item.monthlyDiscount} discountReason={item.discountReason} />}
                         </div>
@@ -95,15 +96,15 @@ export default function Membership() {
                         </a>
                         <Separator className='my-12' />
                         <div className='flex flex-col gap-4'>
-                            <p>Have a coupon from your company?</p>
-                            <div className='flex gap-4'>
+                            <p>Have an access code from your company?</p>
+                            <div className='flex gap-4 items-center'>
                                 <FormInput
                                     value={couponVal}
-                                    onChangeText={setCouponVal} className='flex-1' placeholder='Enter coupon code'
+                                    onChangeText={setCouponVal} className='flex-grow' placeholder='Enter coupon code'
+                                    rightComponent={() => <Button onPress={checkoutWithCoupon}>
+                                        <Text>Join</Text>
+                                    </Button>}
                                 />
-                                <Button onPress={checkoutWithCoupon}>
-                                    <Text>Join</Text>
-                                </Button>
                             </div>
                         </div>
                     </div>
@@ -116,34 +117,6 @@ export default function Membership() {
         </div>
     );
 }
-
-const items = [
-    {
-        monthlyAmount: 59.99,
-        yearlyAmount: 539.8,
-        monthlyDiscount: 50,
-        yearlyDiscount: 50,
-        discountReason: "launch offer",
-        name: "Member",
-        about: "For agent seeking a secure streamlined experience",
-        info: ["Limited Access to Listings", "Per Post Charges"],
-        monthlyPriceId: basicPlanStripeCodes.monthly,
-        yearlyPriceId: basicPlanStripeCodes.yearly,
-    },
-    {
-        monthlyAmount: 99.98,
-        yearlyAmount: 999.8,
-        monthlyDiscount: 50,
-        yearlyDiscount: 50,
-        discountReason: "launch offer",
-        name: "Pro",
-        about: "For agents who want to use full potential of A2A",
-        info: ["Featured Listings", "Pro Badge and Logo", "Enhanced Exposure"],
-        isPro: true,
-        monthlyPriceId: proPlanStripeCodes.monthly,
-        yearlyPriceId: proPlanStripeCodes.yearly
-    }
-]
 
 const StrikeThrough = ({ amount, discount, discountReason }: { amount: number, discount: number, discountReason?: string }) => {
     const discountedAmount = Math.round((discount / 100) * amount * 100) / 100
