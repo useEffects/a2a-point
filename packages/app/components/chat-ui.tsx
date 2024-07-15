@@ -12,7 +12,7 @@ import * as DocumentPicker from 'expo-document-picker'
 import * as ImagePicker from "expo-image-picker"
 import * as Linking from "expo-linking"
 import { Formik, FormikProps } from 'formik'
-import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from "react"
+import { Dispatch, SetStateAction, use, useEffect, useMemo, useRef, useState } from "react"
 import { SectionList, SectionListProps, View } from "react-native"
 import Autolink from 'react-native-autolink'
 import * as Yup from "yup"
@@ -184,6 +184,7 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
         clientName: Yup.string().required("Client Name is required")
     })
 
+
     const Form = (props: FormikProps<A2AFormType>) => {
         return <View className="flex-1">
             <ScrollView contentContainerClassName="flex-grow flex-col gap-4">
@@ -193,14 +194,16 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
                         onChangeText={props.handleChange("name")}
                         label='Title of the listing'
                         error={props.touched.name ? props.errors.name : ""}
+                        onBlur={props.handleBlur("name")}
                     />
                     <FormAutoSelect
                         currentItem={props.values.listing}
                         setCurrentItem={item => props.setFieldValue("listing", item)}
                         label="Listing"
-                        error={props.errors.listing}
+                        error={props.touched.listing ? props.errors.listing : ""}
                         item="listings"
                         filter={{}}
+                        onBlur={props.handleBlur("listing")}
                     />
                     <FormInput
                         value={props.values.commissionSeller?.toString()}
@@ -208,6 +211,7 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
                         label='Seller Commission %'
                         error={props.touched.commissionSeller ? props.errors.commissionSeller : ""}
                         keyboardType='numeric'
+                        onBlur={props.handleBlur("commissionSeller")}
                     />
                     <FormInput
                         value={props.values.commissionBuyer?.toString()}
@@ -215,17 +219,19 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
                         label='Buyer Commission %'
                         error={props.touched.commissionBuyer ? props.errors.commissionBuyer : ""}
                         keyboardType='numeric'
+                        onBlur={props.handleBlur("commissionBuyer")}
                     />
                     <FormInput
                         value={props.values.clientName}
                         onChangeText={props.handleChange("clientName")}
                         label='Client Name'
                         error={props.touched.clientName ? props.errors.clientName : ""}
+                        onBlur={props.handleBlur("clientName")}
                     />
                     <Separator />
                 </View>
-                <Button disabled={!props.isValid} onPress={props.submitForm} className="mt-auto mb-0">
-                    <Text>Generate</Text>
+                <Button onPress={props.submitForm} className="mt-auto mb-0">
+                    {props.isValid ? <Text>Generate</Text> : <Text></Text>}
                 </Button>
             </ScrollView>
         </View>
@@ -276,6 +282,10 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
                     } as A2AFormType}
                     validationSchema={formSchema}
                     onSubmit={handleFormGeneration}
+                    validateOnMount
+                    validateOnBlur
+                    validateOnChange
+                    enableReinitialize
                 >
                     {props => <Form {...props} />}
                 </Formik>

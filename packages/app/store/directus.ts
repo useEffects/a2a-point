@@ -16,10 +16,11 @@ type DirectusStore = {
     logout: () => Promise<void>,
 }
 
-// export const publicToken = isDevBuild ? "e7KhchQTdEjDaoqHtJ9rCV4wtuf7-l8K": "Mnh7gFAmU4QeNRt_TQhTBrDDBxFdjPNu"
-export const publicToken = "Mnh7gFAmU4QeNRt_TQhTBrDDBxFdjPNu"
+export const publicToken = isDevBuild ? "e7KhchQTdEjDaoqHtJ9rCV4wtuf7-l8K" : "Mnh7gFAmU4QeNRt_TQhTBrDDBxFdjPNu"
+// export const publicToken = "Mnh7gFAmU4QeNRt_TQhTBrDDBxFdjPNu"
 
-const refreshTokenExpiration = 60 * 60 * 24 * 7
+const refreshTokenExpiration = 1000 * 60 * 60 * 24 * 60
+const accessTokenExpiration = 1000 * 60 * 60 * 2
 
 const initialClient = createDirectus(directusUrl)
     .with(rest())
@@ -93,7 +94,8 @@ const directusStore = create<DirectusStore>((set, get) => ({
         setInterval(async () => {
             if (get().authenticated && get().refreshToken) {
                 const existingRefreshToken = get().refreshToken
-                if (!shouldRefresh(existingRefreshToken)) return
+                const existingAccessToken = get().token
+                if (!shouldRefresh(existingAccessToken)) return
                 const newTokens = await reqNewTokens(existingRefreshToken)
                 if (!newTokens || !newTokens.accessToken || !newTokens.refreshToken) {
                     await AsyncStorage.removeItem("accessToken");
@@ -164,14 +166,15 @@ const reset = {
     rest: initialClient as MyDirectusClient,
 }
 
-export const shouldRefresh = (token: string) => {
+export const shouldRefresh = (token: string | null) => {
+    if(!token) return false
     try {
         const decoded = jwt.decode(token, "")
         console.log(decoded)
         if (decoded && typeof decoded === "object") {
             const exp = decoded.exp as number
             const now = new Date().getTime() / 1000
-            return exp - now < (refreshTokenExpiration / 7)
+            return exp - now < (accessTokenExpiration / 7)
         }
     } catch (error) {
         console.error("An error occurred:", error);

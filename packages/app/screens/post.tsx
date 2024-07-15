@@ -451,7 +451,7 @@ function PostScreenComponent() {
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const [navigationState, setNavigationState] = useState<NavigationState<Route>>({
-        index: 1,
+        index: 0,
         routes: [
             { key: "form1" },
             { key: "form2" },

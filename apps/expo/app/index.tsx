@@ -3,7 +3,7 @@ import { Theme, ThemeProvider } from "@react-navigation/native";
 import { PortalHost } from "app/components/primitives/portal";
 import { setAndroidNavigationBarTheme } from "app/components/toggle-theme";
 import { useColorScheme } from "app/hooks/color-scheme";
-import directusStore, { reqNewTokens } from "app/store/directus";
+import directusStore, { reqNewTokens, shouldRefresh } from "app/store/directus";
 import { SplashScreen } from "expo-router";
 import * as React from "react";
 import { Platform, StatusBar } from "react-native";
@@ -40,11 +40,17 @@ export default function RootLayout() {
     async function initializeDirectus() {
       if (ready.directus) return
       const refreshToken = await AsyncStorage.getItem("refreshToken");
-      if (refreshToken) {
-        const newTokens = await reqNewTokens(refreshToken)
-        if (newTokens) {
-          await initialize(newTokens.accessToken, newTokens.refreshToken)
+      const accessToken = await AsyncStorage.getItem("accessToken");
+      if (refreshToken && accessToken) {
+        const newTokens = { refreshToken, accessToken }
+        if (shouldRefresh(accessToken)) {
+          const _newTokens = await reqNewTokens(refreshToken)
+          if (_newTokens) {
+            newTokens.accessToken = _newTokens.accessToken
+            newTokens.refreshToken = _newTokens.refreshToken
+          }
         }
+        await initialize(newTokens.accessToken, newTokens.refreshToken)
       }
       setReady(p => ({ ...p, directus: true }))
     }
