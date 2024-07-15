@@ -42,15 +42,15 @@ export default function RootLayout() {
       const refreshToken = await AsyncStorage.getItem("refreshToken");
       const accessToken = await AsyncStorage.getItem("accessToken");
       if (refreshToken && accessToken) {
-        const newTokens = { refreshToken, accessToken }
+        const tokens = { refreshToken, accessToken }
         if (shouldRefresh(accessToken)) {
-          const _newTokens = await reqNewTokens(refreshToken)
-          if (_newTokens) {
-            newTokens.accessToken = _newTokens.accessToken
-            newTokens.refreshToken = _newTokens.refreshToken
+          const newTokens = await reqNewTokens(refreshToken)
+          if (newTokens) {
+            tokens.accessToken = newTokens.accessToken
+            tokens.refreshToken = newTokens.refreshToken
           }
         }
-        await initialize(newTokens.accessToken, newTokens.refreshToken)
+        await initialize(tokens.accessToken, tokens.refreshToken)
       }
       setReady(p => ({ ...p, directus: true }))
     }
@@ -78,6 +78,8 @@ export default function RootLayout() {
   if (!isColorSchemeLoaded || !ready.directus) {
     return null
   }
+
+  console.log("rendering")
 
   return (
 

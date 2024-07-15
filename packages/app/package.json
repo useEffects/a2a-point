@@ -46,7 +46,7 @@
     "hex-color-opacity": "^0.4.2",
     "javascript-time-ago": "^2.5.10",
     "lodash": "^4.17.21",
-    "lucide-react-native": "^0.396.0",
+    "lucide-react-native": "^0.408.0",
     "moti": "latest",
     "nativewind": "^4.0.36",
     "phone": "^3.1.45",
@@ -84,7 +84,6 @@
   "sideEffects": false,
   "devDependencies": {
     "@types/comma-number": "^2.1.2",
-    "@types/lodash": "^4.17.5",
-    "expo-jwt": "^1.7.1"
+    "@types/lodash": "^4.17.5"
   }
 }

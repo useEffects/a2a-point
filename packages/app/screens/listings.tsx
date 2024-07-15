@@ -30,6 +30,7 @@ import { useDebounce } from "use-debounce";
 import { GoToLoginButton } from "./locked-screens";
 import { useLocaleString } from 'app/hooks/locale-string';
 import { ListingCardMetrics } from 'app/lib/props';
+import { memberRole } from 'app/lib/constants';
 
 export enum FilterKeys {
     Budget = "budget",
@@ -328,6 +329,11 @@ const ComboBoxFilters = ({ filters, setFilters }: { filters: Filter[], setFilter
         <FormAutoSelect
             item='users'
             label="Agent"
+            filter={{
+                role: {
+                    _eq: memberRole
+                }
+            }}
             currentItem={agent}
             setCurrentItem={(item) => item && setFilters([...filters, { key: FilterKeys.Agent, value: item.id as string }])}
         />

@@ -175,7 +175,7 @@ export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps 
     const { data } = useQuery<AutoCompleteRenderItemProps[]>({
         queryKey: ["Fetch AutoComplete Data", props.item, debouncedSearchText],
         queryFn: async () => props.item === "users" ?
-            await fetch(`${directusUrl}/users/?filter=${props.filter || ""}&limit=5&search=${debouncedSearchText}&fields=${autoCompleteFields[props.item].join(",")}`, {
+            await fetch(`${directusUrl}/users/?filter=${JSON.stringify(props.filter) || ""}&limit=5&search=${debouncedSearchText}&fields=${autoCompleteFields[props.item].join(",")}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

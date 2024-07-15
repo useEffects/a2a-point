@@ -3,7 +3,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { directusUrl, isDevBuild } from "app/lib/constants";
 import userStore from "./user";
-import jwt from "expo-jwt"
 
 export type MyDirectusClient = DirectusClient<any> & RestClient<any> & AuthenticationClient<any> & WebSocketClient<any>
 
@@ -114,7 +113,7 @@ const directusStore = create<DirectusStore>((set, get) => ({
                 await AsyncStorage.setItem("accessToken", newTokens.accessToken!);
                 await AsyncStorage.setItem("refreshToken", newTokens.refreshToken!);
             }
-        }, 1000 * 60 * 60)
+        }, 1000 * 60 * 5)
         await AsyncStorage.setItem("accessToken", accessToken!);
         await AsyncStorage.setItem("refreshToken", refreshToken!);
     },
@@ -167,19 +166,64 @@ const reset = {
 }
 
 export const shouldRefresh = (token: string | null) => {
-    if(!token) return false
+    if (!token) return false
     try {
-        const decoded = jwt.decode(token, "")
-        console.log(decoded)
+        const payload = token.split(".")[1]!
+        const decodedString = base64UrlDecode(payload)
+        const decoded = JSON.parse(decodedString)
         if (decoded && typeof decoded === "object") {
             const exp = decoded.exp as number
             const now = new Date().getTime() / 1000
-            return exp - now < (accessTokenExpiration / 7)
+            console.log("Checking if token should be refreshed", exp - now < (accessTokenExpiration / 2 / 1000))
+            return exp - now < (accessTokenExpiration / 2 / 1000)
         }
     } catch (error) {
         console.error("An error occurred:", error);
     }
     return false
+}
+
+function base64UrlDecode(input: string): string {
+    // Replace non-url compatible chars with base64 standard chars
+    input = input.replace(/-/g, '+').replace(/_/g, '/');
+
+    // Pad out with standard base64 required padding characters
+    const pad = input.length % 4;
+    if (pad) {
+        if (pad === 1) {
+            throw new Error('InvalidLengthError: Input base64url string is the wrong length to decode');
+        }
+        input += new Array(5 - pad).join('=');
+    }
+
+    // Custom base64 decoding function
+    const binaryString = decodeBase64(input);
+    return decodeURIComponent(
+        binaryString.split('')
+            .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+    );
+}
+
+// Function to decode a base64 string
+function decodeBase64(input: string): string {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+    let str = '';
+    let buffer = 0;
+    let bits = 0;
+
+    for (let i = 0; i < input.length; i++) {
+        if (input[i] === '=') break;
+        const value = chars.indexOf(input[i]!);
+        buffer = (buffer << 6) | value;
+        bits += 6;
+
+        if (bits >= 8) {
+            bits -= 8;
+            str += String.fromCharCode((buffer >> bits) & 0xff);
+        }
+    }
+    return str;
 }
 
 export default directusStore
