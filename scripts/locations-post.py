@@ -88,8 +88,8 @@ for location in locations:
         "type": "group"
     })
 
-token = "Vrp0IHwSgOJM2sno3r3pLNjs4chF-V4e"
-url = "https://dev.dashboard.a2apoint.com"
+token = "FcohKLOEi_mx_AyXLRwtoQ2PkeyhaQoU"
+url = "https://dashboard.a2apoint.com"
 
 res = requests.post(f"{url}/items/rooms", headers={"Authorization": f"Bearer {token}"}, json=payload)
 print(res.json())

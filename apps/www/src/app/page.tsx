@@ -90,7 +90,7 @@ export default async function HomePage() {
                 className="p-4 gap-12"
                 child1={
                     <div className="flex flex-col gap-4 md:gap-12 w-full items-center md:items-end md:pl-12">
-                        <p className="text-3xl md:text-5xl font-extrabold md:text-right">Discover Your <span className="text-primary">Dream</span> Property</p>
+                        <p className="text-3xl md:text-5xl font-extrabold md:text-right">Join the <span className="text-primary">Professional</span> Community</p>
                         <div className="md:max-w-80 flex flex-col gap-8 ml-auto mr-0 items-end">
                             <CompanyStats
                                 className="gap-12 md:block hidden"
