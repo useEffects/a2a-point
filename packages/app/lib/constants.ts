@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 
-// export const isDevBuild = Boolean(process.env.NODE_ENV !== "production")
-export const isDevBuild = true
+export const isDevBuild = Boolean(process.env.NODE_ENV !== "production")
+// export const isDevBuild = false
 
 export const directusOrigin = isDevBuild ? "dev.dashboard.a2apoint" : "dashboard.a2apoint"
 export const portfolioOrigin = isDevBuild ? "dev.a2apoint" : "a2apoint"
