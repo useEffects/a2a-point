@@ -9,7 +9,7 @@ export default function SearchBar({ searchText, setSearchText, searchBarProps }:
         <Input
             value={searchText}
             onChangeText={setSearchText}
-            className="flex-grow rounded-full h-[36px] pl-10"
+            className="w-full rounded-full h-[36px] pl-10"
         />
     </div>
 }

@@ -39,7 +39,7 @@ export const MediumListingCard = (item: MediumListingCardProps & ListingCardMetr
             </Pressable> : <LockedChatButton />}
         </View>
         <Pressable onPress={() => goToListingDetailed(item.id)} className="items-start flex-col gap-2 w-full">
-            <Text className="text-lg text-primary">{item.title}</Text>
+            <Text className="!text-lg text-primary">{item.title}</Text>
             <View className="flex-row justify-between w-full">
                 <LocationChip {...item.location} />
                 {user.id === item.user_created.id && <View className="flex-row gap-4">

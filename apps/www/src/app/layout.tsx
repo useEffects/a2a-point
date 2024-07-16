@@ -11,6 +11,7 @@ import { View } from "src/components/view";
 import { QueryClientProvider } from "src/context/query";
 import "tailwind-theme/theme.css";
 import { Metadata } from "next";
+import { OpenProvider } from "@/hooks/open";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://a2apoint.com"),
@@ -35,19 +36,21 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (<html lang="en" suppressHydrationWarning>
     <head />
     <body>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <View>
-          <Providers>
-            {children}
-          </Providers>
-          <TryLogin />
-        </View>
-      </ThemeProvider>
+      <Providers>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <OpenProvider>
+            <View>
+              {children}
+              <TryLogin />
+            </View>
+          </OpenProvider>
+        </ThemeProvider>
+      </Providers>
     </body>
   </html>);
 }

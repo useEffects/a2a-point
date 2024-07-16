@@ -53,8 +53,8 @@ export default function Membership() {
             <div className="flex flex-col gap-12 md:gap-20 items-start container">
                 <div className='flex flex-col gap-4 md:flex-row justify-between w-full'>
                     <div className="flex flex-col gap-4">
-                        <p className="text-3xl md:text-5xl font-bold text-primary"> Plans and Pricing </p>
-                        <p> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates, dolore? </p>
+                        <p className="text-3xl md:text-5xl font-bold text-primary">A2A Point Plans and Pricing</p>
+                        <p>Explore our various plans and pricing options designed to meet the needs of your business. Find the perfect solution for your requirements.</p>
                     </div>
                     <div className='flex flex-col items-start md:items-end gap-4'>
                         <p className='text-sm text-info md:text-right'>Buy yearly plans at discounted prices</p>
@@ -65,7 +65,7 @@ export default function Membership() {
                     </div>
                 </div>
                 <div className="flex flex-col md:flex-row gap-12 items-stretch w-full min-h-[300px] h-full">
-                    {membershipCardItems.map((item, key) => <div key={key} className={cn("flex flex-col gap-6 justify-center  w-full md:w-1/2 px-8 rounded-xl relative z-10 md:max-w-xs border", item.isPro ? "bg-primary text-primary-foreground" : "bg-card")}>
+                    {membershipCardItems.map((item, key) => <div key={key} className={cn("flex flex-col gap-6 justify-center  w-full md:w-1/2 p-4 md:px-8 rounded-xl relative z-10 md:max-w-xs border", item.isPro ? "bg-primary text-primary-foreground" : "bg-card")}>
                         <div className={cn("text-3xl font-bold", item.isPro ? "text-primary-foreground" : "text-primary")}>
                             {yearly ? <StrikeThrough amount={item.yearlyAmount} discount={item.yearlyDiscount} discountReason={item.discountReason} /> : <StrikeThrough amount={item.monthlyAmount} discount={item.monthlyDiscount} discountReason={item.discountReason} />}
                         </div>
@@ -81,8 +81,8 @@ export default function Membership() {
                             <Text>Choose Plan</Text>
                         </Button>
                     </div>)}
-                    <Separator className='h-[500px]' orientation={isSmallDevice ? "horizontal" : "vertical"} />
-                    <div className='bg-card border px-8 flex flex-col justify-center rounded-xl gap-6 flex-1 flex-grow'>
+                    <Separator className='md:h-[500px]' orientation={isSmallDevice ? "horizontal" : "vertical"} />
+                    <div className='bg-card border p-4 md:px-8 flex flex-col justify-center rounded-xl gap-6 flex-1 flex-grow'>
                         <div className='flex flex-col gap-4'>
                             <p className='text-primary text-3xl font-bold'> Company package </p>
                             <p>Top Selling</p>
@@ -94,13 +94,15 @@ export default function Membership() {
                                 </Text>
                             </Button>
                         </a>
-                        <Separator className='my-12' />
+                        <Separator className='md:my-12' />
                         <div className='flex flex-col gap-4'>
                             <p>Have an access code from your company?</p>
                             <div className='flex gap-4 items-center'>
                                 <FormInput
                                     value={couponVal}
-                                    onChangeText={setCouponVal} className='flex-grow' placeholder='Enter coupon code'
+                                    onChangeText={setCouponVal}
+                                    className='w-[calc(100vw-12rem)] md:w-auto'
+                                    placeholder='Enter access code'
                                     rightComponent={() => <Button onPress={checkoutWithCoupon}>
                                         <Text>Join</Text>
                                     </Button>}
@@ -110,7 +112,9 @@ export default function Membership() {
                     </div>
                 </div>
             </div>
-            <NewsLetter />
+            <div className='p-4'>
+                <NewsLetter />
+            </div>
             <div className="hidden md:block absolute -top-0 bottom-auto left-auto -right-1/4 opacity-10 -z-10">
                 <Buildings />
             </div>

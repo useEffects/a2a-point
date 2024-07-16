@@ -7,7 +7,7 @@ import { Text } from "./ui/text"
 import { ReactNode } from "react"
 
 const storeButtons = (icon: IconDefinition, href: string) => {
-    return (props: ButtonProps) => <Button {...props} href={href}>
+    return (props: ButtonProps) => <Button className="w-full" {...props} href={href}>
         <Text className="flex flex-row gap-4 items-center">
             <FontAwesomeIcon icon={icon} className="!text-inherit" />
             {props.children as ReactNode}

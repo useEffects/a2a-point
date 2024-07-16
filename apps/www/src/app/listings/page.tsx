@@ -5,7 +5,7 @@ import { MediumListingCardProps } from "app/components/cards/atoms/medium";
 import { getListingMetrics, renderCardsQuery } from "app/lib/misc/queries";
 import { mediumListingsFields } from "app/lib/props";
 
-export default async function () {
+export default async function ListingsPage () {
     const initialData = await renderCardsQuery<MediumListingCardProps>({
         collection: "listings",
         fields: mediumListingsFields,

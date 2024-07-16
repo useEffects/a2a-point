@@ -65,6 +65,8 @@ const MediumLocationCard = ({ item }: { item: MediumLocationCardProps & Location
     const goToLocationDetailed = useRouting("location-detailed")
     const goToRoom = useRouting("room-detailed")
 
+    item.members = item.members.filter(member => member.directus_users_id)
+
     return <Pressable onPress={() => goToLocationDetailed(item.id as any)} className="flex-row rounded-xl bg-card justify-start items-start w-full aspect-video">
         <Image source={{ uri: buildAssetUrl(item.avatar) }} className="w-1/2 h-full rounded-tl-xl rounded-bl-xl" resizeMode="cover" />
         <View className="h-full flex-col justify-start gap-2 p-4 w-1/2">
@@ -147,6 +149,7 @@ export const MembersList = ({ members, total, locationId }: {
 }) => {
     const goToMembersList = useRouting("members-list")
     const { colors } = useColorScheme()
+
     const faces = members.map(member => ({
         imageUrl: buildAssetUrl(member.directus_users_id.avatar)
     }))

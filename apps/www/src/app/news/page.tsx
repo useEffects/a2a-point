@@ -33,8 +33,8 @@ export default async function News({ searchParams }: { searchParams: { page?: st
 
     return <div className="container mx-auto flex flex-col gap-12 md:gap-40 p-4">
         <div className="flex flex-col gap-4 items-center">
-            <p className="text-4xl font-semibold"> News and insights </p>
-            <p className="max-w-xl">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Neque, minima. Voluptates suscipit iste quo aliquid repudiandae! Aliquam dicta quas in.</p>
+            <p className="text-4xl font-semibold">A2A Point News and Insights</p>
+            <p className="max-w-xl">Stay updated with the latest news and insights with A2A Point. Discover how we are transforming the way businesses operate and bringing innovative solutions to the market.</p>
             {(news?.length && categories.length) && <ListNews news={news} categories={categories} />}
         </div>
         {count?.length &&

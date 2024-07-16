@@ -5,7 +5,7 @@ import { Separator } from "app/components/ui/separator"
 import { Text } from "app/components/ui/text"
 import { useColorScheme } from "app/hooks/color-scheme"
 import useRouting from "app/hooks/use-routing"
-import { buildAssetUrl, isUserPro, isUserVerified, shortString, timeAgo } from "app/lib/helpers"
+import { buildAssetUrl, getDMRoomId, isUserPro, isUserVerified, shortString, timeAgo } from "app/lib/helpers"
 import { getFeedbacksCountForUser, getListingsCountForUser } from "app/lib/misc/queries"
 import { MediumUsersCardProps, SmallUsersCardProps, UsersCardMetrics } from "app/lib/props"
 import { cn } from "app/lib/utils"
@@ -14,6 +14,8 @@ import * as Linking from "expo-linking"
 import opacity from "hex-color-opacity"
 import { Image, Pressable, View } from "react-native"
 import { CompanyChip } from "./company"
+import { directusOrigin } from "app/lib/constants"
+import directusStore from "app/store/directus"
 
 export const SmallUsersCard = (item: SmallUsersCardProps) => {
     const { colors } = useColorScheme()
@@ -60,8 +62,15 @@ export const SmallUsersCard = (item: SmallUsersCardProps) => {
 
 export const MediumUsersCard = (item: MediumUsersCardProps & UsersCardMetrics) => {
     const { user } = userStore()
+    const { authenticated } = directusStore()
     const shouldShowEllipsis = item.tags?.length ? item.tags.length > 3 : false
     const goToProfile = useRouting("profile-detailed")
+    const goToRoomDetailed = useRouting("room-detailed")
+
+    const handleChatRedirect = async (userId: string) => {
+        const dmRoomId = await getDMRoomId([user.id, userId])
+        goToRoomDetailed(dmRoomId)
+    }
 
     return <Pressable onPress={() => goToProfile(item.id as any)} className="flex-col gap-4">
         <View className="w-full flex-row w-full justify-start">
@@ -69,7 +78,7 @@ export const MediumUsersCard = (item: MediumUsersCardProps & UsersCardMetrics) =
                 <View className="relative flex-col items-start w-full h-16">
                     <View className="h-8 bg-background w-full pl-20 flex-row items-center gap-1">
                         <Text className="text-primary">{item.listingsCount}</Text>
-                        <Text className="text-subtext">leads posted</Text>
+                        <Text className="text-subtext">leads</Text>
                     </View>
                     <View className="absolute" style={{ elevation: 100, zIndex: 100 }}>
                         <Image className="w-16 h-16 rounded-full border border-background border-1" source={{ uri: buildAssetUrl(item.avatar) }} />
@@ -115,15 +124,15 @@ export const MediumUsersCard = (item: MediumUsersCardProps & UsersCardMetrics) =
         <View className="w-full flex-row gap-4">
             {item.company && <CompanyChip avatar={item.company.avatar} title={item.company.title} id={item.company.title} />}
             <View className="flex-row gap-4 ml-auto mr-0">
-                {user.id !== item.id && <Button className="rounded-full" variant={"ghost"} size={"icon"}>
+                {user.id !== item.id && <Button onPress={() => handleChatRedirect(item.id)} disabled={!authenticated} className="rounded-full" variant={"ghost"} size={"icon"}>
                     <MessageCircleMore size={18} className="text-foreground" />
                 </Button>}
                 {[
-                    { icon: Phone, href: `tel:${item.phone}`, show: item.phone },
-                    { icon: AtSign, href: `mailto:${item.email}`, show: item.email },
+                    { icon: Phone, href: authenticated ? `tel:${item.phone}` : "No peeking!", show: item.phone },
+                    { icon: AtSign, href: authenticated ? `mailto:${item.email}` : "No peeking!", show: item.email },
                 ].filter(i => Boolean(i.show)).map(({ icon, href }, i) => {
                     const Icon = icon
-                    return <Button onPress={() => Linking.openURL(href)} key={i} variant={"ghost"} className="rounded-full" size={"icon"}>
+                    return <Button onPress={() => Linking.openURL(href)} key={i} variant={"ghost"} className="rounded-full" size={"icon"} disabled={!authenticated}>
                         <Icon size={18} className="text-foreground" />
                     </Button>
                 })}

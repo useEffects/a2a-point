@@ -5,3 +5,5 @@ export const nextUrl = process.env.NEXT_PUBLIC_URL
 export const canUpdateToken = process.env.NODE_ENV === "production" ? process.env.DIRECTUS_RESOURCE_UPDATE_MANAGER_TOKEN! : "yz9aabx-kf6nbHHCZqOGh4wkRThfUsIE"
 export const canUpdateDirectus = createDirectus(directusUrl).with(rest()).with(staticToken(canUpdateToken))
 export const twilioVerifySID = process.env.TWILIO_VERIFY_SID
+
+export const videoUrl = 'https://a2apoint-misc.nyc3.digitaloceanspaces.com/app/Finalized_Out.mp4'

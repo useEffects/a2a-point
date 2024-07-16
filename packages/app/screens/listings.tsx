@@ -19,13 +19,14 @@ import useRouting from 'app/hooks/use-routing';
 import { cn } from "app/lib/utils";
 import directusStore from "app/store/directus";
 import opacity from 'hex-color-opacity';
-import { isArray, isNumber, isPlainObject, isString } from 'lodash';
+import { filter, isArray, isNumber, isPlainObject, isString } from 'lodash';
 import { Award, Handshake, HousePlus, ListFilter, LucideIcon, LucideProps, Sparkles, X } from "lucide-react-native";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { Platform, View } from "react-native";
 import { Circle, Svg } from 'react-native-svg';
 import { NavigationState, Route, SceneRendererProps, TabView } from 'react-native-tab-view';
-import { useParams, usePathname, useRouter } from 'solito/navigation';
+import { useParams } from 'solito/navigation';
+import { useRouter, usePathname } from 'solito/navigation';
 import { useDebounce } from "use-debounce";
 import { GoToLoginButton } from "./locked-screens";
 import { useLocaleString } from 'app/hooks/locale-string';
@@ -69,13 +70,23 @@ export default function ListingsScreenComponent({ className, data }: { className
     const { authenticated } = directusStore()
     const [key, setKey] = useState(0)
     const [filters, setFilters] = useState([] as Filter[])
+    const [currentFilters, setCurrentFilters] = useState<Filter[]>([])
     const setParams = useSetParams()
-    const [initialData, setInitialData] = useState(data)
 
     const updateParams = function (filters: Filter[]) {
+        setCurrentFilters(filters)
         const newFilters = filters.reduce<{ [key in FilterKeys]?: FilterValue }[]>((acc, filter) => [...acc, { [filter.key]: filter.value }], [])
         const dispatcher = setParams(newFilters)
         typeof dispatcher === "function" && dispatcher()
+        if (Platform.OS === "web") {
+            window.history.replaceState(null, "", `?filters=${JSON.stringify(newFilters)}`)
+            setKey(key + 1)
+        }
+    }
+
+    const applyFilters = () => {
+        updateParams(currentFilters)
+        setBottomSheetVisible(false)
     }
 
     const finalFilters = useMemo(() => filters.map(f => expandFilterValue(f.key, f.value)), [filters])
@@ -111,16 +122,11 @@ export default function ListingsScreenComponent({ className, data }: { className
                     setFilters(r)
                 })
         }
-    }, [JSON.stringify(params), searchParams?.get("filters")])
+    }, [Platform.OS === "web" ? searchParams?.get("filters") : JSON.stringify(params)])
 
     useEffect(() => {
-        setKey(p => p + 1)
-        if (Boolean(filters.length) || Boolean(debouncedSearchText)) {
-            setInitialData([])
-        } else {
-            setInitialData(data)
-        }
-    }, [JSON.stringify(filters), debouncedSearchText])
+        setCurrentFilters(filters)
+    }, [filters])
 
     return <View className={cn("flex-1", className)}>
         <Header className="items-center py-4" height={"auto"}>
@@ -145,9 +151,8 @@ export default function ListingsScreenComponent({ className, data }: { className
         </View>
         {filters.length ? <RenderChips filters={filters} setFilters={updateParams} /> : <View className='h-4 w-full bg-card' />}
         <RenderListings<MediumListingCardProps & ListingCardMetrics>
-            key={key}
             render={bodies.medium}
-            initialData={initialData}
+            initialData={data}
             flatListProps={{
                 ItemSeparatorComponent: () => <Separator />,
                 contentContainerClassName: "max-w-xl"
@@ -169,15 +174,20 @@ export default function ListingsScreenComponent({ className, data }: { className
                     </Button>
                 </View>
                 <View className='px-4'>
-                    <ComboBoxFilters filters={filters} setFilters={updateParams} />
+                    <ComboBoxFilters filters={currentFilters} setFilters={setCurrentFilters} />
                 </View>
                 <Separator />
                 <View className='px-4'>
-                    <CategoryFilters filters={filters} setFilters={updateParams} />
+                    <CategoryFilters filters={currentFilters} setFilters={setCurrentFilters} />
                 </View>
                 <Separator />
                 <View className='px-4'>
-                    <RangeSliders filters={filters} setFilters={updateParams} />
+                    <RangeSliders filters={currentFilters} setFilters={setCurrentFilters} />
+                </View>
+                <View className='px-4'>
+                    {isDifferent(currentFilters, filters) ? <Button onPress={applyFilters} variant={"secondary"}>
+                        <Text>Apply</Text>
+                    </Button> : <></>}
                 </View>
             </View>
         </BottomSheet>
@@ -306,6 +316,7 @@ const RangeFilter = ({ value, setValue, range, label }: { value: [number, number
 }
 
 const ComboBoxFilters = ({ filters, setFilters }: { filters: Filter[], setFilters: (newFilters: Filter[]) => void }) => {
+
     const locationId = filters.find(f => f.key === FilterKeys.Location)?.value
     const agentId = filters.find(f => f.key === FilterKeys.Agent)?.value
     const companyId = filters.find(f => f.key === FilterKeys.Company)?.value
@@ -319,7 +330,7 @@ const ComboBoxFilters = ({ filters, setFilters }: { filters: Filter[], setFilter
             item='rooms'
             label='Location'
             currentItem={location}
-            setCurrentItem={(item) => item && setFilters([...filters, { key: FilterKeys.Location, value: item.id as string }])}
+            setCurrentItem={(item) => item ? setFilters([...filters, { key: FilterKeys.Location, value: item.id as string }]) : setFilters(filters.filter(f => f.key !== FilterKeys.Location))}
             filter={{
                 type: {
                     _eq: "group"
@@ -335,13 +346,13 @@ const ComboBoxFilters = ({ filters, setFilters }: { filters: Filter[], setFilter
                 }
             }}
             currentItem={agent}
-            setCurrentItem={(item) => item && setFilters([...filters, { key: FilterKeys.Agent, value: item.id as string }])}
+            setCurrentItem={(item) => item ? setFilters([...filters, { key: FilterKeys.Agent, value: item.id as string }]) : setFilters(filters.filter(f => f.key !== FilterKeys.Agent))}
         />
         <FormAutoSelect
             item='companies'
             label='Company'
             currentItem={company}
-            setCurrentItem={(item) => item && setFilters([...filters, { key: FilterKeys.Company, value: item.id as string }])}
+            setCurrentItem={(item) => item ? setFilters([...filters, { key: FilterKeys.Company, value: item.id as string }]) : setFilters(filters.filter(f => f.key !== FilterKeys.Company))}
         />
     </View>
 }
@@ -463,7 +474,7 @@ const RenderChips = ({ filters, setFilters }: { filters: Filter[], setFilters: (
 
     const getRangeSliderLabel = (key: FilterKeys, value: [number, number], maxRange: number) => {
         const [min, max] = value
-        return `${key}: ${min} - ${max}${shouldRenderPlus(maxRange, max)}`
+        return `${key}: AED ${min.toLocaleString()} - AED ${max.toLocaleString()}${shouldRenderPlus(maxRange, max)}`
     }
 
     const getLabel = (filter: Filter) => {
@@ -559,4 +570,9 @@ const useSetParams = () => {
     })
 
     return setParams
+}
+
+const isDifferent = (a: Filter[], b: Filter[]) => {
+    if (a.length !== b.length) return true
+    return a.some((f, i) => f.key !== b[i]?.key || f.value !== b[i]?.value)
 }

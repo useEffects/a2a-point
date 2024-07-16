@@ -8,9 +8,10 @@ import { Separator } from "./ui/separator";
 import { getFeedbacksCountForUser, getListingMetrics, getListingsCountForLocation, getListingsCountForUser, getMembersCountForLocation, renderCardsQuery } from "app/lib/misc/queries";
 import { ListingCardMetrics, MediumLocationCardProps, mediumLocationFields, MediumUsersCardProps, mediumUsersFields, smallListingsFields } from "app/lib/props";
 import { memberRole } from "app/lib/constants";
+import { ReactNode } from "react";
+import { ConditionalRender } from "./conditional";
 
-export async function AppLayout({ children }: { children: React.ReactNode }) {
-
+async function Large({ children }: { children: ReactNode }) {
     const premiumFilter = {
         featured: {
             _eq: true
@@ -60,8 +61,8 @@ export async function AppLayout({ children }: { children: React.ReactNode }) {
         return { ...location, membersCount, listingsCount };
     })))
 
-    return <div className="flex flex-1 flex-grow-[2]">
-        <div className="container mx-auto flex flex-row flex-grow px-0">
+    return <div className="md:flex md:flex-1 md:flex-grow-[2]">
+        <div className="container mx-auto flex-row flex-grow px-0 flex">
             <Separator orientation="vertical" />
             {children}
             <Separator orientation="vertical" />
@@ -93,4 +94,11 @@ export async function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
         </div>
     </div>
+}
+
+export function AppLayout({ children }: { children: ReactNode }) {
+    return <ConditionalRender
+        large={<Large>{children}</Large>}
+        mobile={children}
+    />
 }

@@ -51,4 +51,4 @@ export type MediumLocationCardProps = Pick<Room, "id" | "avatar" | "title"> & {
 export type LocationCardMetrics = { membersCount: number, listingsCount: number }
 
 export const smallLocationFields = ["id", "avatar", "title"]
-export const mediumLocationFields = ["id", "avatar", "title", "members.id", "members.rooms_id", "members.directus_users_id.id", "members.directus_users_id.avatar"]
+export const mediumLocationFields = ["id", "avatar", "title", "members.*", "members.directus_users_id.id", "members.directus_users_id.avatar"]

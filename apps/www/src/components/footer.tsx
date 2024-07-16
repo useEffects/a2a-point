@@ -164,7 +164,7 @@ export const Footer = () => {
             <Separator className="w-full" />
             <div className="flex flex-col gap-2 items-center">
                 <div className="w-20 h-20 p-2 rounded-full bg-white">
-                    <img className="w-full h-full" src="/logo.svg" alt="" />
+                    <img className="w-full h-full" src="/icon.svg" alt="" />
                 </div>
                 <p className="text-primary">A2A Point</p>
                 <p className="max-w-md text-sm text-primary text-center"> Elevate your Real Estate Game </p>

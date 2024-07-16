@@ -20,6 +20,7 @@ import { Separator } from "./ui/separator";
 import { Text } from "./ui/text";
 import { UserChip } from "./user-chip";
 import { MaterialSymbolIcon } from "./material-symbol-icon";
+import { X } from "lucide-react-native";
 
 type AdditionalFormInputProps = {
     error?: string,
@@ -214,32 +215,33 @@ export const FormAutoSelect = (props: TextInputProps & AdditionalFormInputProps 
     }
 
     return <View className="w-full">
-        <OutsidePressHandler onOutsidePress={() => setShowResults(false)}>
-            <FormInput
-                label={props.label}
-                error={props.error}
-                value={searchText}
-                onChangeText={handleChange}
-                onFocus={() => setShowResults(true)}
-                className={cn(showResults && "rounded-b-none", props.className)}
-                autoSelect={showResults}
-                {...props}
-            />
-            <Collapsible collapsed={!showResults || !data.length}>
-                <View className="p-1 bg-popover rounded rounded-t-none">
-                    {data.map((item, index) => <View key={index}>
-                        <Button className="flex-row justify-start" variant={"base"} size={"none"} onPress={() => {
-                            props.setCurrentItem(item)
-                            setSearchText(getTitle(item))
-                            setShowResults(false)
-                        }}>
-                            <RenderItem {...item} />
-                        </Button>
-                        {index !== data.length - 1 && <Separator className="my-1" />}
-                    </View>)}
-                </View>
-            </Collapsible>
-        </OutsidePressHandler>
+        <FormInput
+            label={props.label}
+            error={props.error}
+            value={searchText}
+            onChangeText={handleChange}
+            onFocus={() => setShowResults(true)}
+            className={cn(showResults && "rounded-b-none outline-none", props.className)}
+            autoSelect={showResults}
+            rightComponent={() => showResults && <Button onPress={() => setShowResults(false)} size={"smallIcon"} variant={"destructive"}>
+                <X size={18} className="text-destructive-foreground" />
+            </Button>}
+            {...props}
+        />
+        <Collapsible collapsed={!showResults || !data.length}>
+            <View className="p-1 bg-popover rounded rounded-t-none">
+                {data.map((item, index) => <View key={index}>
+                    <Button className="flex-row justify-start" variant={"base"} size={"none"} onPress={() => {
+                        props.setCurrentItem(item)
+                        setSearchText(getTitle(item))
+                        setShowResults(false)
+                    }}>
+                        <RenderItem {...item} />
+                    </Button>
+                    {index !== data.length - 1 && <Separator className="my-1" />}
+                </View>)}
+            </View>
+        </Collapsible>
     </View >
 }
 

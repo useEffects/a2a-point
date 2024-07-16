@@ -14,8 +14,6 @@ export const QueryClientProvider = (props: Omit<QueryClientProviderProps, "clien
     const queryClient = new QueryClient({
         defaultOptions: {
             queries: {
-                staleTime: 0,
-                gcTime: 1000 * 60 * 5,
                 refetchOnMount: "always"
             }
         },

@@ -1,6 +1,6 @@
 /** @jsxImportSource react */
 
-import { Testimonial } from "@/components/client-components/home"
+import { ListingsSearch, Phones, Testimonial, TestimonialCarousel } from "@/components/client-components/home"
 import { readItems } from "@directus/sdk"
 import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"
@@ -15,6 +15,8 @@ import phones from "@/assets/phones.png";
 import HeroGirl from "@/assets/hero-girl.png";
 import { getCompaniesCount, getListingsCount, getLocationsCount, getUsersCount } from "app/lib/misc/queries"
 import { CompanyStats } from "@/components/company-stats"
+import Link from "next/link"
+import { videoUrl } from "@/lib/constants"
 
 export default async function HomePage() {
     const { rest } = directusStore.getState()
@@ -34,22 +36,26 @@ export default async function HomePage() {
         <HalfWidthDiv
             className="px-4 md:p-auto flex-col-reverse gap-8"
             child1={
-                <div className="flex flex-col item-center justify-evenly w-full mx-auto h-full pr-4 gap-4 md:gap-12">
+                <div className="flex flex-col item-center justify-evenly w-full mx-auto h-full pr-4 gap-12">
                     <div className="flex flex-col gap-4">
                         <p className="text-xl md:text-3xl font-bold text-subtext"> Elevate your Real Estate Game </p>
                         <p className="text-3xl md:text-7xl font-bold"> The <span className="text-primary"> One Stop </span> for All Agents </p>
                         <p className="text-subtext">In the dynamic world of real estate, efficiency, transparency, and seamless collaboration are paramount. Introducing A2A POINT, a revolutionary portal designed exclusively for real estate agents, redefining the landscape of property transactions and deal management.</p>
                     </div>
-                    <div className="flex flex-col md:flex-row gap-4">
-                        <div className="flex flex-col gap-4 [&>*]:w-80 [&>*]:rounded-full">
-                            <Button variant={"outline"} size={"lg"}>
-                                <Text>Browse Plans</Text>
+                    <div className="flex flex-col md:flex-row gap-4 items-center">
+                        <div className="flex flex-col gap-4 w-full md:w-80 [&>*]:rounded-full">
+                            <Button variant={"outline"} size={"lg"} className="p-0 w-full">
+                                <Link href="/membership" className="w-full h-full flex flex-col justify-center items-center">
+                                    <Text>Browse Plans</Text>
+                                </Link>
                             </Button>
-                            <Button variant={"outline"} size={"lg"}>
-                                <Text>View Testimonials</Text>
+                            <Button variant={"outline"} size={"lg"} className="p-0 w-full">
+                                <Link href="/listings" className="w-full h-full flex flex-col justify-center items-center">
+                                    <Text>Browse listings</Text>
+                                </Link>
                             </Button>
                         </div>
-                        <div className="flex flex-col gap-4 [&>*]:w-80">
+                        <div className="flex flex-col gap-4 w-full md:w-80">
                             <GooglePlayButton size={"lg"}>
                                 <Text>Download on Google Play</Text>
                             </GooglePlayButton>
@@ -83,11 +89,11 @@ export default async function HomePage() {
                 direction="right"
                 className="p-4 gap-12"
                 child1={
-                    <div className="flex flex-col gap-12 w-full items-end md:pl-12">
-                        <p className="text-3xl md:text-5xl font-extrabold text-right">Discover Your <span className="text-primary">Dream</span> Property</p>
-                        <div className="max-w-80 flex flex-col gap-8 ml-auto mr-0 items-end">
+                    <div className="flex flex-col gap-4 md:gap-12 w-full items-center md:items-end md:pl-12">
+                        <p className="text-3xl md:text-5xl font-extrabold md:text-right">Discover Your <span className="text-primary">Dream</span> Property</p>
+                        <div className="md:max-w-80 flex flex-col gap-8 ml-auto mr-0 items-end">
                             <CompanyStats
-                                className="gap-12"
+                                className="gap-12 md:block hidden"
                                 right
                                 counts={{
                                     listingsCount,
@@ -96,13 +102,22 @@ export default async function HomePage() {
                                     locationsCount
                                 }}
                             />
-                            <p className="text-right">At A2A Point, we offer exceptional properties that exceed your expectations. Join us and explore a world of possibilities!</p>
+                            <CompanyStats
+                                className="gap-12 block md:hidden w-full"
+                                counts={{
+                                    listingsCount,
+                                    usersCount: usesCount,
+                                    companiesCount,
+                                    locationsCount
+                                }}
+                            />
+                            <p className="md:text-right">At A2A Point, we offer exceptional properties that exceed your expectations. Join us and explore a world of possibilities!</p>
                         </div>
                     </div>
                 }
                 child2={
                     <div className="md:h-[calc((50vw*9/16)+250px)]">
-                        <video controls className="w-full" src="https://videos.pexels.com/video-files/3254200/3254200-uhd_3840_2160_25fps.mp4" />
+                        <video controls className="w-full" src={videoUrl} />
                         <div className="hidden md:block absolute left-0 right-0">
                             <div className="absolute h-[250px] left-0 right-auto w-1/2 bg-card"></div>
                             <div className="container">
@@ -118,7 +133,7 @@ export default async function HomePage() {
         </div>
         <div className="container flex flex-col-reverse md:flex-row gap-8 p-4">
             <div className="md:w-1/2 flex flex-col gap-4 md:gap-12 justify-center flex-1">
-                <p className="text-3xl md:text-5xl font-bold">Sign up and access our app <span className="text-primary">It&apos;s free</span></p>
+                <p className="text-3xl md:text-5xl font-bold">Sign up and access our app <span className="text-primary">It&apos;s free to start</span></p>
                 <div className="flex flex-col gap-6">
                     {steps.map((step, index) => <div className="flex flex-col gap-2" key={index}>
                         <p className="text-primary text-xl"> {step.title} </p>
@@ -127,13 +142,25 @@ export default async function HomePage() {
                 </div>
             </div>
             <div className="md:w-1/2 flex flex-col justify-center items-center flex-1">
-                <img src={phones.src} alt="" />
+                <Phones />
+            </div>
+        </div>
+        <div className="container flex flex-col md:flex-row p-4 gap-12 md:gap-0">
+            <div className="md:w-1/2">
+                <div className="flex flex-col gap-4 h-full max-w-sm">
+                    <p className="text-3xl md:text-5xl font-bold text-primary"> Testimonials </p>
+                    <p className="">We love hearing from our agents</p>
+                    <p className="text-subtext">See what our agents are saying about their experience with the platform to get a better understanding.</p>
+                </div>
+            </div>
+            <div className="md:w-1/2">
+                <TestimonialCarousel testimonials={testimonials} />
             </div>
         </div>
         <div className="container flex flex-col md:flex-row p-4">
             <div className="md:w-1/2 flex flex-col gap-4 h-full">
                 <p className="text-3xl md:text-5xl font-bold text-primary"> FAQ </p>
-                <p className="text-subtext">Everyting you need to know about A2APoint</p>
+                <p className="text-subtext">Everything you need to know about A2APoint</p>
             </div>
             <div className="md:w-1/2">
                 <Accordion type="multiple">
@@ -152,7 +179,9 @@ export default async function HomePage() {
                 </Accordion>
             </div>
         </div>
-        <NewsLetter />
+        <div className="p-4">
+            <NewsLetter />
+        </div>
     </div>
 }
 

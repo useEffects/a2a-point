@@ -198,10 +198,11 @@ export const RenderListings = <R extends ListCardProps>({
     const [startedScrolling, setStartedScrolling] = useState(false)
     const isMedium = render.fields === bodies.medium.fields
 
+    const shouldUseInitialData = infinite && initialData.length && !Boolean(searchText || filter)
 
-    const { data, hasNextPage, fetchNextPage, isLoading } = useInfiniteQuery<{ items: (R | ConfirmedAdvertisementCardProps)[], page: unknown }>({
-        initialPageParam: initialData.length ? 1 : 0,
-        queryKey: ["Fetching Listings with fields: ", render.fields, filter, searchText, limit],
+    const { data, hasNextPage, fetchNextPage, isLoading, ...restProps } = useInfiniteQuery<{ items: (R | ConfirmedAdvertisementCardProps)[], page: unknown }>({
+        initialPageParam: shouldUseInitialData ? 1 : 0,
+        queryKey: ["Fetching Listings with fields: ", render.fields, filter, searchText, limit, shouldUseInitialData],
         queryFn: async ({ pageParam }) => {
             const page = pageParam as number
             let items: (R | ConfirmedAdvertisementCardProps)[] = []
@@ -244,12 +245,22 @@ export const RenderListings = <R extends ListCardProps>({
             }
             return Number(lastPageParam) + 1
         },
-        enabled: startedScrolling && infinite
+        enabled: infinite && !shouldUseInitialData && startedScrolling
     })
 
     const items = data?.pages.map(page => page.items).flat() ?? []
 
-    const finalData = useMemo(() => [...initialData, ...items], [data, initialData, startedScrolling])
+    const finalData = useMemo(() => {
+        if (!infinite) return initialData
+        if (shouldUseInitialData) {
+            if (startedScrolling) return [...initialData, ...items]
+            else return initialData
+        }
+        else {
+            return items
+        }
+
+    }, [data, initialData, startedScrolling, shouldUseInitialData, infinite])
 
     const onEndReached = () => {
         setStartedScrolling(true)
@@ -268,7 +279,7 @@ export const RenderListings = <R extends ListCardProps>({
         keyExtractor={(item) => item.id}
         onEndReached={() => infinite && Platform.OS !== "web" && onEndReached()}
         ListFooterComponent={
-            infinite ? () => <BottomLoader endReached={!isLoading && !hasNextPage} onEndReached={() => Platform.OS === "web" && fetchNextPage()} /> :
+            infinite ? () => <BottomLoader endReached={!isLoading && !hasNextPage && startedScrolling} onEndReached={() => Platform.OS === "web" && onEndReached()} /> :
                 <ViewAllButton horizontal={!!flatListProps?.horizontal} button={(props) => <Button onPress={() => goToListings(paramFilters)} {...props} />} />}
     />
 }

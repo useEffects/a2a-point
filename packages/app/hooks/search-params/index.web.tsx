@@ -1,4 +1,4 @@
-import { useSearchParams as useSearchParamsSN } from "solito/navigation"
+import { useSearchParams as useSearchParamsSN } from "next/navigation"
 
 export const useSearchParams = () => {
     return useSearchParamsSN()
