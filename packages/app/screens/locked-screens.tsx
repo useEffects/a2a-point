@@ -1,19 +1,18 @@
 import { Header, HeaderTitle } from "app/components/header";
 import { ArrowUpRight } from "app/components/icons";
 import { Button, ButtonProps } from "app/components/ui/button";
+import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
+import { useColorScheme } from "app/hooks/color-scheme";
 import useRouting from "app/hooks/use-routing";
 import { cn } from "app/lib/utils";
-import * as Linking from "expo-linking";
-import { useColorScheme } from "app/hooks/color-scheme";
 import { ReactNode } from "react";
-import { SvgProps } from "react-native-svg";
 import { Dimensions, Platform, View } from "react-native";
-import { Separator } from "app/components/ui/separator";
+import { SolitoImage as Image } from "solito/image"
 
 type LockedScreenProps = {
     className?: string,
-    SVGComponent: (props: SvgProps) => ReactNode,
+    image: any,
     headerTitle: string,
     header?: () => ReactNode,
     title: string,
@@ -24,14 +23,13 @@ type LockedScreenProps = {
 export default function LockedScreen(props: LockedScreenProps) {
     const { width } = Dimensions.get("window")
     const { isDarkColorScheme } = useColorScheme()
-    const SVG = props.SVGComponent
     const Bottom = props.bottomComponent
     const FinalHeader = props.header
 
     const dimensions = Platform.select({
         web: {
-            width: "56.25vh",
-            height: "100vh"
+            width: "100%",
+            height: "100%"
         },
         default: {
             width: width,
@@ -39,11 +37,11 @@ export default function LockedScreen(props: LockedScreenProps) {
         }
     })
 
-    {/** @ts-ignore */ }
     return <View className="flex-1 relative h-screen">
         {/** @ts-ignore */}
         <View className="absolute top-0 left-0 bottom-0 right-0" style={dimensions}>
-            <SVG width={Platform.OS !== "web" ? "100%" : "calc(100% - 1rem)"} height={"100%"} />
+            {/** @ts-ignore */}
+            <Image src={props.image} width={dimensions.width} height={dimensions.height} alt="locked screen bg" />
         </View>
         <View style={{ opacity: 0.9 }} className={cn("absolute top-0 left-0 bottom-0 right-0", isDarkColorScheme ? "bg-black" : "bg-white")} />
         {FinalHeader ? <FinalHeader /> : <Header>

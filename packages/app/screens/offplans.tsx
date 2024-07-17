@@ -1,17 +1,29 @@
 import { Separator } from "app/components/ui/separator"
 import Construction from "app/components/svg/construction";
 import { Text } from "app/components/ui/text";
-import { Dimensions, View } from "react-native";
+import { Dimensions, Platform, View } from "react-native";
 import { Header } from "app/components/header";
-import OffPlansSVG from "app/components/svg/offplans";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "app/components/ui/card";
+import { SolitoImage as Image } from "solito/image";
+import OffplansImg from "app/assets/locked-screens/offplans.jpg";
 
 export default function OffPlans() {
-    const { width } = Dimensions.get("window")
+    const { width: windowWidth, height: windowHeight } = Dimensions.get("window")
+    const { width, height } = Platform.select({
+        web: {
+            width: "100%",
+            height: "100%"
+        },
+        default: {
+            width: windowWidth,
+            height: windowHeight
+        }
+    })
 
     return <View className="flex-1 relative">
         <View className="absolute top-0 left-0 right-0 bottom-0">
-            <OffPlansSVG width={width} height={width * (16 / 9)} />
+            {/** @ts-ignore */}
+            <Image src={OffplansImg} alt="" width={width} height={height} />
         </View>
         <Header>
             <Text className="text-xl font-bold">Off plans</Text>

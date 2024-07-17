@@ -1,9 +1,9 @@
-import { ComponentType, useState } from "react"
+import { Children, ComponentType, ReactNode, useState } from "react"
 import { Button, ButtonProps } from "../ui/button"
 import { Text } from "../ui/text"
 import { ArrowUpRight, Plus } from "app/components/icons"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
-import { View } from "react-native"
+import { Platform, View } from "react-native"
 import { Separator } from "../ui/separator"
 import { cn } from "app/lib/utils"
 import useRouting from "app/hooks/use-routing"
@@ -25,13 +25,17 @@ export const GoToPostButtonUi = () => {
     const [open, setOpen] = useState(false)
     const goToPost = useRouting("post")
 
+    const ButtonComponent = Platform.OS !== "web" ? ({ children }: { children: ReactNode }) => <Button
+        className="rounded-full" size={"icon"} children={children}
+    /> : ({ children }: { children: ReactNode }) => <View className="rounded-full bg-primary flex justify-center items-center w-10 h-10" children={children} />
+
     return <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-            <Button size={"icon"} className="rounded-full">
+        <DialogTrigger asChild={Platform.OS === "web" ? undefined : true}>
+            <ButtonComponent>
                 <Plus size={24} className="text-primary-foreground" />
-            </Button>
+            </ButtonComponent>
         </DialogTrigger>
-        <DialogContent className="w-[350px]">
+        <DialogContent className="w-[350px] rounded">
             <DialogHeader>
                 <DialogTitle>Post a new lead</DialogTitle>
             </DialogHeader>

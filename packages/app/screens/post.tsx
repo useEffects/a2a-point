@@ -10,29 +10,26 @@ import { Button } from "app/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "app/components/ui/dialog";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
-import { FlatList, ScrollView } from "app/components/utils/virtual-lists";
+import { ScrollView } from "app/components/utils/virtual-lists";
 import { useColorScheme } from "app/hooks/color-scheme";
-import { listingsFolderId, portfolioUrl } from "app/lib/constants";
+import { listingsFolderId } from "app/lib/constants";
 import { uploadFileToDirectus } from "app/lib/file-upload";
 import { buildAssetUrl, groupByN, pickImages } from "app/lib/helpers";
 import { DetailedAmenity } from "app/lib/props";
-import { Amenity, Listing, ListingAmenity } from "app/lib/types";
+import { Amenity, Listing } from "app/lib/types";
 import { cn } from "app/lib/utils";
 import directusStore from "app/store/directus";
 import userStore from "app/store/user";
 import commaNumber from "comma-number";
 import { Formik, FormikProps } from "formik";
 import { Plus } from "lucide-react-native";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { View } from "react-native";
-import Collapsible from "react-native-collapsible";
-import OutsidePressHandler from "react-native-outside-press";
 import { NavigationState, Route, SceneMap, TabView } from "react-native-tab-view";
 import { useParams, useRouter } from "solito/navigation";
-import { useDebounce } from "use-debounce";
 import * as Yup from "yup";
 import LockedScreen from "./locked-screens";
-import PostSVG from "app/components/svg/post";
+import PostImg from "app/assets/locked-screens/post.jpg";
 
 function Form1({ formValues, setFormValues, setNavigationState }: { formValues: Form1Values, setFormValues: Dispatch<SetStateAction<Form1Values>>, setNavigationState: Dispatch<SetStateAction<NavigationState<Route>>> }) {
     const Form1Schema = Yup.object().shape({
@@ -543,7 +540,7 @@ export default function PostScreen() {
 
     return <View className="flex-1 flex-grow h-full">
         {authenticated ? <PostScreenComponent /> : <LockedScreen
-            SVGComponent={PostSVG}
+            image={PostImg}
             title="Create and manage property listings on A2APoint"
             description="Access exclusive features to create, update, and manage your property listings."
             headerTitle="Post"

@@ -376,7 +376,7 @@ const CategoryFilters = ({ filters, setFilters }: { filters: Filter[], setFilter
             key={i}
             className="flex-col gap-1 w-1/5 justify-start">
             {category.Icon({ size: 24, color: filters.some(f => f.key === category.key) ? colors.primary : colors.foreground })}
-            <Text className={cn("text-sm text-center w-16", filters.some(f => f.key === category.key) ? "text-primary" : "text-foreground")}>{category.title}</Text>
+            <Text className={cn("text-sm text-center w-16 whitespace-normal", filters.some(f => f.key === category.key) ? "text-primary" : "text-foreground")}>{category.title}</Text>
         </Button>)}
     </View>
 }
@@ -419,7 +419,7 @@ export const LoginPopover = () => {
     const goToLogin = useRouting("login")
 
     useEffect(() => {
-        if (process.env.NODE_ENV !== "production") return
+        // if (process.env.NODE_ENV !== "production") return
         const isOpenTimeout = setInterval(() => {
             setIsOpen(true)
         }, 1000 * 60 * 1)
@@ -438,7 +438,7 @@ export const LoginPopover = () => {
     }
 
     return <BottomSheet open={isOpen} setOpen={setIsOpen} onBackdropPress={handleClose}>
-        <View className="p-4 bg-card gap-4 flex flex-row justify-center">
+        <View className="p-4 bg-card flex-col gap-4">
             <View className="flex-row justify-between w-full">
                 <View className="flex-row gap-2">
                     <Sparkles fill={colors.primary} className="text-primary" />

@@ -2,7 +2,6 @@ import { deleteItem, readItems } from "@directus/sdk";
 import { RenderUserTileProps, useAutoCompleteItem } from "app/components/formComponents";
 import { Header, HeaderTitle } from "app/components/header";
 import { ArrowUp, Bell, EllipsisVertical, Expand, Info, LogOut, MessageCircle, Rows2, Shrink, UserCog2 } from "app/components/icons";
-import ProfileSVG from "app/components/svg/profile";
 import { ToggleTheme } from "app/components/toggle-theme";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "app/components/ui/dropdown-menu";
 import { Separator } from "app/components/ui/separator";
@@ -14,6 +13,7 @@ import useRouting from "app/hooks/use-routing";
 import { directusUrl } from "app/lib/constants";
 import { buildAssetUrl, timeAgo } from "app/lib/helpers";
 import { getListingsCountForUser } from "app/lib/misc/queries";
+import { ListingCardMetrics } from "app/lib/props";
 import { Company, Document, Feedback, User } from "app/lib/types";
 import { cn } from "app/lib/utils";
 import { StarIcon } from "app/screens/post-feedback";
@@ -32,7 +32,7 @@ import { CommonFilters, RenderListings, bodies, commonFilters } from "../compone
 import { Button } from "../components/ui/button";
 import { FilterKeys } from "./listings";
 import LockedScreen from "./locked-screens";
-import { ListingCardMetrics } from "app/lib/props";
+import ProfileImg from "app/assets/locked-screens/profile.jpg";
 
 const LockedProfileScreen = ({ userId }: { userId: string }) => {
 
@@ -40,7 +40,7 @@ const LockedProfileScreen = ({ userId }: { userId: string }) => {
     const title = userDetails ? `${userDetails.first_name} ${userDetails.last_name}` : "Profile"
 
     return <LockedScreen
-        SVGComponent={ProfileSVG}
+        image={ProfileImg}
         description="Showcase your expertise, recent transactions, and client testimonials to other agents. Build trust and credibility within the real estate community."
         headerTitle={""}
         title="Build your profile!"

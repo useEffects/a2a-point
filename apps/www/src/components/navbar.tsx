@@ -233,7 +233,7 @@ const WebProductNavbar = () => {
 }
 
 const MobileProductNavbar = () => {
-    return <div className="sticky top-[calc(100vh-4rem)] bottom-0 z-[100] self-end w-full bg-card">
+    return <div className="sticky top-[calc(100dvh-4rem)] bottom-0 z-[100] self-end w-full bg-card">
         <ProductTabBar />
     </div>
 }

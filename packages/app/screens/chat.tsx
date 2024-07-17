@@ -1,6 +1,7 @@
 import { readItems } from "@directus/sdk";
 import { useQuery } from "@tanstack/react-query";
-import { Header, HeaderTitle } from "app/components/header";
+import ChatImg from "app/assets/locked-screens/chat.jpg";
+import { Header } from "app/components/header";
 import SearchBar from "app/components/searchbar";
 import { Button } from "app/components/ui/button";
 import { Separator } from "app/components/ui/separator";
@@ -14,17 +15,16 @@ import { buildAssetUrl, getDMRoomId, timeAgo } from "app/lib/helpers";
 import { Room, User } from "app/lib/types";
 import directusStore from "app/store/directus";
 import userStore from "app/store/user";
-import { useMemo, useState } from "react";
-import { Dimensions, Image, View } from "react-native";
-import { useDebounce } from "use-debounce";
 import { uniqBy } from "lodash";
+import { useMemo, useState } from "react";
+import { Image, View } from "react-native";
 import { NavigationState, Route, SceneMap, TabView } from "react-native-tab-view";
-import ChatSVG from "app/components/svg/chat";
+import { useDebounce } from "use-debounce";
 import LockedScreen from "./locked-screens";
 
 export const ChatLocked = () => {
     return <LockedScreen
-        SVGComponent={ChatSVG}
+        image={ChatImg}
         headerTitle="Chat"
         title="Chat with other agents!"
         description="Gain access to seamless communication with other agents, real-time updates, and the ability to share property details and documents instantly."

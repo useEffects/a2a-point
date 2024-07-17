@@ -115,7 +115,7 @@ type MembershipCardProps = {
 export const membershipCardItems = [
     {
         monthlyAmount: 59.98,
-        yearlyAmount: 539.8,
+        yearlyAmount: 599.8,
         monthlyDiscount: 50,
         yearlyDiscount: 50,
         discountReason: "launch offer",
