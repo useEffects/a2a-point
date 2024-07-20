@@ -419,7 +419,7 @@ export const LoginPopover = () => {
     const goToLogin = useRouting("login")
 
     useEffect(() => {
-        // if (process.env.NODE_ENV !== "production") return
+        if (process.env.NODE_ENV !== "production") return
         const isOpenTimeout = setInterval(() => {
             setIsOpen(true)
         }, 1000 * 60 * 1)

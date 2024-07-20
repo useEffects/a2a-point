@@ -129,6 +129,7 @@ const ChatScreen = ({ roomDetails, receivers }: {
                 onEndReached: handleEndReached,
                 className: "flex-1",
             }}
+            receivers={receivers}
         />
     </View>
 }

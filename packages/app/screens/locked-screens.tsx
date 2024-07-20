@@ -43,7 +43,7 @@ export default function LockedScreen(props: LockedScreenProps) {
             {/** @ts-ignore */}
             <Image src={props.image} width={dimensions.width} height={dimensions.height} alt="locked screen bg" />
         </View>
-        <View style={{ opacity: 0.9 }} className={cn("absolute top-0 left-0 bottom-0 right-0", isDarkColorScheme ? "bg-black" : "bg-white")} />
+        <View style={{ opacity: 0.95 }} className={cn("absolute top-0 left-0 bottom-0 right-0 bg-background")} />
         {FinalHeader ? <FinalHeader /> : <Header>
             <HeaderTitle>{props.headerTitle}</HeaderTitle>
         </Header>}

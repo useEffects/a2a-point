@@ -27,7 +27,8 @@ import { UserChip } from './user-chip'
 import { ScrollView } from "./utils/virtual-lists"
 import { getFileSize } from "app/lib/file-upload"
 import { filesize } from "filesize"
-import { uniqBy } from "lodash"
+import { filter, uniqBy } from "lodash"
+import { Member } from "app/context/chats"
 
 export type withId = { id: string }
 export type withUri = { uri: string }
@@ -48,7 +49,8 @@ type ChatUiProps = {
     currentMessageDispatcher: Dispatch<SetStateAction<CurrentMessage>>,
     onSend: () => void,
     isGroup?: boolean,
-    listProps?: Omit<SectionListProps<ChatMessage<withId | withUri>>, "sections" | "renderItem">
+    listProps?: Omit<SectionListProps<ChatMessage<withId | withUri>>, "sections" | "renderItem">,
+    receivers: Member[]
 }
 
 export const ChatBubble = (props: ChatMessage<withId | withUri> & { currentUserId: string } & { goToId?: string, isFirst: boolean, isLast: boolean, isGroup?: boolean }) => {
@@ -142,11 +144,12 @@ const FooterDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateAc
     </DropdownMenu >
 }
 const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispatcher" | "onSend" |
-    "isGroup">) => {
+    "isGroup"> & { receivers: Member[] }) => {
     const { colors } = useColorScheme()
     const [open, setOpen] = useState(false)
     const [openBottomSheet, setOpenBottomSheet] = useState(false)
     const { rest } = directusStore()
+    const { user } = userStore()
 
     const { currentMessage, currentMessageDispatcher, onSend } = props
     const disabled = !(Boolean(currentMessage.text) || Boolean(currentMessage.assets))
@@ -185,53 +188,66 @@ const Footer = (props: Pick<ChatUiProps, "currentMessage" | "currentMessageDispa
     })
 
 
-    const Form = (props: FormikProps<A2AFormType>) => {
+    const Form = (formProps: FormikProps<A2AFormType>) => {
         return <View className="flex-1">
             <ScrollView contentContainerClassName="flex-grow flex-col gap-4">
                 <View className="flex-col gap-4">
                     <FormInput
-                        value={props.values.name}
-                        onChangeText={props.handleChange("name")}
+                        value={formProps.values.name}
+                        onChangeText={formProps.handleChange("name")}
                         label='Title of the listing'
-                        error={props.touched.name ? props.errors.name : ""}
-                        onBlur={props.handleBlur("name")}
+                        error={formProps.touched.name ? formProps.errors.name : ""}
+                        onBlur={formProps.handleBlur("name")}
                     />
                     <FormAutoSelect
-                        currentItem={props.values.listing}
-                        setCurrentItem={item => props.setFieldValue("listing", item)}
+                        currentItem={formProps.values.listing}
+                        setCurrentItem={item => formProps.setFieldValue("listing", item)}
                         label="Listing"
-                        error={props.touched.listing ? props.errors.listing : ""}
+                        error={formProps.touched.listing ? formProps.errors.listing : ""}
                         item="listings"
-                        filter={{}}
-                        onBlur={props.handleBlur("listing")}
+                        filter={{
+                            _or: [
+                                {
+                                    user_created: {
+                                        _eq: user.id
+                                    }
+                                },
+                                {
+                                    user_created: {
+                                        _eq: props.receivers.find(r => r.directus_users_id.id !== user.id)?.directus_users_id.id
+                                    }
+                                }
+                            ]
+                        }}
+                        onBlur={formProps.handleBlur("listing")}
                     />
                     <FormInput
-                        value={props.values.commissionSeller?.toString()}
-                        onChangeText={props.handleChange("commissionSeller")}
+                        value={formProps.values.commissionSeller?.toString()}
+                        onChangeText={formProps.handleChange("commissionSeller")}
                         label='Seller Commission %'
-                        error={props.touched.commissionSeller ? props.errors.commissionSeller : ""}
+                        error={formProps.touched.commissionSeller ? formProps.errors.commissionSeller : ""}
                         keyboardType='numeric'
-                        onBlur={props.handleBlur("commissionSeller")}
+                        onBlur={formProps.handleBlur("commissionSeller")}
                     />
                     <FormInput
-                        value={props.values.commissionBuyer?.toString()}
-                        onChangeText={props.handleChange("commissionBuyer")}
+                        value={formProps.values.commissionBuyer?.toString()}
+                        onChangeText={formProps.handleChange("commissionBuyer")}
                         label='Buyer Commission %'
-                        error={props.touched.commissionBuyer ? props.errors.commissionBuyer : ""}
+                        error={formProps.touched.commissionBuyer ? formProps.errors.commissionBuyer : ""}
                         keyboardType='numeric'
-                        onBlur={props.handleBlur("commissionBuyer")}
+                        onBlur={formProps.handleBlur("commissionBuyer")}
                     />
                     <FormInput
-                        value={props.values.clientName}
-                        onChangeText={props.handleChange("clientName")}
+                        value={formProps.values.clientName}
+                        onChangeText={formProps.handleChange("clientName")}
                         label='Client Name'
-                        error={props.touched.clientName ? props.errors.clientName : ""}
-                        onBlur={props.handleBlur("clientName")}
+                        error={formProps.touched.clientName ? formProps.errors.clientName : ""}
+                        onBlur={formProps.handleBlur("clientName")}
                     />
                     <Separator />
                 </View>
-                <Button onPress={props.submitForm} className="mt-auto mb-0">
-                    {props.isValid ? <Text>Generate</Text> : <Text></Text>}
+                <Button onPress={formProps.submitForm} className="mt-auto mb-0">
+                    {formProps.isValid ? <Text>Generate</Text> : <Text></Text>}
                 </Button>
             </ScrollView>
         </View>
@@ -378,6 +394,6 @@ export const ChatUi = (props: ChatUiProps) => {
                 overScrollMode='never'
             />
         </View>
-        <Footer currentMessage={props.currentMessage} currentMessageDispatcher={props.currentMessageDispatcher} onSend={props.onSend} isGroup={props.isGroup} />
+        <Footer currentMessage={props.currentMessage} currentMessageDispatcher={props.currentMessageDispatcher} onSend={props.onSend} isGroup={props.isGroup} receivers={props.receivers} />
     </View>
 }

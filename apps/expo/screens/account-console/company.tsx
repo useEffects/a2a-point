@@ -3,9 +3,7 @@ import { CompanySelectScreenComponent } from "app/screens/account-console/compan
 import { View } from "react-native"
 
 export const CompanySelectScreen = () => {
-    return <View className="flex-1">
-        <ScrollView contentContainerClassName="p-4 flex-grow">
-            <CompanySelectScreenComponent />
-        </ScrollView>
-    </View>
+    return <ScrollView contentContainerClassName="flex-1">
+        <CompanySelectScreenComponent />
+    </ScrollView>
 }

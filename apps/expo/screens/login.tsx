@@ -1,6 +1,4 @@
-import HeroGirl from "app/assets/hero-girl.png";
 import { Header } from "app/components/header";
-import Hero from "app/components/svg/hero";
 import Logo from "app/components/svg/logo";
 import { Button } from "app/components/ui/button";
 import { Text } from "app/components/ui/text";
@@ -9,14 +7,19 @@ import { directusUrl, portfolioUrl } from "app/lib/constants";
 import directusStore from "app/store/directus";
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect } from "react";
-import { Image, Linking, View } from "react-native";
+import { Linking, View } from "react-native";
 import { ScrollView } from "app/components/utils/virtual-lists";
 import { parse } from "search-params";
+import LoginLightImg from "app/assets/login/light/light_c9pqo8_c_scale,w_1029.jpg";
+import LoginDarkImg from "app/assets/login/dark/dark_gvmzxu_c_scale,w_984.jpg";
+import { Image } from "expo-image";
+import { useColorScheme } from "app/hooks/color-scheme";
 
 const LoginScreen = () => {
     const { initialize, authenticated } = directusStore()
     const appURL = "a2apoint-community://"
     const navigation = useNavigation()
+    const { isDarkColorScheme } = useColorScheme()
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -50,9 +53,8 @@ const LoginScreen = () => {
                     <Text className="text-info underline">https://a2apoint.com</Text>
                 </Button>
             </View>
-            <View className="flex-row justify-center w-full relative">
-                <Hero width={350} height={350} />
-                <Image alt="hero image" source={HeroGirl} style={{ width: 350, height: 350 }} className="absolute" resizeMode="contain" />
+            <View className="flex-row justify-center w-full relative h-[350px]">
+                <Image source={isDarkColorScheme ? LoginDarkImg : LoginLightImg} style={{ width: 350, height: 350 }} />
             </View>
             <Button onPress={handleLogin} className="w-full">
                 <Text>Login or create account</Text>

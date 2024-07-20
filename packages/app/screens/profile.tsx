@@ -32,15 +32,17 @@ import { CommonFilters, RenderListings, bodies, commonFilters } from "../compone
 import { Button } from "../components/ui/button";
 import { FilterKeys } from "./listings";
 import LockedScreen from "./locked-screens";
-import ProfileImg from "app/assets/locked-screens/profile.jpg";
+import ProfileImgLight from "app/assets/locked-screens/light/profile.jpg";
+import ProfileImgDark from "app/assets/locked-screens/dark/profile.jpg";
 
 const LockedProfileScreen = ({ userId }: { userId: string }) => {
+    const { isDarkColorScheme } = useColorScheme()
 
     const userDetails = useAutoCompleteItem("users", userId) as (RenderUserTileProps | null)
     const title = userDetails ? `${userDetails.first_name} ${userDetails.last_name}` : "Profile"
 
     return <LockedScreen
-        image={ProfileImg}
+        image={isDarkColorScheme ? ProfileImgDark : ProfileImgLight}
         description="Showcase your expertise, recent transactions, and client testimonials to other agents. Build trust and credibility within the real estate community."
         headerTitle={""}
         title="Build your profile!"
@@ -164,7 +166,10 @@ export function Profile({ user, company, document }: { user: User, company?: Com
         <Header>
             <View className="flex-row items-center justify-between flex-grow">
                 <Text className="text-xl font-bold">{currentUser.id !== user.id ? `${user.first_name} ${user.last_name}` : "Profile"}</Text>
-                {authenticated ? <ProfileDropdown /> : <></>}
+                <View className="flex-row gap-[1ch] items-center">
+                    <ToggleTheme />
+                    <ProfileDropdown />
+                </View>
             </View>
         </Header>
         <TabView

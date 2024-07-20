@@ -5,9 +5,7 @@ import { VerificationApplyScreenComponent } from "app/screens/account-console/ve
 import { View } from "react-native"
 
 export const VerificationScreen = () => {
-    return <View className="flex-1">
-        <ScrollView contentContainerClassName="p-4 flex-grow">
-            <VerificationApplyScreenComponent />
-        </ScrollView>
-    </View>
+    return <ScrollView contentContainerClassName="flex-1">
+        <VerificationApplyScreenComponent />
+    </ScrollView>
 }

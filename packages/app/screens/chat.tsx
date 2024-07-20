@@ -1,6 +1,7 @@
 import { readItems } from "@directus/sdk";
 import { useQuery } from "@tanstack/react-query";
-import ChatImg from "app/assets/locked-screens/chat.jpg";
+import ChatImgDark from "app/assets/locked-screens/dark/chat.jpg";
+import ChatImgLight from "app/assets/locked-screens/light/chat.jpg";
 import { Header } from "app/components/header";
 import SearchBar from "app/components/searchbar";
 import { Button } from "app/components/ui/button";
@@ -21,10 +22,12 @@ import { Image, View } from "react-native";
 import { NavigationState, Route, SceneMap, TabView } from "react-native-tab-view";
 import { useDebounce } from "use-debounce";
 import LockedScreen from "./locked-screens";
+import { useColorScheme } from "app/hooks/color-scheme";
 
 export const ChatLocked = () => {
+    const { isDarkColorScheme } = useColorScheme()
     return <LockedScreen
-        image={ChatImg}
+        image={isDarkColorScheme ? ChatImgDark : ChatImgLight}
         headerTitle="Chat"
         title="Chat with other agents!"
         description="Gain access to seamless communication with other agents, real-time updates, and the ability to share property details and documents instantly."

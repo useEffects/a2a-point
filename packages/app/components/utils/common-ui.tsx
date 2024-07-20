@@ -26,7 +26,7 @@ export const GoToPostButtonUi = () => {
     const goToPost = useRouting("post")
 
     const ButtonComponent = Platform.OS !== "web" ? ({ children }: { children: ReactNode }) => <Button
-        className="rounded-full" size={"icon"} children={children}
+        className="rounded-full" size={"icon"} onPress={() => setOpen(p => !p)} children={children}
     /> : ({ children }: { children: ReactNode }) => <View className="rounded-full bg-primary flex justify-center items-center w-10 h-10" children={children} />
 
     return <Dialog open={open} onOpenChange={setOpen}>
@@ -43,7 +43,7 @@ export const GoToPostButtonUi = () => {
                 Share a property lead with agents. Ensure information is accurate and complete.
             </DialogDescription>
             <View className="flex-row w-full gap-4 flex-wrap justify-start">
-                {["Buy", "Sale", "Give on rent", "Take on rent"].map((item, i) => <Button className="self-start" size={"sm"} key={i} variant={item === key ? "secondary" : "outline"} onPress={() => setKey(item)}>
+                {["Buy", "Sale", "Give on rent", "Take on rent"].map((item, i) => <Button className="self-start" size={"sm"} key={i} variant={item === key ? "secondary" : "outline"} onPress={() => setKey(item.toLowerCase())}>
                     <Text>{item}</Text>
                 </Button>)}
             </View>

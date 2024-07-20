@@ -55,35 +55,37 @@ export const CompanySelectScreenComponent = () => {
         })
     }
 
-    return <View className="flex-col gap-8 flex-1">
+    return <View className="flex-col gap-12 flex-1">
         <Header>
             <Text className="text-xl font-bold">Company</Text>
         </Header>
-        <View className="flex-col gap-2">
-            <Text className="text-xl text-primary">Choose your company</Text>
-            <Text>Connect with other real estate agents to collaborate and close deals faster.</Text>
-        </View>
-        <View className="flex-col gap-2">
-            <FormAutoSelect
-                key={key}
-                currentItem={company}
-                setCurrentItem={(val) => setCompany(val as (RenderCompanyTileProps | null))}
-                item="companies"
-                label="Company Name (Optional)"
-                placeholder="Search for your company"
-            />
-            <Text className="text-subtext">Leave it blank, if you would like to continue as an individual agent</Text>
-            <Text className="text-info text-sm">Feel free to contact admin if your company is not in the list</Text>
-        </View>
-        <View className="mt-auto mb-0">
-            {shouldShowSetCompany ? <Button disabled={loading} onPress={handleUpdateCompany}>
-                <Text>Set company</Text>
-            </Button> : <View className="flex-col gap-2">
-                <Text className="text-destructive text-center">proceed as individual agent</Text>
-                <Button disabled={loading} onPress={handleRemoveCompany} variant={"destructive"}>
-                    <Text>Remove company</Text>
-                </Button>
-            </View>}
+        <View className="flex-col gap-12 flex-grow p-4">
+            <View className="flex-col gap-2">
+                <Text className="text-xl text-primary">Choose your company</Text>
+                <Text>Connect with other real estate agents to collaborate and close deals faster.</Text>
+            </View>
+            <View className="flex-col gap-2">
+                <FormAutoSelect
+                    key={key}
+                    currentItem={company}
+                    setCurrentItem={(val) => setCompany(val as (RenderCompanyTileProps | null))}
+                    item="companies"
+                    label="Company Name (Optional)"
+                    placeholder="Search for your company"
+                />
+                <Text className="text-subtext">Leave it blank, if you would like to continue as an individual agent</Text>
+                <Text className="text-info text-sm">Feel free to contact admin if your company is not in the list</Text>
+            </View>
+            <View className="mt-auto mb-0">
+                {shouldShowSetCompany ? (loading ? <></> : <Button onPress={handleUpdateCompany}>
+                    <Text>Set company</Text>
+                </Button>) : <View className="flex-col gap-2">
+                    <Text className="text-destructive text-center">proceed as individual agent</Text>
+                    {loading ? <></> : <Button onPress={handleRemoveCompany} variant={"destructive"}>
+                        <Text>Remove company</Text>
+                    </Button>}
+                </View>}
+            </View>
         </View>
     </View>
 }

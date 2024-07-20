@@ -16,15 +16,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.a2apoint.community"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.a2apoint.community",
-      "googleServicesFile": "./assets/firebase/google-services.json"
+      "package": "com.a2apoint.community"
     },
     "web": {
       "bundler": "metro",
@@ -33,9 +33,7 @@
     },
     "plugins": [
       "expo-router",
-      "expo-font",
-      "@react-native-firebase/app",
-      "@react-native-firebase/auth"
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true

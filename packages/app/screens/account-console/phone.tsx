@@ -56,6 +56,7 @@ export const PhoneVerificationScreenComponent = () => {
     }, 5000)
 
     const verifyOtp = async () => {
+        console.log("here")
         setLoading(true)
         if (otp.length < 6 || !parsedPhone.valid || !parsedPhone.number) return
         const res = await fetch(`${portfolioUrl}/api/phone-verify/check`, {
@@ -81,78 +82,81 @@ export const PhoneVerificationScreenComponent = () => {
         setShouldShowAgain(false)
     }
 
+    console.log(loading)
+
     return <View className="gap-12 flex-col flex-1">
         <Header>
             <Text className="text-xl font-bold">Phone</Text>
         </Header>
-        <View className="flex-col gap-8">
-            <View className="flex-col gap-2">
-                <Text className="text-xl text-primary">Verify your phone number</Text>
-                <Text>For integrity purposes, please verify your phone number to ensure reliable communication with other agents.</Text>
-            </View>
-
-            <View className="flex-col gap-2">
-                <FormInput
-                    label="Phone Number"
-                    placeholder="Enter your phone number"
-                    keyboardType="phone-pad"
-                    value={verified ? parsedPhone.number!.international : phone ? phone.toString() : ""}
-                    onChangeText={(val) => setPhone(val)}
-                    error={error ?? ""}
-                    readOnly={verified || triggered}
-                />
-                {verified ? <Text className="text-success text-sm">Phone number verified successfully</Text> : <></>}
-            </View>
-        </View>
-        <Collapsible collapsed={verified || !triggered}>
+        <View className="flex-grow p-4 flex-col gap-12">
             <View className="flex-col gap-8">
-                <SeparatorText>
-                    <Text>Enter the OTP</Text>
-                </SeparatorText>
-                <OtpInput
-                    focusColor={colors.primary}
-                    numberOfDigits={6}
-                    onTextChange={(val) => setOtp(val)}
-                    theme={{
-                        pinCodeTextStyle: {
-                            color: colors.foreground
-                        },
-                        pinCodeContainerStyle: {
-                            borderColor: colors.foreground
-                        },
-                        filledPinCodeContainerStyle: {
-                            borderColor: colors.success,
-                        }
-                    }}
-                    autoFocus={false}
-                />
-                {shouldShowAgain ? <View className="flex-col items-center gap-2">
-                    <Text className="text-subtext">Didn't receive the otp?</Text>
-                    <View className="flex-row gap-4">
-                        <Button onPress={handleReset} variant={"ghost"} size={"sm"}>
-                            <Text>Reset</Text>
-                        </Button>
-                        <Button onPress={sendVerificationCode} variant={"ghost"} size={"sm"}>
-                            <Text>Send again</Text>
-                        </Button>
-                    </View>
-                </View> : <></>}
+                <View className="flex-col gap-2">
+                    <Text className="text-xl text-primary">Verify your phone number</Text>
+                    <Text>For integrity purposes, please verify your phone number to ensure reliable communication with other agents.</Text>
+                </View>
+                <View className="flex-col gap-2">
+                    <FormInput
+                        label="Phone Number"
+                        placeholder="Enter your phone number"
+                        keyboardType="phone-pad"
+                        value={verified ? parsedPhone.number!.international : phone ? phone.toString() : ""}
+                        onChangeText={(val) => setPhone(val)}
+                        error={error ?? ""}
+                        readOnly={verified || triggered}
+                    />
+                    {verified ? <Text className="text-success text-sm">Phone number verified successfully</Text> : <></>}
+                </View>
             </View>
-        </Collapsible>
-        {<View className="flex-col gap-2 mt-auto mb-0">
-            {verified ? <>
-                <Button onPress={handleReset} variant={"destructive"}>
-                    <Text>Change phone number</Text>
-                </Button>
-            </> :
-                <>
-                    {triggered ? <Button disabled={loading} onPress={verifyOtp}>
-                        <Text>Verify</Text>
-                    </Button> : <Button disabled={loading} onPress={sendVerificationCode}>
-                        <Text>Send verification code (SMS)</Text>
-                    </Button>}
-                    {status ? <Text className="text-destructive text-sm text-center">{status}</Text> : <></>}
-                </>}
-        </View>}
+            <Collapsible collapsed={verified || !triggered}>
+                <View className="flex-col gap-8">
+                    <SeparatorText>
+                        <Text>Enter the OTP</Text>
+                    </SeparatorText>
+                    <OtpInput
+                        focusColor={colors.primary}
+                        numberOfDigits={6}
+                        onTextChange={(val) => setOtp(val)}
+                        theme={{
+                            pinCodeTextStyle: {
+                                color: colors.foreground
+                            },
+                            pinCodeContainerStyle: {
+                                borderColor: colors.foreground
+                            },
+                            filledPinCodeContainerStyle: {
+                                borderColor: colors.success,
+                            }
+                        }}
+                        autoFocus={false}
+                    />
+                    {shouldShowAgain ? <View className="flex-col items-center gap-2">
+                        <Text className="text-subtext">Didn't receive the otp?</Text>
+                        <View className="flex-row gap-4">
+                            <Button onPress={handleReset} variant={"ghost"} size={"sm"}>
+                                <Text>Reset</Text>
+                            </Button>
+                            <Button onPress={sendVerificationCode} variant={"ghost"} size={"sm"}>
+                                <Text>Send again</Text>
+                            </Button>
+                        </View>
+                    </View> : <></>}
+                </View>
+            </Collapsible>
+            {<View className="flex-col gap-2 mt-auto mb-0">
+                {verified ? <>
+                    <Button onPress={handleReset} variant={"destructive"}>
+                        <Text>Change phone number</Text>
+                    </Button>
+                </> :
+                    <>
+                        {triggered ? (loading ? <></> : <Button onPress={verifyOtp}>
+                            <Text>Verify</Text>
+                        </Button>) : (loading ? <></> : <Button onPress={sendVerificationCode}>
+                            <Text>Send verification code (SMS)</Text>
+                        </Button>)}
+                        {status ? <Text className="text-destructive text-sm text-center">{status}</Text> : <></>}
+                    </>}
+            </View>}
+        </View>
     </View>
 }
