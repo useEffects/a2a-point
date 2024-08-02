@@ -2,8 +2,8 @@ import { readItem } from "@directus/sdk";
 import { useQuery } from "@tanstack/react-query";
 import { MediumListingCardProps } from "app/components/cards/atoms/medium";
 import { CommonFilters, commonFilters } from "app/components/cards/molecules/listings";
-import { getMembersCountForLocation, useRenderCardQuery } from "app/lib/misc/queries";
-import { mediumListingsFields } from "app/lib/props";
+import { getListingMetrics, getMembersCountForLocation, renderCardsQuery, useRenderCardQuery } from "app/lib/misc/queries";
+import { ListingCardMetrics, mediumListingsFields } from "app/lib/props";
 import { LocationDetailed as LocationDetailedComponent, LocationDetailedProps } from "app/screens/location-detailed";
 import directusStore from "app/store/directus";
 import { useParams } from "solito/navigation";
@@ -37,10 +37,17 @@ export default function LocationDetailed() {
         enabled: !!id
     })
 
-    const { data: listings } = useRenderCardQuery<MediumListingCardProps>({
-        collection: "listings",
-        fields: mediumListingsFields,
-        filter: commonFilters[CommonFilters.GroupId](id!),
+    const { data: listings } = useQuery<(MediumListingCardProps & ListingCardMetrics)[]>({
+        queryKey: ["location detailed listings", id],
+        queryFn: async () => await renderCardsQuery<MediumListingCardProps>({
+            collection: "listings",
+            fields: mediumListingsFields,
+            filter: commonFilters[CommonFilters.GroupId](id!),
+        }).then(res => Promise.all(res.map(async res => {
+            const metrics = await getListingMetrics(res.id)
+            return { ...res, ...metrics }
+        }))),
+        initialData: []
     })
 
     return (room && (totalMembers !== undefined && totalMembers !== null)) ? <LocationDetailedComponent

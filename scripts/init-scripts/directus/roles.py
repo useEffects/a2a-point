@@ -19,13 +19,13 @@ def post_users(role):
                 json=user,
                 headers={"Authorization": f"Bearer {access_token}"},
             )
+            print(res.status_code)
         token = lib.generate_token()
         res = requests.patch(
             f"{lib.directus_url}/users/{user['id']}",
             json={"token": token},
             headers={"Authorization": f"Bearer {access_token}"},
         )
-        print(res.raise_for_status())
         with open(".env", "a") as f:
             f.write(
                 f"\nDIRECTUS_{role['name'].upper().replace(' ', '_')}_TOKEN={token}"

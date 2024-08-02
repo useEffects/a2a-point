@@ -8,7 +8,6 @@ export const MaterialSymbolIcon = (props: { name: string } & { fill?: string, he
         queryKey: ["Fetching icon", name],
         queryFn: async () => fetch(`${portfolioUrl}/api/icons/${name}`).then(res => res.text()),
         enabled: !!name,
-        staleTime: 1000 * 60 * 60 * 24
     })
 
     return icon ? <InlineSvg color={"white"} fill={fill} width={width} height={height} src={icon} /> : <></>

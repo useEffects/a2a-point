@@ -62,7 +62,6 @@ export default function HomeScreen() {
             locationsCount: 0,
             companiesCount: 0
         },
-        staleTime: Number.MAX_SAFE_INTEGER,
     })
 
     const { data: photoListingsInitialData } = useQuery({

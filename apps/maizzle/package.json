@@ -1,0 +1,15 @@
+{
+  "name": "maizzle",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "maizzle serve",
+    "build": "maizzle build production"
+  },
+  "dependencies": {
+    "@maizzle/framework": "latest",
+    "@tailwindcss/typography": "^0.5.13",
+    "tailwind-theme": "*",
+    "tailwindcss-preset-email": "^1.1.0"
+  }
+}

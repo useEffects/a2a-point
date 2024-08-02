@@ -83,8 +83,11 @@ export const RenderUsers = <R,>({
     const goToUsersList = useRouting("users-list")
     const [startedScrolling, setStartedScrolling] = useState(false)
 
+    const shouldUseInitialData = infinite && initialData.length && !Boolean(searchText || filter)
+
     const { data, fetchNextPage, hasNextPage } = useInfiniteQuery<{ items: R[], page: unknown }>({
-        queryKey: ["fetching users list", fields, filter, limit],
+        initialPageParam: shouldUseInitialData ? 1 : 0,
+        queryKey: ["fetching users list", fields, filter, limit, searchText, shouldUseInitialData],
         queryFn: async ({ pageParam }) => renderCardsQuery<R>({
             collection: "users",
             fields,
@@ -94,17 +97,26 @@ export const RenderUsers = <R,>({
             offset: Number(pageParam) * limit,
             searchText
         }).then(res => ({ items: res, page: pageParam })),
-        initialPageParam: initialData.length ? 1 : 0,
         getNextPageParam: (lastPage, allPages, lastPageParam) => {
             if (lastPage.items.length < limit) return undefined
             else return Number(lastPageParam) + 1
         },
-        enabled: startedScrolling && infinite
+        enabled: startedScrolling && infinite && !shouldUseInitialData
     })
 
     const items = data?.pages.map(page => page.items).flat() ?? []
 
-    const finalData = useMemo(() => initialData.length ? [...initialData, ...items] : initialData, [startedScrolling, data, initialData])
+    const finalData = useMemo(() => {
+        if (!infinite) return initialData
+        if (shouldUseInitialData) {
+            if (startedScrolling) return [...initialData, ...items]
+            else return initialData
+        }
+        else {
+            return items
+        }
+
+    }, [data, initialData, startedScrolling, shouldUseInitialData, infinite])
 
     const onEndReached = () => {
         setStartedScrolling(true)

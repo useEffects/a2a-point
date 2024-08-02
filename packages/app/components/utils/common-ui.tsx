@@ -43,7 +43,7 @@ export const GoToPostButtonUi = () => {
                 Share a property lead with agents. Ensure information is accurate and complete.
             </DialogDescription>
             <View className="flex-row w-full gap-4 flex-wrap justify-start">
-                {["Buy", "Sale", "Give on rent", "Take on rent"].map((item, i) => <Button className="self-start" size={"sm"} key={i} variant={item === key ? "secondary" : "outline"} onPress={() => setKey(item.toLowerCase())}>
+                {["Buy", "Sale", "Give on rent", "Take on rent"].map((item, i) => <Button className="self-start" size={"sm"} key={i} variant={item.toLowerCase() === key.toLowerCase() ? "secondary" : "outline"} onPress={() => setKey(item.toLowerCase())}>
                     <Text>{item}</Text>
                 </Button>)}
             </View>

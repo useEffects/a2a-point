@@ -438,13 +438,13 @@ export const LoginPopover = () => {
     }
 
     return <BottomSheet open={isOpen} setOpen={setIsOpen} onBackdropPress={handleClose}>
-        <View className="p-4 bg-card flex-col gap-4">
+        <View className="p-4 bg-card flex-col gap-4 w-full">
             <View className="flex-row justify-between w-full">
                 <View className="flex-row gap-2">
                     <Sparkles fill={colors.primary} className="text-primary" />
                     <Text className="text-xl font-semibold">Get Started</Text>
                 </View>
-                {canClose ? <Button variant={"destructive"} size={"smallIcon"}>
+                {canClose ? <Button variant={"destructive"} size={"smallIcon"} onPress={handleClose}>
                     <X className='text-destructive-foreground' size={14} />
                 </Button> : <></>}
             </View>

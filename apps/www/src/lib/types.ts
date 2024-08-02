@@ -22,7 +22,7 @@ export type CourseLesson = {
     name: string;
     content: string;
     course: CourseRef;
-    lesson_quiz: CourseQuiz[];
+    course_quiz: CourseQuiz[];
 }
 
 export type CourseQuiz = {

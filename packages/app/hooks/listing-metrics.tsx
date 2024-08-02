@@ -28,16 +28,12 @@ export const useListingMetrics = (listingId: string) => {
             },
             fields: ["id"]
         })),
-        staleTime: 0,
-        gcTime: 0
     })
 
     const deleteBookmark = async (listingId: string, savedId: string) => {
         await queryClient.fetchQuery({
             queryKey: ["delete-listing", savedId],
             queryFn: async () => await rest.request(deleteItem("listings_directus_users", savedId)),
-            staleTime: 0,
-            gcTime: 0
         })
         queryClient.setQueryData(savesCountKey(listingId), ([prev]: UserCount[]
         ) => { return [{ count: { directus_users_id: (Number(prev!.count.directus_users_id) - 1) } }] })

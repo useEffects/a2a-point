@@ -24,7 +24,7 @@ import commaNumber from "comma-number";
 import { Formik, FormikProps } from "formik";
 import { Plus } from "lucide-react-native";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { View } from "react-native";
+import { KeyboardAvoidingView, Platform, View } from "react-native";
 import { NavigationState, Route, SceneMap, TabView } from "react-native-tab-view";
 import { useParams, useRouter } from "solito/navigation";
 import * as Yup from "yup";
@@ -100,7 +100,7 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
             }
         }, [type])
 
-        return <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="flex-grow">
+        return <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="flex-grow justify-between">
             <View className="flex-col gap-4">
                 <FormInput
                     label="Title"
@@ -157,7 +157,7 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
                     onBlur={props.handleBlur("size")}
                 />
             </View>
-            <Button onPress={() => props.handleSubmit()} className="mt-auto mb-0">
+            <Button onPress={() => props.handleSubmit()} className="mt-4 mb-0">
                 <Text>Next</Text>
             </Button>
         </ScrollView>
@@ -470,7 +470,7 @@ function PostScreenComponent() {
                 additional_detail: string,
             }[]
         }> = {
-            deal_type: params.type?.toString(),
+            deal_type: params.type?.toString().toLowerCase(),
 
             title: form1Values.title,
             expected_broker_fees: form1Values.expectedBrokerFees!,
@@ -493,6 +493,7 @@ function PostScreenComponent() {
             featured: form4Values.featured,
         }
         const res = await rest.request(createItem("listings", payload))
+        console.log(res)
         setLoading(false)
         router.back()
     }
@@ -502,35 +503,37 @@ function PostScreenComponent() {
             <Text className="text-xl font-bold">Post</Text>
         </Header>
         <View className="flex-grow p-4 max-w-xl">
-            <TabView
-                swipeEnabled={false}
-                renderTabBar={() => null}
-                navigationState={navigationState}
-                onIndexChange={index => setNavigationState({ ...navigationState, index })}
-                renderScene={SceneMap({
-                    form1: () => <Form1
-                        formValues={form1Values}
-                        setFormValues={setForm1Values}
-                        setNavigationState={setNavigationState}
-                    />,
-                    form2: () => <Form2
-                        formValues={form2Values}
-                        setFormValues={setForm2Values}
-                        setNavigationState={setNavigationState}
-                    />,
-                    form3: () => <Form3
-                        formValues={form3Values}
-                        setFormValues={setForm3Values}
-                        setNavigationState={setNavigationState}
-                    />,
-                    form4: () => <Form4
-                        formValues={form4Values}
-                        setFormValues={setForm4Values}
-                        handleSubmit={handleSubmit}
-                        loading={loading}
-                    />
-                })}
-            />
+            <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === "ios" ? "padding" : "height"}>
+                <TabView
+                    swipeEnabled={false}
+                    renderTabBar={() => null}
+                    navigationState={navigationState}
+                    onIndexChange={index => setNavigationState({ ...navigationState, index })}
+                    renderScene={SceneMap({
+                        form1: () => <Form1
+                            formValues={form1Values}
+                            setFormValues={setForm1Values}
+                            setNavigationState={setNavigationState}
+                        />,
+                        form2: () => <Form2
+                            formValues={form2Values}
+                            setFormValues={setForm2Values}
+                            setNavigationState={setNavigationState}
+                        />,
+                        form3: () => <Form3
+                            formValues={form3Values}
+                            setFormValues={setForm3Values}
+                            setNavigationState={setNavigationState}
+                        />,
+                        form4: () => <Form4
+                            formValues={form4Values}
+                            setFormValues={setForm4Values}
+                            handleSubmit={handleSubmit}
+                            loading={loading}
+                        />
+                    })}
+                />
+            </KeyboardAvoidingView>
         </View>
     </View>
 }

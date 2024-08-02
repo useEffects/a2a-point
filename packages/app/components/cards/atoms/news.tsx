@@ -1,5 +1,4 @@
 /* eslint-disable react/no-children-prop */
-import { FullWidthImage } from "app/components/full-width-image"
 import { Button } from "app/components/ui/button"
 import { Text } from "app/components/ui/text"
 import { UserChip } from "app/components/user-chip"
@@ -27,38 +26,42 @@ export const NewsCard = ({ news, isFirst }: { news: News, isFirst?: boolean }) =
             size={"none"}
             onPress={() => Linking.openURL(`${portfolioUrl}/news/${news.id}`)}
         /> :
-        ({ children }: { children: ReactNode }) => <View children={children} />
+        ({ children }: { children: ReactNode }) => <View children={children} className="flex-col" />
 
     return <Component>
-        <View style={{ width: isNative ? windowWidth * 0.5 : undefined }} className={cn(isFirst ? "flex-row" : "flex-col", "")}>
+        <View style={{ width: isNative ? windowWidth * 0.5 : undefined }} className={cn(isFirst ? "flex-row" : "flex-col",!isNative && "h-full")}>
             <View className={cn(isFirst ? "w-1/2" : "w-full")}>
                 <Image className={cn(isFirst ? "h-[600px]" : isNative ? "h-[200px]" : "h-[300px]", "rounded-tl-xl rounded-tr-xl")} source={{ uri: buildAssetUrl(news.cover_image) }} />
             </View>
-            <View className={cn("bg-card p-4 rounded-bl-xl rounded-br-xl", isFirst ? "w-1/2 self-center bg-transparent max-w-sm mx-auto" : "w-full native:h-40", "p-4 flex-col items-start", isNative ? "gap-1" : "gap-4")}>
+            <View className={cn("bg-card p-4 rounded-bl-xl rounded-br-xl", isFirst ? "w-1/2 self-center bg-transparent max-w-sm mx-auto" : "w-full native:h-40", "p-4 flex-col items-start", isNative ? "gap-1" : "gap-4 flex-grow")}>
                 <View className="flex-row justify-between w-full">
                     <Text className="text-info">{news.read_time}</Text>
                     <Text className="text-subtext text-sm">{timeAgo.format(new Date(news.date_created))}</Text>
                 </View>
                 <Text className="text-lg font-medium">{news.title}</Text>
-                {!isNative && <>
-                    {userCreated && <UserChip user={userCreated} />}
-                    <View className="flex-row flex-wrap gap-4">
-                        {news.categories?.map((category, i) => <View style={{ backgroundColor: opacity(colors.primary, 0.1) }} className="rounded px-2 py-1 text-sm" key={i}>
-                            <Text className="text-primary">{category.news_categories_id.name}</Text>
-                        </View>)}
+                {!isNative && <View className="flex-col gap-4 flex-grow justify-between">
+                    <View className="flex-col gap-4">
+                        <View className="self-start">
+                            <UserChip user={userCreated!} />
+                        </View>
+                        <View className="flex-row flex-wrap gap-4">
+                            {news.categories?.map((category, i) => <View style={{ backgroundColor: opacity(colors.primary, 0.1) }} className="rounded px-2 py-1 text-sm" key={i}>
+                                <Text className="text-primary">{category.news_categories_id.name}</Text>
+                            </View>)}
+                        </View>
+                        <View className="flex-row flex-wrap gap-2">
+                            {news.tags?.map((tag, i) => <View className="border-info border rounded-xl py-1 px-2 text-sm" key={i}>
+                                <Text className="text-info text-sm">{tag}</Text>
+                            </View>)}
+                        </View>
+                        <Text className="text-subtext">{news.description}</Text>
                     </View>
-                    <View className="flex-row flex-wrap gap-2">
-                        {news.tags?.map((tag, i) => <View className="border-info border rounded-xl py-1 px-2 text-sm" key={i}>
-                            <Text className="text-info text-sm">{tag}</Text>
-                        </View>)}
-                    </View>
-                    <Text className="text-subtext">{news.description}</Text>
                     <Link href={`/news/${news.id}`}>
                         <Button>
                             <Text>Read More</Text>
                         </Button>
                     </Link>
-                </>}
+                </View>}
             </View>
         </View>
     </Component>

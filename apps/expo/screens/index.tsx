@@ -134,6 +134,7 @@ const ScreensLayout = () => {
             tabBarContentContainerStyle: {
                 justifyContent: "space-between",
             },
+            animationEnabled: false
         }}
     >
         {tabScreens}
@@ -146,7 +147,7 @@ const AccountConsoleLayout = () => {
     const membershipTabBarLabel = useTabBarLabel(BriefcaseBusiness, "Membership");
     const verificationTabBarLabel = useTabBarLabel(Shield, "Verification");
 
-    return <AccountConsoleTab.Navigator tabBar={CustomTabBar} tabBarPosition='bottom'>
+    return <AccountConsoleTab.Navigator tabBar={CustomTabBar} tabBarPosition='bottom' screenOptions={{ animationEnabled: false }}>
         <AccountConsoleTab.Screen
             key={"phone"}
             name='phone'

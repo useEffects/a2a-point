@@ -143,40 +143,40 @@ export const savesCountKey = (listingId: string) => ["saves-count", listingId]
 export const getListingMetrics = async (listingId: string): Promise<ListingCardMetrics> => {
     const { rest } = directusStore.getState()
     const [viewsRes] = await queryClient.fetchQuery({
-      queryKey: viewsCountKey(listingId),
-      queryFn: async () => await rest.request(aggregate("listings_directus_users_1", {
-        aggregate: {
-          count: ["directus_users_id"],
-        },
-        query: {
-          filter: {
-            listings_id: {
-              _eq: listingId
+        queryKey: viewsCountKey(listingId),
+        queryFn: async () => await rest.request(aggregate("listings_directus_users_1", {
+            aggregate: {
+                count: ["directus_users_id"],
+            },
+            query: {
+                filter: {
+                    listings_id: {
+                        _eq: listingId
+                    }
+                }
             }
-          }
-        }
-      }))
+        }))
     })
     const [savesRes] = await queryClient.fetchQuery({
-      queryKey: savesCountKey(listingId),
-      queryFn: async () => await rest.request(aggregate("listings_directus_users", {
-        aggregate: {
-          count: ["directus_users_id"],
-        },
-        query: {
-          filter: {
-            listings_id: {
-              _eq: listingId
+        queryKey: savesCountKey(listingId),
+        queryFn: async () => await rest.request(aggregate("listings_directus_users", {
+            aggregate: {
+                count: ["directus_users_id"],
+            },
+            query: {
+                filter: {
+                    listings_id: {
+                        _eq: listingId
+                    }
+                }
             }
-          }
-        }
-      }))
+        }))
     })
     return {
-      views: viewsRes!.count["directus_users_id"],
-      saves: savesRes!.count["directus_users_id"],
+        views: viewsRes!.count["directus_users_id"],
+        saves: savesRes!.count["directus_users_id"],
     }
-  }
+}
 
 export const renderCardsQuery = async <R>(props: RenderCardsType) => {
 
@@ -190,7 +190,12 @@ export const renderCardsQuery = async <R>(props: RenderCardsType) => {
         headers: {
             Authorization: `Bearer ${token}`
         }
-    }).then(res => res.json()).then(res => res.data) as R[]
+    }).then(res => res.json()).then(res => {
+        if (!res.data) {
+            console.log(res)
+        }
+        return res.data
+    }) as R[]
     return res
 }
 

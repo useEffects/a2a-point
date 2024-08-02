@@ -81,7 +81,7 @@ export const commonFilters = {
         }
     }),
     [CommonFilters.GroupId]: (groupId: string) => ({
-        group: {
+        location: {
             id: {
                 _eq: groupId
             }

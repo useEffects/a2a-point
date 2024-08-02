@@ -16,7 +16,6 @@ type DirectusStore = {
 }
 
 export const publicToken = isDevBuild ? "e7KhchQTdEjDaoqHtJ9rCV4wtuf7-l8K" : "Mnh7gFAmU4QeNRt_TQhTBrDDBxFdjPNu"
-// export const publicToken = "Mnh7gFAmU4QeNRt_TQhTBrDDBxFdjPNu"
 
 const refreshTokenExpiration = 1000 * 60 * 60 * 24 * 60
 const accessTokenExpiration = 1000 * 60 * 60 * 2

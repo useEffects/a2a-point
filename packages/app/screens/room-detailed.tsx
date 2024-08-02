@@ -51,7 +51,6 @@ const ChatScreen = ({ roomDetails, receivers }: {
         })),
         enabled: !!debouncedSearchText && debouncedSearchText.length > 2,
         initialData: [],
-        staleTime: 0
     }) as { data: { id: string }[], isLoading: boolean }
 
     const handleSend = () => {

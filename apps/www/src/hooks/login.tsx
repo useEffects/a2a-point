@@ -36,6 +36,7 @@ export const useLogin = (redirect?: string) => {
             try {
                 popup.postMessage({ message: "check_status" }, window.location.origin);
                 if (authenticated) {
+                    console.log(authenticated)
                     popup.close();
                 }
             } catch (error) {

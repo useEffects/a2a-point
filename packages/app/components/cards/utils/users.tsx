@@ -21,7 +21,6 @@ export const useSmallUsersQuery = () => {
             return { ...user, listingsCount, ratingsCount }
         }))),
         initialData: [],
-        staleTime: Number.MAX_SAFE_INTEGER,
         refetchOnMount: "always"
     })
 }
@@ -44,6 +43,5 @@ export const useMediumUsersQuery = () => {
             return { ...user, listingsCount, ratingsCount }
         }))),
         initialData: [],
-        staleTime: Number.MAX_SAFE_INTEGER
     })
 }

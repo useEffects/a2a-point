@@ -22,16 +22,12 @@ export default function ListingDetailedScreen() {
         queryKey: ["ListingMetrics", id],
         queryFn: async () => await getListingMetrics(id! as string),
         enabled: !!id,
-        staleTime: 0,
-        gcTime: 0
     })
 
     const { data: usersMetrics } = useQuery({
         queryKey: ["UserMetrics", id],
         queryFn: async () => Promise.all([getListingsCountForUser(data!.user_created.id), getFeedbacksCountForUser(data!.user_created.id)]),
         enabled: !!data,
-        staleTime: 0,
-        gcTime: 0
     })
 
     return (data && metrics && usersMetrics) ? <ListingDetailed listing={{
