@@ -25,13 +25,11 @@ export async function GET(req: NextRequest) {
 
         const { access_token, refresh_token } = data.data
 
-        console.log(access_token, refresh_token)
-
         const url = new URL(appUrl!)
         url.searchParams.append("access_token", access_token)
         url.searchParams.append("refresh_token", refresh_token)
 
-        const script = url.origin === (new URL(portfolioUrl).origin) || (new URL("https://dashboard.a2apoint.com").origin) ?
+        const script = url.origin === (new URL(portfolioUrl).origin) ?
             `window.opener.postMessage({ accessToken: "${access_token}", refreshToken: "${refresh_token}" }, window.location.origin);` :
             `window.location.replace("${url.toString()}")`
 
