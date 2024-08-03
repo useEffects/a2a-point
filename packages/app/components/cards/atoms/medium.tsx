@@ -34,7 +34,7 @@ export const MediumListingCard = (item: MediumListingCardProps & ListingCardMetr
     return <View className="w-full flex-col gap-2 p-4 my-8">
         <View className="flex flex-wrap gap-4 flex-row items-center justify-between">
             <UserChip user={item.user_created} />
-            {authenticated ? user.id === item.user_created.id ? <></> : <Pressable onPress={() => getDMRoomId([item.user_created.id, user.id]).then(id => goToRoom(id))}>
+            {authenticated ? user.id === item.user_created.id ? <></> : <Pressable onPress={() => getDMRoomId([item.user_created.id, user.id]).then(goToRoom)}>
                 <MessageCircleMore className="!text-foreground" />
             </Pressable> : <LockedChatButton />}
         </View>

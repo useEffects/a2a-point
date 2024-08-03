@@ -38,7 +38,7 @@ const directusStore = create<DirectusStore>((set, get) => ({
         }
 
         if (!accessToken || !refreshToken) {
-            return resetDirectus()
+            return await resetDirectus()
         }
         try {
             const response = await fetch(`${directusUrl}/users/me?fields=*`, {
@@ -72,11 +72,11 @@ const directusStore = create<DirectusStore>((set, get) => ({
                     userStore.setState(p => ({ ...p, document: document }))
                 }
             } else {
-                return resetDirectus()
+                return await resetDirectus()
             }
         } catch (error) {
             console.error("An error occurred:", error);
-            return resetDirectus()
+            return await resetDirectus()
         }
 
         const client = createDirectus(directusUrl)
@@ -93,12 +93,12 @@ const directusStore = create<DirectusStore>((set, get) => ({
             if (get().authenticated && get().refreshToken) {
                 const existingRefreshToken = get().refreshToken
                 const existingAccessToken = get().token
-                if (!shouldRefresh(existingAccessToken)) return
+                if (!(await shouldRefresh(existingAccessToken))) return
                 const newTokens = await reqNewTokens(existingRefreshToken)
                 if (!newTokens || !newTokens.accessToken || !newTokens.refreshToken) {
                     await AsyncStorage.removeItem("accessToken");
                     await AsyncStorage.removeItem("refreshToken");
-                    return resetDirectus()
+                    return await resetDirectus()
                 }
                 set(p => ({
                     ...p,
@@ -119,7 +119,7 @@ const directusStore = create<DirectusStore>((set, get) => ({
     logout: async () => {
         await AsyncStorage.removeItem("accessToken");
         await AsyncStorage.removeItem("refreshToken");
-        await fetch(`${directusUrl}/auth/logout`, {
+        const res = await fetch(`${directusUrl}/auth/logout`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -129,7 +129,6 @@ const directusStore = create<DirectusStore>((set, get) => ({
                 mode: "json",
                 refresh_token: get().refreshToken
             })
-
         })
         set({ ...reset })
     }
@@ -150,6 +149,8 @@ export const reqNewTokens = async (refreshToken: string) => {
     if (res.status !== 200) {
         await AsyncStorage.removeItem("accessToken");
         await AsyncStorage.removeItem("refreshToken");
+        const json = await res.json()
+        console.log(json)
         return null
     } else {
         const { data } = await res.json()
@@ -164,8 +165,9 @@ const reset = {
     rest: initialClient as MyDirectusClient,
 }
 
-export const shouldRefresh = (token: string | null) => {
+export const shouldRefresh = async (token: string | null) => {
     if (!token) return false
+    if (!(await checkTokenValid(token))) return false
     try {
         const payload = token.split(".")[1]!
         const decodedString = base64UrlDecode(payload)
@@ -173,8 +175,9 @@ export const shouldRefresh = (token: string | null) => {
         if (decoded && typeof decoded === "object") {
             const exp = decoded.exp as number
             const now = new Date().getTime() / 1000
-            console.log("Checking if token should be refreshed", exp - now < (accessTokenExpiration / 2 / 1000))
-            return exp - now < (accessTokenExpiration / 2 / 1000)
+            const condition = exp - now > 1000 * 10
+            console.log("Checking if token should be refreshed", condition)
+            return condition
         }
     } catch (error) {
         console.error("An error occurred:", error);
@@ -223,6 +226,19 @@ function decodeBase64(input: string): string {
         }
     }
     return str;
+}
+
+export const checkTokenValid = async (accessToken: string) => {
+    const res = await fetch(`${directusUrl}/users/me`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`
+        }
+    })
+    if (res.status !== 200) {
+        console.log("Access Token is invalid")
+        return false
+    }
+    return true
 }
 
 export default directusStore
