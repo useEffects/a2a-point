@@ -18,7 +18,7 @@ type DirectusStore = {
 export const publicToken = isDevBuild ? "e7KhchQTdEjDaoqHtJ9rCV4wtuf7-l8K" : "Mnh7gFAmU4QeNRt_TQhTBrDDBxFdjPNu"
 
 const refreshTokenExpiration = 1000 * 60 * 60 * 24 * 60
-const accessTokenExpiration = 1000 * 60 * 60 * 2
+const accessTokenExpiration = 1000 * 60 * 60 * 24 * 14
 
 const initialClient = createDirectus(directusUrl)
     .with(rest())
@@ -112,7 +112,7 @@ const directusStore = create<DirectusStore>((set, get) => ({
                 await AsyncStorage.setItem("accessToken", newTokens.accessToken!);
                 await AsyncStorage.setItem("refreshToken", newTokens.refreshToken!);
             }
-        }, 1000 * 60 * 5)
+        }, 1000 * 10)
         await AsyncStorage.setItem("accessToken", accessToken!);
         await AsyncStorage.setItem("refreshToken", refreshToken!);
     },
@@ -175,7 +175,8 @@ export const shouldRefresh = async (token: string | null) => {
         if (decoded && typeof decoded === "object") {
             const exp = decoded.exp as number
             const now = new Date().getTime() / 1000
-            const condition = exp - now > 1000 * 10
+            const condition = exp - now > (accessTokenExpiration / 2)
+            console.log(now, exp, exp - now, condition)
             console.log("Checking if token should be refreshed", condition)
             return condition
         }

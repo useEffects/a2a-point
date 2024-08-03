@@ -18,6 +18,18 @@ const WithNoBounce = <P,>(Component: React.ComponentType<P>) => {
 }
 
 export const ScrollView = WithNoBounce<ScrollViewProps>(RNScrollView);
-export const FlatList = WithNoBounce<FlatListProps<any>>(RNFlatList);
-export const SectionList = WithNoBounce<SectionListProps<any, any>>(RNSectionList);
-export const HorizontalFlatList = WithNoBounce<HorizontalFlatListProps<any>>(ISHorizontalFlatlist);
+
+export const FlatList = <T,>(props: FlatListProps<T>) => {
+    const Component = WithNoBounce<FlatListProps<T>>(RNFlatList);
+    return <Component {...props} />;
+};
+
+export const SectionList = <ItemT, SectionT>(props: SectionListProps<ItemT, SectionT>) => {
+    const Component = WithNoBounce<SectionListProps<ItemT, SectionT>>(RNSectionList);
+    return <Component {...props} />;
+};
+
+export const HorizontalFlatList = <T,>(props: HorizontalFlatListProps<T>) => {
+    const Component = WithNoBounce<HorizontalFlatListProps<T>>(ISHorizontalFlatlist);
+    return <Component {...props} />;
+};
