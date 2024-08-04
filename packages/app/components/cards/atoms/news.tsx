@@ -16,7 +16,6 @@ import { Link } from "solito/link"
 
 export const NewsCard = ({ news, isFirst }: { news: News, isFirst?: boolean }) => {
     const isNative = Platform.OS !== "web"
-    const userCreated = useUserDetails(news.user_created)
     const windowWidth = Dimensions.get("window").width
     const { colors } = useColorScheme()
     const Component = isNative ?
@@ -29,7 +28,7 @@ export const NewsCard = ({ news, isFirst }: { news: News, isFirst?: boolean }) =
         ({ children }: { children: ReactNode }) => <View children={children} className="flex-col" />
 
     return <Component>
-        <View style={{ width: isNative ? windowWidth * 0.5 : undefined }} className={cn(isFirst ? "flex-row" : "flex-col",!isNative && "h-full")}>
+        <View style={{ width: isNative ? windowWidth * 0.5 : undefined }} className={cn(isFirst ? "flex-row" : "flex-col", !isNative && "h-full")}>
             <View className={cn(isFirst ? "w-1/2" : "w-full")}>
                 <Image className={cn(isFirst ? "h-[600px]" : isNative ? "h-[200px]" : "h-[300px]", "rounded-tl-xl rounded-tr-xl")} source={{ uri: buildAssetUrl(news.cover_image) }} />
             </View>
@@ -41,9 +40,6 @@ export const NewsCard = ({ news, isFirst }: { news: News, isFirst?: boolean }) =
                 <Text className="text-lg font-medium">{news.title}</Text>
                 {!isNative && <View className="flex-col gap-4 flex-grow justify-between">
                     <View className="flex-col gap-4">
-                        <View className="self-start">
-                            <UserChip user={userCreated!} />
-                        </View>
                         <View className="flex-row flex-wrap gap-4">
                             {news.categories?.map((category, i) => <View style={{ backgroundColor: opacity(colors.primary, 0.1) }} className="rounded px-2 py-1 text-sm" key={i}>
                                 <Text className="text-primary">{category.news_categories_id.name}</Text>

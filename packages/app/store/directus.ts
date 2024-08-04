@@ -112,7 +112,7 @@ const directusStore = create<DirectusStore>((set, get) => ({
                 await AsyncStorage.setItem("accessToken", newTokens.accessToken!);
                 await AsyncStorage.setItem("refreshToken", newTokens.refreshToken!);
             }
-        }, 1000 * 10)
+        }, 1000 * 60 * 5)
         await AsyncStorage.setItem("accessToken", accessToken!);
         await AsyncStorage.setItem("refreshToken", refreshToken!);
     },

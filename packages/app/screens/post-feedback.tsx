@@ -114,7 +114,8 @@ export function PostFeedbackComponent({ user, feedback }: { user: SmallUser, fee
                 }))
             }
         }
-        _handleSubmit().then(() => {
+        _handleSubmit().then((res) => {
+            console.log(res)
             setLoading(false)
             router.back()
         })

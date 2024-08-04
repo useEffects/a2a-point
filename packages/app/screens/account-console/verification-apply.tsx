@@ -119,7 +119,7 @@ export const VerificationApplyScreenComponent = () => {
                             <Text>If you do not have broker number, you can upload other documents to verify your account</Text>
                             <Text>Accepted ID's are</Text>
                             <View className="flex-row flex-wrap gap-2">
-                                {["Driver's license", "Passport"].map((id, i) => <Text className="rounded-full border border-foreground py-1 px-2 text-sm" key={i}>{id}</Text>)}
+                                {["Driver's license", "Passport", "RERA ID"].map((id, i) => <Text className="rounded-full border border-foreground py-1 px-2 text-sm" key={i}>{id}</Text>)}
                             </View>
                         </View>
                         {asset && <View className="flex-row gap-2 items-start">

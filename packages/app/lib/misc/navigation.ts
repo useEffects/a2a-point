@@ -46,4 +46,5 @@ export type AccountConsoleParamList = {
     "phone": undefined,
     "membership": undefined,
     "verification": undefined,
+    "premium": undefined,
 }

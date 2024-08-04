@@ -3,7 +3,7 @@ import { MembershipApplyScreenComponent } from "app/screens/account-console/memb
 import { View } from "react-native"
 
 export const MembershipScreen = () => {
-    return <ScrollView contentContainerClassName="flex-1">
+    return <ScrollView contentContainerClassName="flex-grow">
         <MembershipApplyScreenComponent />
     </ScrollView>
 }

@@ -17,7 +17,6 @@ export default async function CoursesPage() {
         queryFn: async () => await rest.request(readItems("portfolio", {
             fields: fields.map(field => `featured_course.${field}`)
         })).then(res => {
-            console.log({ res })
             return res
         }) as unknown as { featured_course: Course },
     })

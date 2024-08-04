@@ -35,6 +35,7 @@ import ProfileScreen from "./profile";
 import ProfileDetailed from './profile-detailed';
 import RoomDetailed from './room-detailed';
 import { UsersListScreen } from './users-list';
+import { PremiumCreditsScreen } from './account-console/premium';
 
 const MainTab = createMaterialTopTabNavigator<MainTopTabParamList>();
 const AccountConsoleTab = createMaterialTopTabNavigator<AccountConsoleParamList>();
@@ -146,6 +147,7 @@ const AccountConsoleLayout = () => {
     const companyTabBarLabel = useTabBarLabel(Building2, "Company");
     const membershipTabBarLabel = useTabBarLabel(BriefcaseBusiness, "Membership");
     const verificationTabBarLabel = useTabBarLabel(Shield, "Verification");
+    const premiumTopBarLabel = useTabBarLabel(TrendingUp, "Premium");
 
     return <AccountConsoleTab.Navigator tabBar={CustomTabBar} tabBarPosition='bottom' screenOptions={{ animationEnabled: false }}>
         <AccountConsoleTab.Screen
@@ -178,6 +180,14 @@ const AccountConsoleLayout = () => {
             component={VerificationScreen}
             options={{
                 tabBarLabel: verificationTabBarLabel,
+            }}
+        />
+        <AccountConsoleTab.Screen
+            key={"premium"}
+            name='premium'
+            component={PremiumCreditsScreen}
+            options={{
+                tabBarLabel: premiumTopBarLabel,
             }}
         />
     </AccountConsoleTab.Navigator>
