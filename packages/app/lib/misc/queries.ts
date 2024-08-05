@@ -44,13 +44,6 @@ export const getListingsCount = async () => {
     const getListingsCount = await rest.request(aggregate("listings", {
         aggregate: {
             count: ["*"]
-        },
-        query: {
-            filter: {
-                verified: {
-                    _eq: true
-                }
-            }
         }
     }))
     return getListingsCount?.[0]!.count as unknown as number
@@ -64,18 +57,9 @@ export const getListingsCountForLocation = async (locationId: string) => {
         },
         query: {
             filter: {
-                _and: [
-                    {
-                        location: {
-                            _eq: locationId
-                        }
-                    },
-                    {
-                        verified: {
-                            _eq: true
-                        }
-                    }
-                ]
+                location: {
+                    _eq: locationId
+                }
             }
         }
     }))

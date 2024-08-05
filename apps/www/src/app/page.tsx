@@ -25,12 +25,11 @@ export default async function HomePage() {
         queryFn: async () => await rest.request(readItems("portfolio", {
             fields: ["featured_testimonials.feedbacks_id.*", "featured_testimonials.feedbacks_id.user_created.avatar", "featured_testimonials.feedbacks_id.user_created.first_name", "featured_testimonials.feedbacks_id.user_created.last_name", "featured_testimonials.feedbacks_id.user_created.title"],
         })).then(data => (data as unknown as { featured_testimonials: { feedbacks_id: Testimonial }[] }).featured_testimonials?.map(({ feedbacks_id }) => feedbacks_id))
-    }) ?? []
+    })
     const listingsCount = await getListingsCount()
     const usesCount = await getUsersCount()
     const companiesCount = await getCompaniesCount()
     const locationsCount = await getLocationsCount()
-
 
     return <div className="flex flex-col gap-12 md:gap-40 items-center relative">
         <HalfWidthDiv
