@@ -11,10 +11,10 @@ import { useColorScheme } from "app/hooks/color-scheme"
 import directusStore from "app/store/directus"
 import { LocationChip } from "app/components/utils/chips"
 import useRouting from "app/hooks/use-routing"
-import { useLocaleString } from "app/hooks/locale-string"
+import { useLocalizedCost } from "app/hooks/locale-string"
 import { ListingCardMetrics } from "app/lib/props"
 
-export type MediumListingCardProps = Pick<Listing, "id" | "title" | "budget" | "deal_type" | "description" | "date_created"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email" | "plan"> } & { location: Pick<Room, "id" | "title" | "avatar"> }
+export type MediumListingCardProps = Pick<Listing, "id" | "title" | "budget" | "deal_type" | "description" | "date_created" | "price"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email" | "plan"> } & { location: Pick<Room, "id" | "title" | "avatar"> }
 
 export const LockedChatButton = () => {
     const { colors } = useColorScheme()
@@ -29,7 +29,7 @@ export const MediumListingCard = (item: MediumListingCardProps & ListingCardMetr
     const { authenticated } = directusStore()
     const goToRoom = useRouting("room-detailed")
     const goToListingDetailed = useRouting("listing-detailed")
-    const localizedBudget = useLocaleString(item.budget)
+    const localizedCost = useLocalizedCost(item.deal_type, item.budget, item.price)
 
     return <View className="w-full flex-col gap-2 p-4 my-8">
         <View className="flex flex-wrap gap-4 flex-row items-center justify-between">
@@ -53,7 +53,7 @@ export const MediumListingCard = (item: MediumListingCardProps & ListingCardMetr
             </View>
             <View className="flex-col gap-1 bg-card rounded-2xl p-4 mt-2 w-full">
                 <View className="flex-row justify-between">
-                    <Text className="text-success">AED {localizedBudget}</Text>
+                    <Text className="text-success">AED {localizedCost}</Text>
                     <Text className="text-primary capitalize">{item.deal_type}</Text>
                 </View>
                 <Text>{shortString(item.description, 150)}</Text>

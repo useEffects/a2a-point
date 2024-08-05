@@ -50,6 +50,7 @@ export type Listing = {
     parking: number | null;
     location: string;
     budget: number;
+    price: number;
     covered_by_seller: boolean;
     furnishing: string;
     size: number;

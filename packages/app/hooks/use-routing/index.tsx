@@ -30,10 +30,7 @@ export default function useRouting(link: keyof (RootStackParamList & MainTopTabP
             return () => navigation.navigate(link)
         case "listings":
             return (filters: any) => navigation.navigate(link, { filters })
-        case "company":
-        case "phone":
-        case "membership":
-        case "verification":
+        default:
             return () => alert("Not implemented yet!")
     }
 }

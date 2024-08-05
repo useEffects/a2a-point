@@ -54,6 +54,18 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
             })
             .min(0)
             .typeError("Budget must be a valid number"),
+        price: Yup.number()
+            .when("deal_type", ([deal_type]) => {
+                if (deal_type === "sale" || deal_type === "give on rent") {
+                    return Yup.number()
+                        .required("Price is required")
+                        .typeError("Price must be a valid number")
+                } else {
+                    return Yup.number().notRequired()
+                }
+            })
+            .min(0)
+            .typeError("Price must be a valid number"),
         furnishing: Yup.string()
             .when("deal_type", ([deal_type]) => {
                 if (deal_type === "give on rent") {
@@ -131,6 +143,7 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
                     onBlur={props.handleBlur("description")}
                 />
                 <RenderDealTypeSpecificComponent
+                    price={props.values.price}
                     budget={props.values.budget}
                     covered_by_seller={props.values.covered_by_seller}
                     deal_type={props.values.deal_type}
@@ -555,6 +568,7 @@ const form1InitialValues: Form1Values = {
     title: "",
     description: "",
     budget: null,
+    price: null,
     deal_type: "buy",
     furnishing: "furnished",
     covered_by_seller: "dependent",
@@ -583,6 +597,7 @@ type Form1Values = {
     title: string;
     description: string;
     budget: number | null;
+    price: number | null;
     deal_type: "buy" | "take on rent" | "sale" | "give on rent" | null;
     furnishing: "furnished" | "semi furnished" | "unfurnished" | null;
     covered_by_seller: "yes" | "no" | "dependent" | null;
@@ -623,7 +638,7 @@ export const RenderAmenity = ({ amenity, additional_detail }: DetailedAmenity) =
     </View>
 }
 
-const RenderDealTypeSpecificComponent = ({ deal_type, covered_by_seller, furnishing, budget, setFieldValue, handleBlur, touched, errors }: Pick<Form1Values, "deal_type" | "covered_by_seller" | "furnishing" | "budget"> & {
+const RenderDealTypeSpecificComponent = ({ deal_type, covered_by_seller, furnishing, budget, price, setFieldValue, handleBlur, touched, errors }: Pick<Form1Values, "deal_type" | "covered_by_seller" | "furnishing" | "budget" | "price"> & {
     setFieldValue: FormikProps<Form1Values>["setFieldValue"],
     handleBlur: FormikProps<Form1Values>["handleBlur"],
     touched: FormikProps<Form1Values>["touched"],
@@ -631,19 +646,39 @@ const RenderDealTypeSpecificComponent = ({ deal_type, covered_by_seller, furnish
 }) => {
     switch (deal_type) {
         case "sale":
-            return <FormSelect
-                options={["yes", "no", "dependent"].map(val => ({ label: val, value: val }))}
-                label="Covered by seller"
-                value={covered_by_seller ? { value: covered_by_seller, label: covered_by_seller } : undefined}
-                onValueChange={(val) => setFieldValue("covered_by_seller", val?.value)}
-            />
+            return <>
+                <FormSelect
+                    options={["yes", "no", "dependent"].map(val => ({ label: val, value: val }))}
+                    label="Covered by seller"
+                    value={covered_by_seller ? { value: covered_by_seller, label: covered_by_seller } : undefined}
+                    onValueChange={(val) => setFieldValue("covered_by_seller", val?.value)}
+                />
+                <FormInput
+                    label="Price (AED)"
+                    value={commaNumber(price || "")}
+                    onChangeText={(val) => setFieldValue("price", parseInt(val.replace(/,/g, "")))}
+                    error={touched.price ? errors.price : ""}
+                    keyboardType="number-pad"
+                    onBlur={handleBlur("price")}
+                />
+            </>
         case "give on rent":
-            return <FormSelect
-                options={["furnished", "semi furnished", "unfurnished"].map(val => ({ label: val, value: val }))}
-                label="Furnishing"
-                value={furnishing ? { value: furnishing, label: furnishing } : undefined}
-                onValueChange={(val) => setFieldValue("furnishing", val?.value)}
-            />
+            return <>
+                <FormSelect
+                    options={["furnished", "semi furnished", "unfurnished"].map(val => ({ label: val, value: val }))}
+                    label="Furnishing"
+                    value={furnishing ? { value: furnishing, label: furnishing } : undefined}
+                    onValueChange={(val) => setFieldValue("furnishing", val?.value)}
+                />
+                <FormInput
+                    label="Price (AED)"
+                    value={commaNumber(price || "")}
+                    onChangeText={(val) => setFieldValue("price", parseInt(val.replace(/,/g, "")))}
+                    error={touched.price ? errors.price : ""}
+                    keyboardType="number-pad"
+                    onBlur={handleBlur("price")}
+                />
+            </>
         case "buy":
         case "take on rent":
             return <FormInput

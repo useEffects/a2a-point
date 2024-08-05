@@ -10,7 +10,7 @@ import { Bookmark, ExternalLink, Eye } from "lucide-react-native"
 import { Image, Pressable, View } from "react-native"
 import { useRouter } from "solito/navigation"
 import useRouting from "app/hooks/use-routing"
-import { useLocaleString } from "app/hooks/locale-string"
+import { useLocalizedCost } from "app/hooks/locale-string"
 import { ListingCardMetrics } from "app/lib/props"
 
 export const OpenDetailsButton = ({ id, size = "sm" }: { id: string, size?: "default" | "sm" | "lg" | "icon" | null | undefined }) => {
@@ -22,7 +22,7 @@ export const OpenDetailsButton = ({ id, size = "sm" }: { id: string, size?: "def
     </Button>
 }
 
-export type SmallListingCardProps = Pick<Listing, "id" | "title" | "budget" | "deal_type" | "tags" | "date_created"> & { user_created: Pick<User, "id" | "avatar"> } & { location: Pick<Room, "id" | "title" | "avatar"> }
+export type SmallListingCardProps = Pick<Listing, "id" | "title" | "budget" | "deal_type" | "tags" | "date_created" | "price"> & { user_created: Pick<User, "id" | "avatar"> } & { location: Pick<Room, "id" | "title" | "avatar"> }
 
 export const RenderMetrics = ({ metrics }: { metrics: ListingCardMetrics }) => {
     const { colors } = useColorScheme()
@@ -44,7 +44,7 @@ export const RenderMetrics = ({ metrics }: { metrics: ListingCardMetrics }) => {
 export const SmallListingCard = (item: SmallListingCardProps & ListingCardMetrics) => {
     const { colors } = useColorScheme()
     const goToListingDetailed = useRouting("listing-detailed")
-    const localizedBudget = useLocaleString(item.budget)
+    const localizedCost = useLocalizedCost(item.deal_type, item.budget, item.price)
 
     return <Pressable onPress={() => goToListingDetailed(item.id)} className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start rounded native:w-[400px]">
         <Image source={{ uri: buildAssetUrl(item.user_created.avatar) }} className="w-8 h-8 rounded-full" />
@@ -52,7 +52,7 @@ export const SmallListingCard = (item: SmallListingCardProps & ListingCardMetric
             <View className="flex-col gap-1">
                 <Text className="text-lg font-semibold text-wrap">{item.title}</Text>
                 <View className="flex-row justify-between gap-4 items-center">
-                    <Text className="!text-success">AED {localizedBudget}</Text>
+                    <Text className="!text-success">AED {localizedCost}</Text>
                     <Text style={{ backgroundColor: opacity(colors.success, 0.1) }} className="text-success px-1 rounded">{item.deal_type}</Text>
                 </View>
                 {item.tags && <View className="flex-row gap-1 flex-wrap items-center">
