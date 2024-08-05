@@ -79,6 +79,7 @@
           ${msg("doRegister")}
         </@button.kw>
       </@buttonGroup.kw>
+      <p class="text-blue-600">Note: Register and start your free trial today (No card required) </p
     </@form.kw>
   <#elseif section="nav">
     <@link.kw color="secondary" href=url.loginUrl size="small">
