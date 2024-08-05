@@ -45,6 +45,13 @@ export const getListingsCount = async () => {
         aggregate: {
             count: ["*"]
         },
+        query: {
+            filter: {
+                verified: {
+                    _eq: true
+                }
+            }
+        }
     }))
     return getListingsCount?.[0]!.count as unknown as number
 }
@@ -57,9 +64,18 @@ export const getListingsCountForLocation = async (locationId: string) => {
         },
         query: {
             filter: {
-                location: {
-                    _eq: locationId
-                }
+                _and: [
+                    {
+                        location: {
+                            _eq: locationId
+                        }
+                    },
+                    {
+                        verified: {
+                            _eq: true
+                        }
+                    }
+                ]
             }
         }
     }))

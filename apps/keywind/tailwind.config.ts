@@ -6,7 +6,7 @@ const { light: colors } = theme;
 
 const palette = getPalette([
   { name: 'primary', color: colors.primary, shade: 600, shades: [100, 200, 300, 400, 500, 600, 700, 800, 900] },
-  { name: 'secondary', color: colors.accent, shade: 600, shades: [100, 200, 300, 400, 500, 600, 700, 800, 900] },
+  { name: 'secondary', color: colors.card, shade: 600, shades: [100, 200, 300, 400, 500, 600, 700, 800, 900] },
 ])
 
 export default {

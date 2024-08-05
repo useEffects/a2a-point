@@ -98,6 +98,7 @@ const directusStore = create<DirectusStore>((set, get) => ({
                 if (!newTokens || !newTokens.accessToken || !newTokens.refreshToken) {
                     await AsyncStorage.removeItem("accessToken");
                     await AsyncStorage.removeItem("refreshToken");
+                    console.log("Failed to refresh tokens")
                     return await resetDirectus()
                 }
                 set(p => ({
@@ -166,8 +167,8 @@ const reset = {
 }
 
 export const shouldRefresh = async (token: string | null) => {
-    if (!token) return false
-    if (!(await checkTokenValid(token))) return false
+    if (!token) return true
+    if (!(await checkTokenValid(token))) return true
     try {
         const payload = token.split(".")[1]!
         const decodedString = base64UrlDecode(payload)
