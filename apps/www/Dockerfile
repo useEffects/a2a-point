@@ -1,4 +1,4 @@
-FROM node:20-bullseye
+FROM node:lts-bullseye
 
 RUN apt-get update && \
     apt-get install -y curl wget jq openssl python3 python3-pip&& \

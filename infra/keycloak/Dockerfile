@@ -1,4 +1,4 @@
-FROM node:20-bullseye
+FROM node:lts-bullseye as builder
 
 WORKDIR /app
 COPY package.json .
