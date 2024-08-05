@@ -3,61 +3,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
 import { Button } from "src/components/ui/button"
 import { Separator } from "src/components/ui/separator"
+import { navItems } from "./navbar"
 
-export const navItems = [
-    {
-        label: "Home",
-        href: "/"
-    },
-    {
-        label: "Membership",
-        href: "/membership"
-    },
-    {
-        label: "Courses",
-        href: "/courses"
-    },
-    {
-        label: "News",
-        href: "/news"
-    },
-    {
-        label: "Listings",
-        href: "/listings",
-        trial: true
-    },
-    {
-        label: "Chat",
-        href: "/chat",
-        locked: true
-    },
-    {
-        label: "Post",
-        href: "/post",
-        locked: true
-    },
-    {
-        label: "Profile",
-        href: "/profile",
-        locked: true
-    }
-]
+
 
 const footerItems = [
     {
         label: "Product",
         links: [
             {
-                label: "Community",
-                href: "https://community.a2apoint.com"
-            },
-            {
                 label: "Android App",
-                href: "https://mobile.a2apoint.com"
+                href: "https://a2apoint.com/android"
             },
             {
                 label: "IOS App",
-                href: "/contact"
+                href: "https://a2apoint.com/ios"
             },
             {
                 label: "Dashboard",
@@ -71,7 +31,7 @@ const footerItems = [
     },
     {
         label: "Site Map",
-        links: navItems
+        links: navItems.map(({ items }) => items).flat().map(({ title, href }) => ({ label: title, href }))
     },
     {
         label: "Resources",
@@ -86,7 +46,7 @@ const footerItems = [
             },
             {
                 label: "Why A2A Point",
-                href: "/why"
+                href: "https://a2apoint.com/#why-a2a-point"
             },
         ]
     },
@@ -95,15 +55,11 @@ const footerItems = [
         links: [
             {
                 label: "Careers (We're Hiring)",
-                href: "/api"
+                href: "https://www.linkedin.com/company/a2a-point-l-l-c/jobs/"
             },
             {
                 label: "Customer Service",
-                href: ""
-            },
-            {
-                label: "Developers Contact",
-                href: "https://joelsamuel.me"
+                href: "/contact"
             },
         ]
     }
