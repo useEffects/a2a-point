@@ -1,4 +1,4 @@
-import { directusUrl, isUsingLocalMachine } from "app/lib/constants";
+import { directusUrl } from "app/lib/constants";
 import { portfolioUrl } from "app/lib/constants";
 import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";

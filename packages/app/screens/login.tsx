@@ -12,34 +12,38 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect } from "react";
-import { Linking, View } from "react-native";
+import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { parse } from "search-params";
+import * as Linking from "expo-linking"
 
 const LoginScreen = () => {
     const { initialize, authenticated } = directusStore()
-    const appURL = "a2apoint-community://"
     const router = useRouter()
+    const appURL = "a2apoint-community://"
     const { isDarkColorScheme } = useColorScheme()
     const insets = useSafeAreaInsets()
 
     useEffect(() => {
         const timer = setInterval(() => {
             if (authenticated) {
-                // router.replace("/")
+                router.replace("/")
                 clearInterval(timer)
             }
         }, 100)
         return () => clearInterval(timer)
     }, [authenticated])
 
+
     const handleLogin = async () => {
         try {
-            const result = await WebBrowser.openAuthSessionAsync(`${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/auth-redirect?appUrl=${appURL}`, appURL);
+            const result = await WebBrowser.openAuthSessionAsync(`${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/auth-redirect?appUrl=${appURL}/login`, appURL);
+            console.log(result)
             if (result.type === "success") {
                 const { access_token: accessToken, refresh_token: refreshToken } = parse(result.url)
                 if (accessToken && refreshToken) {
                     await initialize(accessToken.toString(), refreshToken.toString())
+                    router.replace("/")
                 }
             }
         } catch (error) {
