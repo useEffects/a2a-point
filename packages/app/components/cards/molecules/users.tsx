@@ -7,12 +7,12 @@ import { FlatListProps, Platform, View } from "react-native"
 import { BottomLoader } from "./listings"
 import { ViewAllButton } from "app/components/utils/common-ui"
 import { useInfiniteQuery } from "@tanstack/react-query"
-import useRouting from "app/hooks/use-routing"
 import { Button } from "app/components/ui/button"
 import { mediumUsersFields, smallUsersFields, UsersCardMetrics } from "app/lib/props"
 import { renderCardsQuery } from "app/lib/misc/queries"
 import { uniqBy } from "lodash"
 import { memberRole } from "app/lib/constants"
+import { useRouter } from "solito/navigation"
 
 export enum Mode {
     small = "small",
@@ -80,7 +80,7 @@ export const RenderUsers = <R,>({
 }: RenderUserProps<R>) => {
 
     const { fields, renderMethod: Component } = bodies[mode]
-    const goToUsersList = useRouting("users-list")
+    const router = useRouter()
     const [startedScrolling, setStartedScrolling] = useState(false)
 
     const shouldUseInitialData = infinite && initialData.length && !Boolean(searchText || filter)
@@ -129,7 +129,7 @@ export const RenderUsers = <R,>({
         ItemSeparatorComponent={() => <View className="w-4 h-4" />}
         onEndReached={() => Platform.OS !== "web" && infinite && onEndReached()}
         ListFooterComponent={infinite ? <BottomLoader endReached={!hasNextPage} onEndReached={() => Platform.OS === "web" && onEndReached()} /> : <ViewAllButton horizontal={!!flatListProps.horizontal}
-            button={(props) => <Button onPress={() => goToUsersList("")} {...props} />}
+            button={(props) => <Button onPress={() => router.push("/agents")} {...props} />}
         />}
         {...flatListProps}
     />

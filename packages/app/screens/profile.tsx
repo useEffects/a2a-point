@@ -1,4 +1,6 @@
 import { deleteItem, readItems } from "@directus/sdk";
+import ProfileImgDark from "app/assets/locked-screens/dark/profile.jpg";
+import ProfileImgLight from "app/assets/locked-screens/light/profile.jpg";
 import { RenderUserTileProps, useAutoCompleteItem } from "app/components/formComponents";
 import { Header, HeaderTitle } from "app/components/header";
 import { ArrowUp, Bell, EllipsisVertical, Expand, Info, LogOut, MessageCircle, Rows2, Shrink, UserCog2 } from "app/components/icons";
@@ -9,7 +11,6 @@ import { Text } from "app/components/ui/text";
 import { UserChip } from "app/components/user-chip";
 import { FlatList, ScrollView } from "app/components/utils/virtual-lists";
 import { useColorScheme } from "app/hooks/color-scheme";
-import useRouting from "app/hooks/use-routing";
 import { directusUrl } from "app/lib/constants";
 import { buildAssetUrl, timeAgo } from "app/lib/helpers";
 import { getListingsCountForUser } from "app/lib/misc/queries";
@@ -20,6 +21,7 @@ import { StarIcon } from "app/screens/post-feedback";
 import directusStore from "app/store/directus";
 import { queryClient } from "app/store/query";
 import userStore from "app/store/user";
+import { useRouter } from "expo-router";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { DimensionValue, Image, Linking, NativeScrollEvent, NativeSyntheticEvent, Platform, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import Collapsible from 'react-native-collapsible';
@@ -32,8 +34,6 @@ import { CommonFilters, RenderListings, bodies, commonFilters } from "../compone
 import { Button } from "../components/ui/button";
 import { FilterKeys } from "./listings";
 import LockedScreen from "./locked-screens";
-import ProfileImgLight from "app/assets/locked-screens/light/profile.jpg";
-import ProfileImgDark from "app/assets/locked-screens/dark/profile.jpg";
 
 const LockedProfileScreen = ({ userId }: { userId: string }) => {
     const { isDarkColorScheme } = useColorScheme()
@@ -70,6 +70,7 @@ export function Profile({ user, company, document }: { user: User, company?: Com
     const [big, setBig] = useState(false)
     const { user: currentUser } = userStore()
     const { authenticated } = directusStore()
+    const router = useRouter()
 
     useEffect(() => {
         getListingsCountForUser(user.id).then(setListingsCount)
@@ -81,8 +82,6 @@ export function Profile({ user, company, document }: { user: User, company?: Com
             props.jumpTo(tabTitles[i]!)
         }
         const buttonWidth = (Platform.OS === "web" ? "calc(50% - 0.5rem)" : width / 2 - 14 - 8) as DimensionValue
-        const goToActivity = useRouting("activity")
-        const goToPostFeedback = useRouting("post-feedback")
 
         return <>
             <Collapsible duration={500} collapsed={collapsed}>
@@ -117,9 +116,9 @@ export function Profile({ user, company, document }: { user: User, company?: Com
                             <Text>Open in dashboard</Text>
                         </Button>
                         {user.id === currentUser.id ?
-                            <Button onPress={goToActivity} variant={"default"} size="sm" style={{ width: buttonWidth }}>
+                            <Button onPress={() => router.push("/agents/me/activity")} variant={"default"} size="sm" style={{ width: buttonWidth }}>
                                 <Text>Your activity</Text>
-                            </Button> : <Button onPress={() => goToPostFeedback({ id: user.id })} size={"sm"} style={{ width: buttonWidth }} variant={"default"}>
+                            </Button> : <Button onPress={() => router.push(`/agents/${user.id}/feedback`)} size={"sm"} style={{ width: buttonWidth }} variant={"default"}>
                                 <Text>Give feedback</Text>
                             </Button>}
                     </View>
@@ -350,14 +349,14 @@ const ListingFeedbacks = ({ userId }: { userId: string }) => {
 
 const RenderFeedbackCard = (props: UserFeedbacksProps & { handleDelete: (id: string) => void }) => {
     const { user } = userStore()
-    const goToPostFeedback = useRouting("post-feedback")
+    const router = useRouter()
 
     return <View className="flex-col gap-4">
         <View className="flex-row items-center justify-between">
             <UserChip user={props.user_created} />
             {user.id === props.user_created.id ?
                 <View className="flex-row items-center gap-2">
-                    <Button onPress={() => goToPostFeedback({ id: props.agent, feedbackId: props.id })} size={"sm"} variant={"outline"}>
+                    <Button onPress={() => router.push(`/agents/${props.agent}/feedback?id=${props.id}`)} size={"sm"} variant={"outline"}>
                         <Text>Edit</Text>
                     </Button>
                     <Button onPress={() => props.handleDelete(props.id)} size={"sm"} variant={"outline"}>
@@ -378,8 +377,7 @@ const WithLabel = ({ label, children, className = "" }: { label: string, childre
 }
 
 const ProfileDropdown = () => {
-    const goToNotifications = useRouting("notifications")
-    const goToAccountConsole = useRouting("account-console")
+    const router = useRouter()
     const { logout } = directusStore()
 
     const [_, setOpen] = useState(false)
@@ -399,7 +397,7 @@ const ProfileDropdown = () => {
             </DropdownMenuItem>
             <DropdownMenuItem onPress={() => {
                 setOpen(false)
-                goToNotifications("")
+                router.push("/agents/me/notifications")
             }}>
                 <View className="flex-row items-center gap-2">
                     <Bell size={18} className="text-foreground" />
@@ -408,7 +406,7 @@ const ProfileDropdown = () => {
             </DropdownMenuItem>
             <DropdownMenuItem onPress={() => {
                 setOpen(false)
-                goToAccountConsole("")
+                router.push("/account-console")
             }}>
                 <View className="flex-row items-center gap-2">
                     <UserCog2 size={18} className="text-foreground" />

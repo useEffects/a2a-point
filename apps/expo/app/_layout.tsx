@@ -5,7 +5,7 @@ import { useColorScheme } from "app/hooks/color-scheme";
 import directusStore, { reqNewTokens, shouldRefresh } from "app/store/directus";
 import { SplashScreen } from "expo-router";
 import * as React from "react";
-import { Platform, StatusBar } from "react-native";
+import { Platform } from "react-native";
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "tailwind-theme/theme.css";
@@ -15,7 +15,7 @@ import * as navigationBar from "expo-navigation-bar"
 export default function RootLayoutNav() {
     const { colorScheme, setColorScheme, colors } = useColorScheme();
     const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
-    const { initialize, authenticated } = directusStore();
+    const { initialize } = directusStore();
     const [ready, setReady] = React.useState({
         directus: false,
         colorScheme: false,
@@ -95,6 +95,8 @@ export default function RootLayoutNav() {
                         <Stack.Screen name="account-console" />
                         <Stack.Screen name="login" />
                         <Stack.Screen name="locations" />
+                        <Stack.Screen name="agents" />
+                        <Stack.Screen name="listings" />
                     </Stack>
                 </Providers>
             </GestureHandlerRootView>

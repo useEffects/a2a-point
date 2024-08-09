@@ -4,7 +4,6 @@ import { Button } from "app/components/ui/button"
 import { Separator } from "app/components/ui/separator"
 import { Text } from "app/components/ui/text"
 import { useColorScheme } from "app/hooks/color-scheme"
-import useRouting from "app/hooks/use-routing"
 import { buildAssetUrl, getDMRoomId, isUserPro, isUserVerified, shortString, timeAgo } from "app/lib/helpers"
 import { getFeedbacksCountForUser, getListingsCountForUser } from "app/lib/misc/queries"
 import { MediumUsersCardProps, SmallUsersCardProps, UsersCardMetrics } from "app/lib/props"
@@ -16,10 +15,11 @@ import { Image, Pressable, View } from "react-native"
 import { CompanyChip } from "./company"
 import { directusOrigin } from "app/lib/constants"
 import directusStore from "app/store/directus"
+import { useRouter } from "solito/navigation"
 
 export const SmallUsersCard = (item: SmallUsersCardProps) => {
     const { colors } = useColorScheme()
-    const goToProfileDetailed = useRouting("profile-detailed")
+    const router = useRouter()
     const { data: ratingsCount } = useQuery({
         queryKey: ["ratingsCount", item.id],
         queryFn: async () => await getFeedbacksCountForUser(item.id)
@@ -29,7 +29,7 @@ export const SmallUsersCard = (item: SmallUsersCardProps) => {
         queryFn: async () => await getListingsCountForUser(item.id)
     })
 
-    return <Pressable onPress={() => goToProfileDetailed(item.id)} className={cn("rounded-xl relative w-44")}>
+    return <Pressable onPress={() => router.push(`/agents/${item.id}`)} className={cn("rounded-xl relative w-44")}>
         <View className="w-full h-10 flex-col justify-center items-start">
             <View className="flex-row items-center rounded p-1" style={{ backgroundColor: opacity(colors.primary, 0.1) }}>
                 <Award size={12} className="text-primary" />
@@ -64,15 +64,14 @@ export const MediumUsersCard = (item: MediumUsersCardProps & UsersCardMetrics) =
     const { user } = userStore()
     const { authenticated } = directusStore()
     const shouldShowEllipsis = item.tags?.length ? item.tags.length > 3 : false
-    const goToProfile = useRouting("profile-detailed")
-    const goToRoomDetailed = useRouting("room-detailed")
+    const router = useRouter()
 
     const handleChatRedirect = async (userId: string) => {
         const dmRoomId = await getDMRoomId([user.id, userId])
-        goToRoomDetailed(dmRoomId)
+        router.push(`/chat/${dmRoomId}`)
     }
 
-    return <Pressable onPress={() => goToProfile(item.id as any)} className="flex-col gap-4">
+    return <Pressable onPress={() => router.push(`/agents/${item.id}`)} className="flex-col gap-4">
         <View className="w-full flex-row w-full justify-start">
             <View className="w-1/2 rounded-tl-xl">
                 <View className="relative flex-col items-start w-full h-16">

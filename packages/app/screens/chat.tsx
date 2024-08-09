@@ -10,19 +10,19 @@ import { Text } from "app/components/ui/text";
 import { FlatList } from "app/components/utils/virtual-lists";
 import { RoomSubscribed } from "app/context/chats";
 import { useChats } from "app/hooks/chats";
-import useRouting from "app/hooks/use-routing";
-import { directusUrl } from "app/lib/constants";
+import { useColorScheme } from "app/hooks/color-scheme";
 import { buildAssetUrl, getDMRoomId, timeAgo } from "app/lib/helpers";
+import { renderCardsQuery } from "app/lib/misc/queries";
 import { Room, User } from "app/lib/types";
 import directusStore from "app/store/directus";
 import userStore from "app/store/user";
+import { useRouter } from "expo-router";
 import { uniqBy } from "lodash";
 import { useMemo, useState } from "react";
 import { Image, View } from "react-native";
 import { NavigationState, Route, SceneMap, TabView } from "react-native-tab-view";
 import { useDebounce } from "use-debounce";
 import LockedScreen from "./locked-screens";
-import { useColorScheme } from "app/hooks/color-scheme";
 
 export const ChatLocked = () => {
     const { isDarkColorScheme } = useColorScheme()
@@ -64,11 +64,16 @@ function ChatScreenComponent() {
 
     const { data: contacts } = useQuery({
         queryKey: ["Fetch Contacts", debouncedSearchText],
-        queryFn: async () => await fetch(`${directusUrl}/users/?fields=${["id", "first_name", "last_name", "avatar"].join(",")}&search=${encodeURIComponent(debouncedSearchText)}&filter=${JSON.stringify({ id: { _neq: user.id } })}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }).then((res) => res.json()).then((res) => res.data),
+        queryFn: async () => await renderCardsQuery<ContactListRowProp>({
+            collection: "users",
+            filter: {
+                id: {
+                    _neq: user.id
+                }
+            },
+            fields: ['id', 'first_name', 'last_name', 'avatar'],
+            searchText: debouncedSearchText
+        }),
         enabled: debouncedSearchText.length > 0,
         initialData: []
     })
@@ -166,7 +171,7 @@ const ChatList = ({ data }: { data: RoomSubscribed[] }) => {
 const ChatListRow = (room: RoomSubscribed) => {
     const { user } = userStore();
     const { messages } = useChats()
-    const goToRoom = useRouting("room-detailed")
+    const router = useRouter()
 
     const lastMessage = messages.find((message) => message.room === room.id);
     let lastMessageContent = lastMessage?.content.trim();
@@ -192,7 +197,7 @@ const ChatListRow = (room: RoomSubscribed) => {
             ),
         ];
 
-    return <Button onPress={() => goToRoom(room.id)} variant={"ghost"}
+    return <Button onPress={() => router.push(`/chat/${room.id}`)} variant={"ghost"}
         className="flex-row gap-4 items-center w-full justify-start !h-20">
         <Image className="w-12 h-12 rounded-full" source={{ uri: roomAvatar }} />
         <View className="flex-col justify-center flex-1">
@@ -210,16 +215,16 @@ type GroupListRowProp = Pick<Room, "avatar" | "id" | "type" | "title">
 
 const ContactListRow = (contact: ContactListRowProp) => {
     const { user } = userStore()
-    const goToRoom = useRouting("room-detailed")
-    return <Button onPress={() => getDMRoomId([contact.id, user.id]).then(id => goToRoom(id))} variant={"ghost"} className="flex-row gap-4 items-center w-full justify-start !h-20">
+    const router = useRouter()
+    return <Button onPress={() => getDMRoomId([contact.id, user.id]).then(id => router.push(`/chat/${id}`))} variant={"ghost"} className="flex-row gap-4 items-center w-full justify-start !h-20">
         <Image className="w-12 h-12 rounded-full" source={{ uri: buildAssetUrl(contact.avatar) }} />
         <Text className="!text-base">{contact.first_name} {contact.last_name}</Text>
     </Button>
 }
 
 const GroupListRow = (group: GroupListRowProp) => {
-    const goToRoom = useRouting("room-detailed")
-    return <Button variant={"ghost"} onPress={() => goToRoom(group.id)} className="flex-row gap-4 items-center w-full justify-start !h-20">
+    const router = useRouter()
+    return <Button variant={"ghost"} onPress={() => router.push(`/chat/${group.id}`)} className="flex-row gap-4 items-center w-full justify-start !h-20">
         <Image className="w-12 h-12 rounded-full" source={{ uri: buildAssetUrl(group.avatar) }} />
         <Text className="!text-base">{group.title}</Text>
     </Button>

@@ -7,7 +7,6 @@ import { Text } from "app/components/ui/text"
 import { ViewAllButton } from "app/components/utils/common-ui"
 import { FlatList } from "app/components/utils/virtual-lists"
 import { useColorScheme } from "app/hooks/color-scheme"
-import useRouting from "app/hooks/use-routing"
 import { InViewPort } from "app/lib/detect-viewport"
 import { extraSmallListingsFields, mediumListingsFields, photoListingsFields, smallListingsFields } from "app/lib/props"
 import { FilterParam } from "app/screens/listings"
@@ -22,6 +21,7 @@ import { MediumListingCard, MediumListingCardProps } from "../atoms/medium"
 import { PhotoListingCard, PhotoListingProps } from "../atoms/photo"
 import { SmallListingCard, SmallListingCardProps } from "../atoms/small"
 import { getListingMetrics } from "app/lib/misc/queries"
+import { useRouter } from "solito/navigation"
 
 type ListCardProps = SmallListingCardProps | ExtraSmallListingCardProps | MediumListingCardProps | PhotoListingProps
 
@@ -188,7 +188,7 @@ export const RenderListings = <R extends ListCardProps>({
         paramFilters?: FilterParam[],
         viewAllButtonLink?: string
     }) => {
-    const goToListings = useRouting("listings")
+    const router = useRouter()
 
     const isAdvertisementCard = (item: ConfirmedAdvertisementCardProps | R): item is ConfirmedAdvertisementCardProps => {
         return (item as ConfirmedAdvertisementCardProps).isAdvertisement !== undefined;
@@ -280,7 +280,7 @@ export const RenderListings = <R extends ListCardProps>({
         onEndReached={() => infinite && Platform.OS !== "web" && onEndReached()}
         ListFooterComponent={
             infinite ? () => <BottomLoader endReached={!isLoading && !hasNextPage && startedScrolling} onEndReached={() => Platform.OS === "web" && onEndReached()} /> :
-                <ViewAllButton horizontal={!!flatListProps?.horizontal} button={(props) => <Button onPress={() => goToListings(paramFilters)} {...props} />} />}
+                <ViewAllButton horizontal={!!flatListProps?.horizontal} button={(props) => <Button onPress={() => router.push(`/listings?filters=${paramFilters}`)} {...props} />} />}
     />
 }
 

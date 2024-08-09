@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { NewsCard } from "app/components/cards/atoms/news";
 import { PhotoListingProps } from "app/components/cards/atoms/photo";
 import { SmallListingCardProps } from "app/components/cards/atoms/small";
-import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings";
+import { bodies, CommonFilters, commonFilters, RenderListings } from "app/components/cards/molecules/listings";
 import { SmallLocationCards } from "app/components/cards/molecules/locations";
 import { RenderUsers, Mode as UsersRenderMode } from "app/components/cards/molecules/users";
 import { useSmallLocationsQuery } from "app/components/cards/utils/locations";
@@ -17,7 +17,6 @@ import { Text } from "app/components/ui/text";
 import { ViewAllButton } from "app/components/utils/common-ui";
 import { FlatList, ScrollView } from "app/components/utils/virtual-lists";
 import { useColorScheme } from "app/hooks/color-scheme";
-import useRouting from "app/hooks/use-routing";
 import { directusUrl, portfolioUrl } from "app/lib/constants";
 import { getCompaniesCount, getListingMetrics, getListingsCount, getLocationsCount, getUsersCount, renderCardsQuery } from "app/lib/misc/queries";
 import { ListingCardMetrics, photoListingsFields, smallListingsFields, SmallUsersCardProps, UsersCardMetrics } from "app/lib/props";
@@ -25,17 +24,18 @@ import { News } from "app/lib/types";
 import directusStore from "app/store/directus";
 import userStore from "app/store/user";
 import * as Linking from "expo-linking";
+import { useRouter } from "expo-router";
 import opacity from "hex-color-opacity";
 import { View } from "react-native";
 import { Link } from "solito/link";
-import { FilterKeys, FilterParam } from "./listings";
+import { FilterKeys } from "./listings";
 
 export default function HomeScreen() {
     const { authenticated } = directusStore()
     const { user } = userStore()
     const { colors } = useColorScheme()
     const { rest } = directusStore()
-    const goToListings = useRouting("listings")
+    const router = useRouter()
 
     const { data: news } = useQuery<News[]>({
         queryKey: ["Fetch news"],
@@ -110,9 +110,9 @@ export default function HomeScreen() {
         />
         <CompanyStats counts={counts} className="justify-start gap-12 px-4" />
         <SeparatorText hideRight>
-            <Button onPress={() => goToListings([{
+            <Button onPress={() => router.push(`/listings?filters=${JSON.stringify([{
                 [FilterKeys.Premium]: CommonFilters.Premium
-            }] as FilterParam[])} variant={"base"} size={"none"} className="flex-row px-4 gap-1 items-center w-60 ml-auto mr-0">
+            }])}`)} variant={"base"} size={"none"} className="flex-row px-4 gap-1 items-center w-60 ml-auto mr-0">
                 <Text className="text-right text-subtext">Premium listings curated by A2APoint</Text>
                 <ArrowUpRight size={24} className="text-info" />
             </Button>

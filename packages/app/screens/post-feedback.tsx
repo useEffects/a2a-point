@@ -1,23 +1,23 @@
+import { createItem, updateItem } from "@directus/sdk";
+import { FormInput } from "app/components/formComponents";
+import { Header } from "app/components/header";
+import { Button } from "app/components/ui/button";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "app/components/ui/dialog";
+import { Separator } from "app/components/ui/separator";
+import { Text } from "app/components/ui/text";
+import { ScrollView } from "app/components/utils/virtual-lists";
 import { useColorScheme } from "app/hooks/color-scheme";
-import { SmallUser, useUserDetails } from "app/hooks/user-details";
+import { SmallUser } from "app/hooks/user-details";
 import { buildAssetUrl, wordCount } from "app/lib/helpers";
+import { Feedback } from "app/lib/types";
+import directusStore from "app/store/directus";
+import { useRouter } from "expo-router";
 import { Formik, FormikProps } from "formik";
 import { Star, StarHalf } from "lucide-react-native";
+import { useState } from "react";
 import { Image, View } from "react-native";
 import StarRating, { StarIconProps } from "react-native-star-rating-widget";
 import * as Yup from 'yup';
-import { FormInput } from "app/components/formComponents";
-import { Button } from "app/components/ui/button";
-import { Text } from "app/components/ui/text";
-import { Feedback } from "app/lib/types";
-import directusStore from "app/store/directus";
-import { createItem, updateItem } from "@directus/sdk";
-import { useState } from "react";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "app/components/ui/dialog"
-import { useRouter } from "solito/navigation";
-import { Header } from "app/components/header";
-import { ScrollView } from "app/components/utils/virtual-lists";
-import { Separator } from "app/components/ui/separator";
 
 export const StarIcon = (props: StarIconProps) => {
     const { colors } = useColorScheme()

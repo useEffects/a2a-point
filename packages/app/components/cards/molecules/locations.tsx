@@ -9,9 +9,8 @@ import { Text } from "app/components/ui/text"
 import { ViewAllButton } from "app/components/utils/common-ui"
 import { FlatList } from "app/components/utils/virtual-lists"
 import { useColorScheme } from "app/hooks/color-scheme"
-import useRouting from "app/hooks/use-routing"
 import { buildAssetUrl, shortString } from "app/lib/helpers"
-import { getListingsCountForLocation, renderCardsQuery } from "app/lib/misc/queries"
+import { getListingsCountForLocation, getMembersCountForLocation, renderCardsQuery } from "app/lib/misc/queries"
 import { LocationCardMetrics, MediumLocationCardProps, mediumLocationFields, SmallLocationCardProps } from "app/lib/props"
 import { User } from "app/lib/types"
 import directusStore from "app/store/directus"
@@ -20,10 +19,11 @@ import { uniqBy } from "lodash"
 import { useEffect, useMemo, useState } from "react"
 import { FlatListProps, Image, Platform, Pressable, View } from "react-native"
 import { BottomLoader } from "./listings"
+import { useRouter } from "solito/navigation"
 
 const SmallLocationCard = ({ item }: { item: SmallLocationCardProps }) => {
     const [count, setCount] = useState(0)
-    const goToLocationDetailed = useRouting("location-detailed")
+    const router = useRouter()
 
     useEffect(() => {
         getListingsCountForLocation(item.id).then(setCount)
@@ -31,7 +31,7 @@ const SmallLocationCard = ({ item }: { item: SmallLocationCardProps }) => {
 
 
     return <View className="flex-col gap-4 items-center my-2">
-        <Pressable className="relative h-16 w-16 rounded-full" onPress={() => goToLocationDetailed(item.id as any)}>
+        <Pressable className="relative h-16 w-16 rounded-full" onPress={() => router.push(`/locations/${item.id}`)}>
             <Image source={{ uri: buildAssetUrl(item.avatar!) }} className="w-16 h-16 rounded-full" />
             <View className="absolute bg-card flex-row justify-center items-center rounded-full w-8 h-8 left-auto -right-2 top-auto -bottom-2">
                 <Text className="!text-xs !text-card-foreground">{count}</Text>
@@ -43,7 +43,7 @@ const SmallLocationCard = ({ item }: { item: SmallLocationCardProps }) => {
 
 export const SmallLocationCards = ({ flatListProps, data }: { flatListProps?: Omit<HorizontalFlatListProps<SmallLocationCardProps>, "data" | "renderItem">, data: SmallLocationCardProps[] }) => {
     const { rest } = directusStore()
-    const goToLocationsList = useRouting("locations-list")
+    const router = useRouter()
 
     return <HorizontalFlatList
         overScrollMode="never"
@@ -52,7 +52,7 @@ export const SmallLocationCards = ({ flatListProps, data }: { flatListProps?: Om
         ItemSeparatorComponent={() => <View className="w-4 h-4" />}
         numRows={2}
         keyExtractor={item => item.id}
-        ListFooterComponent={<ViewAllButton horizontal={true} button={(props: ButtonProps) => <Button onPress={() => goToLocationsList("")} {...props} />} />}
+        ListFooterComponent={<ViewAllButton horizontal={true} button={(props: ButtonProps) => <Button onPress={() => router.push('/locations')} {...props} />} />}
         ListHeaderComponent={() => <View className="w-4 h-4" />}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
@@ -62,18 +62,17 @@ export const SmallLocationCards = ({ flatListProps, data }: { flatListProps?: Om
 
 const MediumLocationCard = ({ item }: { item: MediumLocationCardProps & LocationCardMetrics }) => {
     const { authenticated } = directusStore()
-    const goToLocationDetailed = useRouting("location-detailed")
-    const goToRoom = useRouting("room-detailed")
+    const router = useRouter()
 
     item.members = item.members.filter(member => member.directus_users_id)
 
-    return <Pressable onPress={() => goToLocationDetailed(item.id as any)} className="flex-row rounded-xl bg-card justify-start items-start w-full aspect-video">
+    return <Pressable onPress={() => router.push(`/locations/${item.id}`)} className="flex-row rounded-xl bg-card justify-start items-start w-full aspect-video">
         <Image source={{ uri: buildAssetUrl(item.avatar) }} className="w-1/2 h-full rounded-tl-xl rounded-bl-xl" resizeMode="cover" />
         <View className="h-full flex-col justify-start gap-2 p-4 w-1/2">
             <Text className="font-medium">{item.title}</Text>
             <Text className="text-success">{item.listingsCount} leads available</Text>
             <MembersList locationId={item.id} members={item.members.slice(0, 5)} total={item.membersCount} />
-            <Button onPress={() => goToRoom(item.id)} disabled={!authenticated} className="mt-auto mb-0 flex-row">
+            <Button onPress={() => router.push(`/chat/${item.id}`)} disabled={!authenticated} className="mt-auto mb-0 flex-row">
                 <View className="flex-row">
                     <Text>Group chat</Text>
                     <ArrowUpRight size={18} className="text-primary-foreground" />
@@ -83,13 +82,13 @@ const MediumLocationCard = ({ item }: { item: MediumLocationCardProps & Location
     </Pressable>
 }
 
-export const MediumLocationCards = ({ initialData, limit = 5, searchText = "", infinite, flatListProps }: { initialData: (MediumLocationCardProps & LocationCardMetrics)[], limit?: number, infinite?: boolean, searchText?: string, flatListProps?: Omit<FlatListProps<MediumLocationCardProps>, "data" | "renderItem"> }) => {
-    const goToLocationsList = useRouting("locations-list")
+export const MediumLocationCards = ({ initialData, limit = 5, searchText = "", infinite, flatListProps }: { initialData: (MediumLocationCardProps & LocationCardMetrics)[], limit?: number, infinite?: boolean, searchText?: string, flatListProps?: Omit<FlatListProps<MediumLocationCardProps & LocationCardMetrics>, "data" | "renderItem"> }) => {
     const [startedScrolling, setStartedScrolling] = useState(false)
+    const router = useRouter()
 
     const shouldNotShowInitialData = Boolean(searchText)
 
-    const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery<{ items: MediumLocationCardProps[], page: unknown }>({
+    const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery<{ items: (MediumLocationCardProps & LocationCardMetrics)[], page: unknown }>({
         queryKey: ["Fetching Locations for medium card", searchText, limit, infinite],
         queryFn: async ({ pageParam }) => {
             const res = await renderCardsQuery<MediumLocationCardProps>({
@@ -108,8 +107,15 @@ export const MediumLocationCards = ({ initialData, limit = 5, searchText = "", i
                         _limit: 5,
                     }
                 }
-            }).then(res => ({ items: res, page: pageParam }))
-            return res
+            }).then(res => Promise.all(res.map(async r => {
+                const listingsCount = await getListingsCountForLocation(r.id)
+                const membersCount = await getMembersCountForLocation(r.id)
+                return { ...r, listingsCount, membersCount } as MediumLocationCardProps & LocationCardMetrics
+            })))
+            return {
+                items: res,
+                page: pageParam
+            }
         },
         initialPageParam: shouldNotShowInitialData ? 0 : 1,
         getNextPageParam: (lastPage, allPages, lastPageParam) => {
@@ -137,7 +143,7 @@ export const MediumLocationCards = ({ initialData, limit = 5, searchText = "", i
         onEndReached={() => Platform.OS !== "web" && infinite && onEndReached()}
         ListFooterComponent={infinite ?
             <BottomLoader endReached={startedScrolling && !hasNextPage} onEndReached={() => Platform.OS === "web" && onEndReached()} /> :
-            <ViewAllButton horizontal={false} button={(props) => <Button onPress={() => goToLocationsList("" as any)} {...props} />} />}
+            <ViewAllButton horizontal={false} button={(props) => <Button onPress={() => router.push("/locations")} {...props} />} />}
         {...flatListProps}
     />
 }
@@ -147,8 +153,8 @@ export const MembersList = ({ members, total, locationId }: {
         directus_users_id: Pick<User, "avatar">,
     }[], total: number, locationId: string
 }) => {
-    const goToMembersList = useRouting("members-list")
     const { colors } = useColorScheme()
+    const router = useRouter()
 
     const faces = members.map(member => ({
         imageUrl: buildAssetUrl(member.directus_users_id.avatar)
@@ -156,7 +162,7 @@ export const MembersList = ({ members, total, locationId }: {
 
     return total ? <View className="flex-row relative self-start">
         {faces.map((face, i) => <Image key={i} className="w-12 h-12 -mr-4 rounded-full border-background  border-1 border" source={{ uri: face.imageUrl }} />)}
-        <Pressable className="absolute -right-4 w-12 h-12 flex-col rounded-full justify-center items-center" onPress={() => goToMembersList(locationId)} style={{ backgroundColor: opacity(colors.info, 0.75), zIndex: 10, elevation: 10 }}>
+        <Pressable className="absolute -right-4 w-12 h-12 flex-col rounded-full justify-center items-center" onPress={() => router.push(`/locations/${locationId}/members`)} style={{ backgroundColor: opacity(colors.info, 0.75), zIndex: 10, elevation: 10 }}>
             <Text className="text-info-foreground text-xs">{total}+</Text>
             <ArrowUpRight className="text-info-foreground" size={12} />
         </Pressable>

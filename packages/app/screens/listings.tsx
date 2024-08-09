@@ -13,7 +13,7 @@ import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
 import { GoToPostButtonUi } from 'app/components/utils/common-ui';
 import { useColorScheme } from "app/hooks/color-scheme";
-import useNavigation from 'app/hooks/navigation';
+import { useNavigation } from 'expo-router';
 import { useSearchParams } from 'app/hooks/search-params';
 import { cn } from "app/lib/utils";
 import directusStore from "app/store/directus";
@@ -70,17 +70,17 @@ export default function ListingsScreenComponent({ className, data }: { className
     const [key, setKey] = useState(0)
     const [filters, setFilters] = useState([] as Filter[])
     const [currentFilters, setCurrentFilters] = useState<Filter[]>([])
-    const setParams = useSetParams()
+    // const setParams = useSetParams()
 
     const updateParams = function (filters: Filter[]) {
         setCurrentFilters(filters)
         const newFilters = filters.reduce<{ [key in FilterKeys]?: FilterValue }[]>((acc, filter) => [...acc, { [filter.key]: filter.value }], [])
-        const dispatcher = setParams(newFilters)
-        typeof dispatcher === "function" && dispatcher()
-        if (Platform.OS === "web") {
-            window.history.replaceState(null, "", `?filters=${JSON.stringify(newFilters)}`)
-            setKey(key + 1)
-        }
+        // const dispatcher = setParams(newFilters)
+        // typeof dispatcher === "function" && dispatcher()
+        // if (Platform.OS === "web") {
+        //     window.history.replaceState(null, "", `?filters=${JSON.stringify(newFilters)}`)
+        //     setKey(key + 1)
+        // }
     }
 
     const applyFilters = () => {
@@ -568,18 +568,18 @@ const expandFilterValue = (key: FilterKeys, value: FilterValue): Record<string, 
     }
 }
 
-const useSetParams = () => {
-    const navigation = useNavigation()
-    const pathname = usePathname()
-    const router = useRouter()
+// const useSetParams = () => {
+//     const navigation = useNavigation()
+//     const pathname = usePathname()
+//     const router = useRouter()
 
-    const setParams = (newFilters: { [key in FilterKeys]?: FilterValue }[]) => Platform.select({
-        native: () => navigation.navigate("listings", { filters: newFilters }),
-        web: () => router.push(`${pathname}?filters=${JSON.stringify(newFilters)}`)
-    })
+//     const setParams = (newFilters: { [key in FilterKeys]?: FilterValue }[]) => Platform.select({
+//         native: () => navigation.navigate("listings", { filters: newFilters }),
+//         web: () => router.push(`${pathname}?filters=${JSON.stringify(newFilters)}`)
+//     })
 
-    return setParams
-}
+//     return setParams
+// }
 
 const isDifferent = (a: Filter[], b: Filter[]) => {
     if (a.length !== b.length) return true

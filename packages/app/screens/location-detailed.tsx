@@ -8,14 +8,14 @@ import { Button } from "app/components/ui/button";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
 import { ScrollView } from "app/components/utils/virtual-lists";
-import useRouting from "app/hooks/use-routing";
 import { buildAssetUrl } from "app/lib/helpers";
+import { ListingCardMetrics } from "app/lib/props";
 import { Room, User } from "app/lib/types";
 import directusStore from "app/store/directus";
+import { useRouter } from "expo-router";
 import { ArrowUpRight } from "lucide-react-native";
 import { Platform, View } from "react-native";
 import { FilterKeys } from "./listings";
-import { ListingCardMetrics } from "app/lib/props";
 
 export type LocationListingProps = Pick<Room, "id" | "avatar" | "title"> & {
     members: {
@@ -35,7 +35,7 @@ export type LocationDetailedProps = {
 
 export function LocationDetailed(props: LocationDetailedProps) {
     const { authenticated } = directusStore()
-    const goToRoomDetailed = useRouting("room-detailed")
+    const router = useRouter()
 
     const { room, totalMembers } = props
 
@@ -47,7 +47,7 @@ export function LocationDetailed(props: LocationDetailedProps) {
             <FullWidthImage source={{ uri: buildAssetUrl(room.avatar) }} />
             <View className="flex-1 p-4 flex-col gap-4">
                 <View className="flex-row items-center justify-between pr-4">
-                    <Button disabled={!authenticated} className="flex-row" variant={"default"} size={"sm"} onPress={() => goToRoomDetailed(room.id)}>
+                    <Button disabled={!authenticated} className="flex-row" variant={"default"} size={"sm"} onPress={() => router.push(`/chat/${room.id}`)}>
                         <Text>Open group chat</Text>
                         <ArrowUpRight size={16} className="text-primary-foreground" />
                     </Button>

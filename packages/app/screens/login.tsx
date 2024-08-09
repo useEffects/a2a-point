@@ -1,47 +1,53 @@
+import LoginDarkImg from "app/assets/login/dark/dark_gvmzxu_c_scale,w_984.jpg";
+import LoginLightImg from "app/assets/login/light/light_c9pqo8_c_scale,w_1029.jpg";
 import { Header } from "app/components/header";
 import Logo from "app/components/svg/logo";
 import { Button } from "app/components/ui/button";
 import { Text } from "app/components/ui/text";
-import useNavigation from "app/hooks/navigation";
+import { ScrollView } from "app/components/utils/virtual-lists";
+import { useColorScheme } from "app/hooks/color-scheme";
 import { directusUrl, portfolioUrl } from "app/lib/constants";
 import directusStore from "app/store/directus";
+import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect } from "react";
 import { Linking, View } from "react-native";
-import { ScrollView } from "app/components/utils/virtual-lists";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { parse } from "search-params";
-import LoginLightImg from "app/assets/login/light/light_c9pqo8_c_scale,w_1029.jpg";
-import LoginDarkImg from "app/assets/login/dark/dark_gvmzxu_c_scale,w_984.jpg";
-import { Image } from "expo-image";
-import { useColorScheme } from "app/hooks/color-scheme";
 
 const LoginScreen = () => {
     const { initialize, authenticated } = directusStore()
     const appURL = "a2apoint-community://"
-    const navigation = useNavigation()
+    const router = useRouter()
     const { isDarkColorScheme } = useColorScheme()
+    const insets = useSafeAreaInsets()
 
     useEffect(() => {
         const timer = setInterval(() => {
             if (authenticated) {
-                navigation.navigate("home")
+                // router.replace("/")
                 clearInterval(timer)
             }
         }, 100)
         return () => clearInterval(timer)
-    }, [authenticated, navigation])
+    }, [authenticated])
 
     const handleLogin = async () => {
-        const result = await WebBrowser.openAuthSessionAsync(`${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/auth-redirect?appUrl=${appURL}`, appURL);
-        if (result.type === "success") {
-            const { access_token: accessToken, refresh_token: refreshToken } = parse(result.url)
-            if (accessToken && refreshToken) {
-                await initialize(accessToken.toString(), refreshToken.toString())
+        try {
+            const result = await WebBrowser.openAuthSessionAsync(`${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/auth-redirect?appUrl=${appURL}`, appURL);
+            if (result.type === "success") {
+                const { access_token: accessToken, refresh_token: refreshToken } = parse(result.url)
+                if (accessToken && refreshToken) {
+                    await initialize(accessToken.toString(), refreshToken.toString())
+                }
             }
+        } catch (error) {
+            console.log(error)
         }
     }
 
-    return <ScrollView contentContainerClassName="flex-grow">
+    return <ScrollView contentContainerClassName="flex-grow" contentContainerStyle={{ paddingBottom: insets.bottom }}>
         <Header>
             <Text className="text-xl font-bold">Login</Text>
         </Header>

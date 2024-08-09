@@ -5,11 +5,13 @@ import directusStore from "app/store/directus";
 import { readItem } from "@directus/sdk";
 import { Feedback } from "app/lib/types";
 import PostFeedbackScreen from "app/screens/post-feedback";
+import { useLocalSearchParams } from "expo-router";
 
 export default function PostFeedback() {
-    const { id, feedbackId } = useParams<{ id: string, feedbackId?: string }>()
-    const user = useUserDetails(id)
+    const { feedbackId } = useLocalSearchParams()
     const { rest } = directusStore()
+    const { agent } = useParams()
+    const user = useUserDetails(agent as string)
 
     const { data: feedback } = useQuery({
         queryKey: ["Fetch Feedback", feedbackId],

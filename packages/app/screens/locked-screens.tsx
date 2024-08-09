@@ -4,11 +4,11 @@ import { Button, ButtonProps } from "app/components/ui/button";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
 import { useColorScheme } from "app/hooks/color-scheme";
-import useRouting from "app/hooks/use-routing";
 import { cn } from "app/lib/utils";
+import { useRouter } from "expo-router";
 import { ReactNode } from "react";
 import { Dimensions, Platform, View } from "react-native";
-import { SolitoImage as Image } from "solito/image"
+import { SolitoImage as Image } from "solito/image";
 
 type LockedScreenProps = {
     className?: string,
@@ -61,9 +61,9 @@ export default function LockedScreen(props: LockedScreenProps) {
 }
 
 export const GoToLoginButton = (props: ButtonProps) => {
-    const goToLogin = useRouting("login")
+    const router = useRouter()
 
-    return <Button onPress={goToLogin} variant={"default"} size={"default"} className="flex-row items-center w-full" {...props}>
+    return <Button onPress={() => router.push("/login")} variant={"default"} size={"default"} className="flex-row items-center w-full" {...props}>
         <Text>Take me to login screen</Text>
         <ArrowUpRight className="text-primary-foreground" />
     </Button>

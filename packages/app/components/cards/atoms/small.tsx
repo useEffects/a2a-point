@@ -9,7 +9,6 @@ import opacity from "hex-color-opacity"
 import { Bookmark, ExternalLink, Eye } from "lucide-react-native"
 import { Image, Pressable, View } from "react-native"
 import { useRouter } from "solito/navigation"
-import useRouting from "app/hooks/use-routing"
 import { useLocalizedCost } from "app/hooks/locale-string"
 import { ListingCardMetrics } from "app/lib/props"
 
@@ -43,10 +42,10 @@ export const RenderMetrics = ({ metrics }: { metrics: ListingCardMetrics }) => {
 
 export const SmallListingCard = (item: SmallListingCardProps & ListingCardMetrics) => {
     const { colors } = useColorScheme()
-    const goToListingDetailed = useRouting("listing-detailed")
+    const router = useRouter()
     const localizedCost = useLocalizedCost(item.deal_type, item.budget, item.price)
 
-    return <Pressable onPress={() => goToListingDetailed(item.id)} className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start rounded native:w-[400px]">
+    return <Pressable onPress={() => router.push(`/listings/${item.id}`)} className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start rounded native:w-[400px]">
         <Image source={{ uri: buildAssetUrl(item.user_created.avatar) }} className="w-8 h-8 rounded-full" />
         <View className="flex-col gap-4 flex-1">
             <View className="flex-col gap-1">

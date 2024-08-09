@@ -8,20 +8,19 @@ import { Button, ButtonProps } from "app/components/ui/button"
 import { Text } from "app/components/ui/text"
 import { Member, RoomSubscribed } from "app/context/chats"
 import { useChats } from "app/hooks/chats"
-import useRouting from "app/hooks/use-routing"
 import { buildAssetUrl } from "app/lib/helpers"
 import directusStore from "app/store/directus"
 import userStore from "app/store/user"
 import { randomUUID } from "expo-crypto"
 import { useEffect, useState } from "react"
 import { Image, View } from "react-native"
+import { useRouter } from "solito/navigation"
 import { useDebounce } from "use-debounce"
 
 const ChatScreen = ({ roomDetails, receivers }: {
     roomDetails: { roomName: string, roomAvatar: string, roomId: string, isGroup: boolean }, receivers: Member[]
 }) => {
-    const goToLocationsDetailed = useRouting("location-detailed")
-    const goToProfileDetailed = useRouting("profile-detailed")
+    const router = useRouter()
 
     const { roomName, roomAvatar, roomId, isGroup } = roomDetails
     const { messages, setMessage, loadMoreMessages } = useChats()
@@ -35,7 +34,7 @@ const ChatScreen = ({ roomDetails, receivers }: {
     const [offset, setOffset] = useState(1)
     const [endReached, setEndReached] = useState(false)
 
-    const GoToButton = (props: ButtonProps) => isGroup ? <Button onPress={() => goToLocationsDetailed(roomId)} {...props} /> : <Button onPress={() => goToProfileDetailed(receivers[0]!.directus_users_id.id)} {...props} />
+    const GoToButton = (props: ButtonProps) => isGroup ? <Button onPress={() => router.push(`/locations/${roomId}`)} {...props} /> : <Button onPress={() => router.push(`agents/${receivers[0]!.directus_users_id.id}`)} {...props} />
 
     const { data: scrollToMessages, isLoading: isScrollToMessagesLoading } = useQuery({
         queryKey: ["Search Messages", debouncedSearchText, roomId],

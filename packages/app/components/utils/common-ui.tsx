@@ -1,16 +1,12 @@
-import { Children, ComponentType, ReactNode, useState } from "react"
+import { ComponentType, ReactNode, useState } from "react"
 import { Button, ButtonProps } from "../ui/button"
 import { Text } from "../ui/text"
 import { ArrowUpRight, Plus } from "app/components/icons"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
 import { Platform, View } from "react-native"
 import { Separator } from "../ui/separator"
 import { cn } from "app/lib/utils"
-import useRouting from "app/hooks/use-routing"
-import { set } from "lodash"
-import { DetailedAmenity } from "app/lib/props"
-import { groupByN } from "app/lib/helpers"
-import { RenderAmenity } from "app/screens/post"
+import { useRouter } from "expo-router"
 
 export const ViewAllButton = ({ button, horizontal }: { button: ComponentType<ButtonProps>, horizontal: boolean }) => {
     const Component = button
@@ -23,7 +19,7 @@ export const ViewAllButton = ({ button, horizontal }: { button: ComponentType<Bu
 export const GoToPostButtonUi = () => {
     const [key, setKey] = useState("Buy")
     const [open, setOpen] = useState(false)
-    const goToPost = useRouting("post")
+    const router = useRouter()
 
     const ButtonComponent = Platform.OS !== "web" ? ({ children }: { children: ReactNode }) => <Button
         className="rounded-full" size={"icon"} onPress={() => setOpen(p => !p)} children={children}
@@ -51,7 +47,7 @@ export const GoToPostButtonUi = () => {
             <DialogFooter>
                 <Button onPress={() => {
                     setOpen(false)
-                    goToPost(key.toLowerCase())
+                    router.push(`/listings/post/?deal_type=${key.toLowerCase()}`)
                 }} className="self-start ml-auto mr-0" size={"sm"} variant={"default"}>
                     <Text>Proceed</Text>
                 </Button>

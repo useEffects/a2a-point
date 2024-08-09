@@ -26,7 +26,7 @@ import { Plus } from "lucide-react-native";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, View } from "react-native";
 import { NavigationState, Route, SceneMap, TabView } from "react-native-tab-view";
-import { useParams, useRouter } from "solito/navigation";
+import { useSearchParams, useRouter } from "solito/navigation";
 import * as Yup from "yup";
 import LockedScreen from "./locked-screens";
 import PostImg from "app/assets/locked-screens/post.jpg";
@@ -104,7 +104,9 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
     }
 
     const Form = (props: FormikProps<Form1Values>) => {
-        const { type } = useParams()
+        const searchParams = useSearchParams()
+
+        const type = searchParams?.get("deal_type")
 
         useEffect(() => {
             if (type === "buy" || type === "take on rent" || type === "sale" || type === "give on rent") {
@@ -453,7 +455,6 @@ function Form4({ formValues, setFormValues, handleSubmit, loading }: { formValue
 
 
 function PostScreenComponent() {
-    const params = useParams()
     const [form1Values, setForm1Values] = useState<Form1Values>(form1InitialValues)
     const [form2Values, setForm2Values] = useState<Form2Values>(form2InitialValues)
     const [form3Values, setForm3Values] = useState<Form3Values>(form3InitialValues)
@@ -483,7 +484,7 @@ function PostScreenComponent() {
                 additional_detail: string,
             }[]
         }> = {
-            deal_type: params.type?.toString().toLowerCase(),
+            deal_type: form1Values.deal_type!,
 
             title: form1Values.title,
             expected_broker_fees: form1Values.expectedBrokerFees!,
