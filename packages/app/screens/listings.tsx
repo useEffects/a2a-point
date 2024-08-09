@@ -15,7 +15,6 @@ import { GoToPostButtonUi } from 'app/components/utils/common-ui';
 import { useColorScheme } from "app/hooks/color-scheme";
 import useNavigation from 'app/hooks/navigation';
 import { useSearchParams } from 'app/hooks/search-params';
-import useRouting from 'app/hooks/use-routing';
 import { cn } from "app/lib/utils";
 import directusStore from "app/store/directus";
 import opacity from 'hex-color-opacity';
@@ -416,7 +415,7 @@ export const LoginPopover = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [canClose, setCanClose] = useState(true)
     const { colors } = useColorScheme()
-    const goToLogin = useRouting("login")
+    const router = useRouter()
 
     useEffect(() => {
         if (process.env.NODE_ENV !== "production") return
@@ -452,7 +451,7 @@ export const LoginPopover = () => {
                 <Text>Login to unlock the full application</Text>
                 <GoToLoginButton onPress={() => {
                     setIsOpen(false)
-                    goToLogin("")
+                    router.push("/login")
                 }} />
             </View>
         </View>

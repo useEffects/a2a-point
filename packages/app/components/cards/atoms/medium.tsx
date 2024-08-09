@@ -10,9 +10,9 @@ import { Pressable, View } from "react-native"
 import { useColorScheme } from "app/hooks/color-scheme"
 import directusStore from "app/store/directus"
 import { LocationChip } from "app/components/utils/chips"
-import useRouting from "app/hooks/use-routing"
 import { useLocalizedCost } from "app/hooks/locale-string"
 import { ListingCardMetrics } from "app/lib/props"
+import { useRouter } from "solito/navigation"
 
 export type MediumListingCardProps = Pick<Listing, "id" | "title" | "budget" | "deal_type" | "description" | "date_created" | "price"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "email" | "plan"> } & { location: Pick<Room, "id" | "title" | "avatar"> }
 
@@ -27,18 +27,17 @@ export const LockedChatButton = () => {
 export const MediumListingCard = (item: MediumListingCardProps & ListingCardMetrics) => {
     const { user } = userStore()
     const { authenticated } = directusStore()
-    const goToRoom = useRouting("room-detailed")
-    const goToListingDetailed = useRouting("listing-detailed")
     const localizedCost = useLocalizedCost(item.deal_type, item.budget, item.price)
+    const router = useRouter()
 
     return <View className="w-full flex-col gap-2 p-4 my-8">
         <View className="flex flex-wrap gap-4 flex-row items-center justify-between">
             <UserChip user={item.user_created} />
-            {authenticated ? user.id === item.user_created.id ? <></> : <Pressable onPress={() => getDMRoomId([item.user_created.id, user.id]).then(goToRoom)}>
+            {authenticated ? user.id === item.user_created.id ? <></> : <Pressable onPress={() => getDMRoomId([item.user_created.id, user.id]).then(id => router.push(`/chat/${id}`))}>
                 <MessageCircleMore className="!text-foreground" />
             </Pressable> : <LockedChatButton />}
         </View>
-        <Pressable onPress={() => goToListingDetailed(item.id)} className="items-start flex-col gap-2 w-full">
+        <Pressable onPress={() => router.push(`/listings/${item.id}`)} className="items-start flex-col gap-2 w-full">
             <Text className="!text-lg text-primary">{item.title}</Text>
             <View className="flex-row justify-between w-full">
                 <LocationChip {...item.location} />

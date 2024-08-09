@@ -10,7 +10,7 @@ export const Providers = ({ children }: { children: ReactNode }) => {
     return <EventProvider>
         <QueryClientProvider>
             <ChatsProviderComponent>
-                <KeyboardProvider>
+                <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
                     {children}
                     <PortalHost />
                 </KeyboardProvider>

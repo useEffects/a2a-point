@@ -1,5 +1,5 @@
 import { iconWithClassName } from "app/lib/iconsWithClassName";
-import { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot, Star, Badge, Award, Building2, Rocket, Plus, CreditCard, ChevronRight, AtSign, Rows2, Users, Edit, Delete, MessageCircleMore, Lock, Trash, LogIn, Phone, BriefcaseBusiness, Shield, UserCog2, Handshake, HousePlus, Group, TrendingUp, MapPin, ArrowUp, Info, Expand, MessageCircle, Shrink, FileLock2 } from "lucide-react-native";
+import { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot, Star, Badge, Award, Building2, Rocket, Plus, CreditCard, ChevronRight, AtSign, Rows2, Users, Edit, Delete, MessageCircleMore, Lock, Trash, LogIn, Phone, BriefcaseBusiness, Shield, UserCog2, Handshake, HousePlus, Group, TrendingUp, MapPin, ArrowUp, Info, Expand, MessageCircle, Shrink, FileLock2, Construction, Home, User } from "lucide-react-native";
 
 iconWithClassName(Check);
 iconWithClassName(ChevronDown);
@@ -59,5 +59,8 @@ iconWithClassName(Expand);
 iconWithClassName(MessageCircle);
 iconWithClassName(Shrink);
 iconWithClassName(FileLock2);
+iconWithClassName(Construction);
+iconWithClassName(Home);
+iconWithClassName(User);
 
-export { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot, Star, Badge, Award, Building2, Rocket, Plus, CreditCard, ChevronRight, AtSign, Rows2, Users, Edit, Delete, MessageCircleMore, Lock, Trash, LogIn, Phone, BriefcaseBusiness, Shield, UserCog2, Handshake, HousePlus, Group, TrendingUp, MapPin, ArrowUp, Info, Expand, MessageCircle, Shrink, FileLock2 };
+export { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot, Star, Badge, Award, Building2, Rocket, Plus, CreditCard, ChevronRight, AtSign, Rows2, Users, Edit, Delete, MessageCircleMore, Lock, Trash, LogIn, Phone, BriefcaseBusiness, Shield, UserCog2, Handshake, HousePlus, Group, TrendingUp, MapPin, ArrowUp, Info, Expand, MessageCircle, Shrink, FileLock2, Construction, Home, User };

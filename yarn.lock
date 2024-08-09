@@ -5788,6 +5788,14 @@
   resolved "https://registry.yarnpkg.com/@types/qs/-/qs-6.9.15.tgz#adde8a060ec9c305a82de1babc1056e73bd64dce"
   integrity sha512-uXHQKES6DQKKCLh441Xv/dwxOq1TVS3JPUMlEqoEglvlhR6Mxnlew/Xq/LRVHpLyk7iK3zODe1qYHIMltO7XGg==
 
+"@types/react-native-material-ripple@0.9.6":
+  version "0.9.6"
+  resolved "https://registry.yarnpkg.com/@types/react-native-material-ripple/-/react-native-material-ripple-0.9.6.tgz#0d301c15d9c1dd74809117a6b47c4f9b7a63d580"
+  integrity sha512-4rIu/tAMHejFN9jyMNrknO8OOJVSEQJK07/8BPj61wkLaCesy3nPsaKF0ASCvLTtQ6sdOPI1sRQjSE/euHO/YQ==
+  dependencies:
+    "@types/react" "*"
+    react-native "*"
+
 "@types/react-native-material-textfield@^0.16.10":
   version "0.16.10"
   resolved "https://registry.yarnpkg.com/@types/react-native-material-textfield/-/react-native-material-textfield-0.16.10.tgz#4b3e8736bef92b820d28a69898b76b653ab46225"
@@ -14979,7 +14987,7 @@ prompts@^2.3.2, prompts@^2.4.2:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@*, prop-types@^15.6.0, prop-types@^15.7.2, prop-types@^15.8.1:
+prop-types@*, prop-types@^15.5.10, prop-types@^15.6.0, prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -15346,6 +15354,13 @@ react-native-lightweight-inview@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/react-native-lightweight-inview/-/react-native-lightweight-inview-1.0.4.tgz#197e23e6fac784f036a8624eec7b423de79782a3"
   integrity sha512-qN28tENL60+/LWicRVpCw/6KYw6wrFc7xYGZ++GAQrSlDMLXNWZSCV/4Jc6/4BPafbYEOngcdMshAxTgM3aVlw==
+
+react-native-material-ripple@^0.9.1:
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/react-native-material-ripple/-/react-native-material-ripple-0.9.1.tgz#db1ad9dd7cf97011e4cd8475ae2041ade0f891cb"
+  integrity sha512-dHjARdKoGD3LXwPh2TkURabywM5BfdpKc/AHplJTfBMalhVZ2bc7iJoJmNhNnmT/TZ+B3szL6uV1mO7Pv8zNeA==
+  dependencies:
+    prop-types "^15.5.10"
 
 react-native-otp-textinput@^1.1.6:
   version "1.1.6"
