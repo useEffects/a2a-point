@@ -34,7 +34,7 @@ import { ListingCardMetrics } from 'app/lib/props';
 import { memberRole } from 'app/lib/constants';
 
 export enum FilterKeys {
-    Budget = "budget",
+    Cost = "cost",
     Size = "size",
     Bedrooms = "bedrooms",
     Bathrooms = "bathrooms",
@@ -53,7 +53,7 @@ export type FilterValue = string | [number, number] | CommonFilters
 export type Filter = { key: FilterKeys, value: FilterValue }
 export type FilterParam = { [key in FilterKeys]?: FilterValue }
 
-const budgetRange: [number, number] = [0, 10000000]
+const costRange: [number, number] = [0, 10000000]
 const bedRoomsRange: [number, number] = [0, 8]
 const bathRoomsRange: [number, number] = [0, 8]
 const parkingRange: [number, number] = [0, 8]
@@ -199,7 +199,7 @@ const RangeSliders = ({ filters, setFilters }: { filters: Filter[], setFilters: 
     const [navigationState, setNavigationState] = useState<NavigationState<Route>>({
         index: 0,
         routes: [
-            { key: FilterKeys.Budget },
+            { key: FilterKeys.Cost },
             { key: FilterKeys.Size },
             { key: FilterKeys.Bedrooms },
             { key: FilterKeys.Bathrooms },
@@ -236,7 +236,7 @@ const RangeSliderTab = (props: SceneRendererProps & { navigationState: Navigatio
 
 const RangeSliderScenes = (props: SceneRendererProps & { route: Route } & { filters: Filter[], setFilters: (newFilters: Filter[]) => void }) => {
 
-    const budget = props.filters.find(f => f.key === FilterKeys.Budget)?.value as [number, number] || budgetRange
+    const cost = props.filters.find(f => f.key === FilterKeys.Cost)?.value as [number, number] || costRange
     const size = props.filters.find(f => f.key === FilterKeys.Size)?.value as [number, number] || sizeRange
     const bedRooms = props.filters.find(f => f.key === FilterKeys.Bedrooms)?.value as [number, number] || bedRoomsRange
     const bathRooms = props.filters.find(f => f.key === FilterKeys.Bathrooms)?.value as [number, number] || bathRoomsRange
@@ -255,8 +255,8 @@ const RangeSliderScenes = (props: SceneRendererProps & { route: Route } & { filt
     }
 
     switch (props.route.key) {
-        case FilterKeys.Budget:
-            return <RangeFilter label='Budget' range={budgetRange} value={budget} setValue={dispatcher(FilterKeys.Budget, budgetRange)} />
+        case FilterKeys.Cost:
+            return <RangeFilter label='Cost' range={costRange} value={cost} setValue={dispatcher(FilterKeys.Cost, costRange)} />
         case FilterKeys.Size:
             return <RangeFilter label='Size' range={sizeRange} value={size} setValue={dispatcher(FilterKeys.Size, sizeRange)} />
         case FilterKeys.Bedrooms:
@@ -270,7 +270,7 @@ const RangeSliderScenes = (props: SceneRendererProps & { route: Route } & { filt
 
 const RangeSliderTabIcons = (route: string): LucideIcon | undefined => {
     switch (route) {
-        case FilterKeys.Budget:
+        case FilterKeys.Cost:
             return CreditCard
         case FilterKeys.Size:
             return LandPlot
@@ -400,13 +400,13 @@ const categoryTiles = [
         value: CommonFilters.Buy
     }, {
         Icon: (props: LucideProps) => <HousePlus {...props} />,
-        title: "Take on rent",
+        title: "Give on rent",
         key: FilterKeys.GiveOnRent,
         value: CommonFilters.GiveOnRent
     },
     {
         Icon: (props: LucideProps) => <Handshake {...props} />,
-        title: "Give on rent",
+        title: "Take on rent",
         key: FilterKeys.TakeOnRent,
         value: CommonFilters.TakeOnRent
     }
@@ -474,7 +474,7 @@ const RenderChips = ({ filters, setFilters }: { filters: Filter[], setFilters: (
 
     const getRangeSliderLabel = (key: FilterKeys, value: [number, number], maxRange: number) => {
         const [min, max] = value
-        return `${key}: AED ${min.toLocaleString()} - AED ${max.toLocaleString()}${shouldRenderPlus(maxRange, max)}`
+        return key === FilterKeys.Cost ? `${key}: AED ${min.toLocaleString()} - AED ${max.toLocaleString()}${shouldRenderPlus(maxRange, max)}` : `${key}: ${min.toLocaleString()} - ${max.toLocaleString()}${shouldRenderPlus(maxRange, max)}`
     }
 
     const getLabel = (filter: Filter) => {
@@ -487,8 +487,8 @@ const RenderChips = ({ filters, setFilters }: { filters: Filter[], setFilters: (
                 return `Agent: ${agent?.first_name} ${agent?.last_name}`;
             case FilterKeys.Company:
                 return `Company: ${company?.title}`;
-            case FilterKeys.Budget:
-                return getRangeSliderLabel(FilterKeys.Budget, value as [number, number], budgetRange[1]);
+            case FilterKeys.Cost:
+                return getRangeSliderLabel(FilterKeys.Cost, value as [number, number], costRange[1]);
             case FilterKeys.Size:
                 return getRangeSliderLabel(FilterKeys.Size, value as [number, number], sizeRange[1]);
             case FilterKeys.Bedrooms:
@@ -498,7 +498,7 @@ const RenderChips = ({ filters, setFilters }: { filters: Filter[], setFilters: (
             case FilterKeys.Parking:
                 return getRangeSliderLabel(FilterKeys.Parking, value as [number, number], parkingRange[1]);
             default:
-                return value;
+                return key;
         }
     };
 
@@ -542,12 +542,22 @@ const expandFilterValue = (key: FilterKeys, value: FilterValue): Record<string, 
         case FilterKeys.Bedrooms:
         case FilterKeys.Bathrooms:
         case FilterKeys.Size:
-        case FilterKeys.Budget:
+        case FilterKeys.Cost:
             return {
-                [key]: {
-                    _gte: value[0],
-                    _lte: value[1]
-                }
+                _or: [
+                    {
+                        budget: {
+                            _gte: value[0],
+                            _lte: value[1]
+                        }
+                    },
+                    {
+                        price: {
+                            _gte: value[0],
+                            _lte: value[1]
+                        }
+                    }
+                ]
             }
 
         case FilterKeys.Premium:

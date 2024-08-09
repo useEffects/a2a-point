@@ -4,13 +4,16 @@ import { ReactNode } from "react";
 import { EventProvider } from "react-native-outside-press";
 import { PortalHost } from "../primitives/portal";
 import { QueryClientProvider } from "app/context/query";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 
 export const Providers = ({ children }: { children: ReactNode }) => {
     return <EventProvider>
         <QueryClientProvider>
             <ChatsProviderComponent>
-                {children}
-                <PortalHost />
+                <KeyboardProvider>
+                    {children}
+                    <PortalHost />
+                </KeyboardProvider>
             </ChatsProviderComponent>
         </QueryClientProvider>
     </EventProvider>

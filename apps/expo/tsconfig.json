@@ -4,6 +4,9 @@
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-, "tailwind.config.js"  ]
+    "expo-env.d.ts",
+    "nativewind.d.ts",
+    "**/*.d.ts",
+    "tailwind.config.js"
+  ]
 }

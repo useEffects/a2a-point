@@ -60,6 +60,7 @@
     "react-native-avatar-group": "^1.0.5",
     "react-native-component-inview": "^1.0.2",
     "react-native-lightweight-inview": "^1.0.4",
+    "react-native-keyboard-controller": "^1.12.7",
     "react-native-otp-textinput": "^1.1.6",
     "react-native-outside-press": "^1.2.2",
     "react-native-reanimated": "3.10.0",

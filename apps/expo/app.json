@@ -17,7 +17,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.a2apoint.community"
+      "bundleIdentifier": "com.a2apoint.community",
+      "buildNumber": "1.2"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,6 +26,9 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.a2apoint.community"
+    },
+    "androidStatusBar": {
+      "translucent": true
     },
     "web": {
       "bundler": "metro",

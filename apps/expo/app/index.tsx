@@ -1,21 +1,22 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Theme, ThemeProvider } from "@react-navigation/native";
 import { PortalHost } from "app/components/primitives/portal";
-import { setAndroidNavigationBarTheme } from "app/components/toggle-theme";
 import { useColorScheme } from "app/hooks/color-scheme";
 import directusStore, { reqNewTokens, shouldRefresh } from "app/store/directus";
 import { SplashScreen } from "expo-router";
 import * as React from "react";
-import { Platform, StatusBar } from "react-native";
+import { Platform, StatusBar, View } from "react-native";
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "tailwind-theme/theme.css";
 import AppLayout from "../screens";
 import { Providers } from "app/components/providers";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Text } from "app/components/ui/text";
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+export default function RootScreen() {
   const { colorScheme, setColorScheme, colors } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
   const { initialize, authenticated } = directusStore();
@@ -66,7 +67,6 @@ export default function RootLayout() {
     if (!theme) {
       await AsyncStorage.setItem("theme", colorScheme);
     } else {
-      setAndroidNavigationBarTheme(theme === "dark" ? "dark" : "light");
       setColorScheme(theme === "dark" ? "dark" : "light");
     }
     setIsColorSchemeLoaded(true);
@@ -92,11 +92,10 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={theme}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <StatusBar barStyle={colorScheme === "light" ? "dark-content" : "light-content"} backgroundColor={colors.card} />
         <Providers>
+          <StatusBar barStyle={colorScheme === "dark" ? "light-content" : "dark-content"} backgroundColor={colors.card} />
           <AppLayout />
         </Providers>
-        <PortalHost />
       </GestureHandlerRootView>
     </ThemeProvider>
   );

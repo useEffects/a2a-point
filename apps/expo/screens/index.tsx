@@ -17,7 +17,7 @@ import directusStore from 'app/store/directus';
 import opacity from "hex-color-opacity";
 import { BriefcaseBusiness, Building2, Construction, Home, Lock, LucideIcon, MessageCircleMore, Phone, Shield, TrendingUp, User } from "lucide-react-native";
 import { useEffect, useMemo, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { Platform, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useKeyboardVisible } from '../hooks/keyboard';
 import { CompanySelectScreen } from './account-console/company';
@@ -217,9 +217,9 @@ const CustomTabBar: React.FC<MaterialTopTabBarProps> = ({ state, descriptors, na
     const isKeyboardVisible = useKeyboardVisible();
 
     return isKeyboardVisible ? <></> : (
-        <View>
+        <View style={Platform.select({ android: { paddingBottom: insets.bottom } })}>
             <Separator />
-            <View style={{ paddingBottom: insets.bottom }} className='flex-row items-center h-20 bg-card'>
+            <View className='flex-row items-center h-20 bg-card'>
                 {state.routes.map((route, index) => {
                     const { options } = descriptors[route.key]!;
                     const label =
