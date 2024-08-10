@@ -79,3 +79,5 @@ export const products: {
     ];
 
 export const phoneRegionalCode = process.env.NODE_ENV === "production" ? "AE" : "IN"
+
+export const defaultLimit = 5

@@ -11,6 +11,7 @@ import { Text } from "app/components/ui/text";
 import { UserChip } from "app/components/user-chip";
 import { FlatList, ScrollView } from "app/components/utils/virtual-lists";
 import { useColorScheme } from "app/hooks/color-scheme";
+import { useRouter } from "app/hooks/router";
 import { directusUrl } from "app/lib/constants";
 import { buildAssetUrl, timeAgo } from "app/lib/helpers";
 import { getListingsCountForUser } from "app/lib/misc/queries";
@@ -21,7 +22,6 @@ import { StarIcon } from "app/screens/post-feedback";
 import directusStore from "app/store/directus";
 import { queryClient } from "app/store/query";
 import userStore from "app/store/user";
-import { useRouter } from "expo-router";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { DimensionValue, Image, Linking, NativeScrollEvent, NativeSyntheticEvent, Platform, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import Collapsible from 'react-native-collapsible';
@@ -125,7 +125,7 @@ export function Profile({ user, company, document }: { user: User, company?: Com
                 </View>
             </Collapsible>
             <View className="flex-row justify-between px-4">
-                {Array(3).fill(0).map((_, i) => <Button className={cn("w-1/3 border border-0 rounded-none border-primary", i === index && "border-b-[1px] h-12")} key={i} variant={"base"} onPress={() => onPress(i)}>
+                {Array(3).fill(0).map((_, i) => <Button className={cn("w-1/3 border border-0 rounded-none border-primary", i === index ? "border-b-[1px] h-12" : "border-b-0")} key={i} variant={"base"} onPress={() => onPress(i)}>
                     <TabIcons index={i} isActive={i === index} />
                 </Button>)}
             </View>

@@ -7,6 +7,7 @@ import { ListingCardMetrics, mediumListingsFields } from "app/lib/props";
 import { LocationDetailed as LocationDetailedComponent, LocationDetailedProps } from "app/screens/location-detailed";
 import directusStore from "app/store/directus";
 import { useParams } from "solito/navigation";
+import PadBottom from "../../components/pad-bottom";
 
 export default function LocationDetailed() {
     const params = useParams<{ id?: string }>()
@@ -50,9 +51,12 @@ export default function LocationDetailed() {
         initialData: []
     })
 
-    return (room && (totalMembers !== undefined && totalMembers !== null)) ? <LocationDetailedComponent
-        room={room}
-        totalMembers={totalMembers}
-        listings={listings}
-    /> : <></>
+    return (room && (totalMembers !== undefined && totalMembers !== null)) ?
+        <PadBottom>
+            <LocationDetailedComponent
+                room={room}
+                totalMembers={totalMembers}
+                listings={listings}
+            />
+        </PadBottom> : <></>
 }

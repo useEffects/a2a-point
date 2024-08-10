@@ -1,3 +1,9 @@
-import PostScreen from "app/screens/post";
+import PostScreenComponent from "app/screens/post";
+import PadBottom from "../../components/pad-bottom";
 
-export default PostScreen
+export default function PostScreen() {
+    return <PadBottom>
+        <PostScreenComponent />
+    </PadBottom>
+
+}

@@ -3,14 +3,14 @@ import { Separator } from "app/components/ui/separator"
 import { Text } from "app/components/ui/text"
 import { LocationChip } from "app/components/utils/chips"
 import { useColorScheme } from "app/hooks/color-scheme"
+import { useLocalizedCost } from "app/hooks/locale-string"
+import { useRouter } from "app/hooks/router"
 import { buildAssetUrl, timeAgo } from "app/lib/helpers"
+import { ListingCardMetrics } from "app/lib/props"
 import { Listing, Room, User } from "app/lib/types"
 import opacity from "hex-color-opacity"
 import { Bookmark, ExternalLink, Eye } from "lucide-react-native"
 import { Image, Pressable, View } from "react-native"
-import { useRouter } from "solito/navigation"
-import { useLocalizedCost } from "app/hooks/locale-string"
-import { ListingCardMetrics } from "app/lib/props"
 
 export const OpenDetailsButton = ({ id, size = "sm" }: { id: string, size?: "default" | "sm" | "lg" | "icon" | null | undefined }) => {
     const router = useRouter()

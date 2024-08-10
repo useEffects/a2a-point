@@ -13,6 +13,7 @@ import { useColorScheme } from "app/hooks/color-scheme";
 import opacity from "hex-color-opacity";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import directusStore from "app/store/directus";
+import { useKeyboard } from "../../hooks/keyboard";
 
 const { Navigator } = createMaterialTopTabNavigator();
 
@@ -27,10 +28,12 @@ export default function MainLayout() {
     const { width } = Dimensions.get("window");
     const { colors } = useColorScheme()
     const insets = useSafeAreaInsets()
+    const { isKeyboardVisible } = useKeyboard()
 
     return (
         <MaterialTopTabs
             tabBarPosition="bottom"
+            tabBar={isKeyboardVisible ? () => null : undefined}
             screenOptions={{
                 tabBarContentContainerStyle: {
                     flexDirection: "row",
@@ -40,7 +43,7 @@ export default function MainLayout() {
                     backgroundColor: colors.card,
                     borderTopColor: colors.border,
                     borderTopWidth: 1,
-                    paddingBottom: insets.bottom
+                    paddingBottom: insets.bottom - 8
                 },
                 tabBarItemStyle: {
                     width: width / 5,
@@ -59,7 +62,7 @@ export default function MainLayout() {
             <MaterialTopTabs.Screen name="offplans" options={{ ...getTabItemsOptions("Offplans", Construction) }} />
             <MaterialTopTabs.Screen name="(home)" options={{ ...getTabItemsOptions("Home", Home) }} />
             <MaterialTopTabs.Screen name="listings" options={{ ...getTabItemsOptions("Listings", TrendingUp) }} />
-            <MaterialTopTabs.Screen name="agents" options={{ ...getTabItemsOptions("Profile", User) }} />
+            <MaterialTopTabs.Screen name="agents/me" options={{ ...getTabItemsOptions("Profile", User) }} />
         </MaterialTopTabs>
     );
 }

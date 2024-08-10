@@ -5,6 +5,7 @@ import directusStore from "app/store/directus"
 import { readItem } from "@directus/sdk"
 import { fullListingCardFields, FullListingDetailedProps } from "app/lib/props"
 import { getFeedbacksCountForUser, getListingMetrics, getListingsCountForUser } from "app/lib/misc/queries"
+import PadBottom from "../../components/pad-bottom"
 
 export default function ListingDetailedScreen() {
     const { id } = useParams()
@@ -30,10 +31,14 @@ export default function ListingDetailedScreen() {
         enabled: !!data,
     })
 
-    return (data && metrics && usersMetrics) ? <ListingDetailed listing={{
-        ...data,
-        ...metrics,
-        listingsCount: usersMetrics![0],
-        ratingsCount: usersMetrics![1]
-    }} /> : <></>
+    return (data && metrics && usersMetrics) ?
+        <PadBottom>
+            <ListingDetailed listing={{
+                ...data,
+                ...metrics,
+                listingsCount: usersMetrics![0],
+                ratingsCount: usersMetrics![1]
+            }} />
+        </PadBottom>
+        : <></>
 }

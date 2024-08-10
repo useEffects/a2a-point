@@ -1,7 +1,7 @@
-import { Text } from "app/components/ui/text"
 import { ArrowUpRight } from "app/components/icons"
 import { Button } from "app/components/ui/button"
-import { useRouter } from "solito/navigation"
+import { Text } from "app/components/ui/text"
+import { useRouter } from "app/hooks/router"
 
 export const GoToLoginButton = () => {
     const router = useRouter()

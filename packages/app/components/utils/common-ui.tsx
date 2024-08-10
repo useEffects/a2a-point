@@ -1,12 +1,12 @@
-import { ComponentType, ReactNode, useState } from "react"
-import { Button, ButtonProps } from "../ui/button"
-import { Text } from "../ui/text"
 import { ArrowUpRight, Plus } from "app/components/icons"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
-import { Platform, View } from "react-native"
-import { Separator } from "../ui/separator"
+import { useRouter } from "app/hooks/router"
 import { cn } from "app/lib/utils"
-import { useRouter } from "expo-router"
+import { ComponentType, ReactNode, useState } from "react"
+import { Platform, View } from "react-native"
+import { Button, ButtonProps } from "../ui/button"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
+import { Separator } from "../ui/separator"
+import { Text } from "../ui/text"
 
 export const ViewAllButton = ({ button, horizontal }: { button: ComponentType<ButtonProps>, horizontal: boolean }) => {
     const Component = button

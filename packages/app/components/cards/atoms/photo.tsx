@@ -1,9 +1,9 @@
 import { Text } from "app/components/ui/text";
 import { UserChip } from "app/components/user-chip";
 import { useLocalizedCost } from "app/hooks/locale-string";
+import { useRouter } from "app/hooks/router";
 import { buildAssetUrl } from "app/lib/helpers";
 import { Listing, User } from "app/lib/types";
-import { useRouter } from "expo-router";
 import { Dimensions, Image, Pressable, View } from "react-native";
 
 export type PhotoListingProps = Pick<Listing, "id" | "title" | "budget" | "deal_type" | "photo_1" | "photo_2" | "photo_3" | "price"> & { user_created: Pick<User, "id" | "avatar" | "first_name" | "last_name" | "plan"> }

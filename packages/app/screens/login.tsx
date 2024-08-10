@@ -6,23 +6,21 @@ import { Button } from "app/components/ui/button";
 import { Text } from "app/components/ui/text";
 import { ScrollView } from "app/components/utils/virtual-lists";
 import { useColorScheme } from "app/hooks/color-scheme";
+import { useRouter } from "app/hooks/router";
 import { directusUrl, portfolioUrl } from "app/lib/constants";
 import directusStore from "app/store/directus";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
+import * as Linking from "expo-linking";
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect } from "react";
 import { View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { parse } from "search-params";
-import * as Linking from "expo-linking"
 
 const LoginScreen = () => {
     const { initialize, authenticated } = directusStore()
     const router = useRouter()
     const appURL = "a2apoint-community://"
     const { isDarkColorScheme } = useColorScheme()
-    const insets = useSafeAreaInsets()
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -51,7 +49,7 @@ const LoginScreen = () => {
         }
     }
 
-    return <ScrollView contentContainerClassName="flex-grow" contentContainerStyle={{ paddingBottom: insets.bottom }}>
+    return <ScrollView contentContainerClassName="flex-grow">
         <Header>
             <Text className="text-xl font-bold">Login</Text>
         </Header>

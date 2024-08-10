@@ -2,6 +2,7 @@ import { getListingsCountForLocation, getMembersCountForLocation, renderCardsQue
 import { MediumLocationCardProps, mediumLocationFields } from "app/lib/props";
 import { LocationsList } from "app/screens/locations-list";
 import { useQuery } from "@tanstack/react-query";
+import PadBottom from "../../components/pad-bottom";
 
 export default function LocationsScreen() {
     const { data } = useQuery({
@@ -21,5 +22,7 @@ export default function LocationsScreen() {
         }))),
         initialData: []
     })
-    return <LocationsList data={data} />
+    return <PadBottom>
+        <LocationsList data={data} />
+    </PadBottom>
 }

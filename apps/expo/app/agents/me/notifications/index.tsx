@@ -1,3 +1,8 @@
-import NotificationsListScreen from "app/components/notifications";
+import NotificationsListScreenComponent from "app/components/notifications";
+import PadBottom from "../../../../components/pad-bottom";
 
-export default NotificationsListScreen
+export default function NotificationsListScreen() {
+    return <PadBottom>
+        <NotificationsListScreenComponent />
+    </PadBottom>
+}

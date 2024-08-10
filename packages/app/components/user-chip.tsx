@@ -1,12 +1,10 @@
-import { useColorScheme } from "app/hooks/color-scheme"
+import { useRouter } from "app/hooks/router"
 import { buildAssetUrl, isUserPro } from "app/lib/helpers"
+import { User } from "app/lib/types"
 import { cn } from "app/lib/utils"
-import opacity from "hex-color-opacity"
 import { Image, Pressable, View } from "react-native"
 import { Link } from "solito/link"
 import { Text } from "./ui/text"
-import { User } from "app/lib/types"
-import { useRouter } from "solito/navigation"
 
 export const UserChip = ({ user, className }: { user: Pick<User, "id" | "first_name" | "last_name" | "plan" | "avatar"> & { email?: string }, className?: string }) => {
     const isPro = isUserPro(user.plan)

@@ -168,7 +168,7 @@ export const getListingMetrics = async (listingId: string): Promise<ListingCardM
                     listings_id: {
                         _eq: listingId
                     }
-                }
+                },
             }
         }))
     })

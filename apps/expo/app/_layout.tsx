@@ -97,6 +97,7 @@ export default function RootLayoutNav() {
                         <Stack.Screen name="locations" />
                         <Stack.Screen name="agents" />
                         <Stack.Screen name="listings" />
+                        <Stack.Screen name="chat" />
                     </Stack>
                 </Providers>
             </GestureHandlerRootView>

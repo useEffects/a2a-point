@@ -1,8 +1,8 @@
+import { useRouter } from "app/hooks/router"
+import { buildAssetUrl } from "app/lib/helpers"
 import { Room } from "app/lib/types"
 import { Image, Pressable } from "react-native"
 import { Text } from "../ui/text"
-import { buildAssetUrl } from "app/lib/helpers"
-import { useRouter } from "solito/navigation"
 
 export const LocationChip = ({ avatar, id, title }: Pick<Room, "id" | "title" | "avatar">) => {
     const router = useRouter()

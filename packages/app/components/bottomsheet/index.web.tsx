@@ -9,7 +9,7 @@ export default function BottomSheet(props: { open: boolean, setOpen: Dispatch<Se
     return (
         <Sheet open={props.open} onOpenChange={props.setOpen}>
             <SheetTitle />
-            <SheetContent side={isSmallDevice ? "bottom" : "left"} className="bg-card !border-0">
+            <SheetContent side={isSmallDevice ? "bottom" : "left"} className="bg-card !border-0 overflow-y-auto">
                 {isSmallDevice ? (
                     <div className="flex flex-col gap-4">
                         <Separator />

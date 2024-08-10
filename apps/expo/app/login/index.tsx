@@ -1,10 +1,8 @@
 import LoginScreenComponent from "app/screens/login"
-import { View } from "react-native"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
+import PadBottom from "../../components/pad-bottom"
 
 export default function LoginScreen() {
-    const insets = useSafeAreaInsets()
-    return <View style={{ flex: 1, paddingBottom: insets.bottom }}>
+    return <PadBottom>
         <LoginScreenComponent />
-    </View>
+    </PadBottom>
 }

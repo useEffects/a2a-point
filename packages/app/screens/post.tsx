@@ -24,9 +24,10 @@ import commaNumber from "comma-number";
 import { Formik, FormikProps } from "formik";
 import { Plus } from "lucide-react-native";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, View } from "react-native";
+import { Platform, View } from "react-native";
 import { NavigationState, Route, SceneMap, TabView } from "react-native-tab-view";
-import { useSearchParams, useRouter } from "solito/navigation";
+import { useSearchParams } from "solito/navigation";
+import { useRouter } from "app/hooks/router";
 import * as Yup from "yup";
 import LockedScreen from "./locked-screens";
 import PostImg from "app/assets/locked-screens/post.jpg";
@@ -517,37 +518,35 @@ function PostScreenComponent() {
             <Text className="text-xl font-bold">Post</Text>
         </Header>
         <View className="flex-grow p-4 max-w-xl">
-            <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === "ios" ? "padding" : "height"}>
-                <TabView
-                    swipeEnabled={false}
-                    renderTabBar={() => null}
-                    navigationState={navigationState}
-                    onIndexChange={index => setNavigationState({ ...navigationState, index })}
-                    renderScene={SceneMap({
-                        form1: () => <Form1
-                            formValues={form1Values}
-                            setFormValues={setForm1Values}
-                            setNavigationState={setNavigationState}
-                        />,
-                        form2: () => <Form2
-                            formValues={form2Values}
-                            setFormValues={setForm2Values}
-                            setNavigationState={setNavigationState}
-                        />,
-                        form3: () => <Form3
-                            formValues={form3Values}
-                            setFormValues={setForm3Values}
-                            setNavigationState={setNavigationState}
-                        />,
-                        form4: () => <Form4
-                            formValues={form4Values}
-                            setFormValues={setForm4Values}
-                            handleSubmit={handleSubmit}
-                            loading={loading}
-                        />
-                    })}
-                />
-            </KeyboardAvoidingView>
+            <TabView
+                swipeEnabled={false}
+                renderTabBar={() => null}
+                navigationState={navigationState}
+                onIndexChange={index => setNavigationState({ ...navigationState, index })}
+                renderScene={SceneMap({
+                    form1: () => <Form1
+                        formValues={form1Values}
+                        setFormValues={setForm1Values}
+                        setNavigationState={setNavigationState}
+                    />,
+                    form2: () => <Form2
+                        formValues={form2Values}
+                        setFormValues={setForm2Values}
+                        setNavigationState={setNavigationState}
+                    />,
+                    form3: () => <Form3
+                        formValues={form3Values}
+                        setFormValues={setForm3Values}
+                        setNavigationState={setNavigationState}
+                    />,
+                    form4: () => <Form4
+                        formValues={form4Values}
+                        setFormValues={setForm4Values}
+                        handleSubmit={handleSubmit}
+                        loading={loading}
+                    />
+                })}
+            />
         </View>
     </View>
 }

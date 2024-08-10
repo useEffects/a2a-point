@@ -23,22 +23,21 @@ export const UsersListComponent = ({ data }: { data: (MediumUsersCardProps & Use
                 setSearchText={setSearchText}
             />
         </View>
-        <View className="flex-grow">
-            <RenderUsers<MediumUsersCardProps>
-                mode={Mode.medium}
-                infinite
-                searchText={debouncedSearchText}
-                flatListProps={{
-                    ItemSeparatorComponent: () => <Separator className="my-8" />,
-                    contentContainerClassName: "p-4 max-w-xl flex-grow"
-                }}
-                filter={{
-                    role: {
-                        _eq: memberRole
-                    }
-                }}
-                initialData={data}
-            />
-        </View>
+        <RenderUsers<MediumUsersCardProps>
+            mode={Mode.medium}
+            infinite
+            searchText={debouncedSearchText}
+            flatListProps={{
+                ItemSeparatorComponent: () => <Separator className="my-8" />,
+                contentContainerClassName: "p-4 max-w-xl",
+                showsVerticalScrollIndicator: true
+            }}
+            filter={{
+                role: {
+                    _eq: memberRole
+                }
+            }}
+            initialData={data}
+        />
     </View>
 }

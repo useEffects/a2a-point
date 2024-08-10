@@ -4,14 +4,16 @@ import { ReactNode } from "react";
 import { EventProvider } from "react-native-outside-press";
 import { PortalHost } from "../primitives/portal";
 import { QueryClientProvider } from "app/context/query";
-import { KeyboardProvider } from "react-native-keyboard-controller";
+import { KeyboardGestureArea, KeyboardProvider } from "react-native-keyboard-controller";
 
 export const Providers = ({ children }: { children: ReactNode }) => {
     return <EventProvider>
         <QueryClientProvider>
             <ChatsProviderComponent>
                 <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
-                    {children}
+                    <KeyboardGestureArea interpolator="ios" style={{ flex: 1 }}>
+                        {children}
+                    </KeyboardGestureArea>
                     <PortalHost />
                 </KeyboardProvider>
             </ChatsProviderComponent>

@@ -8,13 +8,13 @@ import { Button, ButtonProps } from "app/components/ui/button"
 import { Text } from "app/components/ui/text"
 import { Member, RoomSubscribed } from "app/context/chats"
 import { useChats } from "app/hooks/chats"
+import { useRouter } from "app/hooks/router"
 import { buildAssetUrl } from "app/lib/helpers"
 import directusStore from "app/store/directus"
 import userStore from "app/store/user"
 import { randomUUID } from "expo-crypto"
 import { useEffect, useState } from "react"
 import { Image, View } from "react-native"
-import { useRouter } from "solito/navigation"
 import { useDebounce } from "use-debounce"
 
 const ChatScreen = ({ roomDetails, receivers }: {
@@ -73,7 +73,7 @@ const ChatScreen = ({ roomDetails, receivers }: {
         if (!isAdded) setEndReached(true)
     }
 
-    return <View className="flex-col h-full w-full">
+    return <View className="flex-col flex-1">
         <Header className="w-full">
             {searchBarVisible ? <View className="flex-row items-center justify-between flex-1 gap-4">
                 <SearchBar

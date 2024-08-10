@@ -1,5 +1,5 @@
 import ScreenLayout from "../../../components/screen-layout";
 
 export default function ChatLayout() {
-    return <ScreenLayout names={["index", "[id]"]} />
+    return <ScreenLayout names={["index"]} />
 }

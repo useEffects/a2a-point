@@ -6,6 +6,7 @@ import { readItem } from "@directus/sdk";
 import { Feedback } from "app/lib/types";
 import PostFeedbackScreen from "app/screens/post-feedback";
 import { useLocalSearchParams } from "expo-router";
+import PadBottom from "../../../components/pad-bottom";
 
 export default function PostFeedback() {
     const { feedbackId } = useLocalSearchParams()
@@ -20,5 +21,9 @@ export default function PostFeedback() {
         })) as Feedback
     })
 
-    return user ? <PostFeedbackScreen user={user} feedback={feedback} /> : <></>
+    return user ?
+        <PadBottom>
+            <PostFeedbackScreen user={user} feedback={feedback} />
+        </PadBottom>
+        : <></>
 }

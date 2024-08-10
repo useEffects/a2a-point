@@ -7,7 +7,9 @@ import { Text } from "app/components/ui/text"
 import { ViewAllButton } from "app/components/utils/common-ui"
 import { FlatList } from "app/components/utils/virtual-lists"
 import { useColorScheme } from "app/hooks/color-scheme"
+import { useRouter } from "app/hooks/router"
 import { InViewPort } from "app/lib/detect-viewport"
+import { getListingMetrics } from "app/lib/misc/queries"
 import { extraSmallListingsFields, mediumListingsFields, photoListingsFields, smallListingsFields } from "app/lib/props"
 import { FilterParam } from "app/screens/listings"
 import directusStore from "app/store/directus"
@@ -20,8 +22,6 @@ import { ExtraSmallListingCard, ExtraSmallListingCardProps } from "../atoms/extr
 import { MediumListingCard, MediumListingCardProps } from "../atoms/medium"
 import { PhotoListingCard, PhotoListingProps } from "../atoms/photo"
 import { SmallListingCard, SmallListingCardProps } from "../atoms/small"
-import { getListingMetrics } from "app/lib/misc/queries"
-import { useRouter } from "solito/navigation"
 
 type ListCardProps = SmallListingCardProps | ExtraSmallListingCardProps | MediumListingCardProps | PhotoListingProps
 
@@ -195,14 +195,11 @@ export const RenderListings = <R extends ListCardProps>({
     }
 
     const { rest } = directusStore()
-    const [startedScrolling, setStartedScrolling] = useState(false)
     const isMedium = render.fields === bodies.medium.fields
 
-    const shouldUseInitialData = infinite && initialData.length && !Boolean(searchText || filter)
-
     const { data, hasNextPage, fetchNextPage, isLoading, ...restProps } = useInfiniteQuery<{ items: (R | ConfirmedAdvertisementCardProps)[], page: unknown }>({
-        initialPageParam: shouldUseInitialData ? 1 : 0,
-        queryKey: ["Fetching Listings with fields: ", render.fields, filter, searchText, limit, shouldUseInitialData],
+        initialPageParam: 0,
+        queryKey: ["Fetching Listings with fields: ", render.fields, filter, searchText, limit],
         queryFn: async ({ pageParam }) => {
             const page = pageParam as number
             let items: (R | ConfirmedAdvertisementCardProps)[] = []
@@ -245,26 +242,17 @@ export const RenderListings = <R extends ListCardProps>({
             }
             return Number(lastPageParam) + 1
         },
-        enabled: infinite && !shouldUseInitialData && startedScrolling
+        enabled: infinite
     })
 
     const items = data?.pages.map(page => page.items).flat() ?? []
 
     const finalData = useMemo(() => {
-        if (!infinite) return initialData
-        if (shouldUseInitialData) {
-            if (startedScrolling) return [...initialData, ...items]
-            else return initialData
-        }
-        else {
-            return items
-        }
-
-    }, [data, initialData, startedScrolling, shouldUseInitialData, infinite])
+        return infinite ? items : initialData
+    }, [infinite, items, initialData])
 
     const onEndReached = () => {
-        setStartedScrolling(true)
-        fetchNextPage()
+        hasNextPage && fetchNextPage()
     }
 
     return <FlatList
@@ -279,7 +267,7 @@ export const RenderListings = <R extends ListCardProps>({
         keyExtractor={(item) => item.id}
         onEndReached={() => infinite && Platform.OS !== "web" && onEndReached()}
         ListFooterComponent={
-            infinite ? () => <BottomLoader endReached={!isLoading && !hasNextPage && startedScrolling} onEndReached={() => Platform.OS === "web" && onEndReached()} /> :
+            infinite ? () => <BottomLoader endReached={!hasNextPage } onEndReached={() => Platform.OS === "web" && onEndReached()} /> :
                 <ViewAllButton horizontal={!!flatListProps?.horizontal} button={(props) => <Button onPress={() => router.push(`/listings?filters=${paramFilters}`)} {...props} />} />}
     />
 }

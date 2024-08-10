@@ -1,7 +1,7 @@
 import { Text } from "app/components/ui/text";
 import { useLocalizedCost } from "app/hooks/locale-string";
+import { useRouter } from "app/hooks/router";
 import { Listing } from "app/lib/types";
-import { useRouter } from "expo-router";
 import { Pressable, View } from "react-native";
 
 export type ExtraSmallListingCardProps = Pick<Listing, "id" | "title" | "budget" | "price" | "deal_type">

@@ -2,35 +2,35 @@
 
 import { RangeSlider } from '@react-native-assets/slider';
 import BottomSheet from 'app/components/bottomsheet';
-import { MediumListingCardProps } from "app/components/cards/atoms/medium";
-import { CommonFilters, RenderListings, bodies, commonFilters } from "app/components/cards/molecules/listings";
+import { MediumListingCard, MediumListingCardProps } from "app/components/cards/atoms/medium";
+import { CommonFilters, commonFilters } from "app/components/cards/molecules/listings";
+import { ConfirmedAdvertisementCardProps, mediumCardListingsWithAds, RenderMediumListingsAds } from 'app/components/cards/queries/listings';
 import { FormAutoSelect, RenderCompanyTileProps, RenderListingTileProps, RenderUserTileProps, useAutoCompleteItem } from 'app/components/formComponents';
 import { Header, HeaderTitle } from 'app/components/header';
 import { Bath, BedDouble, CarFront, CreditCard, LandPlot } from 'app/components/icons';
+import InfiniteList from 'app/components/infinite';
 import SearchBar from "app/components/searchbar";
 import { Button } from "app/components/ui/button";
 import { Separator } from "app/components/ui/separator";
 import { Text } from "app/components/ui/text";
 import { GoToPostButtonUi } from 'app/components/utils/common-ui';
 import { useColorScheme } from "app/hooks/color-scheme";
-import { useNavigation } from 'expo-router';
-import { useSearchParams } from 'app/hooks/search-params';
+import { useLocaleString } from 'app/hooks/locale-string';
+import { useRouter } from "app/hooks/router";
+import { memberRole } from 'app/lib/constants';
+import { ListingCardMetrics } from 'app/lib/props';
 import { cn } from "app/lib/utils";
 import directusStore from "app/store/directus";
 import opacity from 'hex-color-opacity';
-import { filter, isArray, isNumber, isPlainObject, isString } from 'lodash';
+import { isArray, isNumber, isPlainObject, isString } from 'lodash';
 import { Award, Handshake, HousePlus, ListFilter, LucideIcon, LucideProps, Sparkles, X } from "lucide-react-native";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
-import { Platform, View } from "react-native";
+import { View } from "react-native";
 import { Circle, Svg } from 'react-native-svg';
 import { NavigationState, Route, SceneRendererProps, TabView } from 'react-native-tab-view';
-import { useParams } from 'solito/navigation';
-import { useRouter, usePathname } from 'solito/navigation';
+import { useSearchParams, useUpdateSearchParams } from 'solito/navigation';
 import { useDebounce } from "use-debounce";
 import { GoToLoginButton } from "./locked-screens";
-import { useLocaleString } from 'app/hooks/locale-string';
-import { ListingCardMetrics } from 'app/lib/props';
-import { memberRole } from 'app/lib/constants';
 
 export enum FilterKeys {
     Cost = "cost",
@@ -59,28 +59,24 @@ const parkingRange: [number, number] = [0, 8]
 const sizeRange: [number, number] = [0, 10000]
 
 export default function ListingsScreenComponent({ className, data }: { className?: string, data: (MediumListingCardProps & ListingCardMetrics)[] }) {
-    const params = useParams()
-    const searchParams = useSearchParams()
+    const updateSearchParams = useUpdateSearchParams()
+    const filtersFromParams = useSearchParams()?.get("filters")
 
     const [searchText, setSearchText] = useState("")
     const [debouncedSearchText] = useDebounce(searchText, 500)
     const [bottomSheetVisible, setBottomSheetVisible] = useState(false)
     const { colors } = useColorScheme()
     const { authenticated } = directusStore()
-    const [key, setKey] = useState(0)
     const [filters, setFilters] = useState([] as Filter[])
     const [currentFilters, setCurrentFilters] = useState<Filter[]>([])
-    // const setParams = useSetParams()
 
     const updateParams = function (filters: Filter[]) {
         setCurrentFilters(filters)
         const newFilters = filters.reduce<{ [key in FilterKeys]?: FilterValue }[]>((acc, filter) => [...acc, { [filter.key]: filter.value }], [])
-        // const dispatcher = setParams(newFilters)
-        // typeof dispatcher === "function" && dispatcher()
-        // if (Platform.OS === "web") {
-        //     window.history.replaceState(null, "", `?filters=${JSON.stringify(newFilters)}`)
-        //     setKey(key + 1)
-        // }
+
+        updateSearchParams({
+            filters: JSON.stringify(newFilters)
+        })
     }
 
     const applyFilters = () => {
@@ -92,14 +88,10 @@ export default function ListingsScreenComponent({ className, data }: { className
 
     useEffect(() => {
         let parsedFilters: unknown
-        if (Platform.OS === "web") {
-            try {
-                parsedFilters = JSON.parse(searchParams?.get("filters") ?? [].toString())
-            } catch (error) {
-                console.log(error)
-            }
-        } else {
-            parsedFilters = (params && params.filters) ? params.filters : []
+        try {
+            parsedFilters = JSON.parse(filtersFromParams ?? [].toString())
+        } catch (error) {
+
         }
         if (isArray(parsedFilters)) {
             Promise.all(parsedFilters.map(filter => {
@@ -121,7 +113,7 @@ export default function ListingsScreenComponent({ className, data }: { className
                     setFilters(r)
                 })
         }
-    }, [Platform.OS === "web" ? searchParams?.get("filters") : JSON.stringify(params)])
+    }, [filtersFromParams])
 
     useEffect(() => {
         setCurrentFilters(filters)
@@ -149,17 +141,21 @@ export default function ListingsScreenComponent({ className, data }: { className
             </Button>
         </View>
         {filters.length ? <RenderChips filters={filters} setFilters={updateParams} /> : <View className='h-4 w-full bg-card' />}
-        <RenderListings<MediumListingCardProps & ListingCardMetrics>
-            render={bodies.medium}
-            initialData={data}
+        {/* <InfiniteList<(MediumListingCardProps & ListingCardMetrics) | ConfirmedAdvertisementCardProps>
+            initialItems={data}
+            component={({ item }) => <RenderMediumListingsAds item={item} />}
+            queryFn={mediumCardListingsWithAds}
+            queryKey={["Listings page medium cards with ads", data.length, filters, debouncedSearchText]}
+            apiOptions={{
+                filter: filters.length ? commonFilters[CommonFilters.Custom](finalFilters) : undefined,
+                search: debouncedSearchText
+            }}
             flatListProps={{
                 ItemSeparatorComponent: () => <Separator />,
                 contentContainerClassName: "max-w-xl"
             }}
-            filter={filters.length ? commonFilters[CommonFilters.Custom](finalFilters) : undefined}
-            searchText={debouncedSearchText}
             infinite
-        />
+        /> */}
         <BottomSheet
             open={bottomSheetVisible}
             onBackdropPress={() => setBottomSheetVisible(false)}
@@ -567,19 +563,6 @@ const expandFilterValue = (key: FilterKeys, value: FilterValue): Record<string, 
             return commonFilters[value as CommonFilters]("" as any)
     }
 }
-
-// const useSetParams = () => {
-//     const navigation = useNavigation()
-//     const pathname = usePathname()
-//     const router = useRouter()
-
-//     const setParams = (newFilters: { [key in FilterKeys]?: FilterValue }[]) => Platform.select({
-//         native: () => navigation.navigate("listings", { filters: newFilters }),
-//         web: () => router.push(`${pathname}?filters=${JSON.stringify(newFilters)}`)
-//     })
-
-//     return setParams
-// }
 
 const isDifferent = (a: Filter[], b: Filter[]) => {
     if (a.length !== b.length) return true

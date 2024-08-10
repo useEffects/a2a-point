@@ -9,6 +9,7 @@ import { Text } from "app/components/ui/text"
 import { ViewAllButton } from "app/components/utils/common-ui"
 import { FlatList } from "app/components/utils/virtual-lists"
 import { useColorScheme } from "app/hooks/color-scheme"
+import { useRouter } from "app/hooks/router"
 import { buildAssetUrl, shortString } from "app/lib/helpers"
 import { getListingsCountForLocation, getMembersCountForLocation, renderCardsQuery } from "app/lib/misc/queries"
 import { LocationCardMetrics, MediumLocationCardProps, mediumLocationFields, SmallLocationCardProps } from "app/lib/props"
@@ -19,7 +20,6 @@ import { uniqBy } from "lodash"
 import { useEffect, useMemo, useState } from "react"
 import { FlatListProps, Image, Platform, Pressable, View } from "react-native"
 import { BottomLoader } from "./listings"
-import { useRouter } from "solito/navigation"
 
 const SmallLocationCard = ({ item }: { item: SmallLocationCardProps }) => {
     const [count, setCount] = useState(0)
@@ -83,10 +83,7 @@ const MediumLocationCard = ({ item }: { item: MediumLocationCardProps & Location
 }
 
 export const MediumLocationCards = ({ initialData, limit = 5, searchText = "", infinite, flatListProps }: { initialData: (MediumLocationCardProps & LocationCardMetrics)[], limit?: number, infinite?: boolean, searchText?: string, flatListProps?: Omit<FlatListProps<MediumLocationCardProps & LocationCardMetrics>, "data" | "renderItem"> }) => {
-    const [startedScrolling, setStartedScrolling] = useState(false)
     const router = useRouter()
-
-    const shouldNotShowInitialData = Boolean(searchText)
 
     const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery<{ items: (MediumLocationCardProps & LocationCardMetrics)[], page: unknown }>({
         queryKey: ["Fetching Locations for medium card", searchText, limit, infinite],
@@ -117,24 +114,22 @@ export const MediumLocationCards = ({ initialData, limit = 5, searchText = "", i
                 page: pageParam
             }
         },
-        initialPageParam: shouldNotShowInitialData ? 0 : 1,
+        initialPageParam: 0,
         getNextPageParam: (lastPage, allPages, lastPageParam) => {
             if (lastPage.items.length < limit) return undefined
             else return Number(lastPageParam) + 1
         },
-        enabled: startedScrolling && infinite
+        enabled: infinite
     })
 
     const onEndReached = () => {
-        setStartedScrolling(true)
-        fetchNextPage()
+        hasNextPage && fetchNextPage()
     }
 
     const items = data?.pages.map(page => page.items).flat() ?? []
     const finalData = useMemo(() => {
-        if (shouldNotShowInitialData) return items
-        return startedScrolling ? [...initialData, ...items] : initialData
-    }, [startedScrolling, data, initialData])
+        return infinite ? items : initialData
+    }, [items, initialData, infinite])
 
     return <FlatList
         data={uniqBy(finalData, "id")}
@@ -142,8 +137,9 @@ export const MediumLocationCards = ({ initialData, limit = 5, searchText = "", i
         ItemSeparatorComponent={() => <View className="w-4 h-4" />}
         onEndReached={() => Platform.OS !== "web" && infinite && onEndReached()}
         ListFooterComponent={infinite ?
-            <BottomLoader endReached={startedScrolling && !hasNextPage} onEndReached={() => Platform.OS === "web" && onEndReached()} /> :
+            <BottomLoader endReached={!hasNextPage} onEndReached={() => Platform.OS === "web" && onEndReached()} /> :
             <ViewAllButton horizontal={false} button={(props) => <Button onPress={() => router.push("/locations")} {...props} />} />}
+        keyExtractor={item => item.id}
         {...flatListProps}
     />
 }

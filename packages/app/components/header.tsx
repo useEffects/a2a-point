@@ -14,7 +14,7 @@ export const BackButton = () => {
     const router = useRouter()
     const navigation = useNavigation()
 
-    return (navigation.getState().index > 0) ? <Button size={"icon"} className="rounded-full w-8 h-8" variant={"ghost"} onPress={router.back}>
+    return (navigation.canGoBack() && !navigation.getId()?.startsWith("/(main)")) ? <Button size={"icon"} className="rounded-full w-8 h-8" variant={"ghost"} onPress={router.back}>
         <MoveLeft size={18} color={colors.primary} />
     </Button> : <></>
 }

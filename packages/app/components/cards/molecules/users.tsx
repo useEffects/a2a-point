@@ -1,18 +1,18 @@
 "use client"
 
-import { MediumUsersCard, SmallUsersCard } from "../atoms/users"
-import { ComponentType, useMemo, useState } from "react"
-import { FlatList } from "app/components/utils/virtual-lists"
-import { FlatListProps, Platform, View } from "react-native"
-import { BottomLoader } from "./listings"
-import { ViewAllButton } from "app/components/utils/common-ui"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { Button } from "app/components/ui/button"
-import { mediumUsersFields, smallUsersFields, UsersCardMetrics } from "app/lib/props"
-import { renderCardsQuery } from "app/lib/misc/queries"
-import { uniqBy } from "lodash"
+import { ViewAllButton } from "app/components/utils/common-ui"
+import { FlatList } from "app/components/utils/virtual-lists"
+import { useRouter } from "app/hooks/router"
 import { memberRole } from "app/lib/constants"
-import { useRouter } from "solito/navigation"
+import { renderCardsQuery } from "app/lib/misc/queries"
+import { mediumUsersFields, smallUsersFields, UsersCardMetrics } from "app/lib/props"
+import { uniqBy } from "lodash"
+import { ComponentType, useCallback, useMemo, useState } from "react"
+import { FlatListProps, Platform, View } from "react-native"
+import { MediumUsersCard, SmallUsersCard } from "../atoms/users"
+import { BottomLoader } from "./listings"
 
 export enum Mode {
     small = "small",
@@ -79,15 +79,12 @@ export const RenderUsers = <R,>({
     flatListProps = {},
 }: RenderUserProps<R>) => {
 
-    const { fields, renderMethod: Component } = bodies[mode]
-    const router = useRouter()
-    const [startedScrolling, setStartedScrolling] = useState(false)
-
-    const shouldUseInitialData = infinite && initialData.length && !Boolean(searchText || filter)
+    const { fields, renderMethod: Component } = bodies[mode];
+    const router = useRouter();
 
     const { data, fetchNextPage, hasNextPage } = useInfiniteQuery<{ items: R[], page: unknown }>({
-        initialPageParam: shouldUseInitialData ? 1 : 0,
-        queryKey: ["fetching users list", fields, filter, limit, searchText, shouldUseInitialData],
+        initialPageParam: 0,
+        queryKey: ["fetching users list", fields, filter, limit, searchText],
         queryFn: async ({ pageParam }) => renderCardsQuery<R>({
             collection: "users",
             fields,
@@ -97,40 +94,47 @@ export const RenderUsers = <R,>({
             offset: Number(pageParam) * limit,
             searchText
         }).then(res => ({ items: res, page: pageParam })),
-        getNextPageParam: (lastPage, allPages, lastPageParam) => {
-            if (lastPage.items.length < limit) return undefined
-            else return Number(lastPageParam) + 1
+        getNextPageParam: (lastPage) => {
+            return lastPage.items.length < limit ? undefined : Number(lastPage.page) + 1;
         },
-        enabled: startedScrolling && infinite && !shouldUseInitialData
-    })
-
-    const items = data?.pages.map(page => page.items).flat() ?? []
+        enabled: infinite,
+    });
 
     const finalData = useMemo(() => {
-        if (!infinite) return initialData
-        if (shouldUseInitialData) {
-            if (startedScrolling) return [...initialData, ...items]
-            else return initialData
+        if (infinite && data?.pages) {
+            const items = data.pages.map(page => page.items).flat();
+            return uniqBy(items, "id");
         }
-        else {
-            return items
-        }
+        return initialData;
+    }, [data?.pages, initialData, infinite]);
 
-    }, [data, initialData, startedScrolling, shouldUseInitialData, infinite])
+    const onEndReached = useCallback(() => {
+        if (hasNextPage) fetchNextPage();
+    }, [hasNextPage]);
 
-    const onEndReached = () => {
-        setStartedScrolling(true)
-        fetchNextPage()
-    }
+    const renderItem = useCallback(({ item }: { item: R }) => <Component {...item} />, [Component]);
 
-    return <FlatList
-        data={uniqBy(finalData, "id")}
-        renderItem={({ item }) => <Component {...item} />}
-        ItemSeparatorComponent={() => <View className="w-4 h-4" />}
-        onEndReached={() => Platform.OS !== "web" && infinite && onEndReached()}
-        ListFooterComponent={infinite ? <BottomLoader endReached={!hasNextPage} onEndReached={() => Platform.OS === "web" && onEndReached()} /> : <ViewAllButton horizontal={!!flatListProps.horizontal}
-            button={(props) => <Button onPress={() => router.push("/agents")} {...props} />}
-        />}
-        {...flatListProps}
-    />
-}
+    // @ts-expect-error id is not in R
+    const keyExtractor = useCallback((item: R) => item.id, []);
+
+    const ListFooter = useCallback(() => {
+        return infinite
+            ? <BottomLoader endReached={!hasNextPage} onEndReached={() => Platform.OS === "web" && onEndReached()} />
+            : <ViewAllButton
+                horizontal={!!flatListProps.horizontal}
+                button={(props) => <Button onPress={() => router.push("/agents")} {...props} />}
+            />;
+    }, [infinite, hasNextPage]);
+
+    return (
+        <FlatList
+            data={finalData}
+            renderItem={renderItem}
+            keyExtractor={keyExtractor}
+            ItemSeparatorComponent={() => <View className="w-4 h-4" />}
+            onEndReached={() => Platform.OS !== "web" && infinite && onEndReached()}
+            ListFooterComponent={ListFooter}
+            {...flatListProps}
+        />
+    );
+};
