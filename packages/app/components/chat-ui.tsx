@@ -13,7 +13,7 @@ import * as ImagePicker from "expo-image-picker"
 import * as Linking from "expo-linking"
 import { Formik, FormikProps } from 'formik'
 import { Dispatch, SetStateAction, use, useEffect, useMemo, useRef, useState } from "react"
-import { SectionList, SectionListProps, View } from "react-native"
+import { Keyboard, Platform, SectionList, SectionListProps, View } from "react-native"
 import Autolink from 'react-native-autolink'
 import * as Yup from "yup"
 import BottomSheet from './bottomsheet'
@@ -29,6 +29,7 @@ import { getFileSize } from "app/lib/file-upload"
 import { filesize } from "filesize"
 import { filter, uniqBy } from "lodash"
 import { Member } from "app/context/chats"
+import { KeyboardAvoidingView } from "react-native-keyboard-controller"
 
 export type withId = { id: string }
 export type withUri = { uri: string }
@@ -349,51 +350,88 @@ const generateSections = (messages: ChatMessage<withId | withUri>[]) => {
 
 
 export const ChatUi = (props: ChatUiProps) => {
-    const listRef = useRef<SectionList>(null)
-    const sections = useMemo(() => generateSections(uniqBy(props.messages, "id")), [props.messages])
+    const listRef = useRef<SectionList<ChatMessage<withId | withUri>>>(null);
+    const sections = useMemo(() => generateSections(uniqBy(props.messages, 'id')), [props.messages]);
 
     useEffect(() => {
         if (props.goToId) {
-            const { foundItemIndex, foundSectionIndex } = sections.reduce((acc, section, sectionIndex) => {
-                const foundItemIndex = section.data.findIndex(item => item.id === props.goToId)
-                if (foundItemIndex !== -1) {
-                    acc.foundItemIndex = foundItemIndex
-                    acc.foundSectionIndex = sectionIndex
+            const { foundItemIndex, foundSectionIndex } = sections.reduce(
+                (acc, section, sectionIndex) => {
+                    const foundItemIndex = section.data.findIndex(item => item.id === props.goToId);
+                    if (foundItemIndex !== -1) {
+                        acc.foundItemIndex = foundItemIndex;
+                        acc.foundSectionIndex = sectionIndex;
+                    }
+                    return acc;
+                },
+                {
+                    foundItemIndex: -1,
+                    foundSectionIndex: -1,
                 }
-                return acc
-            }, {
-                foundItemIndex: -1,
-                foundSectionIndex: -1
-            })
-            if (foundItemIndex === -1 || foundSectionIndex === -1) return
-            listRef.current?.scrollToLocation({ itemIndex: foundItemIndex, sectionIndex: foundSectionIndex, animated: true, viewPosition: 0.5 })
+            );
+            if (foundItemIndex === -1 || foundSectionIndex === -1) return;
+            listRef.current?.scrollToLocation({
+                itemIndex: foundItemIndex,
+                sectionIndex: foundSectionIndex,
+                animated: true,
+                viewPosition: 0.5,
+            });
         }
+    }, [props.goToId, props.messages, sections]);
 
-    }, [props.goToId, props.messages, sections])
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e: KeyboardEvent) => {
+            // Handle when keyboard appears
+        });
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            // Handle when keyboard hides
+        });
 
-    return <View className="flex-1">
-        <View className="flex-1 grow-1">
-            <SectionList
-                keyboardShouldPersistTaps="handled"
-                contentContainerStyle={{ padding: 1 }}
-                inverted={true}
-                ref={listRef}
-                sections={sections}
-                renderItem={({ item, index, section }) => <ChatBubble
-                    {...item}
-                    currentUserId={props.currentUserId}
-                    goToId={props.goToId}
-                    isFirst={(index === 0 || section.data[index - 1]?.user_created.id !== item.user_created.id)}
-                    isLast={(index === section.data.length - 1 || section.data[index + 1]?.user_created.id !== item.user_created.id)}
+        return () => {
+            keyboardDidHideListener.remove();
+            keyboardDidShowListener.remove();
+        };
+    }, []);
+
+    return (
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
+        >
+            <View style={{ flex: 1 }}>
+                <SectionList
+                    keyboardShouldPersistTaps="handled"
+                    contentContainerStyle={{ padding: 1 }}
+                    inverted={true}
+                    ref={listRef}
+                    sections={sections}
+                    renderItem={({ item, index, section }) => (
+                        <ChatBubble
+                            {...item}
+                            currentUserId={props.currentUserId}
+                            goToId={props.goToId}
+                            isFirst={index === 0 || section.data[index - 1]?.user_created.id !== item.user_created.id}
+                            isLast={index === section.data.length - 1 || section.data[index + 1]?.user_created.id !== item.user_created.id}
+                            isGroup={props.isGroup}
+                        />
+                    )}
+                    renderSectionFooter={({ section }) => (
+                        <Text className="text-sm text-center text-subtext py-4">{section.title}</Text>
+                    )}
+                    keyExtractor={(_, index) => index.toString() as string}
+                    {...props.listProps}
+                    bounces={false}
+                    overScrollMode="never"
+                />
+                <Footer
+                    currentMessage={props.currentMessage}
+                    currentMessageDispatcher={props.currentMessageDispatcher}
+                    onSend={props.onSend}
                     isGroup={props.isGroup}
-                />}
-                renderSectionFooter={({ section }) => <Text className='text-sm text-center text-subtext py-4'>{section.title}</Text>}
-                keyExtractor={(_, index) => index.toString() as string}
-                {...props.listProps}
-                bounces={false}
-                overScrollMode='never'
-            />
-        </View>
-        <Footer currentMessage={props.currentMessage} currentMessageDispatcher={props.currentMessageDispatcher} onSend={props.onSend} isGroup={props.isGroup} receivers={props.receivers} />
-    </View>
-}
+                    receivers={props.receivers}
+                />
+            </View>
+        </KeyboardAvoidingView>
+    );
+};
