@@ -352,6 +352,7 @@ const generateSections = (messages: ChatMessage<withId | withUri>[]) => {
 export const ChatUi = (props: ChatUiProps) => {
     const listRef = useRef<SectionList<ChatMessage<withId | withUri>>>(null);
     const sections = useMemo(() => generateSections(uniqBy(props.messages, 'id')), [props.messages]);
+    const { colors } = useColorScheme()
 
     useEffect(() => {
         if (props.goToId) {
@@ -379,59 +380,42 @@ export const ChatUi = (props: ChatUiProps) => {
         }
     }, [props.goToId, props.messages, sections]);
 
-    useEffect(() => {
-        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e: KeyboardEvent) => {
-            // Handle when keyboard appears
-        });
-        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-            // Handle when keyboard hides
-        });
-
-        return () => {
-            keyboardDidHideListener.remove();
-            keyboardDidShowListener.remove();
-        };
-    }, []);
-
     return (
         <KeyboardAvoidingView
-            style={{ flex: 1 }}
+            style={{ flex: 1, backgroundColor: colors.card }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 40}
         >
-            <View style={{ flex: 1 }}>
-                <SectionList
-                    keyboardShouldPersistTaps="handled"
-                    contentContainerStyle={{ padding: 1 }}
-                    inverted={true}
-                    ref={listRef}
-                    sections={sections}
-                    renderItem={({ item, index, section }) => (
-                        <ChatBubble
-                            {...item}
-                            currentUserId={props.currentUserId}
-                            goToId={props.goToId}
-                            isFirst={index === 0 || section.data[index - 1]?.user_created.id !== item.user_created.id}
-                            isLast={index === section.data.length - 1 || section.data[index + 1]?.user_created.id !== item.user_created.id}
-                            isGroup={props.isGroup}
-                        />
-                    )}
-                    renderSectionFooter={({ section }) => (
-                        <Text className="text-sm text-center text-subtext py-4">{section.title}</Text>
-                    )}
-                    keyExtractor={(_, index) => index.toString() as string}
-                    {...props.listProps}
-                    bounces={false}
-                    overScrollMode="never"
-                />
-                <Footer
-                    currentMessage={props.currentMessage}
-                    currentMessageDispatcher={props.currentMessageDispatcher}
-                    onSend={props.onSend}
-                    isGroup={props.isGroup}
-                    receivers={props.receivers}
-                />
-            </View>
+            <SectionList
+                contentContainerStyle={{ padding: 1, backgroundColor: colors.background, flex: 1 }}
+                inverted={true}
+                ref={listRef}
+                sections={sections}
+                renderItem={({ item, index, section }) => (
+                    <ChatBubble
+                        {...item}
+                        currentUserId={props.currentUserId}
+                        goToId={props.goToId}
+                        isFirst={index === 0 || section.data[index - 1]?.user_created.id !== item.user_created.id}
+                        isLast={index === section.data.length - 1 || section.data[index + 1]?.user_created.id !== item.user_created.id}
+                        isGroup={props.isGroup}
+                    />
+                )}
+                renderSectionFooter={({ section }) => (
+                    <Text className="text-sm text-center text-subtext py-4">{section.title}</Text>
+                )}
+                keyExtractor={(_, index) => index.toString() as string}
+                {...props.listProps}
+                bounces={false}
+                overScrollMode="never"
+            />
+            <Footer
+                currentMessage={props.currentMessage}
+                currentMessageDispatcher={props.currentMessageDispatcher}
+                onSend={props.onSend}
+                isGroup={props.isGroup}
+                receivers={props.receivers}
+            />
         </KeyboardAvoidingView>
     );
 };

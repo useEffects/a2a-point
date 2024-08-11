@@ -4,7 +4,7 @@ import { RangeSlider } from '@react-native-assets/slider';
 import BottomSheet from 'app/components/bottomsheet';
 import { MediumListingCard, MediumListingCardProps } from "app/components/cards/atoms/medium";
 import { CommonFilters, commonFilters } from "app/components/cards/molecules/listings";
-import { ConfirmedAdvertisementCardProps, mediumCardListingsWithAds, RenderMediumListingsAds } from 'app/components/cards/queries/listings';
+import { ConfirmedAdvertisementCardProps, mediumCardListingsWithAds, RenderMediumListingsAds } from 'app/components/cards/molecules2/listings';
 import { FormAutoSelect, RenderCompanyTileProps, RenderListingTileProps, RenderUserTileProps, useAutoCompleteItem } from 'app/components/formComponents';
 import { Header, HeaderTitle } from 'app/components/header';
 import { Bath, BedDouble, CarFront, CreditCard, LandPlot } from 'app/components/icons';
@@ -141,12 +141,12 @@ export default function ListingsScreenComponent({ className, data }: { className
             </Button>
         </View>
         {filters.length ? <RenderChips filters={filters} setFilters={updateParams} /> : <View className='h-4 w-full bg-card' />}
-        {/* <InfiniteList<(MediumListingCardProps & ListingCardMetrics) | ConfirmedAdvertisementCardProps>
+        <InfiniteList<(MediumListingCardProps & ListingCardMetrics) | ConfirmedAdvertisementCardProps>
             initialItems={data}
-            component={({ item }) => <RenderMediumListingsAds item={item} />}
+            component={(item) => <RenderMediumListingsAds {...item} />}
             queryFn={mediumCardListingsWithAds}
             queryKey={["Listings page medium cards with ads", data.length, filters, debouncedSearchText]}
-            apiOptions={{
+            queryFnArgs={{
                 filter: filters.length ? commonFilters[CommonFilters.Custom](finalFilters) : undefined,
                 search: debouncedSearchText
             }}
@@ -155,7 +155,7 @@ export default function ListingsScreenComponent({ className, data }: { className
                 contentContainerClassName: "max-w-xl"
             }}
             infinite
-        /> */}
+        />
         <BottomSheet
             open={bottomSheetVisible}
             onBackdropPress={() => setBottomSheetVisible(false)}

@@ -1,30 +1,33 @@
 import { Query } from "@directus/sdk"
-import { useMemo } from "react"
-import { FlatList } from "./utils/virtual-lists"
-import { FlatListProps, Platform } from "react-native"
-import { BottomLoader } from "./cards/molecules/listings"
-import { ViewAllButton } from "./utils/common-ui"
-import { useRouter } from "app/hooks/router"
-import { Button } from "./ui/button"
 import { useInfiniteQuery } from "@tanstack/react-query"
-import { uniqBy } from "lodash"
+import { useRouter } from "app/hooks/router"
 import { defaultLimit } from "app/lib/constants"
+import { uniqBy } from "lodash"
+import { useMemo } from "react"
+import { FlatList, FlatListProps, Platform } from "react-native"
+import { BottomLoader } from "./cards/molecules/listings"
+import { Button } from "./ui/button"
+import { ViewAllButton } from "./utils/common-ui"
+
+export type queryFnType<T> = (apiOptions: Query<any, T>) => Promise<T[]>
 
 interface InfiniteListProps<T> {
-    component: React.ComponentType<{ item: T }>
+    component: React.FC<T>
     queryKey: any[]
-    queryFn: (limit: number, page: number) => Promise<T[]>
+    queryFn: queryFnType<T>
+    queryFnArgs: Query<any, T>
     initialItems: T[]
-    apiOptions?: Query<any, T>
     infinite?: boolean
     flatListProps?: Omit<FlatListProps<T>, "data" | "renderItem">
+    viewAllLink?: string
+
 }
 
-export default function InfiniteList<T>(props: InfiniteListProps<T>) {
-    const { component: RenderComponent, queryKey, queryFn, initialItems, apiOptions = {}, infinite = false, flatListProps } = props;
-    const { limit = defaultLimit } = apiOptions;
+export default function InfiniteList<T extends (JSX.IntrinsicAttributes & { id: string })>(props: InfiniteListProps<T>) {
+    const { component: RenderComponent, queryKey, queryFn, initialItems, infinite = false, flatListProps, viewAllLink, queryFnArgs = {} } = props;
+    const { limit = defaultLimit } = queryFnArgs
 
-    const { data, fetchNextPage, hasNextPage } = useInfiniteQuery<{ items: T[], page: number }>({
+    const { data, fetchNextPage, hasNextPage } = useInfiniteQuery<{ items: T[], page: unknown }>({
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages, lastPageParam) => {
             if (lastPage.items.length < limit) {
@@ -34,10 +37,9 @@ export default function InfiniteList<T>(props: InfiniteListProps<T>) {
         },
         queryKey: queryKey,
         queryFn: async ({ pageParam = 0 }) => {
-            const page = Number(pageParam);
-            return await queryFn(limit, page).then(res => ({
+            return await queryFn({ ...queryFnArgs, offset: Number(pageParam) * limit }).then(res => ({
                 items: res,
-                page: page,
+                page: pageParam,
             }));
         },
         initialData: {
@@ -48,10 +50,7 @@ export default function InfiniteList<T>(props: InfiniteListProps<T>) {
     });
 
     const finalData = useMemo(() => {
-        return uniqBy(
-            data?.pages.reduce((acc, page) => acc.concat(page.items), [] as T[]),
-            "id"
-        );
+        return uniqBy(data?.pages.reduce((acc, page) => acc.concat(page.items), [] as T[]), "id")
     }, [data]);
 
     const handleEndReached = () => {
@@ -60,39 +59,33 @@ export default function InfiniteList<T>(props: InfiniteListProps<T>) {
         }
     }
 
-    const List = useMemo(
-        () =>
-            withEndReached<T>({
-                onEndReached: handleEndReached,
-                endReached: !hasNextPage,
-                infinite: infinite,
-                horizontal: !!flatListProps?.horizontal,
-                viewAllLink: "",
-            }),
-        [hasNextPage, infinite, flatListProps?.horizontal]
-    );
-
     return (
-        <List
+        <FlatList
             data={finalData}
-            renderItem={({ item }) => <RenderComponent item={item} />}
-            // @ts-expect-error id is not in T
+            renderItem={({ item }) => <RenderComponent {...item} />}
             keyExtractor={(item) => (item).id}
+            onEndReached={() => !isWeb && handleEndReached()}
+            ListFooterComponent={<ListFooterComponent
+                infinite={infinite}
+                endReached={!hasNextPage}
+                onEndReached={handleEndReached}
+                horizontal={flatListProps?.horizontal ?? false}
+                viewAllLink={viewAllLink} />
+            }
             {...flatListProps}
         />
     );
 }
 
-const withEndReached = <T,>({ onEndReached, endReached, infinite, horizontal, viewAllLink }: { onEndReached: () => void, endReached: boolean, infinite: boolean, horizontal: boolean, viewAllLink: string }) => {
-    const isWeb = Platform.OS === "web"
-    return (props: FlatListProps<T>) => <FlatList
-        {...props}
-        onEndReached={() => !isWeb && onEndReached()}
-        ListFooterComponent={() => {
-            const router = useRouter()
-            return infinite ? <BottomLoader endReached={endReached} onEndReached={() => isWeb && onEndReached()} /> :
-                <ViewAllButton horizontal={horizontal} button={(props) => <Button onPress={() => router.push(viewAllLink)} {...props} />} />
-        }
-        }
-    />
+const ListFooterComponent = ({ infinite, endReached, onEndReached, horizontal, viewAllLink }: { infinite: boolean, endReached: boolean, onEndReached: () => void, horizontal: boolean, viewAllLink?: string }) => {
+    const router = useRouter()
+
+    if (!infinite && !viewAllLink) {
+        throw new Error("viewAllLink is required when infinite is true")
+    }
+
+    return infinite ? <BottomLoader endReached={endReached} onEndReached={() => isWeb && onEndReached()} /> :
+        <ViewAllButton horizontal={horizontal} button={(props) => <Button onPress={() => router.push(viewAllLink!)} {...props} />} />
 }
+
+const isWeb = Platform.OS === "web"

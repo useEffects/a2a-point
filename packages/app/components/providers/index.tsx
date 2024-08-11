@@ -11,9 +11,7 @@ export const Providers = ({ children }: { children: ReactNode }) => {
         <QueryClientProvider>
             <ChatsProviderComponent>
                 <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
-                    <KeyboardGestureArea interpolator="ios" style={{ flex: 1 }}>
-                        {children}
-                    </KeyboardGestureArea>
+                    {children}
                     <PortalHost />
                 </KeyboardProvider>
             </ChatsProviderComponent>

@@ -1,6 +1,6 @@
 import directusStore from "app/store/directus"
-import { aggregate } from "@directus/sdk"
-import { directusUrl, memberRole } from "../constants"
+import { aggregate, Query } from "@directus/sdk"
+import { defaultLimit, directusUrl, memberRole } from "../constants"
 import { useQuery } from "@tanstack/react-query"
 import { ListingCardMetrics } from "../props"
 import { queryClient } from "app/store/query"
@@ -186,6 +186,26 @@ export const renderCardsQuery = async <R>(props: RenderCardsType) => {
     const finalCollection = ["users"].includes(collection) ? collection : `items/${collection}`
 
     const url = `${directusUrl}/${finalCollection}/?fields=${fields.join(",")}&limit=${limit}&filter=${JSON.stringify(filter)}&sort=${sort.join(",")}&offset=${offset}&search=${searchText}&deep=${JSON.stringify(deep)}`
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }).then(res => res.json()).then(res => {
+        if (!res.data) {
+            console.log(res)
+        }
+        return res.data
+    }) as R[]
+    return res
+}
+
+export const renderCardsQuery2 = async <R>(props: Query<any, R> & { collection: string }) => {
+    const { token } = directusStore.getState()
+    const { collection, fields = [], filter = {}, sort = ["-date_created"], limit = defaultLimit, offset = 0, search = "", deep = {} } = props
+
+    const finalCollection = ["users"].includes(collection) ? collection : `items/${collection}`
+
+    const url = `${directusUrl}/${finalCollection}/?fields=${fields.join(",")}&limit=${limit}&filter=${JSON.stringify(filter)}&sort=${sort}&offset=${offset}&search=${search}&deep=${JSON.stringify(deep)}`
     const res = await fetch(url, {
         headers: {
             Authorization: `Bearer ${token}`

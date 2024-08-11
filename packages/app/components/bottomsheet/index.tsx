@@ -10,7 +10,6 @@ export default function BottomSheet(props: { open: boolean, setOpen: Dispatch<Se
         backdropStyle={{ backgroundColor: "transparent" }}
         containerStyle={{ backgroundColor: "transparent" }}
         scrollViewProps={{
-            keyboardShouldPersistTaps: "handled",
             bounces: false,
             overScrollMode: "never",
             bouncesZoom: false,

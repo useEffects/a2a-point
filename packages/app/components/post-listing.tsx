@@ -62,7 +62,7 @@ function Form1({ initialValues = form1InitialValues }: { initialValues?: Form1Va
     const typeOptions = Object.entries(typeLabels).map(([value, label]) => ({ value, label }))
 
     const Form = (props: FormikProps<Form1Values>) => {
-        return <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="flex-grow">
+        return <ScrollView contentContainerClassName="flex-grow">
             <View className="flex-1 flex-col gap-4 px-4">
                 <FormInput
                     label="Title"

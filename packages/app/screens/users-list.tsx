@@ -1,5 +1,8 @@
+import { MediumUsersCard } from "app/components/cards/atoms/users"
 import { Mode, RenderUsers } from "app/components/cards/molecules/users"
+import { getMediumUsersCardArgs, mediumUsersCardsQuery } from "app/components/cards/molecules2/agents"
 import { Header, HeaderTitle } from "app/components/header"
+import InfiniteList from "app/components/infinite"
 import SearchBar from "app/components/searchbar"
 import { Separator } from "app/components/ui/separator"
 import { Text } from "app/components/ui/text"
@@ -12,6 +15,9 @@ import { useDebounce } from "use-debounce"
 export const UsersListComponent = ({ data }: { data: (MediumUsersCardProps & UsersCardMetrics)[] }) => {
     const [searchText, setSearchText] = useState("")
     const [debouncedSearchText] = useDebounce(searchText, 500)
+    const queryArgs = getMediumUsersCardArgs({
+        search: debouncedSearchText
+    })
 
     return <View className="flex-1 flex-col justify-start">
         <Header className="">
@@ -23,21 +29,18 @@ export const UsersListComponent = ({ data }: { data: (MediumUsersCardProps & Use
                 setSearchText={setSearchText}
             />
         </View>
-        <RenderUsers<MediumUsersCardProps>
-            mode={Mode.medium}
+        <InfiniteList<MediumUsersCardProps & UsersCardMetrics>
+            initialItems={data}
+            component={item => <MediumUsersCard {...item} />}
+            queryFn={mediumUsersCardsQuery}
+            queryKey={["users list", queryArgs]}
+            queryFnArgs={queryArgs}
             infinite
-            searchText={debouncedSearchText}
             flatListProps={{
                 ItemSeparatorComponent: () => <Separator className="my-8" />,
                 contentContainerClassName: "p-4 max-w-xl",
                 showsVerticalScrollIndicator: true
             }}
-            filter={{
-                role: {
-                    _eq: memberRole
-                }
-            }}
-            initialData={data}
         />
     </View>
 }

@@ -71,8 +71,8 @@ export const MediumUsersCard = (item: MediumUsersCardProps & UsersCardMetrics) =
     }
 
     return <Pressable onPress={() => router.push(`/agents/${item.id}`)} className="flex-col gap-4">
-        <View className="w-full flex-row w-full justify-start">
-            <View className="w-1/2 rounded-tl-xl">
+        <View className="w-full flex-row w-full justify-start min-h-[100px]">
+            <View className="w-1/2 rounded-tl-xl h-full">
                 <View className="relative flex-col items-start w-full h-16">
                     <View className="h-8 bg-background w-full pl-20 flex-row items-center gap-1">
                         <Text className="text-primary">{item.listingsCount}</Text>
@@ -98,7 +98,7 @@ export const MediumUsersCard = (item: MediumUsersCardProps & UsersCardMetrics) =
                     </View>
                 </View>
             </View>
-            <View className="w-1/2 bg-background flex-col">
+            <View className="w-1/2 bg-background flex-col h-full">
                 <View className="h-8 w-full flex-row justify-end items-center gap-4">
                     {isUserPro(item.plan) && <View className="bg-primary/10 text-primary text-sm py-[2px] px-1 rounded flex-row gap-1 items-center">
                         <Award size={12} className="text-primary" />

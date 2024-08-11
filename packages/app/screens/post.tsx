@@ -115,7 +115,7 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
             }
         }, [type])
 
-        return <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="flex-grow justify-between">
+        return <ScrollView contentContainerClassName="flex-grow justify-between">
             <View className="flex-col gap-4">
                 <FormInput
                     label="Title"
