@@ -12,6 +12,8 @@ import "tailwind-theme/theme.css";
 import { Providers } from "app/components/providers";
 import * as navigationBar from "expo-navigation-bar"
 
+SplashScreen.preventAutoHideAsync();
+
 export default function RootLayoutNav() {
     const { colorScheme, setColorScheme, colors } = useColorScheme();
     const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
@@ -74,13 +76,13 @@ export default function RootLayoutNav() {
 
     React.useEffect(() => {
         const initialize = async () => {
-            await initializeDirectus();
-            await initializeApp();
+            await initializeDirectus().then(() => console.log("directus initialized"));
+            await initializeApp().then(() => console.log("app initialized"));
             navigationBar.setBackgroundColorAsync(colors.card);
-            setTimeout(() => SplashScreen.hideAsync(), 3000);
+            SplashScreen.hideAsync();
         };
         initialize();
-    }, [initializeDirectus, initializeApp]);
+    }, []);
 
     if (!isColorSchemeLoaded || !ready.directus) {
         return null;

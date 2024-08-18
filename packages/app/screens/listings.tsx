@@ -286,6 +286,9 @@ const RangeFilter = ({ value, setValue, range, label }: { value: [number, number
     const localizedMin = useLocaleString(min)
     const localizedMax = useLocaleString(max)
 
+    if (label === "Cost") {
+        console.log(value, localizedMin, localizedMax)
+    }
 
     return <View className="flex-col gap-2 w-full h-full justify-center">
         <View className='flex-row gap-2 items-center justify-between'>

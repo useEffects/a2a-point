@@ -14,15 +14,16 @@ import { useColorScheme } from "app/hooks/color-scheme";
 import { useRouter } from "app/hooks/router";
 import { buildAssetUrl, getDMRoomId, timeAgo } from "app/lib/helpers";
 import { renderCardsQuery } from "app/lib/misc/queries";
-import { Room, User } from "app/lib/types";
+import { Message, Room, User } from "app/lib/types";
 import directusStore from "app/store/directus";
 import userStore from "app/store/user";
 import { uniqBy } from "lodash";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Image, View } from "react-native";
 import { NavigationState, Route, SceneMap, TabView } from "react-native-tab-view";
 import { useDebounce } from "use-debounce";
 import LockedScreen from "./locked-screens";
+import { ChatMessage, withId, withUri } from "app/components/chat-ui";
 
 export const ChatLocked = () => {
     const { isDarkColorScheme } = useColorScheme()
@@ -47,20 +48,6 @@ function ChatScreenComponent() {
     const [debouncedSearchText] = useDebounce(searchText, 500)
     const { roomsSubscribed, messages } = useChats()
     const { user } = userStore()
-
-    const filteredRoomsSubscribed = useMemo(() => {
-        return roomsSubscribed.sort((a, b) => {
-            const lastMessageDateCreated = (room: RoomSubscribed) => messages
-                .filter((message) => message.room === room.id)
-                .sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime())[0]?.date_created
-            const aDate = lastMessageDateCreated(a)
-            const bDate = lastMessageDateCreated(b)
-            if (!aDate || !bDate) return 0
-            else {
-                return new Date(bDate).getTime() - new Date(aDate).getTime()
-            }
-        })
-    }, [roomsSubscribed, messages])
 
     const { data: contacts } = useQuery({
         queryKey: ["Fetch Contacts", debouncedSearchText],
@@ -119,11 +106,11 @@ function ChatScreenComponent() {
                 />
             </View> : <></>}
         </View> :
-            <ChatsTabView data={filteredRoomsSubscribed} />}
+            <ChatsTabView roomsSubscribed={roomsSubscribed} messages={messages} />}
     </View>
 }
 
-const ChatsTabView = ({ data }: { data: RoomSubscribed[] }) => {
+const ChatsTabView = ({ roomsSubscribed, messages }: { roomsSubscribed: RoomSubscribed[], messages: ChatMessage<withId | withUri>[] }) => {
     const routes = [
         { key: "all", title: "All" },
         { key: "dm", title: "DM" },
@@ -133,8 +120,14 @@ const ChatsTabView = ({ data }: { data: RoomSubscribed[] }) => {
         index: 0,
         routes: routes
     })
-    const dms = useMemo(() => data.filter((room) => room.type === "dm"), [data])
-    const groups = useMemo(() => data.filter((room) => room.type === "group"), [data])
+
+    const sortedRoomsSubscribed = useMemo(() => {
+        const sortFunction = sortChatRooms(messages)
+        return roomsSubscribed.sort(sortFunction)
+    }, [roomsSubscribed, messages])
+
+    const dms = useMemo(() => sortedRoomsSubscribed.filter((room) => room.type === "dm"), [sortedRoomsSubscribed])
+    const groups = useMemo(() => sortedRoomsSubscribed.filter((room) => room.type === "group"), [sortedRoomsSubscribed])
 
     return <TabView
         navigationState={navigationState}
@@ -150,7 +143,7 @@ const ChatsTabView = ({ data }: { data: RoomSubscribed[] }) => {
             </Button>)}
         </View>}
         renderScene={SceneMap({
-            all: () => <ChatList data={data} />,
+            all: () => <ChatList data={sortedRoomsSubscribed} />,
             dm: () => <ChatList data={dms} />,
             groups: () => <ChatList data={groups} />
         })}
@@ -228,4 +221,19 @@ const GroupListRow = (group: GroupListRowProp) => {
         <Image className="w-12 h-12 rounded-full" source={{ uri: buildAssetUrl(group.avatar) }} />
         <Text className="!text-base">{group.title}</Text>
     </Button>
+}
+
+const sortChatRooms = (messages: ChatMessage<withId | withUri>[]) => (a: RoomSubscribed, b: RoomSubscribed) => {
+    const lastMessageDateCreated = (room: RoomSubscribed) => messages
+        .filter((message) => message.room === room.id)
+        .sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime())[0]?.date_created
+
+    console.log(lastMessageDateCreated(a), lastMessageDateCreated(b))
+
+    const aDate = lastMessageDateCreated(a)
+    const bDate = lastMessageDateCreated(b)
+    if (!aDate || !bDate) return 0
+    else {
+        return new Date(bDate).getTime() - new Date(aDate).getTime()
+    }
 }

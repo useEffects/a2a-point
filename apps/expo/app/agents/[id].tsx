@@ -1,11 +1,27 @@
-import { useMediumUsersQuery } from "app/components/cards/utils/users"
-import { UsersListComponent } from "app/screens/users-list"
-import PadBottom from "../../components/pad-bottom"
+import { useParams } from "solito/navigation"
+import { useQuery } from "@tanstack/react-query"
+import directusStore from "app/store/directus";
+import { directusUrl } from "app/lib/constants";
+import { Company, Document, User } from "app/lib/types";
+import { ProfileScreen } from "app/screens/profile";
 
-export default function AgentDetailedScreen() {
-    const { data } = useMediumUsersQuery()
+export default function ProfileDetailed() {
+    const params = useParams<{ id: string }>()
+    const { token } = directusStore()
 
-    return <PadBottom>
-        <UsersListComponent data={data} />
-    </PadBottom>
+    const fields = ["*", "company.*", "document.*"].join(",")
+    const { data } = useQuery({
+        queryKey: ["Fetch Profile Data", params.id],
+        queryFn: async () => await fetch(`${directusUrl}/users/${params.id}/?fields=${fields}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).then(res => res.json()).then(res => res.data) as Promise<User & {
+            company: Company | null,
+            document: Document | null
+        }>,
+        enabled: !!params.id,
+    })
+
+    return data ? <ProfileScreen user={data} /> : <></>
 }
