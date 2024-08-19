@@ -18,7 +18,7 @@ import { useColorScheme } from "app/hooks/color-scheme";
 import { useLocaleString } from 'app/hooks/locale-string';
 import { useRouter } from "app/hooks/router";
 import { memberRole } from 'app/lib/constants';
-import { ListingCardMetrics } from 'app/lib/props';
+import { ListingCardMetrics, mediumListingsFields } from 'app/lib/props';
 import { cn } from "app/lib/utils";
 import directusStore from "app/store/directus";
 import opacity from 'hex-color-opacity';
@@ -148,7 +148,8 @@ export default function ListingsScreenComponent({ className, data }: { className
             queryKey={["Listings page medium cards with ads", data.length, filters, debouncedSearchText]}
             queryFnArgs={{
                 filter: filters.length ? commonFilters[CommonFilters.Custom](finalFilters) : undefined,
-                search: debouncedSearchText
+                search: debouncedSearchText,
+                fields: mediumListingsFields
             }}
             flatListProps={{
                 ItemSeparatorComponent: () => <Separator />,

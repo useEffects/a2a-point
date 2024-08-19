@@ -129,12 +129,12 @@ const FooterDropDownMenu = (props: { open: boolean, setOpen: Dispatch<SetStateAc
             </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent side="top">
-            <DropdownMenuItem onPress={() => handleAssetUpload("image")}>
+            {Platform.OS !== "ios" && <DropdownMenuItem onPress={() => handleAssetUpload("image")}>
                 <View className="flex-row gap-2 items-center">
                     <ImageIcon size={16} className="!text-primary" />
                     <Text className="!text-sm">Upload Image</Text>
                 </View>
-            </DropdownMenuItem>
+            </DropdownMenuItem>}
             <DropdownMenuItem onPress={() => handleAssetUpload("document")}>
                 <View className="flex-row gap-2 items-center">
                     <FileIcon size={16} className="!text-primary" />

@@ -30,6 +30,8 @@ export const MediumListingCard = (item: MediumListingCardProps & ListingCardMetr
     const localizedCost = useLocalizedCost(item.deal_type, item.budget, item.price)
     const router = useRouter()
 
+    console.log({ item })
+
     return <View className="w-full flex-col gap-2 p-4 my-8">
         <View className="flex flex-wrap gap-4 flex-row items-center justify-between">
             <UserChip user={item.user_created} />
@@ -41,7 +43,7 @@ export const MediumListingCard = (item: MediumListingCardProps & ListingCardMetr
             <Text className="!text-lg text-primary">{item.title}</Text>
             <View className="flex-row justify-between w-full">
                 <LocationChip {...item.location} />
-                {user.id === item.user_created.id && <View className="flex-row gap-4">
+                {user.id === item.user_created.id && authenticated && <View className="flex-row gap-4">
                     <Button variant={"base"} size={"none"}>
                         <Edit size={18} className="text-info" />
                     </Button>
