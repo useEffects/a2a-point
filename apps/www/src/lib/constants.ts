@@ -6,7 +6,8 @@ export const canUpdateToken = process.env.NODE_ENV === "production" ? process.en
 export const canUpdateDirectus = createDirectus(directusUrl).with(rest()).with(staticToken(canUpdateToken))
 export const twilioVerifySID = process.env.TWILIO_VERIFY_SID
 
-export const videoUrl = 'https://a2apoint-misc.nyc3.digitaloceanspaces.com/app/Finalized_Out.mp4'
+export const videoDemoUrl = 'https://a2apoint-misc.nyc3.digitaloceanspaces.com/app/Finalized_Out.mp4'
 
 export const playStoreLink = "https://play.google.com/store/apps/details?id=com.a2apoint.community"
 export const appStoreLink = ""
+export const appVideoLink = ""

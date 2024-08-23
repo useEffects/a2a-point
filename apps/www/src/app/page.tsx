@@ -1,22 +1,21 @@
 /** @jsxImportSource react */
 
-import { ListingsSearch, Phones, Testimonial, TestimonialCarousel } from "@/components/client-components/home"
+import HeroGirl from "@/assets/hero-girl.png"
+import { Phones, Testimonial, TestimonialCarousel } from "@/components/client-components/home"
+import { CompanyStats } from "@/components/company-stats"
+import { HalfWidthDiv } from "@/components/half-width-div"
+import HeroImage from "@/components/hero-image"
+import { AppStoreButton, GooglePlayButton } from "@/components/misc-buttons"
+import { NewsLetter } from "@/components/news-letter"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Button } from "@/components/ui/button"
+import { Text } from "@/components/ui/text"
+import { videoDemoUrl } from "@/lib/constants"
 import { readItems } from "@directus/sdk"
+import { getCompaniesCount, getListingsCount, getLocationsCount, getUsersCount } from "app/lib/misc/queries"
 import directusStore from "app/store/directus"
 import { queryClient } from "app/store/query"
-import { HalfWidthDiv } from "@/components/half-width-div"
-import { Text } from "@/components/ui/text"
-import { Button } from "@/components/ui/button"
-import { AppStoreButton, GooglePlayButton } from "@/components/misc-buttons"
-import HeroImage from "@/components/hero-image"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { NewsLetter } from "@/components/news-letter"
-import phones from "@/assets/phones.png";
-import HeroGirl from "@/assets/hero-girl.png";
-import { getCompaniesCount, getListingsCount, getLocationsCount, getUsersCount } from "app/lib/misc/queries"
-import { CompanyStats } from "@/components/company-stats"
 import Link from "next/link"
-import { videoUrl } from "@/lib/constants"
 
 export default async function HomePage() {
     const { rest } = directusStore.getState()
@@ -116,7 +115,7 @@ export default async function HomePage() {
                 }
                 child2={
                     <div className="md:h-[calc((50vw*9/16)+250px)]">
-                        <video controls className="w-full" src={videoUrl} />
+                        <video controls className="w-full" src={videoDemoUrl} />
                         <div className="hidden md:block absolute left-0 right-0">
                             <div className="absolute h-[250px] left-0 right-auto w-1/2 bg-card"></div>
                             <div className="container">
