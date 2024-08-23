@@ -32,9 +32,8 @@ export default function AccountConsoleLayout() {
                     paddingTop: 12,
                     display: "flex",
                     flexDirection: "column",
-                    justifyContent: "center",
+                    justifyContent: "space-evenly",
                     alignItems: "center",
-                    gap: 4
                 },
             }}
             initialRouteName="phone"

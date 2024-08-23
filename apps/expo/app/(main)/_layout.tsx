@@ -1,14 +1,13 @@
-import { Dimensions, View } from "react-native";
+import { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
 import { Construction, Home, Lock, MessageCircleMore, TrendingUp, User } from "app/components/icons";
-import { LucideIcon } from "lucide-react-native";
 import { Text } from "app/components/ui/text";
 import { useColorScheme } from "app/hooks/color-scheme";
-import opacity from "hex-color-opacity";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import directusStore from "app/store/directus";
-import { useKeyboard } from "../../hooks/keyboard";
 import { Tabs } from 'expo-router';
-import { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs"
+import { LucideIcon } from "lucide-react-native";
+import { Dimensions, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useKeyboard } from "../../hooks/keyboard";
 
 export default function MainLayout() {
     const { width } = Dimensions.get("window");
@@ -33,9 +32,8 @@ export default function MainLayout() {
                     paddingTop: 12,
                     display: "flex",
                     flexDirection: "column",
-                    justifyContent: "center",
+                    justifyContent: "space-evenly",
                     alignItems: "center",
-                    gap: 4
                 },
             }}
             initialRouteName="(home)"

@@ -7,3 +7,6 @@ export const canUpdateDirectus = createDirectus(directusUrl).with(rest()).with(s
 export const twilioVerifySID = process.env.TWILIO_VERIFY_SID
 
 export const videoUrl = 'https://a2apoint-misc.nyc3.digitaloceanspaces.com/app/Finalized_Out.mp4'
+
+export const playStoreLink = "https://play.google.com/store/apps/details?id=com.a2apoint.community"
+export const appStoreLink = ""
