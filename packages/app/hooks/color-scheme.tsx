@@ -25,7 +25,7 @@ export function useColorScheme(): ColorSchemeContextType {
       return {
         colorScheme: themeMode === "light" ? "light" : "dark",
         isDarkColorScheme: themeMode === "dark",
-        setColorScheme: (themeMode: "light" | "dark") => webColorScheme.setTheme(themeMode),
+        setColorScheme: (themeMode: "light" | "dark") => webColorScheme,
         toggleColorScheme: () => webColorScheme.setTheme(themeMode === "light" ? "dark" : "light"),
         colors: themeMode === "light" ? theme.light : theme.dark,
         palette: theme

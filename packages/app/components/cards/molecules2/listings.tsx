@@ -35,8 +35,6 @@ export const mediumCardListingsWithAds: queryFnType<(MediumListingCardProps & Li
         offset: adsOffset,
     }).then(res => res.map(r => ({ ...r, [IS_AD_TYPE]: true })))
 
-    console.log(listings.length, ads.length, currentPage)
-
     return mergeArraysRandomly(listings, ads)
 }
 

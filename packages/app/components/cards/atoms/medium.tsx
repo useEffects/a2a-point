@@ -19,7 +19,7 @@ export type MediumListingCardProps = Pick<Listing, "id" | "title" | "budget" | "
 export const LockedChatButton = () => {
     const { colors } = useColorScheme()
     return <Button variant={"base"} size={"none"} className="flex-row gap-1 items-center bg-muted border border-muted-foreground py-[2px] px-1 rounded">
-        <Text className="text-muted-foreground text-sm">chat</Text>
+        <Text style={{ color: colors["muted-foreground"] }} className="text-muted-foreground text-sm">chat</Text>
         <Lock size={14} color={colors["muted-foreground"]} />
     </Button>
 }
@@ -29,8 +29,6 @@ export const MediumListingCard = (item: MediumListingCardProps & ListingCardMetr
     const { authenticated } = directusStore()
     const localizedCost = useLocalizedCost(item.deal_type, item.budget, item.price)
     const router = useRouter()
-
-    console.log({ item })
 
     return <View className="w-full flex-col gap-2 p-4 my-8">
         <View className="flex flex-wrap gap-4 flex-row items-center justify-between">

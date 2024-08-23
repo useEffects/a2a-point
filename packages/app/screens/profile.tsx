@@ -391,7 +391,7 @@ const ProfileDropdown = () => {
         <DropdownMenuContent sideOffset={Platform.OS !== "web" ? -40 : undefined}>
             <DropdownMenuItem onPress={logout}>
                 <View className="flex-row items-center gap-2">
-                    <LogOut size={18} className="text-foreground" />
+                    <LogOut size={18} className="text-popover-foreground" />
                     <Text>Logout</Text>
                 </View>
             </DropdownMenuItem>
@@ -400,7 +400,7 @@ const ProfileDropdown = () => {
                 router.push("/agents/me/notifications")
             }}>
                 <View className="flex-row items-center gap-2">
-                    <Bell size={18} className="text-foreground" />
+                    <Bell size={18} className="text-popover-foreground" />
                     <Text>Notifications</Text>
                 </View>
             </DropdownMenuItem>
@@ -409,7 +409,7 @@ const ProfileDropdown = () => {
                 router.push("/account-console")
             }}>
                 <View className="flex-row items-center gap-2">
-                    <UserCog2 size={18} className="text-foreground" />
+                    <UserCog2 size={18} className="text-popover-foreground" />
                     <Text>Account console</Text>
                 </View>
             </DropdownMenuItem>

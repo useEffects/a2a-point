@@ -1,4 +1,4 @@
-import LoginDarkImg from "app/assets/login/dark/dark_gvmzxu_c_scale,w_984.jpg";
+import LoginDarkImg from "app/assets/login/dark/Frame_135_2_hzjyas_c_scale,w_1085.jpg";
 import LoginLightImg from "app/assets/login/light/light_c9pqo8_c_scale,w_1029.jpg";
 import { Header } from "app/components/header";
 import Logo from "app/components/svg/logo";

@@ -8,7 +8,8 @@ export default {
   content: [
     './app/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
-    "../../packages/app/**/*.{ts,tsx}",
+    "../../packages/app/components/**/*.{ts,tsx}",
+    "../../packages/app/screens/**/*.{ts,tsx}",
     "./screens/**/*.{ts,tsx}",
   ],
   presets: [require('nativewind/preset')],

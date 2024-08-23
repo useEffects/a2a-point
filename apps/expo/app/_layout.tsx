@@ -16,7 +16,6 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayoutNav() {
     const { colorScheme, setColorScheme, colors } = useColorScheme();
-    const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
     const { initialize } = directusStore();
     const [ready, setReady] = React.useState({
         directus: false,
@@ -64,10 +63,10 @@ export default function RootLayoutNav() {
         const theme = await AsyncStorage.getItem("theme");
         if (!theme) {
             await AsyncStorage.setItem("theme", colorScheme);
+            setColorScheme(colorScheme)
         } else {
             setColorScheme(theme === "dark" ? "dark" : "light");
         }
-        setIsColorSchemeLoaded(true);
         if (Platform.OS === "web") {
             document.documentElement.classList.add("bg-background");
         }
@@ -84,9 +83,10 @@ export default function RootLayoutNav() {
         initialize();
     }, []);
 
-    if (!isColorSchemeLoaded || !ready.directus) {
+    if (!ready.colorScheme || !ready.directus) {
         return null;
     }
+
 
     return (
         <ThemeProvider value={theme}>

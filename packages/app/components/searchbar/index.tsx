@@ -1,5 +1,4 @@
-import { SearchBarProps } from "@rneui/base";
-import { SearchBar as RNESearchBar } from "@rneui/themed";
+import { SearchBar as RNESearchBar, SearchBarProps } from "@rneui/themed";
 import { useColorScheme } from "app/hooks/color-scheme";
 import { Dispatch, SetStateAction } from "react";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
@@ -33,8 +32,6 @@ export default function SearchBar({ searchText, setSearchText, searchBarProps }:
         color: colors.foreground,
         fontSize: 16,
         borderWidth: 0,
-        //@ts-ignore
-        outlineStyle: "none"
     }
     const CancelIcon = () => {
         return searchText ? <Button variant={"base"} size={"none"} style={{ backgroundColor: opacity(colors.foreground, 0.1) }} className="p-1 rounded-full" onPress={() => setSearchText("")}>
@@ -45,12 +42,10 @@ export default function SearchBar({ searchText, setSearchText, searchBarProps }:
         return <Search size={18} color={colors.primary} />
     }
 
-
     return <RNESearchBar
         value={searchText}
         placeholder="Search ..."
         onChangeText={setSearchText}
-        {...searchBarProps}
         searchIcon={<SearchIcon />}
         clearIcon={<CancelIcon />}
         selectionColor={colors.primary}

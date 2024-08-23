@@ -18,14 +18,15 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.a2apoint.community",
-      "buildNumber": "1.3"
+      "buildNumber": "1.6"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.a2apoint.community"
+      "package": "com.a2apoint.community",
+      "versionCode": 4
     },
     "androidStatusBar": {
       "translucent": true

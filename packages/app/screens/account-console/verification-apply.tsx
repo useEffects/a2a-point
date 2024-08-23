@@ -92,9 +92,9 @@ export const VerificationApplyScreenComponent = () => {
                     </CardContent>
                     <CardFooter>
                         <View className="flex-col gap-4 w-full">
-                            <Text>You can still try with another attempt</Text>
+                            <Text className="text-card-foreground">You can still try with another attempt</Text>
                             <Button onPress={() => setAttemptAgain(true)} className="self-start ml-auto mr-0" size={"sm"} variant={"ghost"}>
-                                <Text>Attempt again</Text>
+                                <Text className="text-card-foreground">Attempt again</Text>
                             </Button>
                         </View>
                     </CardFooter>

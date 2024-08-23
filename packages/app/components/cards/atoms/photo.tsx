@@ -19,10 +19,10 @@ export const PhotoListingCard = (item: PhotoListingProps) => {
 
     return <Pressable onPress={() => router.push(`/listings/${item.id}`)} className="rounded-xl bg-card text-wrap">
         <Image source={{ uri: buildAssetUrl(photo) }} width={imageWidth} height={imageHeight} className="rounded-tl-xl rounded-tr-xl" />
-        <View className="bg-card flex-col gap-2 px-2 py-4 items-start w-full" style={{ width: imageWidth }}>
+        <View className="flex-col gap-2 px-2 py-4 items-start w-full flex-grow" style={{ width: imageWidth }}>
             <UserChip user={item.user_created} />
             <Text className="text-wrap">{item.title}</Text>
-            <View className="flex-row gap-4 justify-between w-full">
+            <View className="flex-row gap-4 justify-between w-full mt-auto mb-0">
                 <Text className="text-success">AED {localizedCost}</Text>
                 <Text className="capitalize text-info">{item.deal_type}</Text>
             </View>
