@@ -5,9 +5,10 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
+    console.log(cookies().getAll())
     const token = cookies().get("directus_session_token")?.value
-    cookies().delete("directus_session_token")
     const appUrl = req.nextUrl.searchParams.get("appUrl")
+    console.log(token)
     if (token) {
         const decoded = jwtDecode<JWTTokenPayload>(token)
         const { session } = decoded
@@ -48,6 +49,7 @@ export async function GET(req: NextRequest) {
             }
         })
     }
+    else return new NextResponse("Bad request", { status: 400 })
 }
 
 type JWTTokenPayload = {

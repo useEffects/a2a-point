@@ -28,12 +28,13 @@ services:
         PUBLIC_URL: https://dashboard.a2apoint.com
         ADMIN_EMAIL: admin@a2apoint.com
         ADMIN_PASSWORD: admin
-        SECRET: dg0EJXNmJAFr3D2AFb8uu6ejtQv5o3OD
         DB_HOST: ${DB_HOST}
         DB_PORT: ${DB_PORT}
         DB_USER: ${DB_USERNAME}
         DB_PASSWORD: ${DB_PASSWORD}
         DB_DATABASE: ${DB_DIRECTUS_DATABASE}
+        KEY: ${DIRECTUS_KEY}
+        SECRET: ${DIRECTUS_SECRET}
         CLIENT_ID: ${KC_DIRECTUS_CLIENT_ID}
         CLIENT_SECRET: ${KC_DIRECTUS_CLIENT_SECRET}
     ports:
