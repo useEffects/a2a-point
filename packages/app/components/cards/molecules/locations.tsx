@@ -158,9 +158,9 @@ export const MembersList = ({ members, total, locationId }: {
 
     return Number(total) ? <View className="flex-row relative self-start">
         {faces.map((face, i) => <Image key={i} className="w-12 h-12 -mr-4 rounded-full border-background  border-1 border" source={{ uri: face.imageUrl }} />)}
-        <Pressable className="absolute -right-4 w-12 h-12 flex-col rounded-full justify-center items-center" onPress={() => router.push(`/locations/${locationId}/members`)} style={{ backgroundColor: opacity(colors.info, 0.75), zIndex: 10, elevation: 10 }}>
+        <Pressable className="absolute -right-4 w-12 h-12 flex-col rounded-full justify-center items-center" style={{ backgroundColor: opacity(colors.info, 0.75), zIndex: 10, elevation: 10 }}>
             <Text className="text-info-foreground text-xs">{total}+</Text>
-            <ArrowUpRight className="text-info-foreground" size={12} />
+            {/* <ArrowUpRight className="text-info-foreground" size={12} /> */}
         </Pressable>
     </View> : <Text className="text-warning">No members yet</Text>
 }

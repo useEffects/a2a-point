@@ -293,6 +293,7 @@ const ListingTab = ({ user, big, setBig }: { user: User, big: boolean, setBig: D
                 [FilterKeys.Agent]: user.id
             }]}
             initialData={[]}
+            
         /> :
             <RenderListings<ExtraSmallListingCardProps>
                 render={bodies.extraSmall}

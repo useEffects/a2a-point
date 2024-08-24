@@ -91,7 +91,7 @@ export default function ListingsScreenComponent({ className, data }: { className
         try {
             parsedFilters = JSON.parse(filtersFromParams ?? [].toString())
         } catch (error) {
-
+            console.log(error)
         }
         if (isArray(parsedFilters)) {
             Promise.all(parsedFilters.map(filter => {

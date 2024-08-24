@@ -52,7 +52,6 @@ export default function RootLayoutNav() {
                     tokens.refreshToken = newTokens.refreshToken;
                 }
             }
-            console.log("rendering!");
             await initialize(tokens.accessToken, tokens.refreshToken);
         }
         setReady(p => ({ ...p, directus: true }));

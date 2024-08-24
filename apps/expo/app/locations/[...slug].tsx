@@ -8,12 +8,19 @@ import { LocationDetailed as LocationDetailedComponent, LocationDetailedProps } 
 import directusStore from "app/store/directus";
 import { useParams } from "solito/navigation";
 import PadBottom from "../../components/pad-bottom";
+import { View } from "react-native";
 
-export default function LocationDetailed() {
-    const params = useParams<{ id?: string }>()
-    const { id } = params
+export default function LocationSlug() {
+    const params = useParams<{ slug?: string[] }>()
+    const { slug } = params
+    const [id, ...rest] = slug!
+
+    return rest.join("") === "members" ? <MembersScreen id={id!} /> : <LocationDetailedScreen id={id!} />
+}
+
+const LocationDetailedScreen = ({ id }: { id: string }) => {
+
     const { rest } = directusStore()
-
     const { data: room } = useQuery({
         queryKey: ["LocationDetailed", id],
         queryFn: async () => await rest.request(readItem("rooms", id!, {
@@ -59,4 +66,10 @@ export default function LocationDetailed() {
                 listings={listings}
             />
         </PadBottom> : <></>
+}
+
+const MembersScreen = ({ id }: { id: string }) => {
+    return <View>
+
+    </View>
 }

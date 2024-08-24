@@ -242,13 +242,13 @@ export const RenderListings = <R extends ListCardProps>({
             }
             return Number(lastPageParam) + 1
         },
-        enabled: infinite
+        enabled: true
     })
 
     const items = data?.pages.map(page => page.items).flat() ?? []
 
     const finalData = useMemo(() => {
-        return infinite ? items : initialData
+        return uniqBy([...items, ...initialData], "id")
     }, [infinite, items, initialData])
 
     const onEndReached = () => {
@@ -267,8 +267,8 @@ export const RenderListings = <R extends ListCardProps>({
         keyExtractor={(item) => item.id}
         onEndReached={() => infinite && Platform.OS !== "web" && onEndReached()}
         ListFooterComponent={
-            infinite ? () => <BottomLoader endReached={!hasNextPage } onEndReached={() => Platform.OS === "web" && onEndReached()} /> :
-                <ViewAllButton horizontal={!!flatListProps?.horizontal} button={(props) => <Button onPress={() => router.push(`/listings?filters=${paramFilters}`)} {...props} />} />}
+            infinite ? () => <BottomLoader endReached={!hasNextPage} onEndReached={() => Platform.OS === "web" && onEndReached()} /> :
+                <ViewAllButton horizontal={!!flatListProps?.horizontal} button={(props) => <Button onPress={() => router.push(`/listings?filters=${JSON.stringify(paramFilters)}`)} {...props} />} />}
     />
 }
 
