@@ -9,5 +9,4 @@ export const twilioVerifySID = process.env.TWILIO_VERIFY_SID
 export const videoDemoUrl = 'https://a2apoint-misc.nyc3.digitaloceanspaces.com/app/Finalized_Out.mp4'
 
 export const playStoreLink = "https://play.google.com/store/apps/details?id=com.a2apoint.community"
-export const appStoreLink = ""
-export const appVideoLink = ""
+export const appStoreLink = "https://apps.apple.com/ae/app/a2a-point/id6563145211"
