@@ -18,7 +18,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.a2apoint.community",
-      "buildNumber": "1.7"
+      "buildNumber": "1.8"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,7 +26,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.a2apoint.community",
-      "versionCode": 5
+      "versionCode": 6
     },
     "androidStatusBar": {
       "translucent": true
