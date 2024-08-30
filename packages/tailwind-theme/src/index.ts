@@ -4,6 +4,7 @@ import { writeFileSync } from 'fs';
 import convert from "color-convert"
 
 export * from "./colors"
+export * from "./tailwind-config-colors"
 
 export function generateThemeCSS(): Plugin {
     return {
@@ -26,9 +27,9 @@ export function generateThemeCSS(): Plugin {
             const cssContent = `/*Auto Generated*/\n\n@tailwind base;@tailwind components;\n\n@tailwind utilities;\n\n@layer base {\n\t${lightThemeCSS}\n\t${darkThemeCSS}\n}`;
 
             // Write the generated CSS to a file
-            writeFileSync(`${process.cwd()}/theme.css`, cssContent);
+            // writeFileSync(`${process.cwd()}/theme.css`, cssContent);
 
-            console.log('Global CSS file generated successfully.');
+            // console.log('Global CSS file generated successfully.');
         },
     };
 }
