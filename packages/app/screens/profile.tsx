@@ -72,6 +72,8 @@ export function Profile({ user, company, document }: { user: User, company?: Com
     const { authenticated } = directusStore()
     const router = useRouter()
 
+    console.log(collapsed)
+
     useEffect(() => {
         getListingsCountForUser(user.id).then(setListingsCount)
     }, [user.id])

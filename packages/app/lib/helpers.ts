@@ -11,6 +11,7 @@ import { Alert, Linking, Platform } from "react-native";
 import { ProductType, appName, directusUrl, products } from "./constants";
 import { Document } from "./types";
 import { savesCountKey } from "./misc/queries";
+import { filesize } from "filesize";
 
 TimeAgo.addLocale(en)
 
@@ -205,7 +206,12 @@ export const checkCollectionId = async (id: string, collection: string): Promise
   }
 }
 
-const pickDocumentsHelper = (assets: DocumentPicker.DocumentPickerAsset[] | ImagePicker.ImagePickerAsset[]) => {
+const pickDocumentsHelper = (assets: DocumentPicker.DocumentPickerAsset[] | ImagePicker.ImagePickerAsset[], options = {
+  maxSize: 1 * 1024 * 1024
+}) => {
+  const { maxSize } = options
+
+
   return assets.map(asset => {
     function isDocument(asset: DocumentPicker.DocumentPickerAsset | ImagePicker.ImagePickerAsset): asset is DocumentPicker.DocumentPickerAsset {
       return (asset as DocumentPicker.DocumentPickerAsset).name !== undefined
@@ -225,8 +231,8 @@ const pickDocumentsHelper = (assets: DocumentPicker.DocumentPickerAsset[] | Imag
     }
   }).filter(async asset => {
     const fileInfo = await FileSystem.getInfoAsync(asset.uri, { size: true }) as FileSystem.FileInfo & { size: number }
-    if (fileInfo.size > 1 * 1024 * 1024) {
-      alert(`File size exceeds 1MB limit for ${asset.name} (${fileInfo.size / 1000 / 1000}MB)`)
+    if (fileInfo.size > maxSize) {
+      alert(`File size exceeds ${filesize(maxSize)} limit for ${asset.name} (${filesize(fileInfo.size)})`)
       return false
     }
     return true
