@@ -41,8 +41,8 @@ const footerItems = [
                 href: "/about"
             },
             {
-                label: "Contact Us",
-                href: "/contact"
+                label: "Product presentation",
+                href: "/ppt"
             },
             {
                 label: "Why A2A Point",

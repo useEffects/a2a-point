@@ -10,3 +10,4 @@ export const videoDemoUrl = 'https://a2apoint-misc.nyc3.digitaloceanspaces.com/a
 
 export const playStoreLink = "https://play.google.com/store/apps/details?id=com.a2apoint.community"
 export const appStoreLink = "https://apps.apple.com/ae/app/a2a-point/id6563145211"
+export const pptLink = "https://a2apoint-misc.nyc3.digitaloceanspaces.com/app/A2A%20Point.pptx"
