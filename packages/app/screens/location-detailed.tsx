@@ -43,7 +43,7 @@ export function LocationDetailed(props: LocationDetailedProps) {
         <Header>
             <Text className="text-xl font-bold">{room.title}</Text>
         </Header>
-        <ScrollView contentContainerClassName="flex-grow max-w-xl p-4">
+        <ScrollView contentContainerClassName="flex-grow max-w-xl py-4">
             <FullWidthImage source={{ uri: buildAssetUrl(room.avatar) }} />
             <View className="flex-1 p-4 flex-col gap-4">
                 <View className="flex-row items-center justify-between pr-4">

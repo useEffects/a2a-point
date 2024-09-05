@@ -1,0 +1,18 @@
+{
+  "name": "pg-boss",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@maizzle/framework": "^4.8.9",
+    "mustache": "^4.2.0",
+    "lodash": "4.17.21",
+    "email-templates": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "@types/node": "22.5.0",
+    "@types/mustache": "4.2.5",
+    "@types/lodash": "4.17.7"
+  }
+}

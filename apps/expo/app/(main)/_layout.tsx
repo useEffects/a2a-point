@@ -82,7 +82,7 @@ const getTabItemsOptions = (label: string, Icon: LucideIcon): BottomTabNavigatio
             const navigable = authenticated || navigableTabs.includes(label)
             const activeColor = focused ? (navigable ? colors.primary : colors.subtext) : colors["card-foreground"]
 
-            return <Text style={{ color: activeColor }}>
+            return <Text style={{ color: activeColor, fontSize: 12 }}>
                 {label}
             </Text>
         }

@@ -15,3 +15,5 @@
 
 /* Your custom utility classes */
 @import "utilities";
+
+@import "../../../../packages/tailwind-theme/theme.css"
