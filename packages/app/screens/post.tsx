@@ -22,7 +22,6 @@ import directusStore from "app/store/directus";
 import userStore from "app/store/user";
 import commaNumber from "comma-number";
 import { Formik, FormikProps } from "formik";
-import { Plus } from "lucide-react-native";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Platform, View } from "react-native";
 import { NavigationState, Route, SceneMap, TabView } from "react-native-tab-view";
@@ -31,6 +30,7 @@ import { useRouter } from "app/hooks/router";
 import * as Yup from "yup";
 import LockedScreen from "./locked-screens";
 import PostImg from "app/assets/locked-screens/post.jpg";
+import { CircleAlert, Plus } from "app/components/icons";
 
 function Form1({ formValues, setFormValues, setNavigationState }: { formValues: Form1Values, setFormValues: Dispatch<SetStateAction<Form1Values>>, setNavigationState: Dispatch<SetStateAction<NavigationState<Route>>> }) {
     const Form1Schema = Yup.object().shape({
@@ -414,6 +414,10 @@ function Form4({ formValues, setFormValues, handleSubmit, loading }: { formValue
                     <Switch renderActiveText={false} renderInActiveText={false} value={props.values.featured} onValueChange={val => props.setFieldValue("featured", val)} />
                 </View> : <></>}
             </View>
+            <View className="mt-1/2 mb-4 flex-col items-center gap-4 flex-1 justify-center">
+                <CircleAlert className="text-warning" size={32} />
+                <Text className="text-center text-warning">The listings you create will be added to a verification queue, where our staff will review and approve them.</Text>
+            </View>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                     <Button disabled={loading}>
@@ -553,9 +557,16 @@ function PostScreenComponent() {
 
 export default function PostScreen() {
     const { authenticated } = directusStore();
+    const { user } = userStore()
 
     return <View className="flex-1 flex-grow h-full">
-        {authenticated ? <PostScreenComponent /> : <LockedScreen
+        {authenticated ? user.is_verified ?
+            <PostScreenComponent /> : <LockedScreen
+                image={PostImg}
+                title="Create and manage property listings on A2APoint"
+                description="Verification is required before you can begin posting listings on A2A Point!"
+                headerTitle="Post"
+            /> : <LockedScreen
             image={PostImg}
             title="Create and manage property listings on A2APoint"
             description="Access exclusive features to create, update, and manage your property listings."
