@@ -61,7 +61,7 @@ const getTabItemsOptions = (label: string, Icon: LucideIcon): BottomTabNavigatio
             const { colors } = useColorScheme()
             const activeColor = focused ? colors.primary : colors["card-foreground"]
 
-            return <Text style={{ color: activeColor }}>
+            return <Text style={{ color: activeColor, fontSize: 12 }}>
                 {label}
             </Text>
         }

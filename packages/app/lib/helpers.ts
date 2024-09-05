@@ -242,7 +242,7 @@ const pickDocumentsHelper = (assets: DocumentPicker.DocumentPickerAsset[] | Imag
 export const pickDocuments = async (params: DocumentPicker.DocumentPickerOptions): Promise<Asset<withUri>[]> => {
   const result = await DocumentPicker.getDocumentAsync(params)
   if (!result.canceled) {
-    return pickDocumentsHelper([...result.assets])
+    return pickDocumentsHelper(result.assets)
   } else return []
 }
 
