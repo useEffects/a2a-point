@@ -68,4 +68,10 @@ EXPOSE 8055
 
 # RUN npx --yes directus bootstrap
 # RUN npx --yes directus schema apply --yes ./schema/snapshot.yaml
+
+RUN chmod +x ./scripts/build-extensions.sh
+RUN chmod +x ./scripts/install-in-extensions.sh
+RUN ./scripts/install-in-extensions.sh
+RUN ./scripts/build-extensions.sh
+
 ENTRYPOINT [ "sh", "-c", "npx --yes directus@10.12 start" ]
