@@ -1,11 +1,11 @@
 \newcommand{\MyTextField}[3][1]{%
     \noindent
-    \makebox[1.8cm][l]{\textbf{#2:}}\quad
+    \makebox[1.8cm][l]{\textbf{#2}}\quad
     \TextField[name=#3, width=6cm, multiline=true, height=#1\baselineskip, bordercolor={}, borderwidth=0.5pt]{}%
 }
 
 \newcommand{\MyTextFieldLongerLabel}[3][1]{%
     \noindent
-    \textbf{#2:} \\\\
+    \textbf{#2} \\\\
     \TextField[name=#3, width=8.1cm, multiline=true, height=#1\baselineskip, bordercolor={}, borderwidth=0.5pt]{}%
 }
