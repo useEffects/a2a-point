@@ -85,6 +85,7 @@ const setField = (form: PDFForm, field: string, value: string | null | undefined
     if (!value) return
     const textField = form.getTextField(field)
     textField.setText(value)
+    textField.setFontSize(8)
     textField.enableReadOnly()
 }
 
