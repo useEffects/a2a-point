@@ -82,8 +82,11 @@ export const GET = async (req: Request, { params: { id } }: { params: { id: stri
 }
 
 const setField = (form: PDFForm, field: string, value: string | null | undefined) => {
-    if (!value) return
     const textField = form.getTextField(field)
+    if (value === undefined || value === null) {
+        textField.enableReadOnly()
+        return
+    }
     textField.setText(value)
     textField.setFontSize(8)
     textField.enableReadOnly()

@@ -28,7 +28,7 @@ export const VerificationApplyScreenComponent = () => {
     const [loading, setLoading] = useState(false)
 
     const handleUploadDocument = async () => {
-        const _asset = await pickDocuments({ multiple: false })
+        const _asset = await pickDocuments({ multiple: false }, { maxSize: 5 * 1024 * 1024 })
         setAsset(_asset.length ? _asset[0] : undefined)
     }
 
@@ -44,15 +44,20 @@ export const VerificationApplyScreenComponent = () => {
             ID_proof: fileId || undefined,
         })) as Document
 
-        await fetch(`${directusUrl}/users/${user.id}`, {
+        const res = await fetch(`${directusUrl}/users/${user.id}`, {
             method: "PATCH",
             headers: {
-                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({
-                document: newDocument.id
+                document: Number(newDocument.id),
             })
-        })
+        }).then(res => res.json())
+
+        if (res.data.document !== newDocument.id) {
+            console.log(res.data.document, newDocument.id)
+        }
 
         userStore.setState(p => ({ ...p, document: newDocument }))
         setLoading(false)
@@ -64,7 +69,7 @@ export const VerificationApplyScreenComponent = () => {
             <Text className="text-xl font-bold">Verification</Text>
         </Header>
         <View className="flex-grow p-4">
-            {(!attemptAgain && document) ?
+            {(!attemptAgain && Object.keys(document).length) ?
                 <Card className="mt-auto mb-0">
                     <CardHeader>
                         {!document.verified ? <>
@@ -132,9 +137,11 @@ export const VerificationApplyScreenComponent = () => {
                             <Text>Upload document</Text>
                         </Button>
                     </View>
-                    <Button className="mt-auto mb-0" onPress={handleSendForVerification} disabled={loading}>
+                    {(Boolean(!(brokerId || asset) || loading)) ? <Button className="mt-auto mb-0" disabled>
                         <Text>Send for verification</Text>
-                    </Button>
+                    </Button> : <Button className="mt-auto mb-0" onPress={handleSendForVerification}>
+                        <Text>Send for verification</Text>
+                    </Button>}
                 </View>}
         </View>
     </View>

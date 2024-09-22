@@ -206,10 +206,8 @@ export const checkCollectionId = async (id: string, collection: string): Promise
   }
 }
 
-const pickDocumentsHelper = (assets: DocumentPicker.DocumentPickerAsset[] | ImagePicker.ImagePickerAsset[], options = {
-  maxSize: 1 * 1024 * 1024
-}) => {
-  const { maxSize } = options
+const pickDocumentsHelper = (assets: DocumentPicker.DocumentPickerAsset[] | ImagePicker.ImagePickerAsset[], options?: PickDocumentsHelperOptions) => {
+  const { maxSize } = options ?? { maxSize: 1 * 1024 * 1024 }
 
 
   return assets.map(asset => {
@@ -239,17 +237,17 @@ const pickDocumentsHelper = (assets: DocumentPicker.DocumentPickerAsset[] | Imag
   })
 }
 
-export const pickDocuments = async (params: DocumentPicker.DocumentPickerOptions): Promise<Asset<withUri>[]> => {
+export const pickDocuments = async (params: DocumentPicker.DocumentPickerOptions, options?: PickDocumentsHelperOptions): Promise<Asset<withUri>[]> => {
   const result = await DocumentPicker.getDocumentAsync(params)
   if (!result.canceled) {
-    return pickDocumentsHelper(result.assets)
+    return pickDocumentsHelper(result.assets, options)
   } else return []
 }
 
-export const pickImages = async (params: ImagePicker.ImagePickerOptions): Promise<Asset<withUri>[]> => {
+export const pickImages = async (params: ImagePicker.ImagePickerOptions, options?: PickDocumentsHelperOptions): Promise<Asset<withUri>[]> => {
   const result = await ImagePicker.launchImageLibraryAsync(params)
   if (!result.canceled) {
-    return pickDocumentsHelper([...result.assets])
+    return pickDocumentsHelper([...result.assets], options)
   }
   else return []
 }
@@ -291,4 +289,8 @@ export function groupByN<T>(arr: T[], n: number = 2): T[][] {
   }
 
   return grouped;
+}
+
+export type PickDocumentsHelperOptions = {
+  maxSize: number
 }
