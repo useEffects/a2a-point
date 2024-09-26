@@ -399,6 +399,7 @@ function Form4({ formValues, setFormValues, handleSubmit, loading }: { formValue
     }
 
 
+
     const Form = (props: FormikProps<Form4Values>) => {
         return <ScrollView contentContainerClassName="flex-grow">
             <View className="flex-1 flex-col justify-center items-center gap-12">
@@ -475,7 +476,8 @@ function PostScreenComponent() {
             { key: "form4" }
         ]
     })
-    const { rest } = directusStore()
+    const { rest, token } = directusStore()
+    console.log(token)
 
     const handleSubmit = async () => {
         setLoading(true)
@@ -511,6 +513,7 @@ function PostScreenComponent() {
 
             featured: form4Values.featured,
         }
+        console.log(payload)
         const res = await rest.request(createItem("listings", payload))
         console.log(res)
         setLoading(false)
@@ -560,7 +563,7 @@ export default function PostScreen() {
     const { user } = userStore()
 
     return <View className="flex-1 flex-grow h-full">
-        {authenticated ? user.is_verified ?
+        {authenticated ? true ?
             <PostScreenComponent /> : <LockedScreen
                 image={PostImg}
                 title="Create and manage property listings on A2APoint"
