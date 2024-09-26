@@ -21,7 +21,7 @@ type LockedScreenProps = {
 }
 
 export default function LockedScreen(props: LockedScreenProps) {
-    const { width } = Dimensions.get("window")
+    const { width, height } = Dimensions.get("window")
     const { isDarkColorScheme } = useColorScheme()
     const Bottom = props.bottomComponent
     const FinalHeader = props.header
@@ -33,7 +33,7 @@ export default function LockedScreen(props: LockedScreenProps) {
         },
         default: {
             width: width,
-            height: width * (16 / 9)
+            height: height
         }
     })
 
@@ -54,9 +54,9 @@ export default function LockedScreen(props: LockedScreenProps) {
                 <Text className="text-subtext text-center">{props.description}</Text>
             </View>
         </View>
-        {Bottom ? <Bottom /> : <View className="p-4 w-full md:max-w-sm mx-auto native:max-w-none">
-            <GoToLoginComponent />
-        </View>}
+        <View className="p-4 w-full md:max-w-sm mx-auto native:max-w-none">
+            {Bottom ? <Bottom /> : <GoToLoginComponent />}
+        </View>
     </View>
 }
 
@@ -76,5 +76,17 @@ export const GoToLoginComponent = () => {
         <Text className="text-sm text-center text-destructive">Locked screen! Login to unlock</Text>
         <GoToLoginButton />
     </View>
+}
+
+export const GoToAccountConsole = () => {
+    const router = useRouter()
+
+    return <View className="flex-col gap-1 w-full">
+        <Text className="text-sm text-center text-destructive">Locked screen! Verify account to unlock</Text>
+        <Button onPress={() => router.push("/account-console")} variant={"default"} size={"default"} className="flex-row items-center w-full">
+            <Text>Take me to account console</Text>
+            <ArrowUpRight className="text-primary-foreground" />
+        </Button>
+    </View >
 }
 

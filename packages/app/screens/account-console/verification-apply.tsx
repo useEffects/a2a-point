@@ -15,12 +15,13 @@ import { Document } from "app/lib/types"
 import directusStore from "app/store/directus"
 import userStore from "app/store/user"
 import * as Linking from "expo-linking"
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { View } from "react-native"
 
 export const VerificationApplyScreenComponent = () => {
     const { user, document } = userStore()
     const { token, rest } = directusStore()
+    const [key, setKey] = useState(0)
 
     const [asset, setAsset] = useState<Asset<withUri>>()
     const [brokerId, setBrokerId] = useState("")
@@ -63,6 +64,12 @@ export const VerificationApplyScreenComponent = () => {
         setLoading(false)
         setAttemptAgain(false)
     }
+
+    const shouldDisableVerificationButton = useMemo(() => Boolean(!(brokerId || asset) || loading), [brokerId, asset, loading])
+
+    useEffect(() => {
+        setKey(p => p + 1)
+    }, [shouldDisableVerificationButton])
 
     return <View className="flex-1 ">
         <Header>
@@ -137,11 +144,9 @@ export const VerificationApplyScreenComponent = () => {
                             <Text>Upload document</Text>
                         </Button>
                     </View>
-                    {(Boolean(!(brokerId || asset) || loading)) ? <Button className="mt-auto mb-0" disabled>
+                    <Button className="mt-auto mb-0" onPress={handleSendForVerification} disabled={shouldDisableVerificationButton} key={key}>
                         <Text>Send for verification</Text>
-                    </Button> : <Button className="mt-auto mb-0" onPress={handleSendForVerification}>
-                        <Text>Send for verification</Text>
-                    </Button>}
+                    </Button>
                 </View>}
         </View>
     </View>

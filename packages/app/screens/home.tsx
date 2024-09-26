@@ -108,7 +108,7 @@ export default function HomeScreen() {
                 ListHeaderComponent: () => <View className="w-4 h-4" />
             }}
         />
-        <CompanyStats counts={counts} className="justify-start gap-12 px-4" />
+        <CompanyStats counts={counts} className="gap-12 px-4" />
         <SeparatorText hideRight>
             <Button onPress={() => router.push(`/listings?filters=${JSON.stringify([{
                 [FilterKeys.Premium]: CommonFilters.Premium

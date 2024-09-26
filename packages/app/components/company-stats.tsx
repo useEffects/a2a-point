@@ -36,11 +36,11 @@ export const CompanyStats = ({ className, right, counts }: {
         }
     ]
 
-    return <View className={cn("flex-col", className)}>
-        {groupByN(stats).map((group, i) => <View key={i} className="flex-row gap-4">
+    return <View className={cn("flex-col w-full", className)}>
+        {groupByN(stats).map((group, i) => <View key={i} className="flex-row gap-4 w-full">
             {group.map(({ title, count, icon }, j) => {
                 const Icon = icon
-                return <View key={j} className="w-28">
+                return <View key={j} className="flex-grow">
                     <View className={cn("flex-row items-end gap-1", right && "justify-end")}>
                         <Text className="text-6xl font-bold">{count}</Text>
                         <Text className="text-2xl font-bold mb-1">+</Text>

@@ -28,7 +28,7 @@ import { NavigationState, Route, SceneMap, TabView } from "react-native-tab-view
 import { useSearchParams } from "solito/navigation";
 import { useRouter } from "app/hooks/router";
 import * as Yup from "yup";
-import LockedScreen from "./locked-screens";
+import LockedScreen, { GoToAccountConsole } from "./locked-screens";
 import PostImg from "app/assets/locked-screens/post.jpg";
 import { CircleAlert, Plus } from "app/components/icons";
 
@@ -566,6 +566,7 @@ export default function PostScreen() {
                 title="Create and manage property listings on A2APoint"
                 description="Verification is required before you can begin posting listings on A2A Point!"
                 headerTitle="Post"
+                bottomComponent={() => <GoToAccountConsole />}
             /> : <LockedScreen
             image={PostImg}
             title="Create and manage property listings on A2APoint"
