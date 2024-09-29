@@ -108,6 +108,7 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
         const searchParams = useSearchParams()
 
         const type = searchParams?.get("deal_type")
+        console.log(type)
 
         useEffect(() => {
             if (type === "buy" || type === "take on rent" || type === "sale" || type === "give on rent") {
@@ -477,7 +478,6 @@ function PostScreenComponent() {
         ]
     })
     const { rest, token } = directusStore()
-    console.log(token)
 
     const handleSubmit = async () => {
         setLoading(true)
@@ -497,6 +497,7 @@ function PostScreenComponent() {
             expected_broker_fees: form1Values.expectedBrokerFees!,
             size: form1Values.size!,
             location: form1Values.location?.id! as string | undefined,
+            price: form1Values.price!,
             budget: form1Values.budget!,
             description: form1Values.description,
 
