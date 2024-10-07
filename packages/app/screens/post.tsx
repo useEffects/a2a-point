@@ -113,12 +113,12 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
             if (type === "buy" || type === "take on rent" || type === "sale" || type === "give on rent") {
                 props.setFieldValue("deal_type", type)
 
-                if(process.env.NODE_ENV !== "production") {
-                    props.setFieldValue("title", "There is no one who loves pain itself")
-                    props.setFieldValue("description", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries")
-                    props.setFieldValue("size", 10000)
-                    props.setFieldValue("location", {"avatar": "ceaaccac-77c4-4f7b-8015-e25108a750a5", "id": "0292cd59-1157-4e86-adf8-5fe61146fec8", "title": "Saadiyat Island"})
-                }
+                // if(process.env.NODE_ENV !== "production") {
+                //     props.setFieldValue("title", "There is no one who loves pain itself")
+                //     props.setFieldValue("description", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries")
+                //     props.setFieldValue("size", 10000)
+                //     props.setFieldValue("location", {"avatar": "ceaaccac-77c4-4f7b-8015-e25108a750a5", "id": "0292cd59-1157-4e86-adf8-5fe61146fec8", "title": "Saadiyat Island"})
+                // }
             }
         }, [type])
 
