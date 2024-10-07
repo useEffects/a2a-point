@@ -108,11 +108,17 @@ function Form1({ formValues, setFormValues, setNavigationState }: { formValues: 
         const searchParams = useSearchParams()
 
         const type = searchParams?.get("deal_type")
-        console.log(type)
 
         useEffect(() => {
             if (type === "buy" || type === "take on rent" || type === "sale" || type === "give on rent") {
                 props.setFieldValue("deal_type", type)
+
+                if(process.env.NODE_ENV !== "production") {
+                    props.setFieldValue("title", "There is no one who loves pain itself")
+                    props.setFieldValue("description", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries")
+                    props.setFieldValue("size", 10000)
+                    props.setFieldValue("location", {"avatar": "ceaaccac-77c4-4f7b-8015-e25108a750a5", "id": "0292cd59-1157-4e86-adf8-5fe61146fec8", "title": "Saadiyat Island"})
+                }
             }
         }, [type])
 
@@ -394,14 +400,12 @@ function Form4({ formValues, setFormValues, handleSubmit, loading }: { formValue
         featured: Yup.boolean().required("Option required"),
     })
 
-    const onSubmit = (values: Form4Values) => {
-        setFormValues(values)
+    const onSubmit = () => {
         handleSubmit()
     }
 
-
-
     const Form = (props: FormikProps<Form4Values>) => {
+
         return <ScrollView contentContainerClassName="flex-grow">
             <View className="flex-1 flex-col justify-center items-center gap-12">
                 <View>
@@ -413,7 +417,7 @@ function Form4({ formValues, setFormValues, handleSubmit, loading }: { formValue
                 <Text className={cn(user.premium_quota ? "text-success" : "text-destructive")}>you have {user.premium_quota} premium listing cap available</Text>
                 {user.premium_quota ? <View className="flex-row gap-4 items-center">
                     <Text>Mark as premium</Text>
-                    <Switch renderActiveText={false} renderInActiveText={false} value={props.values.featured} onValueChange={val => props.setFieldValue("featured", val)} />
+                    <Switch renderActiveText={false} renderInActiveText={false} value={formValues.featured} onValueChange={val => setFormValues({featured: val})} />
                 </View> : <></>}
             </View>
             <View className="mt-1/2 mb-4 flex-col items-center gap-4 flex-1 justify-center">
@@ -514,9 +518,9 @@ function PostScreenComponent() {
 
             featured: form4Values.featured,
         }
-        console.log(payload)
+        console.log({payload})
         const res = await rest.request(createItem("listings", payload))
-        console.log(res)
+        console.log({res})
         setLoading(false)
         router.back()
     }
