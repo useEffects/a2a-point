@@ -10,7 +10,9 @@ export const PremiumCreditsScreenComponent = () => {
     const { user } = userStore()
     const handleBuyPremiumCredits = () => {
         const premiumProductListing = products.find(p => p.productType === ProductType.premiumListingsQuota)!
-        Linking.openURL(`${portfolioUrl}/api/pay/${premiumProductListing.stripeCode}/?user_id=${user.id}&isMobile=true`)
+        const link = `${portfolioUrl}/api/pay/${premiumProductListing.stripeCode}/?user_id=${user.id}&isMobile=true`
+        console.log(link)
+        Linking.openURL(link)
     }
     return <View className="gap-12 flex-col flex-1">
         <Header>

@@ -68,12 +68,12 @@ export const products: {
         },
         {
             productType: ProductType.premiumListingsQuota,
-            stripeCode: "price_1PQR61CXSPTRj2WjXMfgm3zY",
+            stripeCode: "price_1PxNFVCXSPTRj2WjFxZ8p4ou",
             mode: "payment"
         },
         {
             productType: ProductType.advertisementsQuota,
-            stripeCode: "price_1PQR6RCXSPTRj2WjZBeXAsCJ",
+            stripeCode: "price_1PxNFTCXSPTRj2WjtTc0EK7o",
             mode: "payment"
         }
     ];
