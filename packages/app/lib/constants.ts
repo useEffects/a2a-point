@@ -19,12 +19,12 @@ export const viewedByMeUrl = `${directusUrl}/admin/content/listings?bookmark=7`
 export const memberRole = "d880f42a-09e6-401c-8bee-7be133b0d2fe"
 
 export const basicPlanStripeCodes = {
-    monthly: "price_1POIoQCXSPTRj2Wj7dkgRn4d",
-    yearly: "price_1POIyzCXSPTRj2WjdgbDZYge"
+    monthly: "price_1PxNFdCXSPTRj2WjiBL35ejZ",
+    yearly: "price_1PxNFZCXSPTRj2WjJf5mKGdF"
 }
 export const proPlanStripeCodes = {
-    monthly: "price_1POIxACXSPTRj2WjrlgGAnro",
-    yearly: "price_1POJ0TCXSPTRj2WjszJgywln"
+    monthly: "price_1PxNFbCXSPTRj2WjnPMsHDAu",
+    yearly: "price_1PxNFXCXSPTRj2WjpgdMrCLs"
 }
 
 export enum ProductType {
@@ -46,34 +46,34 @@ export const products: {
             productType: ProductType.basicPlanMonthly,
             stripeCode: basicPlanStripeCodes.monthly,
             mode: "subscription",
-            productId: "prod_QEmNPbVsqTptZ8"
+            productId: "prod_Qp1IGcvEVKZgWl"
         },
         {
             productType: ProductType.basicPlanYearly,
             stripeCode: basicPlanStripeCodes.yearly,
             mode: "subscription",
-            productId: "prod_QEmYe5USYsicoP"
+            productId: "prod_Qp1InO2vs85UtO"
         },
         {
             productType: ProductType.proPlanMonthly,
             stripeCode: proPlanStripeCodes.monthly,
             mode: "subscription",
-            productId: "prod_QEmWM4RLCJ1iEa"
+            productId: "prod_Qp1IkiUEYyEtte"
         },
         {
             productType: ProductType.proPlanYearly,
             stripeCode: proPlanStripeCodes.yearly,
             mode: "subscription",
-            productId: "prod_QEmZBdUPk5m06O"
+            productId: "prod_Qp1IpKoPsScCUh"
         },
         {
             productType: ProductType.premiumListingsQuota,
-            stripeCode: "price_1PQR61CXSPTRj2WjXMfgm3zY",
+            stripeCode: "price_1PxNFVCXSPTRj2WjFxZ8p4ou",
             mode: "payment"
         },
         {
             productType: ProductType.advertisementsQuota,
-            stripeCode: "price_1PQR6RCXSPTRj2WjZBeXAsCJ",
+            stripeCode: "price_1PxNFTCXSPTRj2WjtTc0EK7o",
             mode: "payment"
         }
     ];

@@ -36,4 +36,4 @@ RUN yarn install
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "python3 /app/scripts/init-scripts/directus/update-tokens.py && yarn build && yarn start"]
+CMD ["sh", "-c", "yarn build && yarn start"]

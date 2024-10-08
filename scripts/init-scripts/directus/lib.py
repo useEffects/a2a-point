@@ -5,16 +5,12 @@ import secrets
 import string
 
 directus_url = "https://dashboard.a2apoint.com"
-email = "admin@a2apoint.com"
-password = "admin"
+email = "info@a2apoint.com"
+password = "Nvarco@9645"
 
 
 def get_access_token():
-    res = requests.post(
-        f"{directus_url}/auth/login", json={"email": email, "password": password}
-    )
-    return res.json()["data"]["access_token"]
-
+    return "XydGQI75IRhuoB1YAYmfx1pkCopqJ6Mc"
 
 def generate_token(length=32):
     characters = string.ascii_letters + string.digits
