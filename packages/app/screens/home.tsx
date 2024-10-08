@@ -19,7 +19,7 @@ import { FlatList, ScrollView } from "app/components/utils/virtual-lists";
 import { useColorScheme } from "app/hooks/color-scheme";
 import { useRouter } from "app/hooks/router";
 import { directusUrl, portfolioUrl } from "app/lib/constants";
-import { getCompaniesCount, getListingMetrics, getListingsCount, getLocationsCount, getUsersCount, renderCardsQuery } from "app/lib/misc/queries";
+import { getCompaniesCount, getCompaniesWithAgents, getListingMetrics, getListingsCount, getLocationsCount, getUsersCount, renderCardsQuery } from "app/lib/misc/queries";
 import { ListingCardMetrics, photoListingsFields, smallListingsFields, SmallUsersCardProps, UsersCardMetrics } from "app/lib/props";
 import { News } from "app/lib/types";
 import directusStore from "app/store/directus";
@@ -50,11 +50,11 @@ export default function HomeScreen() {
 
     const { data: counts } = useQuery<{ listingsCount: number, usersCount: number, locationsCount: number, companiesCount: number }>({
         queryKey: ["Fetch counts"],
-        queryFn: async () => await Promise.all([getListingsCount(), getUsersCount(), getLocationsCount(), getCompaniesCount()]).then(([listingsCount, usersCount, locationsCount, companiesCount]) => ({
+        queryFn: async () => await Promise.all([getListingsCount(), getUsersCount(), getLocationsCount(), getCompaniesWithAgents()]).then(([listingsCount, usersCount, locationsCount, companiesCount]) => ({
             listingsCount,
             usersCount,
             locationsCount,
-            companiesCount
+            companiesCount,
         })),
         initialData: {
             listingsCount: 0,
@@ -63,6 +63,8 @@ export default function HomeScreen() {
             companiesCount: 0
         },
     })
+
+    console.log(counts)
 
     const { data: photoListingsInitialData } = useQuery({
         queryKey: ["Fetch photo listings"],

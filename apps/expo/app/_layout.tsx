@@ -76,7 +76,9 @@ export default function RootLayoutNav() {
         const initialize = async () => {
             await initializeDirectus().then(() => console.log("directus initialized"));
             await initializeApp().then(() => console.log("app initialized"));
-            navigationBar.setBackgroundColorAsync(colors.card);
+            if (Platform.OS === "android") {
+                navigationBar.setBackgroundColorAsync(colors.card);
+            }
             SplashScreen.hideAsync();
         };
         initialize();

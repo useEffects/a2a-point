@@ -92,6 +92,32 @@ export const getCompaniesCount = async () => {
     return companiesCount?.[0]!.count as unknown as number
 }
 
+export const getCompaniesWithAgents = async () => {
+    const { rest } = directusStore.getState()
+    const companiesCount = await rest.request(aggregate("companies", {
+        aggregate: {
+            count: ["*"]
+        },
+        query: {
+            filter: {
+                _and: [
+                    {
+                        "count(members)": {
+                            _gt: 0
+                        }
+                    },
+                    {
+                        members: {
+                            _nnull: true
+                        }
+                    }
+                ]
+            }
+        }
+    }))
+    return companiesCount?.[0]!.count as unknown as number
+}
+
 export const getLocationsCount = async () => {
     const { rest } = directusStore.getState()
     const locationsCount = await rest.request(aggregate("rooms", {

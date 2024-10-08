@@ -147,6 +147,8 @@ export const MembershipCard = ({ name, about, info, monthlyAmount, yearlyAmount,
 
     const checkout = async () => {
         const priceId = isYearly ? yearlyPriceId : monthlyPriceId
+        const link = `${portfolioUrl}/api/pay/${priceId}/?mode=subscription&user_id=${user.id}&isMobile=true`
+        console.log(link)
         Linking.openURL(`${portfolioUrl}/api/pay/${priceId}/?mode=subscription&user_id=${user.id}&isMobile=true`)
     }
 
