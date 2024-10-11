@@ -568,7 +568,7 @@ export default function PostScreen() {
     const { user } = userStore()
 
     return <View className="flex-1 flex-grow h-full">
-        {authenticated ? true ?
+        {authenticated ? user.is_verified ?
             <PostScreenComponent /> : <LockedScreen
                 image={PostImg}
                 title="Create and manage property listings on A2APoint"
