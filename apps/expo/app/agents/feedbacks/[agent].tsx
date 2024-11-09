@@ -7,6 +7,9 @@ import { Feedback } from "app/lib/types";
 import PostFeedbackScreen from "app/screens/post-feedback";
 import { useLocalSearchParams } from "expo-router";
 import PadBottom from "../../../components/pad-bottom";
+import { View } from "react-native";
+import { Header } from "app/components/header";
+import { Text } from "app/components/ui/text";
 
 export default function PostFeedback() {
     const { feedbackId } = useLocalSearchParams()
@@ -21,9 +24,15 @@ export default function PostFeedback() {
         })) as Feedback
     })
 
-    return user ?
-        <PadBottom>
-            <PostFeedbackScreen user={user} feedback={feedback} />
-        </PadBottom>
-        : <></>
+    return <View>
+        <Header>
+            <Text>Hello world</Text>
+        </Header>
+    </View>
+
+    // return user ?
+    //     <PadBottom>
+    //         <PostFeedbackScreen user={user} feedback={feedback} />
+    //     </PadBottom>
+    //     : <></>
 }

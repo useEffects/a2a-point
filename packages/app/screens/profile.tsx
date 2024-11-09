@@ -120,7 +120,7 @@ export function Profile({ user, company, document }: { user: User, company?: Com
                         {user.id === currentUser.id ?
                             <Button onPress={() => router.push("/agents/me/activity")} variant={"default"} size="sm" style={{ width: buttonWidth }}>
                                 <Text>Your activity</Text>
-                            </Button> : <Button onPress={() => router.push(`/agents/${user.id}/feedback`)} size={"sm"} style={{ width: buttonWidth }} variant={"default"}>
+                            </Button> : <Button onPress={() => router.push(`/agents/feedbacks/${user.id}`)} size={"sm"} style={{ width: buttonWidth }} variant={"default"}>
                                 <Text>Give feedback</Text>
                             </Button>}
                     </View>

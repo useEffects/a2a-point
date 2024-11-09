@@ -3,7 +3,7 @@ import { Stack } from "expo-router";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function ScreenLayout({ names }: { names: string[] }) {
+export default function ScreenLayout({ names, height }: { names: string[], height?: number }) {
     const { colors } = useColorScheme()
     const insets = useSafeAreaInsets()
 
@@ -12,7 +12,7 @@ export default function ScreenLayout({ names }: { names: string[] }) {
             screenOptions={{
                 header: () => <View style={{
                     backgroundColor: colors.card,
-                    height: insets.top
+                    height: height ?? insets.top
                 }} />
             }}
             initialRouteName={names[0]}
