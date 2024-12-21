@@ -27,9 +27,16 @@ jobs:
           npm config set registry https://gitea.a2apoint.com/api/packages/a2apoint/npm/
           npm config set //gitea.a2apoint.com/api/packages/a2apoint/npm/:_authToken ${BOT_GITEA_TOKEN}
 
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Configure git
+        run: |
+          git config --global user.email "gitea.bot@example.com"
+          git config --global user.name "gitea.bot"
+
       - name: Build package
         run: |
-          yarn install
           cd packages/tailwind-theme
           yarn build
       
