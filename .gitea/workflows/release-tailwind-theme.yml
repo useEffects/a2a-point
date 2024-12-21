@@ -8,45 +8,30 @@ on:
       - "packages/tailwind-theme/**"
 
 jobs:
-  setup-and-build:
+  setup-bump-and-publish:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
-      
+
       - name: Setup node.js
         uses: actions/setup-node@v4
         with:
           node-version-file: '.node-version'
 
-      - name: Install yarn
-        run: npm i -g yarn
+      - name: Export token
+        run:  export BOT_GITEA_TOKEN=${{ secrets.BOT_GITEA_TOKEN }}
 
       - name: Build package
         run: |
           yarn install
           cd packages/tailwind-theme
           yarn build
-          
-  bump-and-publish:
-    runs-on: ubuntu-22.04
-    needs: setup-and-build
-    steps:
-      - name: Checkout repository code
-        uses: actions/checkout@v4
-      
-      - name: Setup node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.node-version'
       
       - name: Bump version
         run: |
           cd packages/tailwind-theme
           yarn version --patch
-
-      - name: Export token
-        run:  export BOT_GITEA_TOKEN=${{ secrets.BOT_GITEA_TOKEN }}
 
       - name: Publish package
         run: |
