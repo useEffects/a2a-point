@@ -21,6 +21,11 @@ jobs:
 
       - name: Export token
         run:  export BOT_GITEA_TOKEN=${{ secrets.BOT_GITEA_TOKEN }}
+      
+      - name: Configure npm
+        run: |
+          npm config set registry https://gitea.a2apoint.com/api/packages/a2apoint/npm/
+          npm config set //gitea.a2apoint.com/api/packages/a2apoint/npm/:_authToken ${BOT_GITEA_TOKEN}
 
       - name: Build package
         run: |
