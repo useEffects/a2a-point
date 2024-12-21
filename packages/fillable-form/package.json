@@ -5,6 +5,6 @@
   "license": "MIT",
   "dependencies": {
     "change-case": "^5.4.4",
-    "tailwind-theme": "*"
+    "@a2apoint/tailwind-theme": "*"
   }
 }

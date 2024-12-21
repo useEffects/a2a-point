@@ -1,0 +1,58 @@
+name: Release @a2apoint.com/tailwind-theme
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "packages/tailwind-theme/**"
+
+jobs:
+  setup-and-build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+      
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.node-version'
+
+      - name: Build package
+        run: |
+          yarn install
+          cd packages/tailwind-theme
+          yarn build
+          
+  bump-and-publish:
+    runs-on: ubuntu-22.04
+    needs: setup-and-build
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+      
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.node-version'
+      
+      - name: Bump version
+        run: |
+          cd packages/tailwind-theme
+          yarn version --patch
+
+      - name: Export token
+        run:  export BOT_GITEA_TOKEN=${{ secrets.BOT_GITEA_TOKEN }}
+
+      - name: Publish package
+        run: |
+          cd packages/tailwind-theme
+          npm publish
+          
+      - name: Push version bump
+        uses: https://github.com/EndBug/add-and-commit@v9
+        with:
+          author_name: 'gitea.bot'
+          author_email: 'gitea.bot@example.com'
+          message: 'chore: bump version for @a2apoint/tailwind-theme'

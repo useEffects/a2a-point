@@ -75,7 +75,7 @@
     "solito": "4.0.1",
     "stripe": "^15.11.0",
     "tailwind-merge": "^2.3.0",
-    "tailwind-theme": "*",
+    "@a2apoint/tailwind-theme": "*",
     "tailwindcss": "^3.4.3",
     "ts-util-is": "^2.1.0",
     "yup": "1.0.0",
