@@ -6,7 +6,6 @@ import convert from "color-convert"
 export * from "./colors"
 export * from "./tailwind-config-colors"
 
-
 export function generateThemeCSS(): Plugin {
     return {
         postcssPlugin: 'generate-theme-css',

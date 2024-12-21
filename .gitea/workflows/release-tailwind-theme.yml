@@ -14,16 +14,16 @@ jobs:
       - name: Checkout repository code
         uses: actions/checkout@v4
 
+      - name: Export token
+        run:  |
+          export BOT_GITEA_TOKEN=${{ secrets.BOT_GITEA_TOKEN }}
+          echo $BOT_GITEA_TOKEN
+
       - name: Setup node.js
         uses: actions/setup-node@v4
         with:
           node-version-file: '.node-version'
           cache: 'yarn'
-
-      - name: Export token
-        run:  |
-          export BOT_GITEA_TOKEN=${{ secrets.BOT_GITEA_TOKEN }}
-          echo $BOT_GITEA_TOKEN
       
       - name: Install dependencies
         run: yarn install
