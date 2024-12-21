@@ -6,6 +6,7 @@ on:
       - "main"
     paths:
       - "packages/tailwind-theme/**"
+      - ".gitea/workflows/release-tailwind-theme.yml"
 
 jobs:
   setup-bump-and-publish:
@@ -18,6 +19,7 @@ jobs:
         run:  |
           export BOT_GITEA_TOKEN=${{ secrets.BOT_GITEA_TOKEN }}
           echo $BOT_GITEA_TOKEN
+          echo ${#BOT_GITEA_TOKEN}
 
       - name: Setup node.js
         uses: actions/setup-node@v4
