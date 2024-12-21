@@ -1,12 +1,13 @@
 {
-  "name": "tailwind-theme",
-  "version": "1.0.0",
+  "name": "@a2apoint/tailwind-theme",
+  "version": "1.0.2",
   "main": "dist/index.cjs",
   "type": "module",
   "license": "MIT",
   "devDependencies": {
     "@types/color-convert": "^2.0.3",
     "postcss": "^8.4.38",
+    "semver": "7.6.3",
     "tailwindcss": "^3.4.3",
     "tsup": "^8.0.2",
     "tw-colors": "^3.3.1"
