@@ -19,6 +19,9 @@ jobs:
         with:
           node-version-file: '.node-version'
 
+      - name: Install yarn
+        run: npm i -g yarn
+
       - name: Build package
         run: |
           yarn install
