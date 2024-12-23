@@ -28,7 +28,7 @@ jobs:
         run: |
           docker build \
           --build-arg BOT_GITEA_TOKEN=${{ secrets.BOT_GITEA_TOKEN }} \
-          -t a2apoint/www:${{ env.CURRENT_VERSION }} -t a2apoint/www:latest apps/www   
+          -t a2apoint/www:${{ env.CURRENT_VERSION }} -t a2apoint/www:latest .   
 
       - name: Push Docker Image
         run: |
