@@ -6,7 +6,14 @@ WORKDIR /app
 COPY . .
 RUN yarn install
 
+WORKDIR /packages/tailwind-theme
+RUN yarn install
+
+WORKDIR /packages/app
+RUN yarn install
+
 WORKDIR /app/apps/www
+RUN yarn install
 
 EXPOSE 3000
 
