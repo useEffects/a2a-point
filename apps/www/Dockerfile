@@ -1,5 +1,7 @@
 FROM node:lts-bullseye
 
+RUN yarn set version berry
+
 WORKDIR /app
 COPY package.json .
 COPY yarn.lock .
