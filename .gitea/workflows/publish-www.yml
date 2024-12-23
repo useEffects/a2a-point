@@ -42,8 +42,7 @@ jobs:
 
       - name: Bump version
         run: |
-          cd apps/www
-          yarn version --patch
+          sed -i.bak -E 's/"version": "([0-9]+)\.([0-9]+)\.([0-9]+)"/"version": "\1.\2.$((\3+1))"/' apps/www/package.json
 
       - name: Push version bump
         uses: https://github.com/EndBug/add-and-commit@v9
