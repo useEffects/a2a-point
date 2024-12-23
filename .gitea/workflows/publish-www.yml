@@ -21,14 +21,14 @@ jobs:
 
       - name: Export version
         run: |
-          CURRENT_VERSION=$(awk -F'"' '/"version": ".+"/{ print $4; exit; }' package.json)
+          CURRENT_VERSION=$(awk -F'"' '/"version": ".+"/{ print $4; exit; }' apps/www/package.json)
           echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV            
 
       - name: Build Docker Image
         run: |
           docker build \
           --build-arg BOT_GITEA_TOKEN=${{ secrets.BOT_GITEA_TOKEN }} \
-          -t a2apoint/www:${{ env.CURRENT_VERSION }} -t a2apoint/www:latest .   
+          -t a2apoint/www:${{ env.CURRENT_VERSION }} -t a2apoint/www:latest apps/www   
 
       - name: Push Docker Image
         run: |
@@ -40,12 +40,14 @@ jobs:
           docker push gitea.a2apoint.com/a2apoint/www:latest
           docker push gitea.a2apoint.com/a2apoint/www:${{ env.CURRENT_VERSION }}               
 
-      - name: Bump version and commit
+      - name: Bump version
         run: |
           cd apps/www
           yarn version --patch
-          git config --global user.email "gitea.bot@example.com"
-          git config --global user.name "gitea.bot"
-          git add package.json
-          git commit -m "chore: bump version"
-          git push origin main
+
+      - name: Push version bump
+        uses: https://github.com/EndBug/add-and-commit@v9
+        with:
+          author_name: 'gitea.bot'
+          author_email: 'gitea.bot@example.com'
+          message: 'chore: bump version for a2apoint/www'
