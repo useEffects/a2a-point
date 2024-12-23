@@ -1,12 +1,8 @@
 FROM node:lts-bullseye
 
-RUN apt-get update && \
-    apt-get install -y curl wget jq openssl python3 python3-pip&& \
-    apt-get clean
-RUN pip3 install requests
-
 WORKDIR /app
 COPY package.json .
+COPY yarn.lock .
 RUN yarn install
 
 RUN mkdir -p apps/www
@@ -29,10 +25,6 @@ RUN yarn install
 WORKDIR /app
 COPY . .
 
-WORKDIR /app/apps/www
-RUN yarn install
-# RUN yarn build
-# RUN yarn start
 
 EXPOSE 3000
 
