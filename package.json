@@ -31,8 +31,5 @@
     "**/sharp",
     "**/sharp/**"
   ],
-  "packageManager": "yarn@4.5.3",
-  "dependencies": {
-    "react-dom": "^19.0.0"
-  }
+  "packageManager": "yarn@1.22.22"
 }

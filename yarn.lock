@@ -17,7 +17,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@a2apoint/tailwind-theme@workspace:*, @a2apoint/tailwind-theme@workspace:packages/tailwind-theme":
+"@a2apoint/tailwind-theme@npm:*, @a2apoint/tailwind-theme@workspace:packages/tailwind-theme":
   version: 0.0.0-use.local
   resolution: "@a2apoint/tailwind-theme@workspace:packages/tailwind-theme"
   dependencies:
@@ -8481,7 +8481,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app@workspace:packages/app"
   dependencies:
-    "@a2apoint/tailwind-theme": "workspace:*"
+    "@a2apoint/tailwind-theme": "npm:*"
     "@backpackapp-io/react-native-toast": "npm:^0.10.0"
     "@charmy.tech/react-native-stroke-text": "npm:^1.2.2"
     "@directus/sdk": "npm:16.0.2"
@@ -11567,7 +11567,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "email-templates@workspace:packages/email-templates"
   dependencies:
-    "@a2apoint/tailwind-theme": "workspace:*"
+    "@a2apoint/tailwind-theme": "npm:*"
     "@maizzle/framework": "npm:latest"
     "@tailwindcss/typography": "npm:^0.5.13"
     tailwindcss-preset-email: "npm:^1.1.0"
@@ -12605,7 +12605,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "expo-app@workspace:apps/expo"
   dependencies:
-    "@a2apoint/tailwind-theme": "workspace:*"
+    "@a2apoint/tailwind-theme": "npm:*"
     "@babel/core": "npm:^7.20.0"
     "@directus/sdk": "npm:^16.0.0"
     "@expo-google-fonts/inter": "npm:^0.2.3"
@@ -13350,7 +13350,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "fillable-form@workspace:packages/fillable-form"
   dependencies:
-    "@a2apoint/tailwind-theme": "workspace:*"
+    "@a2apoint/tailwind-theme": "npm:*"
     change-case: "npm:^5.4.4"
   languageName: unknown
   linkType: soft
@@ -22194,7 +22194,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native@npm:*":
+"react-native@npm:*, react-native@npm:^0.76.5":
   version: 0.76.5
   resolution: "react-native@npm:0.76.5"
   dependencies:
@@ -26816,7 +26816,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "www@workspace:apps/www"
   dependencies:
-    "@a2apoint/tailwind-theme": "workspace:*"
+    "@a2apoint/tailwind-theme": "npm:*"
     "@directus/sdk": "npm:^16.0.0"
     "@expo/next-adapter": "npm:^6.0.0"
     "@fortawesome/fontawesome-svg-core": "npm:^6.5.2"
@@ -26856,6 +26856,7 @@ __metadata:
     next-video: "npm:^1.0.6"
     pdf-lib: "npm:^1.17.1"
     raf: "npm:^3.4.1"
+    react-native: "npm:^0.76.5"
     setimmediate: "npm:^1.0.5"
     stripe: "npm:^15.9.0"
     tailwind-merge: "npm:^2.3.0"

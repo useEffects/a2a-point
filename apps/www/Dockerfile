@@ -1,20 +1,14 @@
 FROM node:lts-bullseye
 
-RUN yarn set version berry
+ARG BOT_GITEA_TOKEN
 
 WORKDIR /app
 COPY . .
-RUN yarn install
-
-WORKDIR /app/packages/tailwind-theme
-RUN yarn install
-
-WORKDIR /app/packages/app
-RUN yarn install
-
-WORKDIR /app/apps/www
+ENV BOT_GITEA_TOKEN=${BOT_GITEA_TOKEN}
 RUN yarn install
 
 EXPOSE 3000
+
+WORKDIR /app/apps/www
 
 CMD ["sh", "-c", "yarn build && yarn start"]

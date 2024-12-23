@@ -8,7 +8,7 @@ import * as React from "react";
 import { Platform } from "react-native";
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import "tailwind-theme/theme.css";
+import "@a2apoint/tailwind-theme/theme.css";
 import { Providers } from "app/components/providers";
 import * as navigationBar from "expo-navigation-bar"
 
