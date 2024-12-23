@@ -17,7 +17,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@a2apoint/tailwind-theme@npm:*, @a2apoint/tailwind-theme@workspace:packages/tailwind-theme":
+"@a2apoint/tailwind-theme@workspace:*, @a2apoint/tailwind-theme@workspace:packages/tailwind-theme":
   version: 0.0.0-use.local
   resolution: "@a2apoint/tailwind-theme@workspace:packages/tailwind-theme"
   dependencies:
@@ -7797,6 +7797,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-dom@npm:^19":
+  version: 19.0.2
+  resolution: "@types/react-dom@npm:19.0.2"
+  peerDependencies:
+    "@types/react": ^19.0.0
+  checksum: 10c0/3d0c7b78dbe8df64ea769f30af990a5950173a8321c745fe11094d765423f7964c3519dca6e7cd36b4be6521c8efc690bdd3b79b327b229dd1e9d5a8bad677dd
+  languageName: node
+  linkType: hard
+
 "@types/react-native-material-ripple@npm:0.9.6":
   version: 0.9.6
   resolution: "@types/react-native-material-ripple@npm:0.9.6"
@@ -8151,10 +8160,12 @@ __metadata:
   resolution: "a2apoint@workspace:."
   dependencies:
     "@types/react": "npm:^18.2.21"
+    "@types/react-dom": "npm:^19"
     "@types/react-native": "npm:^0.73.0"
     eslint: "npm:^8.21.0"
     prettier: "npm:^3.0.3"
     prettier-plugin-tailwindcss: "npm:^0.5.4"
+    react-dom: "npm:^19.0.0"
     turbo: "npm:^1.4.2"
     typescript: "npm:^5.2.2"
   languageName: unknown
@@ -8470,7 +8481,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app@workspace:packages/app"
   dependencies:
-    "@a2apoint/tailwind-theme": "npm:*"
+    "@a2apoint/tailwind-theme": "workspace:*"
     "@backpackapp-io/react-native-toast": "npm:^0.10.0"
     "@charmy.tech/react-native-stroke-text": "npm:^1.2.2"
     "@directus/sdk": "npm:16.0.2"
@@ -11556,7 +11567,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "email-templates@workspace:packages/email-templates"
   dependencies:
-    "@a2apoint/tailwind-theme": "npm:*"
+    "@a2apoint/tailwind-theme": "workspace:*"
     "@maizzle/framework": "npm:latest"
     "@tailwindcss/typography": "npm:^0.5.13"
     tailwindcss-preset-email: "npm:^1.1.0"
@@ -12594,7 +12605,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "expo-app@workspace:apps/expo"
   dependencies:
-    "@a2apoint/tailwind-theme": "npm:*"
+    "@a2apoint/tailwind-theme": "workspace:*"
     "@babel/core": "npm:^7.20.0"
     "@directus/sdk": "npm:^16.0.0"
     "@expo-google-fonts/inter": "npm:^0.2.3"
@@ -13339,7 +13350,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "fillable-form@workspace:packages/fillable-form"
   dependencies:
-    "@a2apoint/tailwind-theme": "npm:*"
+    "@a2apoint/tailwind-theme": "workspace:*"
     change-case: "npm:^5.4.4"
   languageName: unknown
   linkType: soft
@@ -26805,7 +26816,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "www@workspace:apps/www"
   dependencies:
-    "@a2apoint/tailwind-theme": "npm:*"
+    "@a2apoint/tailwind-theme": "workspace:*"
     "@directus/sdk": "npm:^16.0.0"
     "@expo/next-adapter": "npm:^6.0.0"
     "@fortawesome/fontawesome-svg-core": "npm:^6.5.2"
