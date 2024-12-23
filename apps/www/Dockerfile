@@ -6,10 +6,10 @@ WORKDIR /app
 COPY . .
 RUN yarn install
 
-WORKDIR /packages/tailwind-theme
+WORKDIR /app/packages/tailwind-theme
 RUN yarn install
 
-WORKDIR /packages/app
+WORKDIR /app/packages/app
 RUN yarn install
 
 WORKDIR /app/apps/www
