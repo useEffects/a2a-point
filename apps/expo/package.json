@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@a2apoint/tailwind-theme": "*",
+    "@a2apoint/tailwind-theme": "workspace:*",
     "@directus/sdk": "^16.0.0",
     "@expo-google-fonts/inter": "^0.2.3",
     "@expo-google-fonts/open-sans": "^0.2.3",

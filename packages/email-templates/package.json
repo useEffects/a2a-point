@@ -7,7 +7,7 @@
     "build": "maizzle build production"
   },
   "dependencies": {
-    "@a2apoint/tailwind-theme": "*",
+    "@a2apoint/tailwind-theme": "workspace:*",
     "@maizzle/framework": "latest",
     "@tailwindcss/typography": "^0.5.13",
     "tailwindcss-preset-email": "^1.1.0"
