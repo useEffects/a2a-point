@@ -1,4 +1,5 @@
 const { withExpo } = require('@expo/next-adapter')
+const path = require('path')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -16,7 +17,10 @@ const nextConfig = {
   },
   transpilePackages: [
     'app',
+    'expo',
     'expo-router',
+    'expo-file-system',
+    'expo-modules-core',
     'react-native',
     'react-native-web',
     'solito',
@@ -35,6 +39,16 @@ const nextConfig = {
     'react-native-switch',
     'react-native-lightweight-inview'
   ],
+  output: 'standalone',
+  webpack: config => {
+    config.resolve.modules = [
+      ...(config.resolve.modules || []),
+      path.resolve(__dirname, '../../node_modules'),
+      path.resolve(__dirname, '../../packages/app/node_modules'),
+      path.resolve(__dirname, '../../packages/tailwind-theme/node_modules'),
+    ]
+    return config
+  }
 }
 
 module.exports = withExpo(nextConfig)
