@@ -4,9 +4,9 @@
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
     "paths": {
-      "app/*": ["./packages/app/*"],
+      "app/*": ["./packages/app/*"]
     },
     "jsx": "react-jsx"
   },
-  "extends": "expo/tsconfig.base"
+  "extends": "./tsconfig.base"
 }
