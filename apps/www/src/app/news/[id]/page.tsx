@@ -26,12 +26,12 @@ export default async function ({ params }: { params: { id: string } }) {
         </div>
         <img src={`${directusUrl}/assets/${news.cover_image}`} alt="" />
         <div className="prose max-w-none">
-            <MDXRemote options={{
+            {/* <MDXRemote options={{
                 mdxOptions: {
                     format: "md",
                     development: true
                 }
-            }} source={news.content} />
+            }} source={news.content} /> */}
         </div>
     </div>
 }

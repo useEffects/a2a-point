@@ -51,7 +51,7 @@ export default async function CoursePage({ params: { slug } }: { params: { slug:
                 {course.course_lessons.length && <>
                     <p className="text-xl md:text-3xl font-bold text-primary">{lesson.title}</p>
                     <div className="prose max-w-none">
-                        <MDXRemote source={lesson.content} />
+                        {/* <MDXRemote source={lesson.content} /> */}
                     </div>
                     <Separator />
                     <p className=""> Answer the quiz </p>
