@@ -1,5 +1,5 @@
 import { useColorScheme as useNativewindColorScheme } from "nativewind";
-import { theme } from "tailwind-theme/src/colors"
+import { theme } from "@a2apoint/tailwind-theme/src/colors"
 import { useTheme } from "next-themes"
 import { Platform } from "react-native";
 import { useMemo } from "react";

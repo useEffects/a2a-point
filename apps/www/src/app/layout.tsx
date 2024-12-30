@@ -9,7 +9,7 @@ import { ReactNode } from "react";
 import { ThemeProvider } from "src/components/providers/theme";
 import { View } from "src/components/view";
 import { QueryClientProvider } from "src/context/query";
-import "tailwind-theme/theme.css";
+import "@a2apoint/tailwind-theme/theme.css";
 import { Metadata } from "next";
 import { OpenProvider } from "@/hooks/open";
 

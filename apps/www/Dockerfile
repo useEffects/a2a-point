@@ -1,39 +1,41 @@
-FROM node:lts-bullseye
+FROM node:lts-bullseye AS build
 
-RUN apt-get update && \
-    apt-get install -y curl wget jq openssl python3 python3-pip&& \
-    apt-get clean
-RUN pip3 install requests
+ARG BOT_GITEA_TOKEN
 
 WORKDIR /app
-COPY package.json .
+
+RUN yarn set version berry
+
+COPY package.json yarn.lock .yarnrc .yarnrc.yml .yarn ./
 RUN yarn install
 
-RUN mkdir -p apps/www
-COPY apps/www/package.json /app/apps/www
-WORKDIR /app/apps/www
-RUN yarn install
-
-WORKDIR /app
-RUN mkdir -p packages/app
-COPY packages/app/package.json /app/packages/app
-WORKDIR /app/packages/app
-RUN yarn install
-
-WORKDIR /app
-RUN mkdir -p packages/tailwind-theme
-COPY packages/tailwind-theme/package.json /app/packages/tailwind-theme
 WORKDIR /app/packages/tailwind-theme
+COPY packages/tailwind-theme/package.json .
+RUN yarn install
+
+WORKDIR /app/packages/app
+COPY packages/app/package.json .
+RUN yarn install
+
+WORKDIR /app/apps/www
+COPY apps/www/package.json .
 RUN yarn install
 
 WORKDIR /app
 COPY . .
 
 WORKDIR /app/apps/www
-RUN yarn install
-# RUN yarn build
-# RUN yarn start
+RUN yarn build
+
+
+FROM node:lts-bullseye
+
+WORKDIR /app
+
+COPY --from=build /app/apps/www/.next /app/.next
+COPY --from=build /app/apps/www/public /app/.next/standalone/apps/www/public
+COPY --from=build /app/apps/www/.next/static /app/.next/standalone/apps/www/.next/static
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "yarn build && yarn start"]
+CMD ["sh", "-c", "node .next/standalone/apps/www/server.js"]

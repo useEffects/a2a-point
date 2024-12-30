@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { theme } from "tailwind-theme/src/colors";
+import { theme } from "@a2apoint/tailwind-theme/src/colors";
 import * as changeCase from "change-case"
 
 let latexCode = '';

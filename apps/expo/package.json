@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@a2apoint/tailwind-theme": "*",
     "@directus/sdk": "^16.0.0",
     "@expo-google-fonts/inter": "^0.2.3",
     "@expo-google-fonts/open-sans": "^0.2.3",
@@ -38,6 +39,7 @@
     "react-native-collapsible": "1.6.1",
     "react-native-gesture-handler": "~2.14.0",
     "react-native-keyboard-controller": "^1.12.7",
+    "react-native-material-ripple": "^0.9.1",
     "react-native-outside-press": "^1.2.2",
     "react-native-pager-view": "6.2.3",
     "react-native-reanimated": "~3.6.2",
@@ -48,12 +50,10 @@
     "react-native-web": "~0.19.6",
     "react-native-webview": "13.6.4",
     "search-params": "^4.0.1",
-    "tailwind-theme": "*",
     "tailwindcss-animate": "^1.0.7",
     "toastify-react-native": "^5.0.0",
     "ts-util-is": "^2.1.0",
-    "use-debounce": "^10.0.0",
-    "react-native-material-ripple": "^0.9.1"
+    "use-debounce": "^10.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

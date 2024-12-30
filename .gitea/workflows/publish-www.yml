@@ -1,0 +1,60 @@
+name: Publish a2apoint/www docker image
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - ".gitea/workflows/publish-www.yml"
+      - "apps/www/**/*"
+
+
+jobs:
+  setup-bump-and-publish:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Export token
+        run:  echo "BOT_GITEA_TOKEN=${{ secrets.BOT_GITEA_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Export version
+        run: |
+          CURRENT_VERSION=$(awk -F'"' '/"version": ".+"/{ print $4; exit; }' apps/www/package.json)
+          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV            
+
+      - name: Build Docker Image
+        run: |
+          docker build \
+          --build-arg BOT_GITEA_TOKEN=${{ secrets.BOT_GITEA_TOKEN }} \
+          -t a2apoint/www:${{ env.CURRENT_VERSION }} -t a2apoint/www:latest -f apps/www/Dockerfile .   
+
+      - name: Push Docker Image
+        run: |
+          echo "${{ secrets.BOT_GITEA_TOKEN }}" | docker login gitea.a2apoint.com -u "gitea.bot" --password-stdin
+
+          docker tag a2apoint/www:latest gitea.a2apoint.com/a2apoint/www:latest
+          docker tag a2apoint/www:${{ env.CURRENT_VERSION }} gitea.a2apoint.com/a2apoint/www:${{ env.CURRENT_VERSION }}
+
+          docker push gitea.a2apoint.com/a2apoint/www:latest
+          docker push gitea.a2apoint.com/a2apoint/www:${{ env.CURRENT_VERSION }}               
+
+      - name: Bump version
+        run: |
+          awk -F'["]' -v OFS='"' '
+            /"version":/ {
+              split($4, a, ".");
+              $4 = a[1] "." a[2] "." a[3] + 1
+            }
+            1
+          ' ./apps/www/package.json > ./apps/www/package2.json && \
+          mv ./apps/www/package2.json ./apps/www/package.json
+
+
+      - name: Push version bump
+        uses: https://github.com/EndBug/add-and-commit@v9
+        with:
+          author_name: 'gitea.bot'
+          author_email: 'gitea.bot@example.com'
+          message: 'chore: bump version for a2apoint/www'
