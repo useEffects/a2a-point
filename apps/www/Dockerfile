@@ -25,8 +25,8 @@ WORKDIR /app
 COPY . .
 
 WORKDIR /app/apps/www
+RUN yarn install
 RUN yarn build
-
 
 FROM node:lts-bullseye
 
