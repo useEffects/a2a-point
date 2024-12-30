@@ -4,7 +4,8 @@ ARG BOT_GITEA_TOKEN
 
 WORKDIR /app
 
-COPY package.json yarn.lock .yarnrc .yarnrc.yml .yarn ./
+COPY package.json yarn.lock .yarnrc .yarnrc.yml ./
+COPY .yarn/releases/yarn-4.5.3.cjs ./.yarn/releases/yarn-4.5.3.cjs
 RUN yarn set version berry
 RUN yarn install
 
