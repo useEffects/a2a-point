@@ -4,9 +4,8 @@ ARG BOT_GITEA_TOKEN
 
 WORKDIR /app
 
-RUN yarn set version berry
-
 COPY package.json yarn.lock .yarnrc .yarnrc.yml .yarn ./
+RUN yarn set version berry
 RUN yarn install
 
 WORKDIR /app/packages/tailwind-theme
