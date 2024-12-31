@@ -1,4 +1,3 @@
-import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { ReactNode, useContext, useEffect, useState } from 'react';
@@ -11,23 +10,25 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import '../../../packages/tailwind-theme/theme.css';
 import { Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { colors } = useColorScheme();
   return (
     <Providers>
-      <HideSplashScreen>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
-          <Stack.Screen name="index" />
-          <Stack.Screen name="auth" />
-        </Stack>
-      </HideSplashScreen>
+      <SafeAreaProvider>
+        <HideSplashScreen>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+            }}
+          >
+            <Stack.Screen name="(main)" />
+            <Stack.Screen name="auth" />
+          </Stack>
+        </HideSplashScreen>
+      </SafeAreaProvider>
       <StatusBar />
     </Providers>
   );
