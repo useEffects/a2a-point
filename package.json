@@ -15,5 +15,15 @@
   "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=18"
+  },
+  "pnpm": {
+    "overrides": {
+      "react-native": "0.76.5",
+      "react": "18.3.1",
+      "react-dom": "18.3.1",
+      "@types/react": "18.3.1",
+      "@types/react-dom": "18.3.1",
+      "expo-router": "4.0.15"
+    }
   }
 }

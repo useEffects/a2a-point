@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import { Providers } from 'app/components/providers';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 
@@ -26,8 +27,11 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="(main)/index" options={{ headerShown: false }} />
-    </Stack>
+    <Providers>
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="auth" options={{ headerShown: false }} />
+      </Stack>
+    </Providers>
   );
 }
