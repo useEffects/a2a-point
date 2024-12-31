@@ -4,7 +4,7 @@ import {
   useAuthRequest,
   useAutoDiscovery,
 } from 'expo-auth-session';
-import { Button, Text, View } from 'react-native';
+import { View } from 'react-native';
 import { useContext, useEffect, useState } from 'react';
 import { NEXT_URL, KC_URL, KC_REALM, KC_CLIENT_ID } from '../lib/constants';
 import { keycloakStore } from 'app/store/keycloak';
@@ -19,6 +19,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthTokens } from 'app/lib/types';
 import { URLSearchParams } from 'app/lib/helpers';
 import { directusStore, initialDirectusStore } from 'app/store/directus';
+import { Button } from 'app/components/ui/button';
+import { Text } from 'app/components/ui/text';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -93,9 +95,17 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
   }, [response, discovery]);
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      {!active && <Button title="login" onPress={() => promptAsync()}></Button>}
-      {active && <Button title="logout" onPress={logout}></Button>}
+    <View className="bg-background w-full h-full flex-1 justify-center items-center">
+      {!active && (
+        <Button onPress={() => promptAsync()}>
+          <Text>Login</Text>
+        </Button>
+      )}
+      {active && (
+        <Button onPress={logout}>
+          <Text>Logout</Text>
+        </Button>
+      )}
     </View>
   );
 }

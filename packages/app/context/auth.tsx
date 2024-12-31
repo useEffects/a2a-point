@@ -5,7 +5,11 @@ import {
   staticToken,
 } from '@directus/sdk';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { DefinedUseQueryResult, useQuery, UseQueryResult } from '@tanstack/react-query';
+import {
+  DefinedUseQueryResult,
+  useQuery,
+  UseQueryResult,
+} from '@tanstack/react-query';
 import {
   DIRECTUS_URL,
   KC_ACCESS_TOKEN_EXPIRY,
@@ -127,39 +131,46 @@ export const authOnSuccess = async (
   setKeyCloakStore: (props: Partial<KeycloakStore>) => void,
   setDirectusStore: (props: Partial<DirectusStore>) => void,
 ) => {
-  if (accessToken && refreshToken) {
-    const directusAccessTokenResp = await fetch(
-      `${DIRECTUS_URL}/extended-api/exchange-keycloak-token`,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          accessToken: accessToken,
-          clientId: KC_CLIENT_ID,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
+  try {
+    if (accessToken && refreshToken) {
+      const directusAccessTokenResp = await fetch(
+        `${DIRECTUS_URL}/extended-api/exchange-keycloak-token`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            accessToken: accessToken,
+            clientId: KC_CLIENT_ID,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      },
-    );
-    if (!directusAccessTokenResp.ok) {
-      console.error(await directusAccessTokenResp.json());
+      );
+      if (!directusAccessTokenResp.ok) {
+        console.error(await directusAccessTokenResp.json());
+        setKeyCloakStore({ active: false });
+        setDirectusStore(initialDirectusStore);
+        throw new Error('Error getting access token from directus');
+      }
+
+      const resp = await directusAccessTokenResp.json();
+      setKeyCloakStore({ active: true });
+      setDirectusStore({
+        authenticated: true,
+        rest: createDirectus(DIRECTUS_URL)
+          .with(authentication())
+          .with(rest())
+          .with(staticToken(resp.access_token)),
+      });
+      return resp;
+    } else {
       setKeyCloakStore({ active: false });
       setDirectusStore(initialDirectusStore);
-      throw new Error('Error getting access token from directus');
     }
-
-    const resp = await directusAccessTokenResp.json();
-    setKeyCloakStore({ active: true });
-    setDirectusStore({
-      authenticated: true,
-      rest: createDirectus(DIRECTUS_URL)
-        .with(authentication())
-        .with(rest())
-        .with(staticToken(resp.access_token)),
-    });
-    return resp;
-  } else {
+  } catch (error) {
+    console.error(error);
     setKeyCloakStore({ active: false });
     setDirectusStore(initialDirectusStore);
+    throw error;
   }
 };
