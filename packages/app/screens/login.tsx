@@ -8,17 +8,28 @@ import { Button, Text, View } from 'react-native';
 import { useContext, useEffect, useState } from 'react';
 import { NEXT_URL, KC_URL, KC_REALM, KC_CLIENT_ID } from '../lib/constants';
 import { keycloakStore } from 'app/store/keycloak';
-import { AuthContext, authQueryKey, kcRefreshTokenKey } from 'app/context/auth';
+import {
+  AuthContext,
+  authOnSuccess,
+  authQueryKey,
+  kcRefreshTokenKey,
+} from 'app/context/auth';
 import { useQueryClient } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthTokens } from 'app/lib/types';
 import { URLSearchParams } from 'app/lib/helpers';
+import { directusStore, initialDirectusStore } from 'app/store/directus';
 
 WebBrowser.maybeCompleteAuthSession();
 
 export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
-  const queryClient = useQueryClient();
-  const { active } = keycloakStore();
+  const { active, setKeyCloakStore } = keycloakStore();
+  const { setDirectusStore } = directusStore();
+  const {
+    keycloakQueryResult: {
+      data: { accessToken },
+    },
+  } = useContext(AuthContext);
 
   const discovery = useAutoDiscovery(`${KC_URL}/realms/${KC_REALM}`);
   const redirectUri = makeRedirectUri({
@@ -35,6 +46,28 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
     discovery,
   );
 
+  const logout = async () => {
+    try {
+      const res = await fetch(
+        `${KC_URL}/realms/${KC_REALM}/protocol/openid-connect/logout?client_id=${KC_CLIENT_ID}`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      if (res.ok) {
+        setDirectusStore(initialDirectusStore);
+        setKeyCloakStore({ active: false });
+        await AsyncStorage.removeItem(kcRefreshTokenKey);
+      }
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
   useEffect(() => {
     if (response?.type === 'success') {
       const { code } = response.params;
@@ -44,12 +77,14 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
         redirectUri,
       })
         .then(async (res) => {
-          const { refresh_token, access_token } = res;
-          queryClient.setQueryData<AuthTokens>(authQueryKey, {
-            accessToken: access_token,
-            refreshToken: refresh_token,
-          });
-          await AsyncStorage.setItem(kcRefreshTokenKey, refresh_token);
+          const { refresh_token: refreshToken, access_token: accessToken } =
+            res;
+          authOnSuccess(
+            { accessToken, refreshToken },
+            setKeyCloakStore,
+            setDirectusStore,
+          );
+          await AsyncStorage.setItem(kcRefreshTokenKey, refreshToken);
         })
         .catch(console.error);
     } else if (response?.type === 'error') {
@@ -60,7 +95,7 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {!active && <Button title="login" onPress={() => promptAsync()}></Button>}
-      {active && <Button title="logout" onPress={() => promptAsync()}></Button>}
+      {active && <Button title="logout" onPress={logout}></Button>}
     </View>
   );
 }

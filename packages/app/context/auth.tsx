@@ -5,7 +5,7 @@ import {
   staticToken,
 } from '@directus/sdk';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { DefinedUseQueryResult, useQuery, UseQueryResult } from '@tanstack/react-query';
 import {
   DIRECTUS_URL,
   KC_ACCESS_TOKEN_EXPIRY,
@@ -16,17 +16,24 @@ import {
 } from 'app/lib/constants';
 import { URLSearchParams } from 'app/lib/helpers';
 import { AuthTokens } from 'app/lib/types';
-import { directusStore, initialDirectusStore } from 'app/store/directus';
-import { keycloakStore } from 'app/store/keycloak';
+import {
+  DirectusStore,
+  directusStore,
+  initialDirectusStore,
+} from 'app/store/directus';
+import { KeycloakStore, keycloakStore } from 'app/store/keycloak';
 import { createContext, ReactNode, useEffect } from 'react';
 
-export const AuthContext = createContext({} as UseQueryResult<AuthTokens>);
+export const AuthContext = createContext({
+  keycloakQueryResult: {} as DefinedUseQueryResult<AuthTokens>,
+  directusQueryResult: {} as UseQueryResult,
+});
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { setKeyCloakStore } = keycloakStore();
   const { setDirectusStore } = directusStore();
 
-  const queryResult = useQuery<AuthTokens>({
+  const keycloakQueryResult = useQuery<AuthTokens>({
     queryKey: authQueryKey,
     queryFn: async () => {
       const refreshToken = await AsyncStorage.getItem(kcRefreshTokenKey);
@@ -39,6 +46,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }
         } catch (error) {
           console.error(error);
+          await AsyncStorage.removeItem(kcRefreshTokenKey);
           return initalAuthTokensState;
         }
       }
@@ -49,47 +57,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     refetchIntervalInBackground: true,
   });
 
-  useEffect(() => {
-    (async () => {
-      if (queryResult.data.accessToken && queryResult.data.refreshToken) {
-        setKeyCloakStore({
-          active: true,
-        });
-        const directusAccessTokenResp = await fetch(
-          `${DIRECTUS_URL}/extended-api/exchange-keycloak-token`,
-          {
-            method: 'POST',
-            body: JSON.stringify({
-              accessToken: queryResult.data.accessToken,
-              clientId: KC_CLIENT_ID
-            }),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-        if (!directusAccessTokenResp.ok) {
-          console.error(await directusAccessTokenResp.json());
-          throw new Error('Error getting access token from directus');
-        }
-
-        const { access_token } = await directusAccessTokenResp.json();
-        setDirectusStore({
-          authenticated: true,
-          rest: createDirectus(DIRECTUS_URL)
-            .with(authentication())
-            .with(rest())
-            .with(staticToken(access_token)),
-        });
-      } else {
-        setKeyCloakStore({ active: false });
-        setDirectusStore(initialDirectusStore);
-      }
-    })();
-  }, [queryResult.data]);
+  const directusQueryResult = useQuery({
+    queryKey: ['DIRECTUS GLOBAL CONTEXT', keycloakQueryResult.data],
+    queryFn: async () =>
+      authOnSuccess(
+        { ...keycloakQueryResult.data },
+        setKeyCloakStore,
+        setDirectusStore,
+      ),
+    enabled: Boolean(
+      keycloakQueryResult.data.accessToken &&
+        keycloakQueryResult.data.refreshToken,
+    ),
+  });
 
   return (
-    <AuthContext.Provider value={queryResult}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ keycloakQueryResult, directusQueryResult }}>
+      {children}
+    </AuthContext.Provider>
   );
 };
 
@@ -101,7 +86,7 @@ const initalAuthTokensState: AuthTokens = {
   refreshToken: '',
 };
 
-export const refreshKeycloakTokens = async (
+const refreshKeycloakTokens = async (
   refreshToken: string,
 ): Promise<AuthTokens> => {
   const tokenEndpoint = `${KC_URL}/realms/${KC_REALM}/protocol/openid-connect/token`;
@@ -134,5 +119,47 @@ export const refreshKeycloakTokens = async (
   } catch (error) {
     console.error(error);
     throw error;
+  }
+};
+
+export const authOnSuccess = async (
+  { accessToken, refreshToken }: AuthTokens,
+  setKeyCloakStore: (props: Partial<KeycloakStore>) => void,
+  setDirectusStore: (props: Partial<DirectusStore>) => void,
+) => {
+  if (accessToken && refreshToken) {
+    const directusAccessTokenResp = await fetch(
+      `${DIRECTUS_URL}/extended-api/exchange-keycloak-token`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          accessToken: accessToken,
+          clientId: KC_CLIENT_ID,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    if (!directusAccessTokenResp.ok) {
+      console.error(await directusAccessTokenResp.json());
+      setKeyCloakStore({ active: false });
+      setDirectusStore(initialDirectusStore);
+      throw new Error('Error getting access token from directus');
+    }
+
+    const resp = await directusAccessTokenResp.json();
+    setKeyCloakStore({ active: true });
+    setDirectusStore({
+      authenticated: true,
+      rest: createDirectus(DIRECTUS_URL)
+        .with(authentication())
+        .with(rest())
+        .with(staticToken(resp.access_token)),
+    });
+    return resp;
+  } else {
+    setKeyCloakStore({ active: false });
+    setDirectusStore(initialDirectusStore);
   }
 };
