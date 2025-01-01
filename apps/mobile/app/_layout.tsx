@@ -10,25 +10,22 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import '../../../packages/tailwind-theme/theme.css';
 import { Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   return (
     <Providers>
-      <SafeAreaProvider>
-        <HideSplashScreen>
-          <Stack
-            screenOptions={{
-              headerShown: false,
-            }}
-          >
-            <Stack.Screen name="(main)" />
-            <Stack.Screen name="auth" />
-          </Stack>
-        </HideSplashScreen>
-      </SafeAreaProvider>
+      <HideSplashScreen>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="(main)" />
+          <Stack.Screen name="auth" />
+        </Stack>
+      </HideSplashScreen>
       <StatusBar />
     </Providers>
   );
