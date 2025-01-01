@@ -49,10 +49,10 @@ import userStore from 'app/store/user';
 import * as Linking from 'expo-linking';
 import opacity from 'hex-color-opacity';
 import { View } from 'react-native';
-import { Link } from 'solito/link';
+import { Link } from 'expo-router';
 import { FilterKeys } from './listings';
 
-export default function HomeScreen() {
+export function HomeScreen() {
   const { authenticated } = directusStore();
   const { user } = userStore();
   const { colors } = useColorScheme();

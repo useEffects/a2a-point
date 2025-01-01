@@ -61,7 +61,7 @@ import {
   SceneRendererProps,
   TabView,
 } from 'react-native-tab-view';
-import { Link } from 'solito/link';
+import { Link } from 'expo-router';
 import { ExtraSmallListingCardProps } from '../components/cards/atoms/extra-small';
 import { MediumListingCardProps } from '../components/cards/atoms/medium';
 import {

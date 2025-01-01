@@ -8,5 +8,6 @@
     },
     "jsx": "react-jsx"
   },
-  "extends": "./tsconfig.base"
+  "extends": "./tsconfig.base",
+  "exclude": ["node_modules"]
 }

@@ -37,6 +37,5 @@
     "typescriptreact",
     "scss"
   ],
-  "prettier.configPath": "prettier.config.js",
-  "typescript.tsserver.experimental.enableProjectDiagnostics": true
+  "prettier.configPath": "prettier.config.js"
 }

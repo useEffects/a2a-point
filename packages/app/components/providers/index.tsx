@@ -5,16 +5,17 @@ import { PortalHost } from '../primitives/portal';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from 'app/context/auth';
-import { queryClient, queryStore } from 'app/store/query';
-import { ReactNode, useEffect, useState } from 'react';
+import { queryStore } from 'app/store/query';
+import { ReactNode, useEffect } from 'react';
 
 export const Providers = ({ children }: { children: ReactNode }) => {
+  const queryClient = queryStore();
   useEffect(() => {
     queryStore.setState(new QueryClient());
   }, []);
 
   return (
-    queryClient && (
+    Object.keys(queryClient).length && (
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <EventProvider>

@@ -12,7 +12,7 @@ import { ReactNode } from 'react';
 import { Dimensions, Image, Platform, View } from 'react-native';
 import * as Linking from 'expo-linking';
 import { portfolioUrl } from 'app/lib/constants';
-import { Link } from 'solito/link';
+import { Link } from 'expo-router';
 import { AsyncImage } from 'app/components/async-image';
 
 export const NewsCard = ({

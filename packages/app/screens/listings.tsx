@@ -64,7 +64,7 @@ import {
   SceneRendererProps,
   TabView,
 } from 'react-native-tab-view';
-import { useSearchParams, useUpdateSearchParams } from 'solito/navigation';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useDebounce } from 'use-debounce';
 import { GoToLoginButton } from './locked-screens';
 
@@ -101,8 +101,7 @@ export default function ListingsScreenComponent({
   className?: string;
   data: (MediumListingCardProps & ListingCardMetrics)[];
 }) {
-  const updateSearchParams = useUpdateSearchParams();
-  const filtersFromParams = useSearchParams()?.get('filters');
+  const filtersFromParams = useLocalSearchParams()['filters'];
 
   const [searchText, setSearchText] = useState('');
   const [debouncedSearchText] = useDebounce(searchText, 500);
@@ -119,7 +118,7 @@ export default function ListingsScreenComponent({
       [],
     );
 
-    updateSearchParams({
+    router.setParams({
       filters: JSON.stringify(newFilters),
     });
   };
@@ -137,7 +136,9 @@ export default function ListingsScreenComponent({
   useEffect(() => {
     let parsedFilters: unknown;
     try {
-      parsedFilters = JSON.parse(filtersFromParams ?? [].toString());
+      parsedFilters = JSON.parse(
+        (filtersFromParams as string) || [].toString(),
+      );
     } catch (error) {
       console.log(error);
     }

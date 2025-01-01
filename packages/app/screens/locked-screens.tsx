@@ -8,7 +8,6 @@ import { useRouter } from "app/hooks/router";
 import { cn } from "app/lib/utils";
 import { ReactNode } from "react";
 import { Dimensions, Platform, View } from "react-native";
-import { SolitoImage as Image } from "solito/image";
 
 type LockedScreenProps = {
     className?: string,

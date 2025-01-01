@@ -45,12 +45,12 @@ import {
   SceneMap,
   TabView,
 } from 'react-native-tab-view';
-import { useSearchParams } from 'solito/navigation';
 import { useRouter } from 'app/hooks/router';
 import * as Yup from 'yup';
 import LockedScreen, { GoToAccountConsole } from './locked-screens';
 import PostImg from 'app/assets/locked-screens/post.jpg';
 import { CircleAlert, Plus } from 'app/components/icons';
+import { useLocalSearchParams } from 'expo-router';
 
 function Form1({
   formValues,
@@ -133,9 +133,9 @@ function Form1({
   };
 
   const Form = (props: FormikProps<Form1Values>) => {
-    const searchParams = useSearchParams();
+    const searchParams = useLocalSearchParams();
 
-    const type = searchParams?.get('deal_type');
+    const type = searchParams['deal_type'];
 
     useEffect(() => {
       if (

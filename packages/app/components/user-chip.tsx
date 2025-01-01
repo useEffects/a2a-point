@@ -3,7 +3,7 @@ import { buildAssetUrl, isUserPro } from 'app/lib/helpers';
 import { User } from 'app/lib/types';
 import { cn } from 'app/lib/utils';
 import { Image, Pressable, View } from 'react-native';
-import { Link } from 'solito/link';
+import { Link } from 'expo-router';
 import { Text } from './ui/text';
 import { AsyncImage } from './async-image';
 
