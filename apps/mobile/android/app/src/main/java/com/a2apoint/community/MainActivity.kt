@@ -1,4 +1,4 @@
-package com.useeffects.mobile
+package com.a2apoint.community
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

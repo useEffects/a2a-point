@@ -1,4 +1,4 @@
-package com.useeffects.mobile
+package com.a2apoint.community
 
 import android.app.Application
 import android.content.res.Configuration

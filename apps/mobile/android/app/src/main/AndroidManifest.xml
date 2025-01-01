@@ -26,6 +26,8 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="myapp"/>
         <data android:scheme="com.useeffects.mobile"/>
+        <data android:scheme="a2apoint-community"/>
+        <data android:scheme="com.a2apoint.community"/>
       </intent-filter>
     </activity>
   </application>
