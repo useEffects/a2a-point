@@ -1,14 +1,18 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from 'app/context/auth';
-import { ReactNode } from 'react';
+import { queryClient, queryStore } from 'app/store/query';
+import { ReactNode, useEffect, useState } from 'react';
 
 export const Providers = ({ children }: { children: ReactNode }) => {
-  const queryClient = new QueryClient();
+  useEffect(() => {
+    queryStore.setState(new QueryClient());
+  }, []);
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        {children}
-      </AuthProvider>
-    </QueryClientProvider>
+    queryClient && (
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>{children}</AuthProvider>
+      </QueryClientProvider>
+    )
   );
 };

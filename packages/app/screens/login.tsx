@@ -6,7 +6,7 @@ import {
 } from 'expo-auth-session';
 import { View } from 'react-native';
 import { useContext, useEffect, useState } from 'react';
-import { NEXT_URL, KC_URL, KC_REALM, KC_CLIENT_ID } from '../lib/constants';
+import { NEXT_URL, KC_URL, KC_REALM, KC_CLIENT_ID } from '../lib/constants/env';
 import { keycloakStore } from 'app/store/keycloak';
 import {
   AuthContext,
