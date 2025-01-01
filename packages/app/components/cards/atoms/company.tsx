@@ -1,8 +1,9 @@
 import { Button } from 'app/components/ui/button';
 import { Text } from 'app/components/ui/text';
 import { buildAssetUrl } from 'app/lib/helpers';
+import { Image } from 'react-native';
 import * as Linking from 'expo-linking';
-import { DIRECTUS_URL } from 'app/lib/constants';
+import { directusUrl } from 'app/lib/constants';
 import { AsyncImage } from 'app/components/async-image';
 
 export const CompanyChip = ({
@@ -21,7 +22,7 @@ export const CompanyChip = ({
       id={id}
       className="flex-row items-center justify-start"
       onPress={() =>
-        Linking.openURL(`${DIRECTUS_URL}/admin/content/companies/${id}`)
+        Linking.openURL(`${directusUrl}/admin/content/companies/${id}`)
       }
     >
       <AsyncImage

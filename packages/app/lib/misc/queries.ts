@@ -1,8 +1,8 @@
 import { directusStore } from 'app/store/directus';
 import { aggregate, Query } from '@directus/sdk';
-import { defaultLimit, DIRECTUS_URL, memberRole } from '../constants';
+import { defaultLimit, directusUrl, memberRole } from '../constants';
 import { useQuery } from '@tanstack/react-query';
-import { ListingCardMetrics } from 'app/lib/props';
+import { ListingCardMetrics } from '../props';
 import { queryClient } from 'app/store/query';
 
 export const getListingsCountForUser = async (userId: string) => {
@@ -232,8 +232,7 @@ export const getListingMetrics = async (
 };
 
 export const renderCardsQuery = async <R>(props: RenderCardsType) => {
-  const { rest } = directusStore.getState();
-  const token = await rest.getToken();
+  const token = await directusStore.getState().rest.getToken();
   const {
     collection,
     fields = [],
@@ -249,7 +248,7 @@ export const renderCardsQuery = async <R>(props: RenderCardsType) => {
     ? collection
     : `items/${collection}`;
 
-  const url = `${DIRECTUS_URL}/${finalCollection}/?fields=${fields.join(',')}&limit=${limit}&filter=${JSON.stringify(filter)}&sort=${sort.join(',')}&offset=${offset}&search=${searchText}&deep=${JSON.stringify(deep)}`;
+  const url = `${directusUrl}/${finalCollection}/?fields=${fields.join(',')}&limit=${limit}&filter=${JSON.stringify(filter)}&sort=${sort.join(',')}&offset=${offset}&search=${searchText}&deep=${JSON.stringify(deep)}`;
   const res = (await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -268,8 +267,7 @@ export const renderCardsQuery = async <R>(props: RenderCardsType) => {
 export const renderCardsQuery2 = async <R>(
   props: Query<any, R> & { collection: string },
 ) => {
-  const { rest } = directusStore.getState();
-  const token = await rest.getToken();
+  const token = await directusStore.getState().rest.getToken();
   const {
     collection,
     fields = [],
@@ -285,7 +283,7 @@ export const renderCardsQuery2 = async <R>(
     ? collection
     : `items/${collection}`;
 
-  const url = `${DIRECTUS_URL}/${finalCollection}/?fields=${fields.join(',')}&limit=${limit}&filter=${JSON.stringify(filter)}&sort=${sort}&offset=${offset}&search=${search}&deep=${JSON.stringify(deep)}`;
+  const url = `${directusUrl}/${finalCollection}/?fields=${fields.join(',')}&limit=${limit}&filter=${JSON.stringify(filter)}&sort=${sort}&offset=${offset}&search=${search}&deep=${JSON.stringify(deep)}`;
   const res = (await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,

@@ -1,9 +1,10 @@
+import { useRouter } from 'app/hooks/router';
 import { buildAssetUrl, isUserPro } from 'app/lib/helpers';
 import { User } from 'app/lib/types';
 import { cn } from 'app/lib/utils';
-import { Pressable, View } from 'react-native';
+import { Image, Pressable, View } from 'react-native';
+import { Link } from 'solito/link';
 import { Text } from './ui/text';
-import { Link, useRouter } from 'expo-router';
 import { AsyncImage } from './async-image';
 
 export const UserChip = ({

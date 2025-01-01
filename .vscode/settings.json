@@ -29,6 +29,14 @@
     "source.fixAll.eslint": "always"
   },
   "eslint.format.enable": true,
-  "eslint.validate": ["html", "javascript", "typescript", "javascriptreact", "typescriptreact", "scss"],
-  "prettier.configPath": "prettier.config.js"
+  "eslint.validate": [
+    "html",
+    "javascript",
+    "typescript",
+    "javascriptreact",
+    "typescriptreact",
+    "scss"
+  ],
+  "prettier.configPath": "prettier.config.js",
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true
 }

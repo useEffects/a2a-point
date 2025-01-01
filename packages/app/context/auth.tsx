@@ -16,7 +16,6 @@ import {
   KC_CLIENT_ID,
   KC_REALM,
   KC_URL,
-  NEXT_URL,
 } from 'app/lib/constants';
 import { URLSearchParams } from 'app/lib/helpers';
 import { AuthTokens } from 'app/lib/types';

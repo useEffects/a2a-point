@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, FC } from 'react';
 import { Image, ImageProps, ImageURISource } from 'react-native';
 
 export type AsyncImageSourceType = (
@@ -12,7 +12,7 @@ interface AsyncImageProps extends Omit<ImageProps, 'source'> {
   source: AsyncImageSourceType;
 }
 
-export const AsyncImage: React.FC<AsyncImageProps> = ({ source, ...props }) => {
+export const AsyncImage: FC<AsyncImageProps> = ({ source, ...props }) => {
   const [resolvedUri, setResolvedUri] = useState<string | null>(null);
 
   useEffect(() => {

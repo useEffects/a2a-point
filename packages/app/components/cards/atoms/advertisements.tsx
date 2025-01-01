@@ -3,9 +3,11 @@ import { Advertisement, User } from 'app/lib/types';
 import { Text } from 'app/components/ui/text';
 import {
   buildAssetUrl,
+  getDMRoomId,
+  shortTime,
   timeAgo,
 } from 'app/lib/helpers';
-import { userStore } from 'app/store/user';
+import userStore from 'app/store/user';
 import { UserChip } from 'app/components/user-chip';
 import * as Linking from 'expo-linking';
 import { AsyncImage } from 'app/components/async-image';

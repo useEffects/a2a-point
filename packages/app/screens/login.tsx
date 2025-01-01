@@ -1,152 +1,101 @@
-import * as WebBrowser from 'expo-web-browser';
-import {
-  makeRedirectUri,
-  useAuthRequest,
-  useAutoDiscovery,
-} from 'expo-auth-session';
-import { View } from 'react-native';
-import { useContext, useEffect, useState } from 'react';
-import { NEXT_URL, KC_URL, KC_REALM, KC_CLIENT_ID } from '../lib/constants/env';
-import { keycloakStore } from 'app/store/keycloak';
-import {
-  AuthContext,
-  authOnSuccess,
-  authQueryKey,
-  kcRefreshTokenKey,
-} from 'app/context/auth';
-import { useQueryClient } from '@tanstack/react-query';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AuthTokens } from 'app/lib/types';
-import { URLSearchParams } from 'app/lib/helpers';
-import { directusStore, initialDirectusStore } from 'app/store/directus';
+import LoginDarkImg from 'app/assets/login/dark/Frame_135_2_hzjyas_c_scale,w_1085.jpg';
+import LoginLightImg from 'app/assets/login/light/light_c9pqo8_c_scale,w_1029.jpg';
+import { AsyncImage } from 'app/components/async-image';
+import { Header } from 'app/components/header';
+import Logo from 'app/components/svg/logo';
 import { Button } from 'app/components/ui/button';
 import { Text } from 'app/components/ui/text';
+import { ScrollView } from 'app/components/utils/virtual-lists';
+import { useColorScheme } from 'app/hooks/color-scheme';
+import { useRouter } from 'app/hooks/router';
+import { directusUrl, portfolioUrl } from 'app/lib/constants';
+import { directusStore } from 'app/store/directus';
+import * as Linking from 'expo-linking';
+import * as WebBrowser from 'expo-web-browser';
+import { useEffect } from 'react';
+import { View } from 'react-native';
+import { parse } from 'search-params';
 
-WebBrowser.maybeCompleteAuthSession();
+const LoginScreen = () => {
+  const { authenticated } = directusStore();
+  const router = useRouter();
+  const appURL = 'a2apoint-community://';
+  const { isDarkColorScheme } = useColorScheme();
 
-export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
-  const { active, setKeyCloakStore } = keycloakStore();
-  const { setDirectusStore } = directusStore();
-  const {
-    keycloakQueryResult: {
-      data: { accessToken },
-    },
-  } = useContext(AuthContext);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (authenticated) {
+        router.replace('/');
+        clearInterval(timer);
+      }
+    }, 100);
+    return () => clearInterval(timer);
+  }, [authenticated]);
 
-  const discovery = useAutoDiscovery(`${KC_URL}/realms/${KC_REALM}`);
-  const redirectUri = makeRedirectUri({
-    path: `auth/callback?redirect=${redirect}`,
-  });
-
-  const [request, response, promptAsync] = useAuthRequest(
-    {
-      clientId: KC_CLIENT_ID!,
-      redirectUri,
-      scopes: ['openid', 'profile', 'offline_access'],
-      responseType: 'code',
-    },
-    discovery,
-  );
-
-  const logout = async () => {
+  const handleLogin = async () => {
     try {
-      const res = await fetch(
-        `${KC_URL}/realms/${KC_REALM}/protocol/openid-connect/logout?client_id=${KC_CLIENT_ID}`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
+      const result = await WebBrowser.openAuthSessionAsync(
+        `${directusUrl}/auth/login/keycloak?redirect=${portfolioUrl}/api/auth-redirect?appUrl=${appURL}/login`,
+        appURL,
       );
-      if (res.ok) {
-        setDirectusStore(initialDirectusStore);
-        setKeyCloakStore({ active: false });
-        await AsyncStorage.removeItem(kcRefreshTokenKey);
+      console.log(result);
+      if (result.type === 'success') {
+        const { access_token: accessToken, refresh_token: refreshToken } =
+          parse(result.url);
+        if (accessToken && refreshToken) {
+          //   await initialize(accessToken.toString(), refreshToken.toString());
+          router.replace('/');
+        }
       }
     } catch (error) {
-      console.error(error);
-      throw error;
+      console.log(error);
     }
   };
 
-  useEffect(() => {
-    if (response?.type === 'success') {
-      const { code } = response.params;
-      getToken({
-        code: code!,
-        codeVerifier: request?.codeVerifier!,
-        redirectUri,
-      })
-        .then(async (res) => {
-          const { refresh_token: refreshToken, access_token: accessToken } =
-            res;
-          authOnSuccess(
-            { accessToken, refreshToken },
-            setKeyCloakStore,
-            setDirectusStore,
-          );
-          await AsyncStorage.setItem(kcRefreshTokenKey, refreshToken);
-        })
-        .catch(console.error);
-    } else if (response?.type === 'error') {
-      console.error('Authentication error: ', response.error);
-    }
-  }, [response, discovery]);
-
   return (
-    <View className="bg-background w-full h-full flex-1 justify-center items-center">
-      {!active && (
-        <Button onPress={() => promptAsync()}>
-          <Text>Login</Text>
+    <ScrollView contentContainerClassName="flex-grow">
+      <Header>
+        <Text className="text-xl font-bold">Login</Text>
+      </Header>
+      <View className="flex-col justify-between flex-1 items-start px-4 py-8">
+        <View className="flex-col items-center w-full">
+          <Text className="text-2xl font-bold">
+            Welcome to <Text className="text-2xl text-primary">A2APoint</Text>
+          </Text>
+          <Text>For more information visit</Text>
+          <Button
+            onPress={() => Linking.openURL('https://a2apoint.com')}
+            size={'none'}
+            variant={'base'}
+          >
+            <Text className="text-info underline">https://a2apoint.com</Text>
+          </Button>
+        </View>
+        <View className="flex-row justify-center w-full relative h-[350px]">
+          <AsyncImage
+            source={isDarkColorScheme ? LoginDarkImg : LoginLightImg}
+            style={{ width: 350, height: 350 }}
+          />
+        </View>
+        <Button onPress={handleLogin} className="w-full">
+          <Text>Login or create account</Text>
         </Button>
-      )}
-      {active && (
-        <Button onPress={logout}>
-          <Text>Logout</Text>
-        </Button>
-      )}
-    </View>
+        <View className="flex-col gap-2 w-full items-center">
+          <View className="p-4 bg-light rounded-full">
+            <Logo width={40} height={40} />
+          </View>
+          <Text className="text-sm text-subtext text-center">
+            By continuing, you agree to our{' '}
+            <Text className="text-sm text-info underline">
+              Terms of Service
+            </Text>{' '}
+            and that you have read our{' '}
+            <Text className="text-sm text-info underline">Privacy Policy</Text>
+          </Text>
+        </View>
+      </View>
+    </ScrollView>
   );
-}
-
-export const getToken = async ({
-  code,
-  codeVerifier,
-  redirectUri,
-}: {
-  code: string;
-  codeVerifier: string;
-  redirectUri: string;
-}) => {
-  try {
-    const formParams = new URLSearchParams();
-    formParams.append('grant_type', 'authorization_code');
-    formParams.append('client_id', KC_CLIENT_ID!);
-    formParams.append('code', code);
-    formParams.append('code_verifier', codeVerifier);
-    formParams.append('redirect_uri', redirectUri);
-
-    const response = await fetch(
-      `${KC_URL}/realms/${KC_REALM}/protocol/openid-connect/token`,
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formParams.toString(),
-      },
-    );
-    if (response.ok) {
-      return response.json();
-    } else {
-      const json = await response.json();
-      console.error(json);
-      throw new Error(json);
-    }
-  } catch (e) {
-    console.error(e);
-    throw e;
-  }
 };
+
+export default LoginScreen;

@@ -26,6 +26,7 @@ import { ViewAllButton } from 'app/components/utils/common-ui';
 import { FlatList, ScrollView } from 'app/components/utils/virtual-lists';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { useRouter } from 'app/hooks/router';
+import { directusUrl, portfolioUrl } from 'app/lib/constants';
 import {
   getCompaniesCount,
   getCompaniesWithAgents,
@@ -50,7 +51,6 @@ import opacity from 'hex-color-opacity';
 import { View } from 'react-native';
 import { Link } from 'solito/link';
 import { FilterKeys } from './listings';
-import { DIRECTUS_URL, NEXT_URL } from 'app/lib/constants';
 
 export default function HomeScreen() {
   const { authenticated } = directusStore();
@@ -101,6 +101,8 @@ export default function HomeScreen() {
       companiesCount: 0,
     },
   });
+
+  console.log(counts);
 
   const { data: photoListingsInitialData } = useQuery({
     queryKey: ['Fetch photo listings'],
@@ -223,7 +225,7 @@ export default function HomeScreen() {
             button={(props) => (
               <Button
                 {...props}
-                onPress={() => Linking.openURL(`${NEXT_URL}/news`)}
+                onPress={() => Linking.openURL(`${portfolioUrl}/news`)}
               />
             )}
           />
@@ -255,18 +257,18 @@ export default function HomeScreen() {
 const externalLinks = [
   {
     label: 'Website',
-    href: NEXT_URL,
+    href: portfolioUrl,
   },
   {
     label: 'Dashboard',
-    href: DIRECTUS_URL,
+    href: directusUrl,
   },
   {
     label: 'Courses',
-    href: `${NEXT_URL}/courses`,
+    href: `${directusUrl}/courses`,
   },
   {
     label: 'News',
-    href: `${NEXT_URL}/news`,
+    href: `${directusUrl}/news`,
   },
 ];
