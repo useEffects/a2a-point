@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.a2apoint.community'
+    namespace 'com.useeffects.mobile'
     defaultConfig {
-        applicationId 'com.a2apoint.community'
+        applicationId 'com.useeffects.mobile'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
