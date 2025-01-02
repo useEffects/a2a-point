@@ -157,6 +157,7 @@ export const getUsersCount = async () => {
   const usersCount = await rest.request(
     aggregate('directus_users', {
       aggregate: {
+        // @ts-expect-error * not assignable
         count: ['*'],
       },
       query: {

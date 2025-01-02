@@ -10,7 +10,7 @@ import {
 import { DIRECTUS_URL } from 'app/lib/constants';
 import { create } from 'zustand';
 
-const publicToken = '';
+const publicToken = 'Mnh7gFAmU4QeNRt_TQhTBrDDBxFdjPNu';
 export const initialDirectusStore: Omit<DirectusStore, 'setDirectusStore'> = {
   authenticated: false,
   rest: createDirectus(DIRECTUS_URL)

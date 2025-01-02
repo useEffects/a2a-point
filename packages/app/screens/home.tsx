@@ -20,7 +20,7 @@ import { CompanyStats } from 'app/components/company-stats';
 import { Header } from 'app/components/header';
 import { ArrowUpRight, ExternalLink } from 'app/components/icons';
 import { SeparatorText } from 'app/components/separator-text';
-import { Button } from 'app/components/ui/button';
+// import { Button } from 'app/components/ui/button';
 import { Text } from 'app/components/ui/text';
 import { ViewAllButton } from 'app/components/utils/common-ui';
 import { FlatList, ScrollView } from 'app/components/utils/virtual-lists';
@@ -51,6 +51,7 @@ import opacity from 'hex-color-opacity';
 import { View } from 'react-native';
 import { Link } from 'expo-router';
 import { FilterKeys } from './listings';
+import { Button } from 'app/components/ui/button';
 
 export function HomeScreen() {
   const { authenticated } = directusStore();
@@ -143,8 +144,8 @@ export function HomeScreen() {
   });
 
   return (
-    <ScrollView contentContainerClassName="flex-grow flex-col gap-8 pb-8">
-      <Header>
+    <View className="flex-grow flex-col gap-8 pb-8">
+      <Header shouldntGoBack>
         <Text className="text-xl font-bold">A2APoint</Text>
       </Header>
       <Text className="text-2xl font-bold text-wrap px-4">
@@ -250,7 +251,7 @@ export function HomeScreen() {
           </Link>
         ))}
       </View>
-    </ScrollView>
+    </View>
   );
 }
 

@@ -6,29 +6,31 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from 'app/context/auth';
 import { queryStore } from 'app/store/query';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 export const Providers = ({ children }: { children: ReactNode }) => {
-  const queryClient = queryStore();
+  const [queryClient, setQueryClient] = useState<QueryClient>();
   useEffect(() => {
-    queryStore.setState(new QueryClient());
+    const _client = new QueryClient();
+    queryStore.setState(_client);
+    setQueryClient(_client);
   }, []);
 
-  return (
-    Object.keys(queryClient).length && (
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <EventProvider>
-            <ChatsProviderComponent>
-              <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
-                {children}
-                <PortalHost />
-              </KeyboardProvider>
-            </ChatsProviderComponent>
-          </EventProvider>
-        </AuthProvider>
-      </QueryClientProvider>
-    )
+  return queryClient ? (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <EventProvider>
+          <ChatsProviderComponent>
+            <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
+              {children}
+              <PortalHost />
+            </KeyboardProvider>
+          </ChatsProviderComponent>
+        </EventProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  ) : (
+    <></>
   );
 };
 

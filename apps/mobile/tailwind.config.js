@@ -45,6 +45,7 @@ export default {
         '3xl': [defaultTheme.fontSize['3xl'][0], { ...defaultTheme.fontSize['3xl'][1], fontFamily: 'Poppins_400Regular, sans-serif' }],
         '4xl': [defaultTheme.fontSize['4xl'][0], { ...defaultTheme.fontSize['4xl'][1], fontFamily: 'Poppins_400Regular, sans-serif' }],
       },
+      
     },
   },
   plugins: [

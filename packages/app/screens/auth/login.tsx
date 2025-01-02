@@ -15,12 +15,12 @@ import {
   kcRefreshTokenKey,
 } from 'app/context/auth';
 import { useQueryClient } from '@tanstack/react-query';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthTokens } from 'app/lib/types';
 import { URLSearchParams } from 'app/lib/helpers';
 import { directusStore, initialDirectusStore } from 'app/store/directus';
 import { Button } from 'app/components/ui/button';
 import { Text } from 'app/components/ui/text';
+import { storage } from 'app/lib/mmkv';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -62,7 +62,7 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
       if (res.ok) {
         setDirectusStore(initialDirectusStore);
         setKeyCloakStore({ active: false });
-        await AsyncStorage.removeItem(kcRefreshTokenKey);
+        storage.delete(kcRefreshTokenKey);
       }
     } catch (error) {
       console.error(error);
@@ -86,7 +86,7 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
             setKeyCloakStore,
             setDirectusStore,
           );
-          await AsyncStorage.setItem(kcRefreshTokenKey, refreshToken);
+          storage.set(kcRefreshTokenKey, refreshToken);
         })
         .catch(console.error);
     } else if (response?.type === 'error') {

@@ -4,7 +4,6 @@ import {
   rest,
   staticToken,
 } from '@directus/sdk';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   DefinedUseQueryResult,
   useQuery,
@@ -26,6 +25,7 @@ import {
 } from 'app/store/directus';
 import { KeycloakStore, keycloakStore } from 'app/store/keycloak';
 import { createContext, ReactNode, useEffect } from 'react';
+import { storage } from 'app/lib/mmkv';
 
 export const AuthContext = createContext({
   keycloakQueryResult: {} as DefinedUseQueryResult<AuthTokens>,
@@ -39,17 +39,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const keycloakQueryResult = useQuery<AuthTokens>({
     queryKey: authQueryKey,
     queryFn: async () => {
-      const refreshToken = await AsyncStorage.getItem(kcRefreshTokenKey);
+      const refreshToken = storage.getString(kcRefreshTokenKey);
       if (refreshToken) {
         try {
           const tokens = await refreshKeycloakTokens(refreshToken);
           if (tokens.accessToken && tokens.refreshToken) {
-            await AsyncStorage.setItem(kcRefreshTokenKey, tokens.refreshToken);
+            storage.set(kcRefreshTokenKey, tokens.refreshToken);
             return { ...tokens };
           }
         } catch (error) {
           console.error(error);
-          await AsyncStorage.removeItem(kcRefreshTokenKey);
+          storage.delete(kcRefreshTokenKey);
           return initalAuthTokensState;
         }
       }
