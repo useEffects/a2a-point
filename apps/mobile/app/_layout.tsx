@@ -2,6 +2,8 @@ import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   Stack,
+  useGlobalSearchParams,
+  useLocalSearchParams,
   useNavigation,
   usePathname,
   useRouter,
@@ -130,9 +132,20 @@ export const RouterProvider = ({ children }: { children: React.ReactNode }) => {
   const navigation = useNavigation();
   const pathname = usePathname();
   const segments = useSegments();
+  const globalSearchParams = useGlobalSearchParams();
+  const localSearchParams = useLocalSearchParams();
 
   return (
-    <RouterContext.Provider value={{ router, navigation, pathname, segments }}>
+    <RouterContext.Provider
+      value={{
+        router,
+        navigation,
+        pathname,
+        segments,
+        globalSearchParams,
+        localSearchParams,
+      }}
+    >
       {children}
     </RouterContext.Provider>
   );

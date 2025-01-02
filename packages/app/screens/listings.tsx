@@ -2,10 +2,7 @@
 
 import { RangeSlider } from '@react-native-assets/slider';
 import BottomSheet from 'app/components/bottomsheet';
-import {
-  MediumListingCard,
-  MediumListingCardProps,
-} from 'app/components/cards/atoms/medium';
+import { MediumListingCardProps } from 'app/components/cards/atoms/medium';
 import {
   CommonFilters,
   commonFilters,
@@ -38,7 +35,12 @@ import { Text } from 'app/components/ui/text';
 import { GoToPostButtonUi } from 'app/components/utils/common-ui';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { useLocaleString } from 'app/hooks/locale-string';
-import { useRouter } from 'app/hooks/router';
+import {
+  useRouter,
+  useLocalSearchParams,
+  useNavigation,
+  useGlobalSearchParams,
+} from 'app/hooks/router';
 import { memberRole } from 'app/lib/constants';
 import { ListingCardMetrics, mediumListingsFields } from 'app/lib/props';
 import { cn } from 'app/lib/utils';
@@ -64,7 +66,6 @@ import {
   SceneRendererProps,
   TabView,
 } from 'react-native-tab-view';
-import { useLocalSearchParams } from 'expo-router';
 import { useDebounce } from 'use-debounce';
 import { GoToLoginButton } from './locked-screens';
 
@@ -101,7 +102,7 @@ export function ListingsScreen({
   className?: string;
   data: (MediumListingCardProps & ListingCardMetrics)[];
 }) {
-  const filtersFromParams = useLocalSearchParams()['filters'];
+  const filtersFromParams = useGlobalSearchParams()['filters'];
 
   const [searchText, setSearchText] = useState('');
   const [debouncedSearchText] = useDebounce(searchText, 500);
@@ -120,9 +121,7 @@ export function ListingsScreen({
       [],
     );
 
-    router.setParams({
-      filters: JSON.stringify(newFilters),
-    });
+    router.push(`/listings?filters=${JSON.stringify(newFilters)}`);
   };
 
   const applyFilters = () => {
@@ -138,6 +137,7 @@ export function ListingsScreen({
   useEffect(() => {
     let parsedFilters: unknown;
     try {
+      if (!filtersFromParams) return;
       parsedFilters = JSON.parse(
         (filtersFromParams as string) || [].toString(),
       );
@@ -179,7 +179,7 @@ export function ListingsScreen({
 
   return (
     <View className={cn('flex-1', className)}>
-      <Header className="items-center py-4" height={'auto'}>
+      <Header className="items-center py-4" height={'auto'} shouldntGoBack>
         <View className="flex-row flex-1 justify-between items-center">
           <HeaderTitle>Listings</HeaderTitle>
           <GoToPostButtonUi />
@@ -194,7 +194,7 @@ export function ListingsScreen({
           className={cn(
             'rounded-full border',
             !filters.length ? 'border-info' : 'border-success bg-success',
-            bottomSheetVisible && 'border-primary bg-primary',
+            bottomSheetVisible && 'border-info bg-info',
           )}
         >
           <ListFilter
@@ -203,7 +203,7 @@ export function ListingsScreen({
               filters.length
                 ? colors.card
                 : bottomSheetVisible
-                  ? colors['primary-foreground']
+                  ? colors['info-foreground']
                   : colors.info
             }
           />
@@ -261,9 +261,22 @@ export function ListingsScreen({
               />
             </Button>
           </View>
+          <View className="px-4">
+            <ComboBoxFilters
+              filters={currentFilters}
+              setFilters={setCurrentFilters}
+            />
+          </View>
           <Separator />
           <View className="px-4">
             <CategoryFilters
+              filters={currentFilters}
+              setFilters={setCurrentFilters}
+            />
+          </View>
+          <Separator />
+          <View className="px-4">
+            <RangeSliders
               filters={currentFilters}
               setFilters={setCurrentFilters}
             />
@@ -364,11 +377,11 @@ const RangeSliderTab = (
               <Circle cx={4} cy={4} r={4} fill={colors.primary} />
             </Svg>
             <Icon
-              className={cn(
+              color={
                 props.navigationState.index === i
-                  ? 'text-foreground'
-                  : 'text-subtext',
-              )}
+                  ? colors.foreground
+                  : colors.subtext
+              }
             />
             <View
               className={cn(

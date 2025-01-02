@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { Router } from 'expo-router';
+import { Router, UnknownOutputParams } from 'expo-router';
 import { NavigationProp, NavigationState } from '@react-navigation/native';
 
 type RouterContextType = {
@@ -12,6 +12,8 @@ type RouterContextType = {
   };
   pathname: string;
   segments: string[];
+  globalSearchParams: UnknownOutputParams;
+  localSearchParams: UnknownOutputParams;
 };
 
 export const RouterContext = createContext<RouterContextType>(
@@ -56,4 +58,28 @@ export const useSegments = () => {
   }
 
   return context.segments;
+};
+
+export const useGlobalSearchParams = () => {
+  const context = useContext(RouterContext);
+
+  if (!context.globalSearchParams) {
+    throw new Error(
+      'useGlobalSearchParams must be used within a RouterProvider.',
+    );
+  }
+
+  return context.globalSearchParams;
+};
+
+export const useLocalSearchParams = () => {
+  const context = useContext(RouterContext);
+
+  if (!context.localSearchParams) {
+    throw new Error(
+      'useLocalSearchParams must be used within a RouterProvider.',
+    );
+  }
+
+  return context.localSearchParams;
 };

@@ -49,7 +49,14 @@ type AdditionalFormInputProps = {
 export const initialInputHeight = 40;
 
 export const FormInput = (props: TextInputProps & AdditionalFormInputProps) => {
-  const { error, label, maxLines = 4, ...rest } = props;
+  const {
+    error,
+    label,
+    maxLines = 4,
+    rightComponent,
+    autoSelect,
+    ...rest
+  } = props;
   const [height, setHeight] = useState<DimensionValue>(
     props.initialHeight ?? initialInputHeight,
   );
@@ -249,6 +256,15 @@ export const FormAutoSelect = (
     AdditionalFormInputProps &
     AdditionalAutoSelectFormProps,
 ) => {
+  const {
+    item,
+    currentItem,
+    filter,
+    setCurrentItem,
+    initialValue,
+    ...formInputprops
+  } = props;
+
   const isRenderRoomTile = (
     item: AutoCompleteRenderItemProps | undefined,
   ): item is RenderRoomTileProps => {
@@ -273,11 +289,12 @@ export const FormAutoSelect = (
   const [searchText, setSearchText] = useState(title);
   const [debouncedSearchText] = useDebounce(searchText, 500);
   const [showResults, setShowResults] = useState(false);
+  const { colors } = useColorScheme();
 
   const { data } = useQuery<AutoCompleteRenderItemProps[]>({
     queryKey: ['Fetch AutoComplete Data', props.item, debouncedSearchText],
     queryFn: async () => {
-      const token = rest.getToken();
+      const token = await rest.getToken();
       return props.item === 'users'
         ? await fetch(
             `${directusUrl}/users/?filter=${JSON.stringify(props.filter) || ''}&limit=5&search=${debouncedSearchText}&fields=${autoCompleteFields[props.item].join(',')}`,
@@ -370,11 +387,15 @@ export const FormAutoSelect = (
               size={'smallIcon'}
               variant={'destructive'}
             >
-              <X size={18} className="text-destructive-foreground" />
+              <X
+                size={18}
+                color={colors['destructive-foreground']}
+                className="text-destructive-foreground"
+              />
             </Button>
           )
         }
-        {...props}
+        {...formInputprops}
       />
       <Collapsible collapsed={!showResults || !data.length}>
         <View className="p-1 bg-popover rounded rounded-t-none">

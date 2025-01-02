@@ -127,6 +127,9 @@ importers:
       react-native-mmkv:
         specifier: ^3.2.0
         version: 3.2.0(react-native@0.76.5(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1)
+      react-native-pager-view:
+        specifier: 6.5.1
+        version: 6.5.1(react-native@0.76.5(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1)
       react-native-reanimated:
         specifier: ~3.16.6
         version: 3.16.6(@babel/core@7.26.0)(react-native@0.76.5(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1)
@@ -7082,6 +7085,12 @@ packages:
 
   react-native-outside-press@1.2.2:
     resolution: {integrity: sha512-TkLB6KefjSXAPMHl2CQBpGnLQHT1wJp455k3vdhTRiT72llIyXrDDLp/gDhgQNNJAd3+XUEO5F+TZr882t8sYw==}
+    peerDependencies:
+      react: 18.3.1
+      react-native: 0.76.5
+
+  react-native-pager-view@6.5.1:
+    resolution: {integrity: sha512-YdX7bP+rPYvATMU7HzlMq9JaG3ui/+cVRbFZFGW+QshDULANFg9ECR1BA7H7JTIcO/ZgWCwF+1aVmYG5yBA9Og==}
     peerDependencies:
       react: 18.3.1
       react-native: 0.76.5
@@ -16388,6 +16397,11 @@ snapshots:
       react-native: 0.76.5(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.1)(react@18.3.1)
 
   react-native-outside-press@1.2.2(react-native@0.76.5(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-native: 0.76.5(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.1)(react@18.3.1)
+
+  react-native-pager-view@6.5.1(react-native@0.76.5(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1):
     dependencies:
       react: 18.3.1
       react-native: 0.76.5(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.1)(react@18.3.1)
