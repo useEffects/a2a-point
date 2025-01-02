@@ -93,7 +93,7 @@ const LockedProfileScreen = ({ userId }: { userId: string }) => {
       headerTitle={''}
       title="Build your profile!"
       header={() => (
-        <Header>
+        <Header shouldntGoBack>
           <View className="flex-row flex-grow items-center justify-between">
             <HeaderTitle>{title}</HeaderTitle>
             <ToggleTheme />
@@ -271,7 +271,7 @@ export function Profile({
   };
   return (
     <View className="relative flex-1">
-      <Header>
+      <Header shouldntGoBack>
         <View className="flex-row items-center justify-between flex-grow">
           <Text className="text-xl font-bold">
             {currentUser.id !== user.id

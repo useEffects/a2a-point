@@ -36,12 +36,24 @@ export default function MainLayout() {
       }}
     >
       <Tabs.Screen
+        name="chat"
+        options={{ ...getTabItemsOptions('Chat', MessageCircleMore) }}
+      />
+      <Tabs.Screen
+        name="offplans"
+        options={{ ...getTabItemsOptions('Offplans', Construction) }}
+      />
+      <Tabs.Screen
         name="index"
         options={{ ...getTabItemsOptions('Home', Home) }}
       />
       <Tabs.Screen
         name="listings"
         options={{ ...getTabItemsOptions('Listings', TrendingUp) }}
+      />
+      <Tabs.Screen
+        name="agents/me"
+        options={{ ...getTabItemsOptions('Profie', User) }}
       />
     </Tabs>
   );

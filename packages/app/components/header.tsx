@@ -1,6 +1,6 @@
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { cn } from 'app/lib/utils';
-import { useNavigation, useRouter } from 'expo-router';
+import { useNavigation, useRouter } from 'app/hooks/router';
 import { MoveLeft } from 'lucide-react-native';
 import { ReactNode } from 'react';
 import { DimensionValue, Platform, View } from 'react-native';
@@ -12,8 +12,9 @@ export const headerHeight = 48;
 export const BackButton = () => {
   const { colors } = useColorScheme();
   const router = useRouter();
+  const navigation = useNavigation();
 
-  return (
+  return navigation.canGoBack() ? (
     <Button
       size={'icon'}
       className="rounded-full w-8 h-8"
@@ -22,6 +23,8 @@ export const BackButton = () => {
     >
       <MoveLeft size={18} color={colors.primary} />
     </Button>
+  ) : (
+    <></>
   );
 };
 

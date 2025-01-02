@@ -4,23 +4,27 @@ import {
   useAuthRequest,
   useAutoDiscovery,
 } from 'expo-auth-session';
-import { View } from 'react-native';
-import { useContext, useEffect, useState } from 'react';
-import { NEXT_URL, KC_URL, KC_REALM, KC_CLIENT_ID } from 'app/lib/constants';
+import { Image, View } from 'react-native';
+import { useContext, useEffect } from 'react';
+import { KC_URL, KC_REALM, KC_CLIENT_ID } from 'app/lib/constants';
 import { keycloakStore } from 'app/store/keycloak';
 import {
   AuthContext,
   authOnSuccess,
-  authQueryKey,
   kcRefreshTokenKey,
 } from 'app/context/auth';
-import { useQueryClient } from '@tanstack/react-query';
-import { AuthTokens } from 'app/lib/types';
 import { URLSearchParams } from 'app/lib/helpers';
 import { directusStore, initialDirectusStore } from 'app/store/directus';
 import { Button } from 'app/components/ui/button';
 import { Text } from 'app/components/ui/text';
 import { storage } from 'app/lib/mmkv';
+import { Header } from 'app/components/header';
+import { AsyncImage } from 'app/components/async-image';
+import Logo from 'app/components/svg/logo';
+import * as Linking from 'expo-linking';
+import { useColorScheme } from 'app/hooks/color-scheme';
+import LoginDarkImg from 'app/assets/login/dark/Frame_135_2_hzjyas_c_scale,w_1085.jpg';
+import LoginLightImg from 'app/assets/login/light/light_c9pqo8_c_scale,w_1029.jpg';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -47,6 +51,8 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
     },
     discovery,
   );
+
+  const { isDarkColorScheme } = useColorScheme();
 
   const logout = async () => {
     try {
@@ -95,17 +101,47 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
   }, [response, discovery]);
 
   return (
-    <View className="bg-background w-full h-full flex-1 justify-center items-center">
-      {!active && (
-        <Button onPress={() => promptAsync()}>
-          <Text>Login</Text>
+    <View className="flex-1">
+      <Header className=''>
+        <Text className="text-xl font-bold">Login</Text>
+      </Header>
+      <View className="flex-col justify-evenly flex-1 items-start px-4 py-8">
+        <View className="flex-col items-center w-full">
+          <Text className="text-2xl font-bold">
+            Welcome to <Text className="text-2xl text-primary">A2APoint</Text>
+          </Text>
+          <Text>For more information visit</Text>
+          <Button
+            onPress={() => Linking.openURL('https://a2apoint.com')}
+            size={'none'}
+            variant={'base'}
+          >
+            <Text className="text-info underline">https://a2apoint.com</Text>
+          </Button>
+        </View>
+        <View className="flex-row justify-center w-full relative h-[350px]">
+          <Image
+            source={isDarkColorScheme ? LoginDarkImg : LoginLightImg}
+            style={{ width: 350, height: 350 }}
+          />
+        </View>
+        <Button onPress={() => promptAsync()} className="w-full">
+          <Text>Login or create account</Text>
         </Button>
-      )}
-      {active && (
-        <Button onPress={logout}>
-          <Text>Logout</Text>
-        </Button>
-      )}
+        <View className="flex-col gap-2 w-full items-center">
+          <View className="p-4 bg-light rounded-full">
+            <Logo width={40} height={40} />
+          </View>
+          <Text className="text-sm text-subtext text-center">
+            By continuing, you agree to our{' '}
+            <Text className="text-sm text-info underline">
+              Terms of Service
+            </Text>{' '}
+            and that you have read our{' '}
+            <Text className="text-sm text-info underline">Privacy Policy</Text>
+          </Text>
+        </View>
+      </View>
     </View>
   );
 }

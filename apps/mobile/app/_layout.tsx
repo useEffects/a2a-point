@@ -39,7 +39,9 @@ export default function RootLayout() {
                 }}
               >
                 <Stack.Screen name="(main)" />
-                <Stack.Screen name="auth" />
+
+                <Stack.Screen name="auth/login" />
+                <Stack.Screen name="auth/callback" />
               </Stack>
             </RouterProvider>
           </HideSplashScreen>

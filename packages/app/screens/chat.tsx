@@ -43,7 +43,7 @@ export const ChatLocked = () => {
   );
 };
 
-export default function ChatScreen() {
+export function ChatScreen() {
   const { authenticated } = directusStore();
 
   return authenticated ? <ChatScreenComponent /> : <ChatLocked />;
