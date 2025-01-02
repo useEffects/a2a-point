@@ -39,6 +39,10 @@ export default function MainLayout() {
         name="index"
         options={{ ...getTabItemsOptions('Home', Home) }}
       />
+      <Tabs.Screen
+        name="listings"
+        options={{ ...getTabItemsOptions('Listings', TrendingUp) }}
+      />
     </Tabs>
   );
 }

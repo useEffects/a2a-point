@@ -103,8 +103,6 @@ export function HomeScreen() {
     },
   });
 
-  console.log(counts);
-
   const { data: photoListingsInitialData } = useQuery({
     queryKey: ['Fetch photo listings'],
     queryFn: async () =>

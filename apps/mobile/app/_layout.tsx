@@ -1,6 +1,12 @@
 import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Stack } from 'expo-router';
+import {
+  Stack,
+  useNavigation,
+  usePathname,
+  useRouter,
+  useSegments,
+} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { ReactNode, useContext, useEffect, useState } from 'react';
 import 'react-native-reanimated';
@@ -14,6 +20,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { storage } from 'app/lib/mmkv';
 import { DefaultTheme, Theme, ThemeProvider } from '@react-navigation/native';
+import { RouterContext } from 'app/context/router';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -23,14 +30,16 @@ export default function RootLayout() {
       <Providers>
         <SafeAreaProvider>
           <HideSplashScreen>
-            <Stack
-              screenOptions={{
-                headerShown: false,
-              }}
-            >
-              <Stack.Screen name="(main)" />
-              <Stack.Screen name="auth" />
-            </Stack>
+            <RouterProvider>
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                }}
+              >
+                <Stack.Screen name="(main)" />
+                <Stack.Screen name="auth" />
+              </Stack>
+            </RouterProvider>
           </HideSplashScreen>
         </SafeAreaProvider>
       </Providers>
@@ -115,3 +124,16 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
     </ThemeProvider>
   );
 }
+
+export const RouterProvider = ({ children }: { children: React.ReactNode }) => {
+  const router = useRouter();
+  const navigation = useNavigation();
+  const pathname = usePathname();
+  const segments = useSegments();
+
+  return (
+    <RouterContext.Provider value={{ router, navigation, pathname, segments }}>
+      {children}
+    </RouterContext.Provider>
+  );
+};

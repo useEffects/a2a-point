@@ -64,7 +64,7 @@ import {
   SceneRendererProps,
   TabView,
 } from 'react-native-tab-view';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useDebounce } from 'use-debounce';
 import { GoToLoginButton } from './locked-screens';
 
@@ -94,7 +94,7 @@ const bathRoomsRange: [number, number] = [0, 8];
 const parkingRange: [number, number] = [0, 8];
 const sizeRange: [number, number] = [0, 10000];
 
-export default function ListingsScreenComponent({
+export function ListingsScreen({
   className,
   data,
 }: {
@@ -110,6 +110,8 @@ export default function ListingsScreenComponent({
   const { authenticated } = directusStore();
   const [filters, setFilters] = useState([] as Filter[]);
   const [currentFilters, setCurrentFilters] = useState<Filter[]>([]);
+
+  const router = useRouter();
 
   const updateParams = function (filters: Filter[]) {
     setCurrentFilters(filters);
@@ -192,11 +194,18 @@ export default function ListingsScreenComponent({
           className={cn(
             'rounded-full border',
             !filters.length ? 'border-info' : 'border-success bg-success',
+            bottomSheetVisible && 'border-primary bg-primary',
           )}
         >
           <ListFilter
             size={18}
-            color={filters.length ? colors.card : colors.info}
+            color={
+              filters.length
+                ? colors.card
+                : bottomSheetVisible
+                  ? colors['primary-foreground']
+                  : colors.info
+            }
           />
         </Button>
       </View>
@@ -228,6 +237,7 @@ export default function ListingsScreenComponent({
         flatListProps={{
           ItemSeparatorComponent: () => <Separator />,
           contentContainerClassName: 'max-w-xl',
+          scrollEnabled: false,
         }}
         infinite
       />
@@ -244,25 +254,16 @@ export default function ListingsScreenComponent({
               size={'smallIcon'}
               onPress={() => setBottomSheetVisible(false)}
             >
-              <X size={14} className="text-destructive-foreground" />
+              <X
+                size={14}
+                color={colors['destructive-foreground']}
+                className="text-destructive-foreground"
+              />
             </Button>
-          </View>
-          <View className="px-4">
-            <ComboBoxFilters
-              filters={currentFilters}
-              setFilters={setCurrentFilters}
-            />
           </View>
           <Separator />
           <View className="px-4">
             <CategoryFilters
-              filters={currentFilters}
-              setFilters={setCurrentFilters}
-            />
-          </View>
-          <Separator />
-          <View className="px-4">
-            <RangeSliders
               filters={currentFilters}
               setFilters={setCurrentFilters}
             />
