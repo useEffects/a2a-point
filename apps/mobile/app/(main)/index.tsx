@@ -7,7 +7,9 @@ export default function HomeScreen() {
   return (
     <ScrollView
       className="flex-1 bg-background"
-      style={{ paddingTop: insets.top }}
+      contentContainerStyle={{
+        paddingTop: insets.top,
+      }}
     >
       <HomeScreenBase />
     </ScrollView>

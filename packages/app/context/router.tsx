@@ -1,19 +1,23 @@
 import { createContext, useContext } from 'react';
-import { Router, UnknownOutputParams } from 'expo-router';
+import {
+  Router,
+  UnknownOutputParams,
+  useRouter as useRouterBase,
+  useNavigation as useNavigationBase,
+  usePathname as usePathnameBase,
+  useSegments as useSegmentsBase,
+  useGlobalSearchParams as useGlobalSearchParamsBase,
+  useLocalSearchParams as useLocalSearchParamsBase,
+} from 'expo-router';
 import { NavigationProp, NavigationState } from '@react-navigation/native';
 
 type RouterContextType = {
-  router: Router;
-  navigation: Omit<
-    NavigationProp<ReactNavigation.RootParamList>,
-    'getState'
-  > & {
-    getState(): NavigationState | undefined;
-  };
-  pathname: string;
-  segments: string[];
-  globalSearchParams: UnknownOutputParams;
-  localSearchParams: UnknownOutputParams;
+  router: typeof useRouterBase;
+  navigation: typeof useNavigationBase;
+  pathname: typeof usePathnameBase;
+  segments: typeof useSegmentsBase;
+  globalSearchParams: typeof useGlobalSearchParamsBase;
+  localSearchParams: typeof useLocalSearchParamsBase;
 };
 
 export const RouterContext = createContext<RouterContextType>(
@@ -27,7 +31,7 @@ export const useRouter = () => {
     throw new Error('useRouter must be used within a RouterProvider.');
   }
 
-  return context.router;
+  return context.router();
 };
 
 export const useNavigation = () => {
@@ -37,7 +41,7 @@ export const useNavigation = () => {
     throw new Error('useNavigation must be used within a RouterProvider.');
   }
 
-  return context.navigation;
+  return context.navigation();
 };
 
 export const usePathname = () => {
@@ -47,7 +51,7 @@ export const usePathname = () => {
     throw new Error('usePathname must be used within a RouterProvider.');
   }
 
-  return context.pathname;
+  return context.pathname();
 };
 
 export const useSegments = () => {
@@ -57,7 +61,7 @@ export const useSegments = () => {
     throw new Error('useSegments must be used within a RouterProvider.');
   }
 
-  return context.segments;
+  return context.segments();
 };
 
 export const useGlobalSearchParams = () => {
@@ -69,7 +73,7 @@ export const useGlobalSearchParams = () => {
     );
   }
 
-  return context.globalSearchParams;
+  return context.globalSearchParams();
 };
 
 export const useLocalSearchParams = () => {
@@ -81,5 +85,5 @@ export const useLocalSearchParams = () => {
     );
   }
 
-  return context.localSearchParams;
+  return context.localSearchParams();
 };

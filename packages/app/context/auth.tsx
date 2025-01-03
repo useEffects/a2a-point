@@ -26,6 +26,7 @@ import {
 import { KeycloakStore, keycloakStore } from 'app/store/keycloak';
 import { createContext, ReactNode, useEffect } from 'react';
 import { storage } from 'app/lib/mmkv';
+import userStore from 'app/store/user';
 
 export const AuthContext = createContext({
   keycloakQueryResult: {} as DefinedUseQueryResult<AuthTokens>,
@@ -152,14 +153,64 @@ export const authOnSuccess = async (
         throw new Error('Error getting access token from directus');
       }
 
-      const resp = await directusAccessTokenResp.json();
+      const resp = (await directusAccessTokenResp.json()) as {
+        access_token: string;
+      };
+      const { access_token: directusAccessToken } = resp;
+
+      const usersFetchResp = await fetch(`${DIRECTUS_URL}/users/me?fields=*`, {
+        headers: {
+          Authorization: `Bearer ${directusAccessToken}`,
+        },
+      });
+
+      if (usersFetchResp.ok) {
+        const { data: user } = await usersFetchResp.json();
+        userStore.setState((p) => ({
+          ...p,
+          user: user,
+        }));
+        if (user.company) {
+          const company = await fetch(
+            `${DIRECTUS_URL}/items/companies/${user.company}`,
+            {
+              headers: {
+                Authorization: `Bearer ${directusAccessToken}`,
+              },
+            },
+          )
+            .then((res) => res.json())
+            .then((res) => res.data);
+          userStore.setState((p) => ({
+            ...p,
+            company: company,
+          }));
+        }
+        if (user.document) {
+          const document = await fetch(
+            `${DIRECTUS_URL}/items/documents/${user.document}`,
+            {
+              headers: {
+                Authorization: `Bearer ${directusAccessToken}`,
+              },
+            },
+          )
+            .then((res) => res.json())
+            .then((res) => res.data);
+          userStore.setState((p) => ({ ...p, document: document }));
+        }
+      } else {
+        console.error('Unable to fetch users data');
+        console.log(await usersFetchResp.json());
+      }
+
       setKeyCloakStore({ active: true });
       setDirectusStore({
         authenticated: true,
         rest: createDirectus(DIRECTUS_URL)
           .with(authentication())
           .with(rest())
-          .with(staticToken(resp.access_token)),
+          .with(staticToken(directusAccessToken)),
       });
       return resp;
     } else {

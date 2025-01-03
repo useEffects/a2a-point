@@ -57,8 +57,14 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
   const [authReady, setAuthReady] = useState(false);
   const [colorSchemeReady, setColorSchemeReady] = useState(false);
   const {
-    keycloakQueryResult: { isLoading: isKeycloakQueryLoading },
-    directusQueryResult: { isLoading: isDirectusQueryLoading },
+    keycloakQueryResult: {
+      isLoading: isKeycloakQueryLoading,
+      isFetching: isKeycloakQueryFetching,
+    },
+    directusQueryResult: {
+      isLoading: isDirectusQueryLoading,
+      isFetching: isDirectusQueryFetching,
+    },
   } = useContext(AuthContext);
 
   const theme: Theme = {
@@ -104,7 +110,15 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!authReady && !(isDirectusQueryLoading || isKeycloakQueryLoading)) {
+    if (
+      !authReady &&
+      !(
+        isDirectusQueryLoading ||
+        isKeycloakQueryLoading ||
+        isDirectusQueryFetching ||
+        isKeycloakQueryFetching
+      )
+    ) {
       setAuthReady(true);
     }
   }, [isKeycloakQueryLoading, isDirectusQueryLoading]);
@@ -130,22 +144,15 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
 }
 
 export const RouterProvider = ({ children }: { children: React.ReactNode }) => {
-  const router = useRouter();
-  const navigation = useNavigation();
-  const pathname = usePathname();
-  const segments = useSegments();
-  const globalSearchParams = useGlobalSearchParams();
-  const localSearchParams = useLocalSearchParams();
-
   return (
     <RouterContext.Provider
       value={{
-        router,
-        navigation,
-        pathname,
-        segments,
-        globalSearchParams,
-        localSearchParams,
+        router: useRouter,
+        navigation: useNavigation,
+        pathname: usePathname,
+        segments: useSegments,
+        globalSearchParams: useGlobalSearchParams,
+        localSearchParams: useLocalSearchParams,
       }}
     >
       {children}

@@ -79,7 +79,7 @@
     "react-native-autocomplete-input": "^5.5.4",
     "react-native-autolink": "^4.2.0",
     "react-native-avatar-group": "^1.0.5",
-    "react-native-collapsible": "^1.6.2",
+    "react-native-collapsible": "1.6.1",
     "react-native-component-inview": "^1.0.2",
     "react-native-gesture-handler": "^2.21.2",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
