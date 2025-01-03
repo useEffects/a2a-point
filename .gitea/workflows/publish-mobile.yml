@@ -1,0 +1,62 @@
+name: Publish a2apoint/mobile dev apk build
+
+on:
+  push:
+    branches:
+      - 'dev'
+    paths:
+      - '.gitea/workflows/publish-mobile.yml'
+      - 'apps/mobile/**/*'
+      - 'packages/app/**/*'
+
+jobs:
+  setup-bump-and-publish:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Export token
+        run: echo "BOT_GITEA_TOKEN=${{ secrets.BOT_GITEA_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.node-version'
+          cache: 'pnpm'
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Setup Android SDK
+        uses: https://github.com/amyu/setup-android@v4
+
+      - name: Bump version
+        run: |
+          source .gitea/workflows/scripts/.venv/bin/activate
+          python .gitea/workflows/scripts/update-mobile-versions.py ${PWD}/apps/mobile
+          python .gitea/workflows/scripts/update-mobile-builds.py ${PWD}/apps/mobile     
+          VERSION=$(node -p "require('./apps/mobile/package.json').version")
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: build
+        run: |
+          pnpm install
+          cd apps/mobile
+          npx --yes expo prebuild -p android
+          cd android
+          ./gradlew assembleRelease
+          pnpm run
+
+      - name: Push version bump
+        uses: https://github.com/EndBug/add-and-commit@v9
+        with:
+          author_name: 'gitea.bot'
+          author_email: 'gitea.bot@example.com'
+          message: 'chore: bump version for a2apoint/www'
