@@ -61,12 +61,12 @@ jobs:
       - name: Publish apk
         run: |
           curl --user gitea.bot:${BOT_GITEA_TOKEN} \
-          --upload-file apps/mobile/android/app/build/outputs/apk/release \
-          https://gitea.a2apoint.com/api/packages/a2apoint/generic/mobile-dev-build/${VERSION}/release.apk
+          --upload-file apps/mobile/android/app/build/outputs/apk/release/app-release.apk \
+          https://gitea.a2apoint.com/api/packages/a2apoint/generic/community-app/${VERSION}/app.apk
 
       - name: Push version bump
         uses: https://github.com/EndBug/add-and-commit@v9
         with:
           author_name: 'gitea.bot'
           author_email: 'gitea.bot@example.com'
-          message: 'chore: bump version for a2apoint/www'
+          message: 'chore: bump version for a2apoint/mobile'
