@@ -39,7 +39,7 @@ jobs:
           distribution: temurin
 
       - name: Setup Android SDK
-        uses: https://github.com/amyu/setup-android@v4
+        uses: https://github.com/android-actions/setup-android@v3
 
       - name: Bump version
         run: |
