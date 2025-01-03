@@ -781,7 +781,7 @@ function PostScreenComponent() {
   );
 }
 
-export default function PostScreen() {
+export function PostScreen() {
   const { authenticated } = directusStore();
   const { user } = userStore();
 

@@ -13,7 +13,7 @@ import { useEffect, useMemo, useState } from "react"
 import { View } from "react-native"
 import Collapsible from "react-native-collapsible"
 
-export const PhoneVerificationScreenComponent = () => {
+export const PhoneVerificationScreen = () => {
     const { user } = userStore()
 
     const [verified, setVerified] = useState(Boolean(user.phone))

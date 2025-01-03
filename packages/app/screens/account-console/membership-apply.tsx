@@ -25,7 +25,7 @@ import {
 } from 'app/components/ui/card';
 import { Header } from 'app/components/header';
 
-export const MembershipApplyScreenComponent = () => {
+export const MembershipApplyScreen = () => {
   const { user } = userStore();
   const [code, setCode] = useState('');
   const [yearly, setYearly] = useState(false);

@@ -6,7 +6,7 @@ import * as Linking from "expo-linking"
 import { portfolioUrl, products, ProductType } from "app/lib/constants"
 import userStore from "app/store/user"
 
-export const PremiumCreditsScreenComponent = () => {
+export const PremiumCreditsScreen = () => {
     const { user } = userStore()
     const handleBuyPremiumCredits = () => {
         const premiumProductListing = products.find(p => p.productType === ProductType.premiumListingsQuota)!

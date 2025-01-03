@@ -204,7 +204,7 @@ const ChatScreen = ({
   );
 };
 
-export default function RoomDetailedComponent({ roomId }: { roomId: string }) {
+export function RoomDetailedScreen({ roomId }: { roomId: string }) {
   const { user } = userStore();
   const { roomsSubscribed, addRoom } = useChats();
   const [room, setRoom] = useState<RoomSubscribed | null | undefined>();

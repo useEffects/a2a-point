@@ -12,7 +12,7 @@ import { useEffect, useState } from "react"
 import { View } from "react-native"
 import { useDebounce } from "use-debounce"
 
-export const UsersListComponent = ({ data }: { data: (MediumUsersCardProps & UsersCardMetrics)[] }) => {
+export const UsersListScreen = ({ data }: { data: (MediumUsersCardProps & UsersCardMetrics)[] }) => {
     const [searchText, setSearchText] = useState("")
     const [debouncedSearchText] = useDebounce(searchText, 500)
     const queryArgs = getMediumUsersCardArgs({

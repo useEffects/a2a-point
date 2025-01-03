@@ -10,7 +10,7 @@ import { useState } from "react";
 import { View } from "react-native";
 import { NavigationState, Route, SceneMap, SceneRendererProps, TabView } from "react-native-tab-view";
 
-export default function ActivityScreenComponent() {
+export function ActivityScreen() {
     const [navigationState, setNavigationState] = useState<NavigationState<Route>>({
         index: 0,
         routes: [

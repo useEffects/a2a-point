@@ -8,7 +8,7 @@ import userStore from "app/store/user"
 import { useEffect, useState } from "react"
 import { View } from "react-native"
 
-export const CompanySelectScreenComponent = () => {
+export const CompanySelectScreen = () => {
     const { user } = userStore()
     const [company, setCompany] = useState<RenderCompanyTileProps | null>(null)
     const [key, setKey] = useState(0)

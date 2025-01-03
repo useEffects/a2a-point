@@ -25,7 +25,7 @@ import * as Linking from 'expo-linking';
 import { useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
 
-export const VerificationApplyScreenComponent = () => {
+export const VerificationApplyScreen = () => {
   const { user, document } = userStore();
   const { rest } = directusStore();
   const [key, setKey] = useState(0);

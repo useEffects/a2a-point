@@ -34,6 +34,9 @@ importers:
       '@babel/runtime':
         specifier: ^7.26.0
         version: 7.26.0
+      '@directus/sdk':
+        specifier: 16.0.2
+        version: 16.0.2
       '@expo/vector-icons':
         specifier: ^14.0.4
         version: 14.0.4
@@ -1343,9 +1346,16 @@ packages:
   '@charmy.tech/react-native-stroke-text@1.2.2':
     resolution: {integrity: sha512-d3JfbtsMw1ivvFq8ZpK9cMPb6bvNBW5mOhSfwd9CqZncXxV+axMqjxgTL8SgVGr0FxFT85rhRe6Zc0hfLOQF5w==}
 
+  '@directus/sdk@16.0.2':
+    resolution: {integrity: sha512-GJ+GgQGGlx/pOsnaMPJSn4HjbJypsODJ0P1Xd0X+1WCTuIk3gj4vLBQmj5D0CPPWU/wdNCeFl+Fx8KsnJfOZlA==}
+    engines: {node: '>=18.0.0'}
+
   '@directus/sdk@18.0.3':
     resolution: {integrity: sha512-PnEDRDqr2x/DG3HZ3qxU7nFp2nW6zqJqswjii57NhriXgTz4TBUI8NmSdzQvnyHuTL9J0nedYfQGfW4v8odS1A==}
     engines: {node: '>=18.0.0'}
+
+  '@directus/system-data@1.0.3':
+    resolution: {integrity: sha512-Dr7w2RZiX3/+kBOLqz8KkMHXmDhzVVraaK+CLQNgsB1FOxotuegyWfQxTi+YvDhH9gEs8/yZZBKeyQetcTQfSg==}
 
   '@egjs/hammerjs@2.0.17':
     resolution: {integrity: sha512-XQsZgjm2EcVUiZQf11UBJQfmZeEmOW8DpI1gsFeln6w0ae0ii4dMQEQ0kjl6DspdWX1aGY1/loyXnP0JS06e/A==}
@@ -9575,7 +9585,13 @@ snapshots:
 
   '@charmy.tech/react-native-stroke-text@1.2.2': {}
 
+  '@directus/sdk@16.0.2':
+    dependencies:
+      '@directus/system-data': 1.0.3
+
   '@directus/sdk@18.0.3': {}
+
+  '@directus/system-data@1.0.3': {}
 
   '@egjs/hammerjs@2.0.17':
     dependencies:

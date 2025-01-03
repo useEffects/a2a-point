@@ -137,7 +137,7 @@ const RenderNotifications = (
   );
 };
 
-export default function NotificationsList() {
+export function NotificationsListScreen() {
   const { rest } = directusStore();
   const { user } = userStore();
   const [notifications, setNotifications] = useState<Notification[]>([]);

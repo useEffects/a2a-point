@@ -11,7 +11,7 @@ import { queryClient } from 'app/store/query';
 import userStore from 'app/store/user';
 import { useEffect } from 'react';
 
-export default function FullListingScreen({
+export function ListingScreen({
   listing,
 }: {
   listing: FullListingDetailedProps & UsersCardMetrics & ListingCardMetrics;
