@@ -23,6 +23,7 @@ export type MediumListingCardProps = Pick<
   | 'description'
   | 'date_created'
   | 'price'
+  | 'featured'
 > & {
   user_created: Pick<
     User,

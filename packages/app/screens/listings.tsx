@@ -111,6 +111,7 @@ export function ListingsScreen({
   const { authenticated } = directusStore();
   const [filters, setFilters] = useState([] as Filter[]);
   const [currentFilters, setCurrentFilters] = useState<Filter[]>([]);
+  const [key, setKey] = useState(0);
 
   const router = useRouter();
 
@@ -174,8 +175,9 @@ export function ListingsScreen({
   }, [filtersFromParams]);
 
   useEffect(() => {
+    setKey((p) => p + 1);
     setCurrentFilters(filters);
-  }, [filters]);
+  }, [filters, debouncedSearchText]);
 
   return (
     <View className={cn('flex-1', className)}>
@@ -218,7 +220,7 @@ export function ListingsScreen({
         | (MediumListingCardProps & ListingCardMetrics)
         | ConfirmedAdvertisementCardProps
       >
-        initialItems={data}
+        initialItems={[]}
         component={(item) => <RenderMediumListingsAds {...item} />}
         queryFn={mediumCardListingsWithAds}
         queryKey={[
@@ -226,6 +228,7 @@ export function ListingsScreen({
           data.length,
           filters,
           debouncedSearchText,
+          key,
         ]}
         queryFnArgs={{
           filter: filters.length
