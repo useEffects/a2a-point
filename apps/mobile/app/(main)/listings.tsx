@@ -28,7 +28,7 @@ export default function ListingsScreen() {
 
   return (
     <ScrollView
-      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+      contentContainerStyle={{ paddingTop: top }}
     >
       <ListingsScreenBase data={data} />;
     </ScrollView>

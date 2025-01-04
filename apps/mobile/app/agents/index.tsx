@@ -5,11 +5,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function AgentsListScreen() {
   const { data } = useMediumUsersQuery();
-  const { top, bottom } = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
 
   return (
     <ScrollView
-      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+      contentContainerStyle={{ paddingTop: top }}
     >
       <UsersListScreenBase data={data} />
     </ScrollView>

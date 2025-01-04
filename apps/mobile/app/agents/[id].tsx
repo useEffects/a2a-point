@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ProfileDetailed() {
   const params = useGlobalSearchParams<{ id: string }>();
-  const { top, bottom } = useSafeAreaInsets();
+  const { top  } = useSafeAreaInsets();
   const { rest } = directusStore();
 
   const fields = ['*', 'company.*', 'document.*'].join(',');
@@ -29,7 +29,7 @@ export default function ProfileDetailed() {
 
   return data ? (
     <ScrollView
-      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+      contentContainerStyle={{ paddingTop: top }}
     >
       <ProfileScreen user={data} />
     </ScrollView>

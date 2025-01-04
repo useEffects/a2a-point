@@ -3,11 +3,11 @@ import { PremiumCreditsScreen as PremiumCreditsScreenBase } from 'app/screens/ac
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function PremiumCreditsScreen() {
-  const { top, bottom } = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
   return (
     <ScrollView
       contentContainerClassName="flex-grow"
-      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+      contentContainerStyle={{ paddingTop: top }}
     >
       <PremiumCreditsScreenBase />
     </ScrollView>

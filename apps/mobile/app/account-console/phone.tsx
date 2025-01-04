@@ -3,11 +3,11 @@ import { PhoneVerificationScreen as PhoneVerificationScreenBase } from 'app/scre
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function PhoneVerificationScreen() {
-  const { top, bottom } = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
   return (
     <ScrollView
       contentContainerClassName="flex-grow"
-      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+      contentContainerStyle={{ paddingTop: top }}
     >
       <PhoneVerificationScreenBase />
     </ScrollView>

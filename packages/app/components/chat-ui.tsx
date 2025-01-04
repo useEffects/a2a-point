@@ -146,9 +146,11 @@ export const ChatBubble = (
         props.isFirst ? 'rounded-bl-2xl' : '',
       );
   const infoPositioning = renderRight ? 'ml-auto mr-0' : 'mr-auto ml-0';
-  const textColor = renderRight
-    ? '!text-primary-foreground'
-    : 'text-background';
+  const textColor = renderRight ? 'text-primary-foreground' : 'text-background';
+
+  const textColorIcon = renderRight
+    ? colors['primary-foreground']
+    : colors.background;
 
   return (
     <View
@@ -207,9 +209,9 @@ export const ChatBubble = (
           </Text>
           {renderRight ? (
             props.sent ? (
-              <Check size={12} className={textColor} />
+              <Check color={textColorIcon} size={12} className={textColor} />
             ) : (
-              <Clock size={12} className={textColor} />
+              <Clock color={textColorIcon} size={12} className={textColor} />
             )
           ) : (
             <></>
@@ -225,6 +227,7 @@ const FooterDropDownMenu = (props: {
   setOpen: Dispatch<SetStateAction<boolean>>;
   currentMessageDispatcher: Dispatch<SetStateAction<CurrentMessage>>;
 }) => {
+  const { colors } = useColorScheme();
   const handleAssetUpload = async (type: 'document' | 'image') => {
     const result =
       type === 'document'
@@ -269,21 +272,33 @@ const FooterDropDownMenu = (props: {
           variant={'ghost'}
           onPress={() => props.setOpen((p) => !p)}
         >
-          <Paperclip size={18} className="!text-foreground" />
+          <Paperclip
+            color={colors.foreground}
+            size={18}
+            className="!text-foreground"
+          />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent side="top">
         {Platform.OS !== 'ios' && (
           <DropdownMenuItem onPress={() => handleAssetUpload('image')}>
             <View className="flex-row gap-2 items-center">
-              <ImageIcon size={16} className="!text-primary" />
+              <ImageIcon
+                color={colors.primary}
+                size={16}
+                className="!text-primary"
+              />
               <Text className="!text-sm">Upload Image</Text>
             </View>
           </DropdownMenuItem>
         )}
         <DropdownMenuItem onPress={() => handleAssetUpload('document')}>
           <View className="flex-row gap-2 items-center">
-            <FileIcon size={16} className="!text-primary" />
+            <FileIcon
+              color={colors.primary}
+              size={16}
+              className="!text-primary"
+            />
             <Text className="!text-sm">Upload Document</Text>
           </View>
         </DropdownMenuItem>
@@ -441,7 +456,11 @@ const Footer = (
             size={'icon'}
             className="w-5 h-5 bg-destructive"
           >
-            <X size={12} className="text-destructive-foreground" />
+            <X
+              color={colors['destructive-foreground']}
+              size={12}
+              className="text-destructive-foreground"
+            />
           </Button>
         </View>
       ) : (
@@ -461,7 +480,11 @@ const Footer = (
                 variant={'ghost'}
                 size={'icon'}
               >
-                <FileLock2 className="text-foreground" size={18} />
+                <FileLock2
+                  color={colors.foreground}
+                  className="text-foreground"
+                  size={18}
+                />
               </Button>
             ) : (
               <></>
@@ -487,7 +510,11 @@ const Footer = (
             className="rounded-full justify-center items-center border-primary"
             onPress={onSend}
           >
-            <Send size={16} className="!text-foreground" />
+            <Send
+              color={colors.foreground}
+              size={16}
+              className="!text-foreground"
+            />
           </Button>
         )}
       </View>
@@ -507,7 +534,11 @@ const Footer = (
               variant={'destructive'}
               size={'smallIcon'}
             >
-              <X size={16} className="text-destructive-foreground" />
+              <X
+                color={colors['destructive-foreground']}
+                size={16}
+                className="text-destructive-foreground"
+              />
             </Button>
           </View>
           <Formik
@@ -668,6 +699,7 @@ export const ChatUi = (props: ChatUiProps) => {
         {...props.listProps}
         bounces={false}
         overScrollMode="never"
+        scrollEnabled={false}
       />
       <Footer
         currentMessage={props.currentMessage}

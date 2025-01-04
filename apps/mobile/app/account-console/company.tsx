@@ -7,7 +7,7 @@ export default function CompanySelectScreen() {
   return (
     <ScrollView
       contentContainerClassName="flex-grow"
-      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+      contentContainerStyle={{ paddingTop: top }}
     >
       <CompanySelectScreenBase />
     </ScrollView>

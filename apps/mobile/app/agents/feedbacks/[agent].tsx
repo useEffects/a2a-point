@@ -13,7 +13,7 @@ export default function PostFeedback() {
   const { feedbackId } = useLocalSearchParams();
   const { rest } = directusStore();
   const { agent } = useGlobalSearchParams();
-  const { top, bottom } = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
   const user = useUserDetails(agent as string);
 
   const { data: feedback } = useQuery({
@@ -28,7 +28,7 @@ export default function PostFeedback() {
 
   return user ? (
     <ScrollView
-      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+      contentContainerStyle={{ paddingTop: top }}
     >
       <PostFeedbackScreen user={user} feedback={feedback} />
     </ScrollView>

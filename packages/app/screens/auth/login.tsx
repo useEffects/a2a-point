@@ -54,28 +54,6 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
 
   const { isDarkColorScheme } = useColorScheme();
 
-  const logout = async () => {
-    try {
-      const res = await fetch(
-        `${KC_URL}/realms/${KC_REALM}/protocol/openid-connect/logout?client_id=${KC_CLIENT_ID}`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
-      if (res.ok) {
-        setDirectusStore(initialDirectusStore);
-        setKeyCloakStore({ active: false });
-        storage.delete(kcRefreshTokenKey);
-      }
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
-
   useEffect(() => {
     if (response?.type === 'success') {
       const { code } = response.params;

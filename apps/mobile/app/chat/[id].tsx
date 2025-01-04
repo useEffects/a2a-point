@@ -9,7 +9,7 @@ export default function RoomDetailedScreen() {
 
   return typeof id === 'string' ? (
     <ScrollView
-      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+      contentContainerStyle={{ paddingTop: top, flex: 1 }}
     >
       <RoomDetailedScreenBase roomId={id} />
     </ScrollView>

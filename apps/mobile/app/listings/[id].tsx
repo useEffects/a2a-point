@@ -14,7 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ListingDetailedScreen() {
   const { id } = useGlobalSearchParams();
-  const { top, bottom } = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
   const { rest } = directusStore();
 
   const { data } = useQuery({
@@ -46,9 +46,7 @@ export default function ListingDetailedScreen() {
   });
 
   return data && metrics && usersMetrics ? (
-    <ScrollView
-      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
-    >
+    <ScrollView contentContainerStyle={{ paddingTop: top }}>
       <ListingScreenBase
         listing={{
           ...data,

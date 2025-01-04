@@ -3,10 +3,10 @@ import { ActivityScreen as ActivityScreenBase } from 'app/screens/activity';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ActivityScreen() {
-  const { top, bottom } = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
   return (
     <ScrollView
-      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+      contentContainerStyle={{ paddingTop: top }}
     >
       <ActivityScreenBase />
     </ScrollView>

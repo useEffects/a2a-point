@@ -8,13 +8,7 @@ export function ToggleTheme() {
   const { colors, isDarkColorScheme, toggleColorScheme, setColorScheme } =
     useColorScheme();
 
-  const nativeOnPress = () => {
-    const newTheme = isDarkColorScheme ? 'light' : 'dark';
-    setColorScheme(newTheme);
-    storage.set('theme', newTheme);
-  };
-
-  const onPress = Platform.OS !== 'web' ? nativeOnPress : toggleColorScheme;
+  const onPress = toggleColorScheme;
 
   return (
     <Button

@@ -31,17 +31,23 @@ import { UserChip } from 'app/components/user-chip';
 import { FlatList, ScrollView } from 'app/components/utils/virtual-lists';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { useRouter } from 'app/hooks/router';
-import { directusUrl } from 'app/lib/constants';
+import { directusUrl, KC_CLIENT_ID, KC_REALM, KC_URL } from 'app/lib/constants';
 import { buildAssetUrl, timeAgo } from 'app/lib/helpers';
 import { getListingsCountForUser } from 'app/lib/misc/queries';
 import { ListingCardMetrics } from 'app/lib/props';
 import { Company, Document, Feedback, User } from 'app/lib/types';
 import { cn } from 'app/lib/utils';
 import { StarIcon } from 'app/screens/post-feedback';
-import { directusStore } from 'app/store/directus';
+import { directusStore, initialDirectusStore } from 'app/store/directus';
 import { queryClient } from 'app/store/query';
 import userStore from 'app/store/user';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import {
   DimensionValue,
   Image,
@@ -74,6 +80,9 @@ import { Button } from '../components/ui/button';
 import { FilterKeys } from './listings';
 import LockedScreen from './locked-screens';
 import { AsyncImage } from 'app/components/async-image';
+import { AuthContext, kcRefreshTokenKey } from 'app/context/auth';
+import { storage } from 'app/lib/mmkv';
+import { keycloakStore } from 'app/store/keycloak';
 
 const LockedProfileScreen = ({ userId }: { userId: string }) => {
   const { isDarkColorScheme } = useColorScheme();
@@ -627,17 +636,59 @@ const ProfileDropdown = () => {
 
   const [_, setOpen] = useState(false);
 
+  const { colors } = useColorScheme();
+  const { setDirectusStore } = directusStore();
+  const { setKeyCloakStore } = keycloakStore();
+  const { keycloakQueryResult } = useContext(AuthContext);
+
+  const logout = async () => {
+    try {
+      const accessToken = keycloakQueryResult.data.accessToken;
+      const res = await fetch(
+        `${KC_URL}/realms/${KC_REALM}/protocol/openid-connect/logout?client_id=${KC_CLIENT_ID}`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      if (res.ok) {
+        setDirectusStore(initialDirectusStore);
+        setKeyCloakStore({ active: false });
+        storage.delete(kcRefreshTokenKey);
+      }
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
   return (
     <DropdownMenu onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant={'ghost'} size={'icon'}>
-          <EllipsisVertical size={24} className="text-foreground" />
+          <EllipsisVertical
+            size={24}
+            color={colors.foreground}
+            className="text-foreground"
+          />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent sideOffset={Platform.OS !== 'web' ? -40 : undefined}>
-        <DropdownMenuItem>
+        <DropdownMenuItem
+          onPress={() => {
+            setOpen(false);
+            logout();
+            router.push('/');
+          }}
+        >
           <View className="flex-row items-center gap-2">
-            <LogOut size={18} className="text-popover-foreground" />
+            <LogOut
+              color={colors['popover-foreground']}
+              size={18}
+              className="text-popover-foreground"
+            />
             <Text>Logout</Text>
           </View>
         </DropdownMenuItem>
@@ -648,7 +699,11 @@ const ProfileDropdown = () => {
           }}
         >
           <View className="flex-row items-center gap-2">
-            <Bell size={18} className="text-popover-foreground" />
+            <Bell
+              size={18}
+              color={colors['popover-foreground']}
+              className="text-popover-foreground"
+            />
             <Text>Notifications</Text>
           </View>
         </DropdownMenuItem>
@@ -659,7 +714,11 @@ const ProfileDropdown = () => {
           }}
         >
           <View className="flex-row items-center gap-2">
-            <UserCog2 size={18} className="text-popover-foreground" />
+            <UserCog2
+              color={colors['popover-foreground']}
+              size={18}
+              className="text-popover-foreground"
+            />
             <Text>Account console</Text>
           </View>
         </DropdownMenuItem>

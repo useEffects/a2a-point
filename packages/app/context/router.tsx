@@ -8,8 +8,8 @@ import {
   useSegments as useSegmentsBase,
   useGlobalSearchParams as useGlobalSearchParamsBase,
   useLocalSearchParams as useLocalSearchParamsBase,
+  useRootNavigationState as useRootNavigationStateBase,
 } from 'expo-router';
-import { NavigationProp, NavigationState } from '@react-navigation/native';
 
 type RouterContextType = {
   router: typeof useRouterBase;
@@ -18,6 +18,7 @@ type RouterContextType = {
   segments: typeof useSegmentsBase;
   globalSearchParams: typeof useGlobalSearchParamsBase;
   localSearchParams: typeof useLocalSearchParamsBase;
+  rootNavigationState: typeof useRootNavigationStateBase;
 };
 
 export const RouterContext = createContext<RouterContextType>(
@@ -86,4 +87,16 @@ export const useLocalSearchParams = () => {
   }
 
   return context.localSearchParams();
+};
+
+export const useRootNavigationState = () => {
+  const context = useContext(RouterContext);
+
+  if (!context.rootNavigationState) {
+    throw new Error(
+      'useLocalSearchParams must be used within a RouterProvider.',
+    );
+  }
+
+  return context.rootNavigationState();
 };

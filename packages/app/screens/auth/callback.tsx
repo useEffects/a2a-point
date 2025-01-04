@@ -1,15 +1,13 @@
 import { useEffect } from 'react';
 import { View } from 'react-native';
-import { useRouter } from 'app/context/router';
+import { useRootNavigationState, useRouter } from 'app/context/router';
+import { Redirect } from 'expo-router';
 
 export const AuthCallbackScreen = ({
   redirect = '/',
 }: {
   redirect?: string;
 }) => {
-  const router = useRouter();
-  useEffect(() => {
-    router.navigate(redirect);
-  }, []);
-  return <View></View>;
+  const rootNavigationState = useRootNavigationState();
+  return rootNavigationState.key ? <Redirect href={redirect} /> : <View></View>;
 };

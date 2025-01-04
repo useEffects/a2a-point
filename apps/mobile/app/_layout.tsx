@@ -5,6 +5,7 @@ import {
   useLocalSearchParams,
   useNavigation,
   usePathname,
+  useRootNavigationState,
   useRouter,
   useSegments,
 } from 'expo-router';
@@ -22,53 +23,57 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { storage } from 'app/lib/mmkv';
 import { DefaultTheme, Theme, ThemeProvider } from '@react-navigation/native';
 import { RouterContext } from 'app/context/router';
+import { PortalHost } from 'app/components/primitives/portal';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   return (
-    <GestureHandlerRootView>
-      <Providers>
-        <SafeAreaProvider>
-          <HideSplashScreen>
-            <RouterProvider>
-              <Stack
-                screenOptions={{
-                  headerShown: false,
-                }}
-              >
-                <Stack.Screen name="(main)" />
+    <>
+      <GestureHandlerRootView>
+        <Providers>
+          <SafeAreaProvider>
+            <HideSplashScreen>
+              <RouterProvider>
+                <Stack
+                  screenOptions={{
+                    headerShown: false,
+                  }}
+                >
+                  <Stack.Screen name="(main)" />
 
-                <Stack.Screen name="account-console" />
+                  <Stack.Screen name="account-console" />
 
-                <Stack.Screen name="agents/[id]" />
-                <Stack.Screen name="agents/index" />
-                <Stack.Screen name="agents/me/activity" />
-                <Stack.Screen name="agents/me/notifications" />
-                <Stack.Screen name="agents/feedbacks/[agent]" />
+                  <Stack.Screen name="agents/[id]" />
+                  <Stack.Screen name="agents/index" />
+                  <Stack.Screen name="agents/me/activity" />
+                  <Stack.Screen name="agents/me/notifications" />
+                  <Stack.Screen name="agents/feedbacks/[agent]" />
 
-                <Stack.Screen name="chat/[id]" />
+                  <Stack.Screen name="chat/[id]" />
 
-                <Stack.Screen name="listings/[id]" />
-                <Stack.Screen name="listings/post" />
+                  <Stack.Screen name="listings/[id]" />
+                  <Stack.Screen name="listings/post" />
 
-                <Stack.Screen name="locations/[...slug]" />
-                <Stack.Screen name="locations/index" />
+                  <Stack.Screen name="locations/[...slug]" />
+                  <Stack.Screen name="locations/index" />
 
-                <Stack.Screen name="auth/login" />
-                <Stack.Screen name="auth/callback" />
-              </Stack>
-            </RouterProvider>
-          </HideSplashScreen>
-        </SafeAreaProvider>
-      </Providers>
-    </GestureHandlerRootView>
+                  <Stack.Screen name="auth/login" />
+                  <Stack.Screen name="auth/callback" />
+                </Stack>
+                <PortalHost />
+              </RouterProvider>
+            </HideSplashScreen>
+          </SafeAreaProvider>
+        </Providers>
+      </GestureHandlerRootView>
+    </>
   );
 }
 
 function HideSplashScreen({ children }: { children: ReactNode }) {
   const [splashScreenHidden, setSplashScreenHidden] = useState(false);
-  const { colorScheme, setColorScheme, palette, colors } = useColorScheme();
+  const { colorScheme, setColorScheme, colors } = useColorScheme();
   const [authReady, setAuthReady] = useState(false);
   const [colorSchemeReady, setColorSchemeReady] = useState(false);
   const {
@@ -108,14 +113,6 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
               ? 'dark'
               : 'light';
 
-        const colors = palette[theme];
-
-        if (Platform.OS === 'android') {
-          navigationBar.setBackgroundColorAsync(colors.card);
-          navigationBar.setButtonStyleAsync(
-            theme === 'dark' ? 'light' : 'dark',
-          );
-        }
         if (theme !== colorScheme) {
           setColorScheme(theme);
         }
@@ -125,6 +122,21 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (Platform.OS === 'android') {
+      navigationBar.setBackgroundColorAsync(colors.card);
+      navigationBar.setButtonStyleAsync(
+        colorScheme === 'dark' ? 'light' : 'dark',
+      );
+    }
+  }, [colors]);
+
+  useEffect(() => {
+    // console.log({
+    //   isDirectusQueryFetching,
+    //   isDirectusQueryLoading,
+    //   isKeycloakQueryFetching,
+    //   isKeycloakQueryLoading,
+    // });
     if (
       !authReady &&
       !(
@@ -136,7 +148,12 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
     ) {
       setAuthReady(true);
     }
-  }, [isKeycloakQueryLoading, isDirectusQueryLoading]);
+  }, [
+    isKeycloakQueryLoading,
+    isDirectusQueryLoading,
+    isDirectusQueryFetching,
+    isKeycloakQueryFetching,
+  ]);
 
   useEffect(() => {
     if (authReady && colorSchemeReady && !splashScreenHidden) {
@@ -168,6 +185,7 @@ export const RouterProvider = ({ children }: { children: React.ReactNode }) => {
         segments: useSegments,
         globalSearchParams: useGlobalSearchParams,
         localSearchParams: useLocalSearchParams,
+        rootNavigationState: useRootNavigationState,
       }}
     >
       {children}

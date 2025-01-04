@@ -34,6 +34,7 @@ export default function MainLayout() {
           alignItems: 'center',
         },
       }}
+      initialRouteName="index"
     >
       <Tabs.Screen
         name="chat"

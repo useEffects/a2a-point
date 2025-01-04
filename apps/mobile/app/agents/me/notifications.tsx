@@ -3,10 +3,10 @@ import { ScrollView } from 'app/components/utils/virtual-lists';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function NotificationsListScreen() {
-  const { top, bottom } = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
   return (
     <ScrollView
-      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+      contentContainerStyle={{ paddingTop: top }}
     >
       <NotificationsListScreenBase />
     </ScrollView>

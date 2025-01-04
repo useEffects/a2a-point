@@ -196,7 +196,7 @@ const ChatScreen = ({
         listProps={{
           onEndReachedThreshold: 0,
           onEndReached: handleEndReached,
-          className: 'flex-1',
+          className: 'flex-1 flex-grow',
         }}
         receivers={receivers}
       />

@@ -3,11 +3,11 @@ import { MembershipApplyScreen as MembershipApplyScreenBase } from 'app/screens/
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function MembershipScreen() {
-  const { top, bottom } = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
   return (
     <ScrollView
       contentContainerClassName="flex-grow"
-      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+      contentContainerStyle={{ paddingTop: top }}
     >
       <MembershipApplyScreenBase />
     </ScrollView>

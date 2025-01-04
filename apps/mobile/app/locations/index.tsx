@@ -36,7 +36,7 @@ export default function LocationsScreen() {
   });
   return (
     <ScrollView
-      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+      contentContainerStyle={{ paddingTop: top }}
     >
       <LocationsList data={data} />
     </ScrollView>

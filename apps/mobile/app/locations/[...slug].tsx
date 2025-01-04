@@ -36,7 +36,7 @@ export default function LocationSlug() {
 
 const LocationDetailedScreen = ({ id }: { id: string }) => {
   const { rest } = directusStore();
-  const { top, bottom } = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
   const { data: room } = useQuery({
     queryKey: ['LocationDetailed', id],
     queryFn: async () =>
@@ -91,7 +91,7 @@ const LocationDetailedScreen = ({ id }: { id: string }) => {
 
   return room && totalMembers !== undefined && totalMembers !== null ? (
     <ScrollView
-      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+      contentContainerStyle={{ paddingTop: top }}
     >
       <LocationDetailedComponent
         room={room}

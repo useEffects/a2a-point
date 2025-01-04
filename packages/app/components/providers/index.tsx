@@ -1,7 +1,6 @@
 import { ChatsProvider } from 'app/context/chats';
 import { directusStore } from 'app/store/directus';
 import { EventProvider } from 'react-native-outside-press';
-import { PortalHost } from '../primitives/portal';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from 'app/context/auth';
@@ -23,7 +22,6 @@ export const Providers = ({ children }: { children: ReactNode }) => {
           <ChatsProviderComponent>
             <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
               {children}
-              <PortalHost />
             </KeyboardProvider>
           </ChatsProviderComponent>
         </EventProvider>

@@ -5,7 +5,7 @@ import sys
 import os
 import lib
 
-def update_prerelease_version(file_path):
+def update_package_json(file_path):
     data = lib.read_json(file_path)
 
     if 'version' not in data:
@@ -22,14 +22,18 @@ def update_prerelease_version(file_path):
     data['version'] = str(new_version)
     lib.write_json(file_path, data)
 
-    return str(new_version)
 
-def propagate_version_to_app_json(app_json_path, version):
+def update_app_json(app_json_path):
     data = lib.read_json(app_json_path)
 
     # Update the version in app.json
-    data['expo']['version'] = version
+    version = data['expo']['version']
+    version_number_parts = ios_build_number.split('.')
+    if len(version_number_parts) == 3:
+        new_version = f"{version_number_parts[0]}.{version_number_parts[1]}.{int(version_number_parts[2]) + 1}"
+        data['expo']['version'] = new_version
     lib.write_json(app_json_path, data)
+
 
 if len(sys.argv) != 2:
     print("Usage: python script.py <folder_path>")
@@ -50,7 +54,7 @@ if not os.path.exists(app_json_path):
     raise FileNotFoundError(f"{app_json_path} not found.")
 
 # Update package.json version and propagate it to app.json
-new_version = update_prerelease_version(package_json_path)
-propagate_version_to_app_json(app_json_path, new_version)
+update_package_json(package_json_path)
+update_app_json(app_json_path)
 
-print(f"Updated version to {new_version} in both package.json and app.json.")
+print(f"Updated versions in both package.json and app.json.")
