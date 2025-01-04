@@ -9,7 +9,6 @@ import {
   LandPlot,
 } from 'app/components/icons';
 import { Separator } from 'app/components/ui/separator';
-import { ScrollView } from 'app/components/utils/virtual-lists';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { useListingMetrics } from 'app/hooks/listing-metrics';
 import { directusUrl } from 'app/lib/constants';
@@ -92,7 +91,7 @@ export const FullListingCard = (
           {shortString(props.title, 30)}
         </Text>
       </Header>
-      <ScrollView contentContainerClassName="flex-col gap-8 flex-grow max-w-xl">
+      <View className="flex-col gap-8 flex-grow max-w-xl">
         <View className="px-4 flex flex-col gap-4">
           <View className="flex-col gap-2">
             <Text className="text-xl font-medium text-primary">
@@ -165,14 +164,14 @@ export const FullListingCard = (
         <View className="flex flex-row justify-between px-4">
           {
             <ListingIconTile
-              icon={<LandPlot className="!text-base !text-foreground" />}
+              icon={<LandPlot size={18} color={colors.foreground} className="!text-base !text-foreground" />}
               text="Size"
               value={`${props.size} sqft`}
             />
           }
           {props.bedrooms ? (
             <ListingIconTile
-              icon={<BedDouble className="!text-base !text-foreground" />}
+              icon={<BedDouble size={18} color={colors.foreground} className="!text-base !text-foreground" />}
               text="Beds"
               value={props.bedrooms}
             />
@@ -181,7 +180,7 @@ export const FullListingCard = (
           )}
           {props.bathrooms ? (
             <ListingIconTile
-              icon={<Bath className="!text-base !text-foreground" />}
+              icon={<Bath size={18} color={colors.foreground} className="!text-base !text-foreground" />}
               text="Baths"
               value={props.bathrooms}
             />
@@ -190,7 +189,7 @@ export const FullListingCard = (
           )}
           {props.parking ? (
             <ListingIconTile
-              icon={<CarFront className="!text-base !text-foreground" />}
+              icon={<CarFront size={18} color={colors.foreground} className="!text-base !text-foreground" />}
               text="Parking"
               value={props.parking}
             />
@@ -253,7 +252,7 @@ export const FullListingCard = (
         ) : (
           <></>
         )}
-      </ScrollView>
+      </View>
     </View>
   );
 };

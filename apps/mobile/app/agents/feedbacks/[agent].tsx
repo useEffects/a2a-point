@@ -6,11 +6,14 @@ import { Feedback } from 'app/lib/types';
 import PostFeedbackScreen from 'app/screens/post-feedback';
 import { useLocalSearchParams } from 'expo-router';
 import { useGlobalSearchParams } from 'app/context/router';
+import { ScrollView } from 'app/components/utils/virtual-lists';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function PostFeedback() {
   const { feedbackId } = useLocalSearchParams();
   const { rest } = directusStore();
   const { agent } = useGlobalSearchParams();
+  const { top, bottom } = useSafeAreaInsets();
   const user = useUserDetails(agent as string);
 
   const { data: feedback } = useQuery({
@@ -23,5 +26,13 @@ export default function PostFeedback() {
       )) as Feedback,
   });
 
-  return user ? <PostFeedbackScreen user={user} feedback={feedback} /> : <></>;
+  return user ? (
+    <ScrollView
+      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+    >
+      <PostFeedbackScreen user={user} feedback={feedback} />
+    </ScrollView>
+  ) : (
+    <></>
+  );
 }

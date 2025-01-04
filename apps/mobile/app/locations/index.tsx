@@ -7,8 +7,10 @@ import { MediumLocationCardProps, mediumLocationFields } from 'app/lib/props';
 import { LocationsList } from 'app/screens/locations-list';
 import { useQuery } from '@tanstack/react-query';
 import { ScrollView } from 'app/components/utils/virtual-lists';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function LocationsScreen() {
+  const { top, bottom } = useSafeAreaInsets();
   const { data } = useQuery({
     queryKey: ['locations'],
     queryFn: async () =>
@@ -33,7 +35,9 @@ export default function LocationsScreen() {
     initialData: [],
   });
   return (
-    <ScrollView>
+    <ScrollView
+      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+    >
       <LocationsList data={data} />
     </ScrollView>
   );

@@ -60,7 +60,7 @@ export const SmallUsersCard = (item: SmallUsersCardProps) => {
           className="flex-row items-center rounded p-1"
           style={{ backgroundColor: opacity(colors.primary, 0.1) }}
         >
-          <Award size={12} className="text-primary" />
+          <Award size={12} color={colors.primary} className="text-primary" />
           <Text className="text-primary text-xs">Pro</Text>
         </View>
       </View>
@@ -99,6 +99,7 @@ export const MediumUsersCard = (
 ) => {
   const { user } = userStore();
   const { authenticated } = directusStore();
+  const { colors } = useColorScheme();
   const shouldShowEllipsis = item.tags?.length ? item.tags.length > 3 : false;
   const router = useRouter();
 
@@ -127,7 +128,11 @@ export const MediumUsersCard = (
             </View>
             <View className="bg-card w-full pl-20 flex-row items-center justify-between gap-4 pr-4 rounded-tl-xl flex-grow">
               <View className="flex-row gap-1 items-center">
-                <Star size={18} className="text-success" />
+                <Star
+                  size={18}
+                  color={colors.success}
+                  className="text-success"
+                />
                 <Text className="text-success">{item.computed_rating}</Text>
               </View>
               <View className="flex-row gap-1 items-center">
@@ -150,13 +155,21 @@ export const MediumUsersCard = (
           <View className="h-8 w-full flex-row justify-end items-center gap-4">
             {isUserPro(item.plan) && (
               <View className="bg-primary/10 text-primary text-sm py-[2px] px-1 rounded flex-row gap-1 items-center">
-                <Award size={12} className="text-primary" />
+                <Award
+                  size={12}
+                  color={colors.primary}
+                  className="text-primary"
+                />
                 <Text className="text-sm text-primary">Pro</Text>
               </View>
             )}
             {item.document && isUserVerified(item.document) && (
               <View className="bg-success/10 text-success text-sm py-[2px] px-1 rounded flex-row gap-1 items-center">
-                <Check size={12} className="text-success" />
+                <Check
+                  size={12}
+                  color={colors.success}
+                  className="text-success"
+                />
                 <Text className="text-sm text-success">Verified</Text>
               </View>
             )}
@@ -234,7 +247,11 @@ export const MediumUsersCard = (
                   size={'icon'}
                   disabled={!authenticated}
                 >
-                  <Icon size={18} className="text-foreground" />
+                  <Icon
+                    color={colors.foreground}
+                    size={18}
+                    className="text-foreground"
+                  />
                 </Button>
               );
             })}

@@ -20,6 +20,7 @@ import {
 import { directusStore } from 'app/store/directus';
 import { useGlobalSearchParams } from 'expo-router';
 import { View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function LocationSlug() {
   const params = useGlobalSearchParams<{ slug?: string[] }>();
@@ -35,6 +36,7 @@ export default function LocationSlug() {
 
 const LocationDetailedScreen = ({ id }: { id: string }) => {
   const { rest } = directusStore();
+  const { top, bottom } = useSafeAreaInsets();
   const { data: room } = useQuery({
     queryKey: ['LocationDetailed', id],
     queryFn: async () =>
@@ -88,7 +90,9 @@ const LocationDetailedScreen = ({ id }: { id: string }) => {
   });
 
   return room && totalMembers !== undefined && totalMembers !== null ? (
-    <ScrollView>
+    <ScrollView
+      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+    >
       <LocationDetailedComponent
         room={room}
         totalMembers={totalMembers}

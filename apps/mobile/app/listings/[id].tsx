@@ -10,9 +10,11 @@ import {
 } from 'app/lib/misc/queries';
 import { useGlobalSearchParams } from 'expo-router';
 import { ScrollView } from 'app/components/utils/virtual-lists';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ListingDetailedScreen() {
   const { id } = useGlobalSearchParams();
+  const { top, bottom } = useSafeAreaInsets();
   const { rest } = directusStore();
 
   const { data } = useQuery({
@@ -44,7 +46,9 @@ export default function ListingDetailedScreen() {
   });
 
   return data && metrics && usersMetrics ? (
-    <ScrollView>
+    <ScrollView
+      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+    >
       <ListingScreenBase
         listing={{
           ...data,

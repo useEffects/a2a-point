@@ -7,7 +7,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ListingsScreen() {
-  const { top } = useSafeAreaInsets();
+  const { top, bottom } = useSafeAreaInsets();
   const { data } = useQuery({
     queryKey: ['Listings page medium cards'],
     queryFn: async () =>
@@ -27,7 +27,9 @@ export default function ListingsScreen() {
   });
 
   return (
-    <ScrollView contentContainerStyle={{ paddingTop: top }}>
+    <ScrollView
+      contentContainerStyle={{ paddingTop: top, paddingBottom: bottom }}
+    >
       <ListingsScreenBase data={data} />;
     </ScrollView>
   );

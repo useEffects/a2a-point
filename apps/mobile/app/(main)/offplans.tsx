@@ -3,9 +3,9 @@ import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function OffPlansScreen() {
-  const { top } = useSafeAreaInsets();
+  const { top, bottom } = useSafeAreaInsets();
   return (
-    <View className="flex-1" style={{ paddingTop: top }}>
+    <View className="flex-1" style={{ paddingTop: top, paddingBottom: bottom }}>
       <OffPlansScreenBase />
     </View>
   );

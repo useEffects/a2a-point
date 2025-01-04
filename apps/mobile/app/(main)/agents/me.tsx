@@ -6,9 +6,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ProfileScreen() {
   const { user, company, document } = userStore();
-  const { top } = useSafeAreaInsets();
+  const { top, bottom } = useSafeAreaInsets();
   return (
-    <View style={{ paddingTop: top }} className="flex-1">
+    <View style={{ paddingTop: top, paddingBottom: bottom }} className="flex-1">
       <ProfileScreenBase user={user} company={company} document={document} />
     </View>
   );

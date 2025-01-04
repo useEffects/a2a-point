@@ -39,6 +39,22 @@ export default function RootLayout() {
               >
                 <Stack.Screen name="(main)" />
 
+                <Stack.Screen name="account-console" />
+
+                <Stack.Screen name="agents/[id]" />
+                <Stack.Screen name="agents/index" />
+                <Stack.Screen name="agents/me/activity" />
+                <Stack.Screen name="agents/me/notifications" />
+                <Stack.Screen name="agents/feedbacks/[agent]" />
+
+                <Stack.Screen name="chat/[id]" />
+
+                <Stack.Screen name="listings/[id]" />
+                <Stack.Screen name="listings/post" />
+
+                <Stack.Screen name="locations/[...slug]" />
+                <Stack.Screen name="locations/index" />
+
                 <Stack.Screen name="auth/login" />
                 <Stack.Screen name="auth/callback" />
               </Stack>
