@@ -50,6 +50,17 @@ jobs:
           VERSION=$(node -p "require('./apps/mobile/package.json').version")
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
+      - name: Add .env file
+        run: |
+          touch apps/mobile/.env
+          echo "EXPO_PUBLIC_KC_URL=${{ secrets.EXPO_PUBLIC_KC_URL }}" > apps/mobile/.env
+          echo "EXPO_PUBLIC_KC_CLIENT_ID=${{ secrets.EXPO_PUBLIC_KC_CLIENT_ID }}" > apps/mobile/.env
+          echo "EXPO_PUBLIC_KC_REALM=${{ secrets.EXPO_PUBLIC_KC_REALM }}" > .apps/mobile/.env
+          echo "EXPO_PUBLIC_KC_REFRESH_TOKEN_EXPIRY=${{ secrets.EXPO_PUBLIC_KC_REFRESH_TOKEN_EXPIRY }}" > apps/mobile/.env
+          echo "EXPO_PUBLIC_KC_ACCESS_TOKEN_EXPIRY=${{ secrets.EXPO_PUBLIC_KC_ACCESS_TOKEN_EXPIRY }}" > apps/mobile/.env
+          echo "EXPO_PUBLIC_NEXT_URL=${{ secrets.EXPO_PUBLIC_NEXT_URL }}" > apps/mobile/.env
+          echo "EXPO_PUBLIC_DIRECTUS_URL=${{ secrets.EXPO_PUBLIC_DIRECTUS_URL }}" > apps/mobile/.env
+
       - name: Build apk
         run: |
           pnpm install
@@ -69,4 +80,4 @@ jobs:
         with:
           author_name: 'gitea.bot'
           author_email: 'gitea.bot@example.com'
-          message: 'chore: bump version for a2apoint/mobile'
+          message: 'chore: bump versions for a2apoint/mobile'
