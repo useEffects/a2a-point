@@ -1,7 +1,6 @@
 import { useColorScheme as useNativewindColorScheme } from 'nativewind';
 import { theme } from '@a2apoint/tailwind-theme/src/colors';
-import { Appearance, Platform } from 'react-native';
-import { useMemo } from 'react';
+import { Appearance } from 'react-native';
 
 export type ColorSchemeContextType = {
   colorScheme: 'dark' | 'light';

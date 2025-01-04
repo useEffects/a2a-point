@@ -28,7 +28,7 @@ def update_app_json(app_json_path):
 
     # Update the version in app.json
     version = data['expo']['version']
-    version_number_parts = ios_build_number.split('.')
+    version_number_parts = version.split('.')
     if len(version_number_parts) == 3:
         new_version = f"{version_number_parts[0]}.{version_number_parts[1]}.{int(version_number_parts[2]) + 1}"
         data['expo']['version'] = new_version
