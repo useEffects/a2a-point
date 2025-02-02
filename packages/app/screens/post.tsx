@@ -786,7 +786,7 @@ export function PostScreen() {
   const { user } = userStore();
 
   return (
-    <View className="flex-1 flex-grow h-full">
+    <View className="flex-1">
       {authenticated ? (
         user.is_verified ? (
           <PostScreenComponent />

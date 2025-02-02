@@ -62,6 +62,8 @@ import { filesize } from 'filesize';
 import { filter, uniqBy } from 'lodash';
 import { Member } from 'app/context/chats';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useKeyboard } from '../../../apps/mobile/hooks/keyboard';
 
 export type withId = { id: string };
 export type withUri = { uri: string };
@@ -322,6 +324,8 @@ const Footer = (
   const disabled = !(
     Boolean(currentMessage.text) || Boolean(currentMessage.assets)
   );
+  const { bottom } = useSafeAreaInsets();
+  const { isKeyboardVisible } = useKeyboard();
 
   const handleFormGeneration = async (values: A2AFormType) => {
     const res = await rest.request(
@@ -443,7 +447,13 @@ const Footer = (
   };
 
   return (
-    <View className="flex-col">
+    <View
+      className="flex-col"
+      style={{
+        paddingBottom:
+          Platform.OS === 'ios' && isKeyboardVisible ? undefined : bottom,
+      }}
+    >
       <Separator />
       {currentMessage.assets && currentMessage.assets.length ? (
         <View className="border-solid border-0 border-l-4 border-primary bg-accent p-2 flex-row justify-between items-center">
@@ -660,11 +670,7 @@ export const ChatUi = (props: ChatUiProps) => {
   }, [props.goToId, props.messages, sections]);
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: colors.card }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 40}
-    >
+    <>
       <SectionList
         contentContainerStyle={{
           padding: 1,
@@ -708,6 +714,6 @@ export const ChatUi = (props: ChatUiProps) => {
         isGroup={props.isGroup}
         receivers={props.receivers}
       />
-    </KeyboardAvoidingView>
+    </>
   );
 };

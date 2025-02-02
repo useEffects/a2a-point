@@ -236,17 +236,17 @@ export function HomeScreen() {
       </SeparatorText>
       <View className="flex-row justify-between px-4">
         {externalLinks.map(({ label, href }, index) => (
-          <Link key={index} href={href} className="">
-            <Button
-              variant={'base'}
-              size={'none'}
-              style={{ backgroundColor: opacity(colors.info, 0.1) }}
-              className="flex-row gap-1 py-1 px-2 rounded"
-            >
-              <Text className="text-info">{label}</Text>
-              <ExternalLink size={18} className="text-info" />
-            </Button>
-          </Link>
+          <Button
+            key={index}
+            variant={'base'}
+            size={'none'}
+            style={{ backgroundColor: opacity(colors.info, 0.1) }}
+            className="flex-row gap-1 py-1 px-2 rounded"
+            onPress={() => Linking.openURL(href)}
+          >
+            <Text className="text-info">{label}</Text>
+            <ExternalLink size={18} className="text-info" color={colors.info} />
+          </Button>
         ))}
       </View>
     </View>

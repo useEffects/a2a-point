@@ -86,6 +86,7 @@ export default function LockedScreen(props: LockedScreenProps) {
 
 export const GoToLoginButton = (props: ButtonProps) => {
   const router = useRouter();
+  const { colors } = useColorScheme();
 
   return (
     <Button
@@ -96,7 +97,10 @@ export const GoToLoginButton = (props: ButtonProps) => {
       {...props}
     >
       <Text>Take me to login screen</Text>
-      <ArrowUpRight className="text-primary-foreground" />
+      <ArrowUpRight
+        className="text-primary-foreground"
+        color={colors['primary-foreground']}
+      />
     </Button>
   );
 };
