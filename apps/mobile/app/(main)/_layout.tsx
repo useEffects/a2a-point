@@ -13,14 +13,16 @@ import {
   User,
 } from 'app/components/icons';
 import { StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function MainLayout() {
   const { colors } = useColorScheme();
   const { width } = Dimensions.get('window');
+  const { bottom } = useSafeAreaInsets();
   return (
     <Tabs
       screenOptions={{
-        header: () => null,
+        headerShown: false,
         tabBarStyle: {
           backgroundColor: colors.card,
           borderTopColor: colors.border,
@@ -46,7 +48,9 @@ export default function MainLayout() {
       />
       <Tabs.Screen
         name="index"
-        options={{ ...getTabItemsOptions('Home', Home) }}
+        options={{
+          ...getTabItemsOptions('Home', Home),
+        }}
       />
       <Tabs.Screen
         name="listings"

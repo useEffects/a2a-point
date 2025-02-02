@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export default function PostScreen() {
   const { top, bottom } = useSafeAreaInsets();
   return (
-    <ScrollView contentContainerStyle={{ paddingTop: top, bottom }}>
+    <ScrollView contentContainerStyle={{ paddingTop: top, bottom, flex: 1 }}>
       <PostScreenBase />
     </ScrollView>
   );
