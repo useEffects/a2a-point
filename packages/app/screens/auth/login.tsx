@@ -25,10 +25,12 @@ import * as Linking from 'expo-linking';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import LoginDarkImg from 'app/assets/login/dark/Frame_135_2_hzjyas_c_scale,w_1085.jpg';
 import LoginLightImg from 'app/assets/login/light/light_c9pqo8_c_scale,w_1029.jpg';
+import { useRouter } from 'app/context/router';
 
 WebBrowser.maybeCompleteAuthSession();
 
 export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
+  const router = useRouter();
   const { active, setKeyCloakStore } = keycloakStore();
   const { setDirectusStore } = directusStore();
   const {
@@ -78,9 +80,15 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
     }
   }, [response, discovery]);
 
+  useEffect(() => {
+    if (response?.type === 'success' && active) {
+      router.push(`auth/callback?redirect=${redirect}`);
+    }
+  }, [active, response]);
+
   return (
     <View className="flex-1">
-      <Header className=''>
+      <Header className="">
         <Text className="text-xl font-bold">Login</Text>
       </Header>
       <View className="flex-col justify-evenly flex-1 items-start px-4 py-8">

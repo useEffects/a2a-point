@@ -143,9 +143,6 @@ export function HomeScreen() {
 
   return (
     <View className="flex-grow flex-col gap-8 pb-8">
-      <Header shouldntGoBack>
-        <Text className="text-xl font-bold">A2APoint</Text>
-      </Header>
       <Text className="text-2xl font-bold text-wrap px-4">
         {authenticated
           ? `Welcome back ${user.first_name} ${user.last_name}`
