@@ -14,6 +14,7 @@ import {
   View,
   Image,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type LockedScreenProps = {
   className?: string;
@@ -27,6 +28,7 @@ type LockedScreenProps = {
 
 export default function LockedScreen(props: LockedScreenProps) {
   const { width, height } = Dimensions.get('window');
+  const { bottom } = useSafeAreaInsets();
   const { isDarkColorScheme } = useColorScheme();
   const Bottom = props.bottomComponent;
   const FinalHeader = props.header;
@@ -44,7 +46,7 @@ export default function LockedScreen(props: LockedScreenProps) {
 
   // prettier-ignore
   return (
-    <View className="flex-1 relative h-screen">
+    <View className="flex-1 relative h-screen" style={{paddingBottom: bottom}}>
       {/** @ts-ignore */}
       <View style={dimensions}
         className="absolute top-0 left-0 bottom-0 right-0"
@@ -61,13 +63,13 @@ export default function LockedScreen(props: LockedScreenProps) {
         style={{ opacity: 0.95 }}
         className={cn('absolute top-0 left-0 bottom-0 right-0 bg-background')}
       />
-      {FinalHeader ? (
+      {/* {FinalHeader ? (
         <FinalHeader />
       ) : (
         <Header>
           <HeaderTitle>{props.headerTitle}</HeaderTitle>
         </Header>
-      )}
+      )} */}
       <View className="flex-grow px-4 flex-col justify-center max-w-md mx-auto">
         <View className="flex-col gap-4">
           <Text className="text-2xl font-bold text-primary text-center">
@@ -120,6 +122,7 @@ export const GoToLoginComponent = () => {
 
 export const GoToAccountConsole = () => {
   const router = useRouter();
+  const { colors } = useColorScheme();
 
   return (
     <View className="flex-col gap-1 w-full">
@@ -133,7 +136,10 @@ export const GoToAccountConsole = () => {
         className="flex-row items-center w-full"
       >
         <Text>Take me to account console</Text>
-        <ArrowUpRight className="text-primary-foreground" />
+        <ArrowUpRight
+          className="text-primary-foreground"
+          color={colors['primary-foreground']}
+        />
       </Button>
     </View>
   );

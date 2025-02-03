@@ -86,11 +86,6 @@ export const FullListingCard = (
 
   return (
     <View className="flex-col gap-4 flex-1 pb-4">
-      <Header>
-        <Text className="font-bold text-xl">
-          {shortString(props.title, 30)}
-        </Text>
-      </Header>
       <View className="flex-col gap-8 flex-grow max-w-xl">
         <View className="px-4 flex flex-col gap-4">
           <View className="flex-col gap-2">
@@ -164,14 +159,26 @@ export const FullListingCard = (
         <View className="flex flex-row justify-between px-4">
           {
             <ListingIconTile
-              icon={<LandPlot size={18} color={colors.foreground} className="!text-base !text-foreground" />}
+              icon={
+                <LandPlot
+                  size={18}
+                  color={colors.foreground}
+                  className="!text-base !text-foreground"
+                />
+              }
               text="Size"
               value={`${props.size} sqft`}
             />
           }
           {props.bedrooms ? (
             <ListingIconTile
-              icon={<BedDouble size={18} color={colors.foreground} className="!text-base !text-foreground" />}
+              icon={
+                <BedDouble
+                  size={18}
+                  color={colors.foreground}
+                  className="!text-base !text-foreground"
+                />
+              }
               text="Beds"
               value={props.bedrooms}
             />
@@ -180,7 +187,13 @@ export const FullListingCard = (
           )}
           {props.bathrooms ? (
             <ListingIconTile
-              icon={<Bath size={18} color={colors.foreground} className="!text-base !text-foreground" />}
+              icon={
+                <Bath
+                  size={18}
+                  color={colors.foreground}
+                  className="!text-base !text-foreground"
+                />
+              }
               text="Baths"
               value={props.bathrooms}
             />
@@ -189,7 +202,13 @@ export const FullListingCard = (
           )}
           {props.parking ? (
             <ListingIconTile
-              icon={<CarFront size={18} color={colors.foreground} className="!text-base !text-foreground" />}
+              icon={
+                <CarFront
+                  size={18}
+                  color={colors.foreground}
+                  className="!text-base !text-foreground"
+                />
+              }
               text="Parking"
               value={props.parking}
             />
