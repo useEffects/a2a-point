@@ -2,7 +2,7 @@
   "expo": {
     "name": "A2APoint",
     "slug": "a2apoint-community",
-    "version": "2.0.2",
+    "version": "2.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "a2apoint-community",
@@ -11,7 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.a2apoint.community",
-      "buildNumber": "2.3"
+      "buildNumber": "2.5"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +19,7 @@
         "backgroundColor": "#FAF9F8"
       },
       "package": "com.a2apoint.community",
-      "versionCode": 3
+      "versionCode": 5
     },
     "web": {
       "bundler": "metro",
