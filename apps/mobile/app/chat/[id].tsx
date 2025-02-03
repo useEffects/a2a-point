@@ -1,19 +1,30 @@
 import { RoomDetailedScreen as RoomDetailedScreenBase } from 'app/screens/room-detailed';
 import { useGlobalSearchParams } from 'app/context/router';
 import { ScrollView } from 'app/components/utils/virtual-lists';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-export default function RoomDetailedScreen() {
+const Stack = createNativeStackNavigator();
+
+function RoomDetailedScreenComponent() {
   const { id } = useGlobalSearchParams();
-  const { top, bottom } = useSafeAreaInsets();
 
   return typeof id === 'string' ? (
-    <ScrollView
-      contentContainerStyle={{ paddingTop: top, flex: 1 }}
-    >
+    <ScrollView contentContainerStyle={{ flex: 1 }}>
       <RoomDetailedScreenBase roomId={id} />
     </ScrollView>
   ) : (
     <></>
+  );
+}
+
+export default function RoomDetailedScreen() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Room Detailed"
+        component={RoomDetailedScreenComponent}
+        options={{ header: () => null }}
+      />
+    </Stack.Navigator>
   );
 }

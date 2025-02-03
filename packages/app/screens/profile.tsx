@@ -102,14 +102,7 @@ const LockedProfileScreen = ({ userId }: { userId: string }) => {
       description="Showcase your expertise, recent transactions, and client testimonials to other agents. Build trust and credibility within the real estate community."
       headerTitle={''}
       title="Build your profile!"
-      header={() => (
-        <Header shouldntGoBack>
-          <View className="flex-row flex-grow items-center justify-between">
-            <HeaderTitle>{title}</HeaderTitle>
-            <ToggleTheme />
-          </View>
-        </Header>
-      )}
+      header={() => <></>}
     />
   );
 };

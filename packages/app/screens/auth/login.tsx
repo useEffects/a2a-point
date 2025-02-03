@@ -5,7 +5,7 @@ import {
   useAutoDiscovery,
 } from 'expo-auth-session';
 import { Image, View } from 'react-native';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { KC_URL, KC_REALM, KC_CLIENT_ID } from 'app/lib/constants';
 import { keycloakStore } from 'app/store/keycloak';
 import {
@@ -39,6 +39,7 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
       data: { accessToken },
     },
   } = useContext(AuthContext);
+  const [shouldRedirectNow, setShouldRedirectNow] = useState(false);
 
   const discovery = useAutoDiscovery(`${KC_URL}/realms/${KC_REALM}`);
   const redirectUri = makeRedirectUri({
@@ -74,21 +75,15 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
             setDirectusStore,
           );
           storage.set(kcRefreshTokenKey, refreshToken);
+          router.push(`auth/callback?redirect=${redirect}`);
         })
         .catch(console.error);
     } else if (response?.type === 'error') {
       console.error('Authentication error: ', response.error);
+    } else {
+      console.log(response);
     }
   }, [response, discovery]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (response?.type === 'success' && active) {
-        router.push(`auth/callback?redirect=${redirect}`);
-      }
-    }, 500);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <View className="flex-1">
