@@ -1,15 +1,39 @@
-import { ProfileScreen as ProfileScreenBase } from 'app/screens/profile';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  ProfileScreen as ProfileScreenBase,
+  ProfileScreenHeader,
+} from 'app/screens/profile';
 import userStore from 'app/store/user';
-import React from 'react';
+import { useNavigation } from 'expo-router';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-export default function ProfileScreen() {
+const Stack = createNativeStackNavigator();
+
+function ProfileScreenComponent() {
   const { user, company, document } = userStore();
-  const { top } = useSafeAreaInsets();
+  const navigation = useNavigation();
+  useEffect(() => {
+    navigation.setOptions({
+      header: () => <ProfileScreenHeader user={user} />,
+      headerShown: true,
+    });
+  }, [navigation]);
   return (
-    <View style={{ paddingTop: top }} className="flex-1">
+    <View className="flex-1">
       <ProfileScreenBase user={user} company={company} document={document} />
     </View>
+  );
+}
+
+export default function ProfileScreen() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Profile"
+        component={ProfileScreenComponent}
+        options={{ header: () => null }}
+      />
+    </Stack.Navigator>
   );
 }

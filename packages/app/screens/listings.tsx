@@ -68,6 +68,7 @@ import {
 } from 'react-native-tab-view';
 import { useDebounce } from 'use-debounce';
 import { GoToLoginButton } from './locked-screens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export enum FilterKeys {
   Cost = 'cost',
@@ -181,41 +182,6 @@ export function ListingsScreen({
 
   return (
     <View className={cn('flex-1', className)}>
-      <Header className="items-center py-4" height={'auto'} shouldntGoBack>
-        <View className="flex-row flex-1 justify-between items-center">
-          <HeaderTitle>Listings</HeaderTitle>
-          <GoToPostButtonUi />
-        </View>
-      </Header>
-      <View className="flex-row items-center justify-between gap-4 w-full bg-card px-4">
-        <SearchBar searchText={searchText} setSearchText={setSearchText} />
-        <Button
-          onPress={() => setBottomSheetVisible(true)}
-          variant={'base'}
-          size={'icon'}
-          className={cn(
-            'rounded-full border',
-            !filters.length ? 'border-info' : 'border-success bg-success',
-            bottomSheetVisible && 'border-info bg-info',
-          )}
-        >
-          <ListFilter
-            size={18}
-            color={
-              filters.length
-                ? colors.card
-                : bottomSheetVisible
-                  ? colors['info-foreground']
-                  : colors.info
-            }
-          />
-        </Button>
-      </View>
-      {filters.length ? (
-        <RenderChips filters={filters} setFilters={updateParams} />
-      ) : (
-        <View className="h-4 w-full bg-card" />
-      )}
       <InfiniteList<
         | (MediumListingCardProps & ListingCardMetrics)
         | ConfirmedAdvertisementCardProps
@@ -238,9 +204,47 @@ export function ListingsScreen({
           fields: mediumListingsFields,
         }}
         flatListProps={{
-          ItemSeparatorComponent: () => <Separator />,
+          ItemSeparatorComponent: () => <Separator className="my-8" />,
           contentContainerClassName: 'max-w-xl',
           scrollEnabled: false,
+          ListHeaderComponent: (
+            <View className="py-4">
+              <View className="flex-row items-center justify-between gap-4 w-full px-4">
+                <SearchBar
+                  searchText={searchText}
+                  setSearchText={setSearchText}
+                />
+                <Button
+                  onPress={() => setBottomSheetVisible(true)}
+                  variant={'base'}
+                  size={'icon'}
+                  className={cn(
+                    'rounded-full border',
+                    !filters.length
+                      ? 'border-info'
+                      : 'border-success bg-success',
+                    bottomSheetVisible && 'border-info bg-info',
+                  )}
+                >
+                  <ListFilter
+                    size={18}
+                    color={
+                      filters.length
+                        ? colors.card
+                        : bottomSheetVisible
+                          ? colors['info-foreground']
+                          : colors.info
+                    }
+                  />
+                </Button>
+              </View>
+              {filters.length ? (
+                <RenderChips filters={filters} setFilters={updateParams} />
+              ) : (
+                <></>
+              )}
+            </View>
+          ),
         }}
         infinite
       />
@@ -297,6 +301,23 @@ export function ListingsScreen({
       </BottomSheet>
       {!authenticated ? <LoginPopover /> : <></>}
     </View>
+  );
+}
+
+export function ListingsScreenHeader() {
+  const { top } = useSafeAreaInsets();
+  return (
+    <Header height={'auto'} shouldntGoBack>
+      <View
+        style={{ paddingTop: top + 16 }}
+        className="pb-4 flex-row items-center"
+      >
+        <View className="flex-row flex-1 justify-between items-center h-12">
+          <HeaderTitle>Listings</HeaderTitle>
+          <GoToPostButtonUi />
+        </View>
+      </View>
+    </Header>
   );
 }
 
@@ -659,7 +680,7 @@ const CategoryFilters = ({
           variant={'base'}
           size={'none'}
           key={i}
-          className="flex-col gap-1 w-1/5 justify-start"
+          className="flex-col gap-1 w-1/5 justify-start items-center"
         >
           {category.Icon({
             size: 24,
@@ -669,7 +690,7 @@ const CategoryFilters = ({
           })}
           <Text
             className={cn(
-              'text-sm text-center w-16 whitespace-normal',
+              'text-sm text-center w-[60px] whitespace-normal',
               filters.some((f) => f.key === category.key)
                 ? 'text-primary'
                 : 'text-foreground',

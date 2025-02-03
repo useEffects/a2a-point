@@ -2,7 +2,7 @@ import { readItems } from '@directus/sdk';
 import { useQuery } from '@tanstack/react-query';
 import ChatImgDark from 'app/assets/locked-screens/dark/chat.jpg';
 import ChatImgLight from 'app/assets/locked-screens/light/chat.jpg';
-import { Header } from 'app/components/header';
+import { Header, HeaderTitle } from 'app/components/header';
 import SearchBar from 'app/components/searchbar';
 import { Button } from 'app/components/ui/button';
 import { Separator } from 'app/components/ui/separator';
@@ -30,6 +30,7 @@ import { useDebounce } from 'use-debounce';
 import LockedScreen from './locked-screens';
 import { ChatMessage, withId, withUri } from 'app/components/chat-ui';
 import { AsyncImage } from 'app/components/async-image';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const ChatLocked = () => {
   const { isDarkColorScheme } = useColorScheme();
@@ -93,10 +94,7 @@ function ChatScreenComponent() {
 
   return (
     <View className="flex-col h-full">
-      <Header>
-        <Text className="text-xl font-bold">Chat</Text>
-      </Header>
-      <View className="p-4 bg-card">
+      <View className="p-4 pb-0">
         <SearchBar searchText={searchText} setSearchText={setSearchText} />
       </View>
       {contacts?.length || groups?.length ? (
@@ -128,6 +126,22 @@ function ChatScreenComponent() {
         <ChatsTabView roomsSubscribed={roomsSubscribed} messages={messages} />
       )}
     </View>
+  );
+}
+
+export function ChatScreenHeader() {
+  const { top } = useSafeAreaInsets();
+  return (
+    <Header shouldntGoBack height={'auto'}>
+      <View
+        style={{ paddingTop: top + 16 }}
+        className="pb-4 flex-row items-center"
+      >
+        <View className="h-12 flex-row items-center">
+          <HeaderTitle>Chat</HeaderTitle>
+        </View>
+      </View>
+    </Header>
   );
 }
 
