@@ -64,9 +64,13 @@ export default function MainLayout() {
   );
 }
 
-const getTabItemsOptions = (
+const getTabItemsOptions = (label: string, Icon: LucideIcon) =>
+  createTabBarOptions(label, Icon, navigableTabs);
+
+export const createTabBarOptions = (
   label: string,
   Icon: LucideIcon,
+  navigableTabs: string[],
 ): BottomTabNavigationOptions => {
   return {
     tabBarIcon: ({ focused }) => {

@@ -2,7 +2,7 @@
 import { createItem } from '@directus/sdk';
 import { Asset, withUri } from 'app/components/chat-ui';
 import { FormInput } from 'app/components/formComponents';
-import { Header } from 'app/components/header';
+import { BackButton, Header, HeaderTitle } from 'app/components/header';
 import { X } from 'app/components/icons';
 import { SeparatorText } from 'app/components/separator-text';
 import { Button } from 'app/components/ui/button';
@@ -24,6 +24,7 @@ import userStore from 'app/store/user';
 import * as Linking from 'expo-linking';
 import { useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const VerificationApplyScreen = () => {
   const { user, document } = userStore();
@@ -89,9 +90,6 @@ export const VerificationApplyScreen = () => {
 
   return (
     <View className="flex-1 ">
-      <Header>
-        <Text className="text-xl font-bold">Verification</Text>
-      </Header>
       <View className="flex-grow p-4">
         {!attemptAgain && Object.keys(document).length ? (
           <Card className="mt-auto mb-0">
@@ -230,3 +228,20 @@ export const VerificationApplyScreen = () => {
     </View>
   );
 };
+
+export function VerificationApplyScreenHeader() {
+  const { top } = useSafeAreaInsets();
+  return (
+    <Header height={'auto'}>
+      <View
+        className="flex-row items-center pb-4"
+        style={{ paddingTop: top + 16 }}
+      >
+        <View className="h-12 flex-row items-center gap-4">
+          <BackButton />
+          <HeaderTitle>Verification</HeaderTitle>
+        </View>
+      </View>
+    </Header>
+  );
+}

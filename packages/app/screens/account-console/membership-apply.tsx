@@ -23,7 +23,8 @@ import {
   CardHeader,
   CardTitle,
 } from 'app/components/ui/card';
-import { Header } from 'app/components/header';
+import { BackButton, Header, HeaderTitle } from 'app/components/header';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const MembershipApplyScreen = () => {
   const { user } = userStore();
@@ -54,11 +55,6 @@ export const MembershipApplyScreen = () => {
 
   return (
     <View className="flex-1 flex-col">
-      <View className="mb-4 w-full">
-        <Header>
-          <Text className="text-xl font-bold">Membership</Text>
-        </Header>
-      </View>
       <View className="flex-grow p-4 flex-col gap-4">
         {user.plan ? (
           <View className="flex-col gap-2 flex-grow">
@@ -155,6 +151,23 @@ export const MembershipApplyScreen = () => {
     </View>
   );
 };
+
+export function MembershipApplyScreenHeader() {
+  const { top } = useSafeAreaInsets();
+  return (
+    <Header height={'auto'}>
+      <View
+        className="flex-row items-center pb-4"
+        style={{ paddingTop: top + 16 }}
+      >
+        <View className="h-12 flex-row items-center gap-4">
+          <BackButton />
+          <HeaderTitle>Membership</HeaderTitle>
+        </View>
+      </View>
+    </Header>
+  );
+}
 
 type MembershipCardProps = {
   name: string;
