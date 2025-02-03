@@ -116,11 +116,11 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
           </View>
           <Text className="text-sm text-subtext text-center">
             By continuing, you agree to our{' '}
-            <Text className="text-sm text-info underline">
+            <Text onPress={() => Linking.openURL("https://a2apoint.com/privacy")} className="text-sm text-info underline">
               Terms of Service
             </Text>{' '}
             and that you have read our{' '}
-            <Text className="text-sm text-info underline">Privacy Policy</Text>
+            <Text onPress={() => Linking.openURL("https://a2apoint.com/terms")} className="text-sm text-info underline">Privacy Policy</Text>
           </Text>
         </View>
       </View>
