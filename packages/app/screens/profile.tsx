@@ -5,7 +5,7 @@ import {
   RenderUserTileProps,
   useAutoCompleteItem,
 } from 'app/components/formComponents';
-import { Header, HeaderTitle } from 'app/components/header';
+import { BackButton, Header, HeaderTitle } from 'app/components/header';
 import {
   ArrowUp,
   Bell,
@@ -310,7 +310,11 @@ export const ProfileScreenHeader = ({ user }: { user: User }) => {
   const { top } = useSafeAreaInsets();
   return (
     <Header shouldntGoBack height={'auto'}>
-      <View style={{ paddingTop: top + 16 }} className="w-full pb-4 flex-row items-center">
+      <View
+        style={{ paddingTop: top + 16 }}
+        className="w-full pb-4 flex-row items-center gap-4"
+      >
+        {currentUser.id !== user.id && <BackButton />}
         <View className="flex-row items-center justify-between flex-grow h-12">
           <HeaderTitle>
             {currentUser.id !== user.id
