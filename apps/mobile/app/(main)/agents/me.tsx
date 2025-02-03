@@ -16,7 +16,6 @@ function ProfileScreenComponent() {
   useEffect(() => {
     navigation.setOptions({
       header: () => <ProfileScreenHeader user={user} />,
-      headerShown: true,
     });
   }, [navigation]);
   return (

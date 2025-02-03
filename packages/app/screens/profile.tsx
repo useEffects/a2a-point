@@ -652,7 +652,7 @@ const ProfileDropdown = () => {
 
   const { colors } = useColorScheme();
   const { setDirectusStore } = directusStore();
-  const { setKeyCloakStore } = keycloakStore();
+  const { setKeyCloakStore, active } = keycloakStore();
   const { keycloakQueryResult } = useContext(AuthContext);
 
   const logout = async () => {
@@ -678,7 +678,7 @@ const ProfileDropdown = () => {
     }
   };
 
-  return (
+  return active ? (
     <DropdownMenu onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant={'ghost'} size={'icon'}>
@@ -738,5 +738,7 @@ const ProfileDropdown = () => {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  ) : (
+    <></>
   );
 };

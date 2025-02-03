@@ -18,7 +18,7 @@ import { directusStore, initialDirectusStore } from 'app/store/directus';
 import { Button } from 'app/components/ui/button';
 import { Text } from 'app/components/ui/text';
 import { storage } from 'app/lib/mmkv';
-import { Header } from 'app/components/header';
+import { BackButton, Header, HeaderTitle } from 'app/components/header';
 import { AsyncImage } from 'app/components/async-image';
 import Logo from 'app/components/svg/logo';
 import * as Linking from 'expo-linking';
@@ -26,6 +26,7 @@ import { useColorScheme } from 'app/hooks/color-scheme';
 import LoginDarkImg from 'app/assets/login/dark/Frame_135_2_hzjyas_c_scale,w_1085.jpg';
 import LoginLightImg from 'app/assets/login/light/light_c9pqo8_c_scale,w_1029.jpg';
 import { useRouter } from 'app/context/router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -81,16 +82,16 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
   }, [response, discovery]);
 
   useEffect(() => {
-    if (response?.type === 'success' && active) {
-      router.push(`auth/callback?redirect=${redirect}`);
-    }
-  }, [active, response]);
+    const interval = setInterval(() => {
+      if (response?.type === 'success' && active) {
+        router.push(`auth/callback?redirect=${redirect}`);
+      }
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <View className="flex-1">
-      <Header className="">
-        <Text className="text-xl font-bold">Login</Text>
-      </Header>
       <View className="flex-col justify-evenly flex-1 items-start px-4 py-8">
         <View className="flex-col items-center w-full">
           <Text className="text-2xl font-bold">
@@ -129,6 +130,23 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
         </View>
       </View>
     </View>
+  );
+}
+
+export function LoginScreenHeader() {
+  const { top } = useSafeAreaInsets();
+  return (
+    <Header height={'auto'}>
+      <View
+        className="flex-row items-center pb-4"
+        style={{ paddingTop: top + 16 }}
+      >
+        <View className="h-12 flex-row items-center gap-4">
+          <BackButton />
+          <HeaderTitle>Login</HeaderTitle>
+        </View>
+      </View>
+    </Header>
   );
 }
 

@@ -23,6 +23,7 @@ export default function MainLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
+        header: () => null,
         tabBarStyle: {
           backgroundColor: colors.card,
           borderTopColor: colors.border,
@@ -58,7 +59,7 @@ export default function MainLayout() {
       />
       <Tabs.Screen
         name="agents/me"
-        options={{ ...getTabItemsOptions('Profie', User) }}
+        options={{ ...getTabItemsOptions('Profile', User) }}
       />
     </Tabs>
   );
