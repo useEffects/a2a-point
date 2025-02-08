@@ -2,7 +2,7 @@ import { Separator } from 'app/components/ui/separator';
 import Construction from 'app/components/svg/construction';
 import { Text } from 'app/components/ui/text';
 import { Dimensions, Image, Platform, View } from 'react-native';
-import { Header } from 'app/components/header';
+import { Header, HeaderTitle } from 'app/components/header';
 import {
   Card,
   CardContent,
@@ -12,6 +12,7 @@ import {
 import OffplansImgLight from 'app/assets/locked-screens/light/offplans.jpg';
 import OffplansImgDark from 'app/assets/locked-screens/dark/offplans.jpg';
 import { useColorScheme } from 'app/hooks/color-scheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export function OffPlansScreen() {
   const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
@@ -38,9 +39,6 @@ export function OffPlansScreen() {
           height={height}
         />
       </View>
-      <Header shouldntGoBack>
-        <Text className="text-xl font-bold">Off plans</Text>
-      </Header>
       <View className="flex-grow">
         <Card className="self-start w-full rounded-none">
           <CardHeader>
@@ -67,9 +65,18 @@ export function OffPlansScreen() {
   );
 }
 
-<View className="p-4 flex-1 flex-col gap-8">
-  <View className="rounded-full bg-popover p-4">
-    <Construction width={300} height={300} />
-  </View>
-  <Separator />
-</View>;
+export function OffplansScreenHeader() {
+  const { top } = useSafeAreaInsets();
+  return (
+    <Header shouldntGoBack height={'auto'}>
+      <View
+        style={{ paddingTop: top + 16 }}
+        className="pb-4 flex-row items-center"
+      >
+        <View className="flex-row items-center h-12">
+          <HeaderTitle>Off plans</HeaderTitle>
+        </View>
+      </View>
+    </Header>
+  );
+}

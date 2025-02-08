@@ -63,7 +63,7 @@ export const MediumListingCard = (
   const router = useRouter();
 
   return (
-    <View className="w-full flex-col gap-2 p-4 my-8">
+    <View className="w-full flex-col gap-2 p-4">
       <View className="flex flex-wrap gap-4 flex-row items-center justify-between">
         <UserChip user={item.user_created} />
         {authenticated ? (

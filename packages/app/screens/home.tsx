@@ -17,7 +17,7 @@ import {
 import { useSmallLocationsQuery } from 'app/components/cards/utils/locations';
 import { useSmallUsersQuery } from 'app/components/cards/utils/users';
 import { CompanyStats } from 'app/components/company-stats';
-import { Header } from 'app/components/header';
+import { Header, HeaderTitle } from 'app/components/header';
 import { ArrowUpRight, ExternalLink } from 'app/components/icons';
 import { SeparatorText } from 'app/components/separator-text';
 // import { Button } from 'app/components/ui/button';
@@ -52,6 +52,7 @@ import { View } from 'react-native';
 import { Link } from 'expo-router';
 import { FilterKeys } from './listings';
 import { Button } from 'app/components/ui/button';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export function HomeScreen() {
   const { authenticated } = directusStore();
@@ -249,6 +250,22 @@ export function HomeScreen() {
     </View>
   );
 }
+
+export const HomeScreenHeader = () => {
+  const { top } = useSafeAreaInsets();
+  return (
+    <Header shouldntGoBack height={'auto'}>
+      <View
+        style={{ paddingTop: top + 16 }}
+        className="pb-4 flex-row items-center"
+      >
+        <View className="h-12 flex-row items-center">
+          <HeaderTitle>A2A Point</HeaderTitle>
+        </View>
+      </View>
+    </Header>
+  );
+};
 
 const externalLinks = [
   {

@@ -4,13 +4,21 @@ import {
   renderCardsQuery,
 } from 'app/lib/misc/queries';
 import { MediumLocationCardProps, mediumLocationFields } from 'app/lib/props';
-import { LocationsList } from 'app/screens/locations-list';
+import {
+  LocationsList,
+  LocationsListScreenHeader,
+} from 'app/screens/locations-list';
 import { useQuery } from '@tanstack/react-query';
 import { ScrollView } from 'app/components/utils/virtual-lists';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useEffect } from 'react';
+import { useNavigation } from 'expo-router';
 
-export default function LocationsScreen() {
-  const { top, bottom } = useSafeAreaInsets();
+const Stack = createNativeStackNavigator();
+
+function LocationsScreenComponent() {
+  const navigation = useNavigation();
   const { data } = useQuery({
     queryKey: ['locations'],
     queryFn: async () =>
@@ -34,11 +42,28 @@ export default function LocationsScreen() {
       ),
     initialData: [],
   });
+
+  useEffect(() => {
+    navigation.setOptions({
+      header: () => <LocationsListScreenHeader />,
+    });
+  }, [navigation]);
+
   return (
-    <ScrollView
-      contentContainerStyle={{ paddingTop: top }}
-    >
+    <ScrollView contentContainerStyle={{ flex: 1 }}>
       <LocationsList data={data} />
     </ScrollView>
+  );
+}
+
+export default function LocationsScreen() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="locations"
+        component={LocationsScreenComponent}
+        options={{ header: () => null }}
+      />
+    </Stack.Navigator>
   );
 }

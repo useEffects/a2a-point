@@ -43,13 +43,9 @@ export const Header = ({
     <View
       className={cn('flex-row items-center px-4 gap-2 bg-card', className)}
       style={{
-        height: Platform.select({
-          native: height,
-          default: 72,
-        }),
+        height,
       }}
     >
-      {Platform.OS === 'web' || shouldntGoBack ? <></> : <BackButton />}
       {children}
     </View>
   );

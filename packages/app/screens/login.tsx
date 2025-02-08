@@ -86,11 +86,25 @@ const LoginScreen = () => {
           </View>
           <Text className="text-sm text-subtext text-center">
             By continuing, you agree to our{' '}
-            <Text className="text-sm text-info underline">
-              Terms of Service
-            </Text>{' '}
-            and that you have read our{' '}
-            <Text className="text-sm text-info underline">Privacy Policy</Text>
+            <Button
+              onPress={() => Linking.openURL('https://a2apoint.com')}
+              size={'none'}
+              variant={'base'}
+            >
+              <Text className="text-sm text-info underline">
+                Terms of Service
+              </Text>
+            </Button>
+            and that you have read our
+            <Button
+              onPress={() => Linking.openURL('https://a2apoint.com')}
+              size={'none'}
+              variant={'base'}
+            >
+              <Text className="text-sm text-info underline">
+                Privacy Policy
+              </Text>
+            </Button>
           </Text>
         </View>
       </View>

@@ -1,5 +1,5 @@
 import { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
-import { Dimensions, View } from 'react-native';
+import { Dimensions, View, StyleSheet } from 'react-native';
 import {
   BriefcaseBusiness,
   Building2,
@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { directusStore } from 'app/store/directus';
 import { Tabs } from 'expo-router';
 import { useKeyboard } from '../../hooks/keyboard';
+import { createTabBarOptions } from '../(main)/_layout';
 
 export default function AccountConsoleLayout() {
   const { width } = Dimensions.get('window');
@@ -30,12 +31,10 @@ export default function AccountConsoleLayout() {
         tabBarStyle: {
           backgroundColor: colors.card,
           borderTopColor: colors.border,
-          borderTopWidth: 1,
-          paddingBottom: insets.bottom,
+          borderTopWidth: StyleSheet.hairlineWidth,
         },
         tabBarItemStyle: {
           width: width / 5,
-          paddingTop: 12,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-evenly',
@@ -68,24 +67,11 @@ export default function AccountConsoleLayout() {
   );
 }
 
-const getTabItemsOptions = (
-  label: string,
-  Icon: LucideIcon,
-): BottomTabNavigationOptions => {
-  return {
-    tabBarIcon: ({ focused }) => {
-      const { colors } = useColorScheme();
-      const activeColor = focused ? colors.primary : colors['card-foreground'];
-      const fillColor = focused ? colors.primary : 'transparent';
-
-      return <Icon color={activeColor} fill={fillColor} size={24} />;
-    },
-    tabBarLabel: ({ focused }) => {
-      const { authenticated } = directusStore();
-      const { colors } = useColorScheme();
-      const activeColor = focused ? colors.primary : colors['card-foreground'];
-
-      return <Text style={{ color: activeColor, fontSize: 12 }}>{label}</Text>;
-    },
-  };
-};
+const getTabItemsOptions = (label: string, Icon: LucideIcon) =>
+  createTabBarOptions(label, Icon, [
+    'Phone',
+    'Company',
+    'Verification',
+    'Premium',
+    'Membership',
+  ]);

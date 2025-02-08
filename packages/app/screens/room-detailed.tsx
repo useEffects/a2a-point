@@ -1,7 +1,7 @@
 import { readItem, readItems } from '@directus/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { ChatUi, CurrentMessage } from 'app/components/chat-ui';
-import { Header } from 'app/components/header';
+import { BackButton, Header } from 'app/components/header';
 import { ChevronDown, ChevronUp, Search, X } from 'app/components/icons';
 import SearchBar from 'app/components/searchbar';
 import { Button, ButtonProps } from 'app/components/ui/button';
@@ -15,6 +15,7 @@ import userStore from 'app/store/user';
 import { randomUUID } from 'expo-crypto';
 import { useEffect, useState } from 'react';
 import { Image, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDebounce } from 'use-debounce';
 
 const ChatScreen = ({
@@ -30,6 +31,7 @@ const ChatScreen = ({
   receivers: Member[];
 }) => {
   const router = useRouter();
+  const { top } = useSafeAreaInsets();
 
   const { roomName, roomAvatar, roomId, isGroup } = roomDetails;
   const { messages, setMessage, loadMoreMessages } = useChats();
@@ -104,86 +106,96 @@ const ChatScreen = ({
 
   return (
     <View className="flex-col flex-1">
-      <Header className="w-full">
-        {searchBarVisible ? (
-          <View className="flex-row items-center justify-between flex-1 gap-4">
-            <SearchBar
-              searchText={searchText}
-              setSearchText={setSearchText}
-              searchBarProps={{
-                showLoading: isScrollToMessagesLoading,
-              }}
-            />
-            <View className="flex-row items-center">
-              {scrollToMessages && scrollToMessages.length ? (
-                <View className="flex-row items-center">
-                  <Text>
-                    {scrollToIndex + 1} / {scrollToMessages.length}
-                  </Text>
-                  <View className="flex-row">
-                    <Button
-                      disabled={scrollToIndex === scrollToMessages.length - 1}
-                      className="mx-0"
-                      onPress={() =>
-                        scrollToIndex < scrollToMessages.length - 1 &&
-                        setScrollToIndex((p) => p + 1)
-                      }
-                      variant={'ghost'}
-                      size={'icon'}
-                    >
-                      <ChevronUp size={18} className="!text-foreground" />
-                    </Button>
-                    <Button
-                      disabled={scrollToIndex === 0}
-                      className="mx-0"
-                      variant={'ghost'}
-                      size={'icon'}
-                      onPress={() =>
-                        scrollToIndex > 0 && setScrollToIndex((p) => p - 1)
-                      }
-                    >
-                      <ChevronDown size={18} className="!text-foreground" />
-                    </Button>
-                  </View>
-                </View>
-              ) : (
-                <></>
-              )}
-              <Button
-                variant={'ghost'}
-                size={'icon'}
-                onPress={() => {
-                  setSearchBarVisible(false);
-                  setSearchText('');
-                }}
-              >
-                <X size={18} className="!text-foreground" />
-              </Button>
-            </View>
-          </View>
-        ) : (
-          <View className="flex-row justify-between items-center flex-1">
-            <GoToButton variant={'base'} size={'none'}>
-              <View className="flex-row items-center gap-2">
-                <Image
-                  source={{ uri: roomAvatar }}
-                  className="w-8 h-8 rounded-full"
+      <Header height={'auto'}>
+        <View
+          className="pb-4 flex-row items-center"
+          style={{ paddingTop: top + 16 }}
+        >
+          <View className="w-full flex-row gap-4 items-center">
+            <BackButton />
+            {searchBarVisible ? (
+              <View className="flex-row items-center justify-between flex-1 gap-4">
+                <SearchBar
+                  searchText={searchText}
+                  setSearchText={setSearchText}
+                  searchBarProps={{
+                    showLoading: isScrollToMessagesLoading,
+                  }}
                 />
-                <Text>{roomName}</Text>
+                <View className="flex-row items-center">
+                  {scrollToMessages && scrollToMessages.length ? (
+                    <View className="flex-row items-center">
+                      <Text>
+                        {scrollToIndex + 1} / {scrollToMessages.length}
+                      </Text>
+                      <View className="flex-row">
+                        <Button
+                          disabled={
+                            scrollToIndex === scrollToMessages.length - 1
+                          }
+                          className="mx-0"
+                          onPress={() =>
+                            scrollToIndex < scrollToMessages.length - 1 &&
+                            setScrollToIndex((p) => p + 1)
+                          }
+                          variant={'ghost'}
+                          size={'icon'}
+                        >
+                          <ChevronUp size={18} className="!text-foreground" />
+                        </Button>
+                        <Button
+                          disabled={scrollToIndex === 0}
+                          className="mx-0"
+                          variant={'ghost'}
+                          size={'icon'}
+                          onPress={() =>
+                            scrollToIndex > 0 && setScrollToIndex((p) => p - 1)
+                          }
+                        >
+                          <ChevronDown size={18} className="!text-foreground" />
+                        </Button>
+                      </View>
+                    </View>
+                  ) : (
+                    <></>
+                  )}
+                  <Button
+                    variant={'ghost'}
+                    size={'icon'}
+                    onPress={() => {
+                      setSearchBarVisible(false);
+                      setSearchText('');
+                    }}
+                  >
+                    <X size={18} className="!text-foreground" />
+                  </Button>
+                </View>
               </View>
-            </GoToButton>
-            <View className="flex-row items-center gap-2">
-              <Button
-                variant={'ghost'}
-                size={'icon'}
-                onPress={() => setSearchBarVisible(true)}
-              >
-                <Search size={18} className="!text-foreground" />
-              </Button>
-              {/* <ChatDropDownMenu roomId={roomId} members={receivers} isGroup={isGroup} open={openDropdown} setOpen={setOpenDropdown} /> */}
-            </View>
+            ) : (
+              <View className="flex-row justify-between items-center flex-1">
+                <GoToButton variant={'base'} size={'none'}>
+                  <View className="flex-row items-center gap-2">
+                    <Image
+                      source={{ uri: roomAvatar }}
+                      className="w-8 h-8 rounded-full"
+                    />
+                    <Text>{roomName}</Text>
+                  </View>
+                </GoToButton>
+                <View className="flex-row items-center gap-2">
+                  <Button
+                    variant={'ghost'}
+                    size={'icon'}
+                    onPress={() => setSearchBarVisible(true)}
+                  >
+                    <Search size={18} className="!text-foreground" />
+                  </Button>
+                  {/* <ChatDropDownMenu roomId={roomId} members={receivers} isGroup={isGroup} open={openDropdown} setOpen={setOpenDropdown} /> */}
+                </View>
+              </View>
+            )}
           </View>
-        )}
+        </View>
       </Header>
       <ChatUi
         currentUserId={user?.id!}

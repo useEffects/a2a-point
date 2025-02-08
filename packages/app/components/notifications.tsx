@@ -24,7 +24,8 @@ import { queryStore } from 'app/store/query';
 import { EllipsisVertical } from 'lucide-react-native';
 import { timeAgo } from 'app/lib/helpers';
 import userStore from 'app/store/user';
-import { Header } from './header';
+import { BackButton, Header, HeaderTitle } from './header';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const fetchNotificationsQueryKey = ['Fetching Notifications'];
 
@@ -170,9 +171,6 @@ export function NotificationsListScreen() {
 
   return (
     <View className="flex-1">
-      <Header>
-        <Text className="text-xl font-bold">Notifications</Text>
-      </Header>
       {notifications.length ? (
         <FlatList
           data={notifications}
@@ -190,5 +188,22 @@ export function NotificationsListScreen() {
         </View>
       )}
     </View>
+  );
+}
+
+export function NotificationsListScreenHeader() {
+  const { top } = useSafeAreaInsets();
+  return (
+    <Header height={'auto'}>
+      <View
+        className="flex-row items-center pb-4"
+        style={{ paddingTop: top + 16 }}
+      >
+        <View className="h-12 flex-row items-center gap-4">
+          <BackButton />
+          <HeaderTitle>Notifications</HeaderTitle>
+        </View>
+      </View>
+    </Header>
   );
 }

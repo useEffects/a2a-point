@@ -8,7 +8,7 @@ import {
   RenderRoomTileProps,
 } from 'app/components/formComponents';
 import { FullWidthImage } from 'app/components/full-width-image';
-import { Header } from 'app/components/header';
+import { BackButton, Header, HeaderTitle } from 'app/components/header';
 import { MaterialSymbolIcon } from 'app/components/material-symbol-icon';
 import { SeparatorText } from 'app/components/separator-text';
 import { Switch } from 'app/components/switch';
@@ -51,6 +51,7 @@ import LockedScreen, { GoToAccountConsole } from './locked-screens';
 import PostImg from 'app/assets/locked-screens/post.jpg';
 import { CircleAlert, Plus } from 'app/components/icons';
 import { useLocalSearchParams } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function Form1({
   formValues,
@@ -733,9 +734,6 @@ function PostScreenComponent() {
 
   return (
     <View className="flex-1 w-full">
-      <Header>
-        <Text className="text-xl font-bold">Post</Text>
-      </Header>
       <View className="flex-grow p-4 max-w-xl">
         <TabView
           swipeEnabled={false}
@@ -808,6 +806,23 @@ export function PostScreen() {
         />
       )}
     </View>
+  );
+}
+
+export function PostScreenHeader() {
+  const { top } = useSafeAreaInsets();
+  return (
+    <Header height={'auto'}>
+      <View
+        className="flex-row items-center pb-4"
+        style={{ paddingTop: top + 16 }}
+      >
+        <View className="h-12 flex-row items-center gap-4">
+          <BackButton />
+          <HeaderTitle>Post</HeaderTitle>
+        </View>
+      </View>
+    </Header>
   );
 }
 

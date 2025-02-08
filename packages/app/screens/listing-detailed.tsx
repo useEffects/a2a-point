@@ -1,5 +1,7 @@
 import { createItem, readItems } from '@directus/sdk';
+import { Header } from 'app/components/header';
 import { FullListingCard } from 'app/components/cards/atoms/full';
+import { BackButton, HeaderTitle } from 'app/components/header';
 import {
   FullListingDetailedProps,
   ListingCardMetrics,
@@ -10,6 +12,8 @@ import { directusStore } from 'app/store/directus';
 import { queryClient } from 'app/store/query';
 import userStore from 'app/store/user';
 import { useEffect } from 'react';
+import { View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export function ListingScreen({
   listing,
@@ -61,11 +65,28 @@ export function ListingScreen({
   }, [listingId, rest, user.id, listing, authenticated]);
 
   return listing ? (
-    <>
+    <View className='py-4'>
       <FullListingCard {...listing} />
       {!authenticated ? <LoginPopover /> : <></>}
-    </>
+    </View>
   ) : (
     <></>
+  );
+}
+
+export function ListingDetailedScreenHeader({ title }: { title: string }) {
+  const { top } = useSafeAreaInsets();
+  return (
+    <Header height={'auto'}>
+      <View
+        className="flex-row items-center pb-4"
+        style={{ paddingTop: top + 16 }}
+      >
+        <View className="h-12 flex-row items-center gap-4">
+          <BackButton />
+          <HeaderTitle>{title}</HeaderTitle>
+        </View>
+      </View>
+    </Header>
   );
 }

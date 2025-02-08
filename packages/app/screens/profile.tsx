@@ -5,7 +5,7 @@ import {
   RenderUserTileProps,
   useAutoCompleteItem,
 } from 'app/components/formComponents';
-import { Header, HeaderTitle } from 'app/components/header';
+import { BackButton, Header, HeaderTitle } from 'app/components/header';
 import {
   ArrowUp,
   Bell,
@@ -83,6 +83,7 @@ import { AsyncImage } from 'app/components/async-image';
 import { AuthContext, kcRefreshTokenKey } from 'app/context/auth';
 import { storage } from 'app/lib/mmkv';
 import { keycloakStore } from 'app/store/keycloak';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const LockedProfileScreen = ({ userId }: { userId: string }) => {
   const { isDarkColorScheme } = useColorScheme();
@@ -101,14 +102,7 @@ const LockedProfileScreen = ({ userId }: { userId: string }) => {
       description="Showcase your expertise, recent transactions, and client testimonials to other agents. Build trust and credibility within the real estate community."
       headerTitle={''}
       title="Build your profile!"
-      header={() => (
-        <Header shouldntGoBack>
-          <View className="flex-row flex-grow items-center justify-between">
-            <HeaderTitle>{title}</HeaderTitle>
-            <ToggleTheme />
-          </View>
-        </Header>
-      )}
+      header={() => <></>}
     />
   );
 };
@@ -278,19 +272,6 @@ export function Profile({
   };
   return (
     <View className="relative flex-1">
-      <Header shouldntGoBack>
-        <View className="flex-row items-center justify-between flex-grow">
-          <Text className="text-xl font-bold">
-            {currentUser.id !== user.id
-              ? `${user.first_name} ${user.last_name}`
-              : 'Profile'}
-          </Text>
-          <View className="flex-row gap-[1ch] items-center">
-            <ToggleTheme />
-            <ProfileDropdown />
-          </View>
-        </View>
-      </Header>
       <TabView
         style={{ height }}
         renderTabBar={TabBar}
@@ -316,6 +297,32 @@ export function Profile({
     </View>
   );
 }
+
+export const ProfileScreenHeader = ({ user }: { user: User }) => {
+  const { user: currentUser } = userStore();
+  const { top } = useSafeAreaInsets();
+  return (
+    <Header shouldntGoBack height={'auto'}>
+      <View
+        style={{ paddingTop: top + 16 }}
+        className="w-full pb-4 flex-row items-center gap-4"
+      >
+        {currentUser.id !== user.id && <BackButton />}
+        <View className="flex-row items-center justify-between flex-grow h-12">
+          <HeaderTitle>
+            {currentUser.id !== user.id
+              ? `${user.first_name} ${user.last_name}`
+              : 'Profile'}
+          </HeaderTitle>
+          <View className="flex-row gap-[1ch] items-center">
+            <ToggleTheme />
+            <ProfileDropdown />
+          </View>
+        </View>
+      </View>
+    </Header>
+  );
+};
 
 const tabTitles = ['info', 'listings', 'feedbacks'];
 
@@ -638,7 +645,7 @@ const ProfileDropdown = () => {
 
   const { colors } = useColorScheme();
   const { setDirectusStore } = directusStore();
-  const { setKeyCloakStore } = keycloakStore();
+  const { setKeyCloakStore, active } = keycloakStore();
   const { keycloakQueryResult } = useContext(AuthContext);
 
   const logout = async () => {
@@ -664,7 +671,7 @@ const ProfileDropdown = () => {
     }
   };
 
-  return (
+  return active ? (
     <DropdownMenu onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant={'ghost'} size={'icon'}>
@@ -724,5 +731,7 @@ const ProfileDropdown = () => {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  ) : (
+    <></>
   );
 };
