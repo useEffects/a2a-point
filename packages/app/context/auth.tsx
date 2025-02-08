@@ -25,7 +25,7 @@ import {
 } from 'app/store/directus';
 import { KeycloakStore, keycloakStore } from 'app/store/keycloak';
 import { createContext, ReactNode, useEffect } from 'react';
-import { storage } from 'app/lib/mmkv';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import userStore from 'app/store/user';
 
 export const AuthContext = createContext({
@@ -40,17 +40,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const keycloakQueryResult = useQuery<AuthTokens>({
     queryKey: authQueryKey,
     queryFn: async () => {
-      const refreshToken = storage.getString(kcRefreshTokenKey);
+      const refreshToken = await AsyncStorage.getItem(kcRefreshTokenKey);
       if (refreshToken) {
         try {
           const tokens = await refreshKeycloakTokens(refreshToken);
           if (tokens.accessToken && tokens.refreshToken) {
-            storage.set(kcRefreshTokenKey, tokens.refreshToken);
+            await AsyncStorage.setItem(kcRefreshTokenKey, tokens.refreshToken);
             return { ...tokens };
           }
         } catch (error) {
           console.error(error);
-          storage.delete(kcRefreshTokenKey);
+          await AsyncStorage.removeItem(kcRefreshTokenKey);
           return initalAuthTokensState;
         }
       }

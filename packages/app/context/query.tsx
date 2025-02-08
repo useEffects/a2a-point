@@ -3,14 +3,10 @@
 import { QueryClient, QueryClientProviderProps } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
-import { storage } from 'app/lib/mmkv';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const asyncStoragePersister = createAsyncStoragePersister({
-  storage: {
-    getItem: storage.getString,
-    setItem: storage.set,
-    removeItem: storage.delete,
-  },
+  storage: AsyncStorage,
 });
 
 export const QueryClientProvider = (

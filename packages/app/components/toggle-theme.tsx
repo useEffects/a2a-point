@@ -2,7 +2,6 @@ import { useColorScheme } from 'app/hooks/color-scheme';
 import { MoonStar, Sun } from 'lucide-react-native';
 import { Platform } from 'react-native';
 import { Button } from './ui/button';
-import { storage } from 'app/lib/mmkv';
 
 export function ToggleTheme() {
   const { colors, isDarkColorScheme, toggleColorScheme, setColorScheme } =

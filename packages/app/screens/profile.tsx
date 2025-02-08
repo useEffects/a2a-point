@@ -81,7 +81,7 @@ import { FilterKeys } from './listings';
 import LockedScreen from './locked-screens';
 import { AsyncImage } from 'app/components/async-image';
 import { AuthContext, kcRefreshTokenKey } from 'app/context/auth';
-import { storage } from 'app/lib/mmkv';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { keycloakStore } from 'app/store/keycloak';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -663,7 +663,7 @@ const ProfileDropdown = () => {
       if (res.ok) {
         setDirectusStore(initialDirectusStore);
         setKeyCloakStore({ active: false });
-        storage.delete(kcRefreshTokenKey);
+        await AsyncStorage.removeItem(kcRefreshTokenKey);
       }
     } catch (error) {
       console.error(error);

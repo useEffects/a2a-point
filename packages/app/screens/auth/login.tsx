@@ -17,7 +17,7 @@ import { URLSearchParams } from 'app/lib/helpers';
 import { directusStore, initialDirectusStore } from 'app/store/directus';
 import { Button } from 'app/components/ui/button';
 import { Text } from 'app/components/ui/text';
-import { storage } from 'app/lib/mmkv';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BackButton, Header, HeaderTitle } from 'app/components/header';
 import { AsyncImage } from 'app/components/async-image';
 import Logo from 'app/components/svg/logo';
@@ -74,7 +74,7 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
             setKeyCloakStore,
             setDirectusStore,
           );
-          storage.set(kcRefreshTokenKey, refreshToken);
+          await AsyncStorage.setItem(kcRefreshTokenKey, refreshToken);
           router.push(`auth/callback?redirect=${redirect}`);
         })
         .catch(console.error);
@@ -86,7 +86,7 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
   }, [response, discovery]);
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 grow">
       <View className="flex-col justify-evenly flex-1 items-start px-4 py-8">
         <View className="flex-col items-center w-full">
           <Text className="text-2xl font-bold">
@@ -116,11 +116,19 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
           </View>
           <Text className="text-sm text-subtext text-center">
             By continuing, you agree to our{' '}
-            <Text onPress={() => Linking.openURL("https://a2apoint.com/privacy")} className="text-sm text-info underline">
+            <Text
+              onPress={() => Linking.openURL('https://a2apoint.com/privacy')}
+              className="text-sm text-info underline"
+            >
               Terms of Service
             </Text>{' '}
             and that you have read our{' '}
-            <Text onPress={() => Linking.openURL("https://a2apoint.com/terms")} className="text-sm text-info underline">Privacy Policy</Text>
+            <Text
+              onPress={() => Linking.openURL('https://a2apoint.com/terms')}
+              className="text-sm text-info underline"
+            >
+              Privacy Policy
+            </Text>
           </Text>
         </View>
       </View>
