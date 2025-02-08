@@ -24,6 +24,8 @@ import { storage } from 'app/lib/mmkv';
 import { DefaultTheme, Theme, ThemeProvider } from '@react-navigation/native';
 import { RouterContext } from 'app/context/router';
 import { PortalHost } from 'app/components/primitives/portal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getVersion } from 'react-native-device-info';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -191,4 +193,14 @@ export const RouterProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
     </RouterContext.Provider>
   );
+};
+
+const checkForUpdate = async () => {
+  const storedVersion = await AsyncStorage.getItem('app_version');
+  const currentVersion = getVersion();
+
+  if (storedVersion !== currentVersion) {
+    await AsyncStorage.clear();
+    await AsyncStorage.setItem('app_version', currentVersion);
+  }
 };
