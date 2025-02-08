@@ -20,12 +20,10 @@ import '../../../packages/tailwind-theme/theme.css';
 import { Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { storage } from 'app/lib/mmkv';
 import { DefaultTheme, Theme, ThemeProvider } from '@react-navigation/native';
 import { RouterContext } from 'app/context/router';
 import { PortalHost } from 'app/components/primitives/portal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getVersion } from 'react-native-device-info';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -107,7 +105,7 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
   useEffect(() => {
     (async () => {
       if (!colorSchemeReady) {
-        const _theme = storage.getString('theme');
+        const _theme = await AsyncStorage.getItem('theme');
         const theme =
           _theme === 'dark'
             ? 'dark'

@@ -17,7 +17,7 @@ function LoginScreenComponent() {
     });
   }, [navigation]);
   return (
-    <ScrollView className='flex-1'>
+    <ScrollView contentContainerStyle={{ flex: 1 }}>
       <LoginScreenBase />
     </ScrollView>
   );
