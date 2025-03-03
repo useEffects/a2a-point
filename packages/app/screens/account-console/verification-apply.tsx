@@ -2,7 +2,11 @@
 import { createItem } from '@directus/sdk';
 import { Asset, withUri } from 'app/components/chat-ui';
 import { FormInput } from 'app/components/formComponents';
-import { BackButton, Header, HeaderTitle } from 'app/components/header';
+import {
+  BackButton,
+  Header,
+  HeaderTitle,
+} from 'app/components/header';
 import { X } from 'app/components/icons';
 import { SeparatorText } from 'app/components/separator-text';
 import { Button } from 'app/components/ui/button';
@@ -24,7 +28,6 @@ import userStore from 'app/store/user';
 import * as Linking from 'expo-linking';
 import { useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const VerificationApplyScreen = () => {
   const { user, document } = userStore();
@@ -230,17 +233,11 @@ export const VerificationApplyScreen = () => {
 };
 
 export function VerificationApplyScreenHeader() {
-  const { top } = useSafeAreaInsets();
   return (
-    <Header height={'auto'}>
-      <View
-        className="flex-row items-center pb-4"
-        style={{ paddingTop: top + 16 }}
-      >
-        <View className="h-12 flex-row items-center gap-4">
-          <BackButton />
-          <HeaderTitle>Verification</HeaderTitle>
-        </View>
+    <Header>
+      <View className="flex-row items-center gap-4">
+        <BackButton />
+        <HeaderTitle>Verification</HeaderTitle>
       </View>
     </Header>
   );

@@ -1,4 +1,3 @@
-import { Header } from 'app/components/header';
 import {
   Bath,
   BedDouble,
@@ -12,19 +11,17 @@ import { Separator } from 'app/components/ui/separator';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { useListingMetrics } from 'app/hooks/listing-metrics';
 import { directusUrl } from 'app/lib/constants';
-import { buildAssetUrl, groupByN, shortString } from 'app/lib/helpers';
+import { buildAssetUrl } from 'app/lib/helpers';
 import {
-  DetailedAmenity,
   FullListingDetailedProps,
   ListingCardMetrics,
   UsersCardMetrics,
 } from 'app/lib/props';
-import { RenderAmenities, RenderAmenity } from 'app/screens/post';
+import { RenderAmenities } from 'app/screens/post';
 import { directusStore } from 'app/store/directus';
-import userStore from 'app/store/user';
 import opacity from 'hex-color-opacity';
 import { ReactNode, useMemo } from 'react';
-import { Dimensions, Image, Linking, View } from 'react-native';
+import { Dimensions, Linking, View } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import { Button } from '../../ui/button';
 import { Text } from '../../ui/text';

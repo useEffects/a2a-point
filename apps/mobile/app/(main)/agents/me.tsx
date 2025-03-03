@@ -1,38 +1,20 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Stacked } from '@/components/stacked';
 import {
-  ProfileScreen as ProfileScreenBase,
+  ProfileScreen as ProfileScreenComponent,
   ProfileScreenHeader,
 } from 'app/screens/profile';
 import userStore from 'app/store/user';
-import { useNavigation } from 'expo-router';
-import React, { useEffect } from 'react';
-import { View } from 'react-native';
-
-const Stack = createNativeStackNavigator();
-
-function ProfileScreenComponent() {
-  const { user, company, document } = userStore();
-  const navigation = useNavigation();
-  useEffect(() => {
-    navigation.setOptions({
-      header: () => <ProfileScreenHeader user={user} />,
-    });
-  }, [navigation]);
-  return (
-    <View className="flex-1">
-      <ProfileScreenBase user={user} company={company} document={document} />
-    </View>
-  );
-}
+import React from 'react';
 
 export default function ProfileScreen() {
+  const { user, company, document } = userStore();
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Profile"
-        component={ProfileScreenComponent}
-        options={{ header: () => null }}
+    <Stacked header={() => <ProfileScreenHeader user={user} />}>
+      <ProfileScreenComponent
+        user={user}
+        company={company}
+        document={document}
       />
-    </Stack.Navigator>
+    </Stacked>
   );
 }

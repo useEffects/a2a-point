@@ -2,7 +2,11 @@ import {
   FormAutoSelect,
   RenderCompanyTileProps,
 } from 'app/components/formComponents';
-import { BackButton, Header, HeaderTitle } from 'app/components/header';
+import {
+  BackButton,
+  Header,
+  HeaderTitle,
+} from 'app/components/header';
 import { Button } from 'app/components/ui/button';
 import { Text } from 'app/components/ui/text';
 import { portfolioUrl } from 'app/lib/constants';
@@ -10,7 +14,6 @@ import { getCompanyFromId } from 'app/lib/misc/from-id';
 import userStore from 'app/store/user';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const CompanySelectScreen = () => {
   const { user } = userStore();
@@ -124,17 +127,11 @@ export const CompanySelectScreen = () => {
 };
 
 export const CompanySelectScreenHeader = () => {
-  const { top } = useSafeAreaInsets();
   return (
-    <Header height={'auto'}>
-      <View
-        style={{ paddingTop: top + 16 }}
-        className="flex-row items-center pb-4 flex-1"
-      >
-        <View className="h-12 flex-row items-center gap-4">
-          <BackButton />
-          <HeaderTitle>Company</HeaderTitle>
-        </View>
+    <Header>
+      <View className="flex-row items-center gap-4">
+        <BackButton />
+        <HeaderTitle>Company</HeaderTitle>
       </View>
     </Header>
   );

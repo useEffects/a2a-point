@@ -6,6 +6,8 @@ import { ReactNode } from 'react';
 import { DimensionValue, Platform, View } from 'react-native';
 import { Button } from './ui/button';
 import { Text } from './ui/text';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Separator } from './ui/separator';
 
 export const headerHeight = 48;
 
@@ -17,7 +19,7 @@ export const BackButton = () => {
   return navigation.canGoBack() ? (
     <Button
       size={'icon'}
-      className="rounded-full w-8 h-8"
+      className="rounded-full"
       variant={'ghost'}
       onPress={router.back}
     >
@@ -28,26 +30,16 @@ export const BackButton = () => {
   );
 };
 
-export const Header = ({
-  children,
-  height = headerHeight,
-  className,
-  shouldntGoBack,
-}: {
-  children: ReactNode;
-  height?: DimensionValue;
-  className?: string;
-  shouldntGoBack?: boolean;
-}) => {
+export const Header = ({ children }: { children: ReactNode }) => {
+  const { top: paddingTop } = useSafeAreaInsets();
+
   return (
-    <View
-      className={cn('flex-row items-center px-4 gap-2 bg-card', className)}
-      style={{
-        height,
-      }}
-    >
-      {children}
-    </View>
+    <>
+      <View style={{ paddingTop }} className="bg-card pb-4 px-4">
+        <View className="h-12 flex-row items-center">{children}</View>
+      </View>
+      <Separator />
+    </>
   );
 };
 
@@ -59,7 +51,7 @@ export const HeaderTitle = ({
   className?: string;
 }) => {
   return (
-    <Text className={cn('md:text-3xl text-xl font-bold', className)}>
+    <Text className={cn('md:text-3xl text-2xl font-bold', className)}>
       {children}
     </Text>
   );

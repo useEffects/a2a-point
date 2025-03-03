@@ -106,95 +106,88 @@ const ChatScreen = ({
 
   return (
     <View className="flex-col flex-1">
-      <Header height={'auto'}>
-        <View
-          className="pb-4 flex-row items-center"
-          style={{ paddingTop: top + 16 }}
-        >
-          <View className="w-full flex-row gap-4 items-center">
-            <BackButton />
-            {searchBarVisible ? (
-              <View className="flex-row items-center justify-between flex-1 gap-4">
-                <SearchBar
-                  searchText={searchText}
-                  setSearchText={setSearchText}
-                  searchBarProps={{
-                    showLoading: isScrollToMessagesLoading,
-                  }}
-                />
-                <View className="flex-row items-center">
-                  {scrollToMessages && scrollToMessages.length ? (
-                    <View className="flex-row items-center">
-                      <Text>
-                        {scrollToIndex + 1} / {scrollToMessages.length}
-                      </Text>
-                      <View className="flex-row">
-                        <Button
-                          disabled={
-                            scrollToIndex === scrollToMessages.length - 1
-                          }
-                          className="mx-0"
-                          onPress={() =>
-                            scrollToIndex < scrollToMessages.length - 1 &&
-                            setScrollToIndex((p) => p + 1)
-                          }
-                          variant={'ghost'}
-                          size={'icon'}
-                        >
-                          <ChevronUp size={18} className="!text-foreground" />
-                        </Button>
-                        <Button
-                          disabled={scrollToIndex === 0}
-                          className="mx-0"
-                          variant={'ghost'}
-                          size={'icon'}
-                          onPress={() =>
-                            scrollToIndex > 0 && setScrollToIndex((p) => p - 1)
-                          }
-                        >
-                          <ChevronDown size={18} className="!text-foreground" />
-                        </Button>
-                      </View>
+      <Header>
+        <View className="w-full flex-row gap-4 items-center">
+          <BackButton />
+          {searchBarVisible ? (
+            <View className="flex-row items-center justify-between flex-1 gap-4">
+              <SearchBar
+                searchText={searchText}
+                setSearchText={setSearchText}
+                searchBarProps={{
+                  showLoading: isScrollToMessagesLoading,
+                }}
+              />
+              <View className="flex-row items-center">
+                {scrollToMessages && scrollToMessages.length ? (
+                  <View className="flex-row items-center">
+                    <Text>
+                      {scrollToIndex + 1} / {scrollToMessages.length}
+                    </Text>
+                    <View className="flex-row">
+                      <Button
+                        disabled={scrollToIndex === scrollToMessages.length - 1}
+                        className="mx-0"
+                        onPress={() =>
+                          scrollToIndex < scrollToMessages.length - 1 &&
+                          setScrollToIndex((p) => p + 1)
+                        }
+                        variant={'ghost'}
+                        size={'icon'}
+                      >
+                        <ChevronUp size={18} className="!text-foreground" />
+                      </Button>
+                      <Button
+                        disabled={scrollToIndex === 0}
+                        className="mx-0"
+                        variant={'ghost'}
+                        size={'icon'}
+                        onPress={() =>
+                          scrollToIndex > 0 && setScrollToIndex((p) => p - 1)
+                        }
+                      >
+                        <ChevronDown size={18} className="!text-foreground" />
+                      </Button>
                     </View>
-                  ) : (
-                    <></>
-                  )}
-                  <Button
-                    variant={'ghost'}
-                    size={'icon'}
-                    onPress={() => {
-                      setSearchBarVisible(false);
-                      setSearchText('');
-                    }}
-                  >
-                    <X size={18} className="!text-foreground" />
-                  </Button>
-                </View>
-              </View>
-            ) : (
-              <View className="flex-row justify-between items-center flex-1">
-                <GoToButton variant={'base'} size={'none'}>
-                  <View className="flex-row items-center gap-2">
-                    <Image
-                      source={{ uri: roomAvatar }}
-                      className="w-8 h-8 rounded-full"
-                    />
-                    <Text>{roomName}</Text>
                   </View>
-                </GoToButton>
-                <View className="flex-row items-center gap-2">
-                  <Button
-                    variant={'ghost'}
-                    size={'icon'}
-                    onPress={() => setSearchBarVisible(true)}
-                  >
-                    <Search size={18} className="!text-foreground" />
-                  </Button>
-                  {/* <ChatDropDownMenu roomId={roomId} members={receivers} isGroup={isGroup} open={openDropdown} setOpen={setOpenDropdown} /> */}
-                </View>
+                ) : (
+                  <></>
+                )}
+                <Button
+                  variant={'ghost'}
+                  size={'icon'}
+                  onPress={() => {
+                    setSearchBarVisible(false);
+                    setSearchText('');
+                  }}
+                >
+                  <X size={18} className="!text-foreground" />
+                </Button>
               </View>
-            )}
-          </View>
+            </View>
+          ) : (
+            <View className="flex-row justify-between items-center flex-1">
+              <GoToButton variant={'base'} size={'none'}>
+                <View className="flex-row items-center gap-2">
+                  <Image
+                    source={{ uri: roomAvatar }}
+                    className="w-8 h-8 rounded-full"
+                  />
+                  <Text>{roomName}</Text>
+                </View>
+              </GoToButton>
+              <View className="flex-row items-center gap-2">
+                <Button
+                  variant={'ghost'}
+                  size={'icon'}
+                  onPress={() => setSearchBarVisible(true)}
+                >
+                  <Search size={18} className="!text-foreground" />
+                </Button>
+                {/* <ChatDropDownMenu roomId={roomId} members={receivers} isGroup={isGroup} open={openDropdown} setOpen={setOpenDropdown} /> */}
+              </View>
+            </View>
+          )}
         </View>
       </Header>
       <ChatUi

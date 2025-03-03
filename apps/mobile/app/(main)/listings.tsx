@@ -2,27 +2,13 @@ import { MediumListingCardProps } from 'app/components/cards/atoms/medium';
 import { getListingMetrics, renderCardsQuery } from 'app/lib/misc/queries';
 import { mediumListingsFields } from 'app/lib/props';
 import {
-  ListingsScreen as ListingsScreenBase,
+  ListingsScreen as ListingsScreenComponent,
   ListingsScreenHeader,
 } from 'app/screens/listings';
 import { useQuery } from '@tanstack/react-query';
-import { ScrollView } from 'react-native-gesture-handler';
-import { useNavigation } from 'expo-router';
-import { useEffect } from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Stacked } from '@/components/stacked';
 
-const Stack = createNativeStackNavigator();
-
-function ListingsScreenComponent() {
-  const navigation = useNavigation();
-
-  useEffect(() => {
-    navigation.setOptions({
-      header: () => <ListingsScreenHeader />,
-      headerShown: true,
-    });
-  }, [navigation]);
-
+export default function ListingsScreen() {
   const { data } = useQuery({
     queryKey: ['Listings page medium cards'],
     queryFn: async () =>
@@ -42,20 +28,8 @@ function ListingsScreenComponent() {
   });
 
   return (
-    <ScrollView>
-      <ListingsScreenBase data={data} />;
-    </ScrollView>
-  );
-}
-
-export default function ListingsScreen() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Listings"
-        component={ListingsScreenComponent}
-        options={{ header: () => null }}
-      />
-    </Stack.Navigator>
+    <Stacked header={() => <ListingsScreenHeader />}>
+      <ListingsScreenComponent data={data} />
+    </Stacked>
   );
 }

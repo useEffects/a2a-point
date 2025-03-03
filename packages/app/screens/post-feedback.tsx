@@ -1,7 +1,11 @@
 import { createItem, updateItem } from '@directus/sdk';
 import { AsyncImage } from 'app/components/async-image';
 import { FormInput } from 'app/components/formComponents';
-import { BackButton, Header, HeaderTitle } from 'app/components/header';
+import {
+  BackButton,
+  Header,
+  HeaderTitle,
+} from 'app/components/header';
 import { Button } from 'app/components/ui/button';
 import {
   Dialog,
@@ -25,8 +29,7 @@ import { directusStore } from 'app/store/directus';
 import { Formik, FormikProps } from 'formik';
 import { Star, StarHalf } from 'lucide-react-native';
 import { useState } from 'react';
-import { Image, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View } from 'react-native';
 import StarRating, { StarIconProps } from 'react-native-star-rating-widget';
 import * as Yup from 'yup';
 
@@ -243,17 +246,11 @@ export function PostFeedbackComponent({
 
 export function PostFeedbackScreenHeader({ feedback }: { feedback: boolean }) {
   const title = feedback ? 'Edit Feedback' : 'Give Feedback';
-  const { top } = useSafeAreaInsets();
   return (
-    <Header height={'auto'}>
-      <View
-        className="flex-row items-center pb-4"
-        style={{ paddingTop: top + 16 }}
-      >
-        <View className="h-12 flex-row items-center gap-4">
-          <BackButton />
-          <HeaderTitle>{title}</HeaderTitle>
-        </View>
+    <Header>
+      <View className="flex-row items-center gap-4">
+        <BackButton />
+        <HeaderTitle>{title}</HeaderTitle>
       </View>
     </Header>
   );

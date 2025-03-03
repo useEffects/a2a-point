@@ -13,7 +13,6 @@ import { queryClient } from 'app/store/query';
 import userStore from 'app/store/user';
 import { useEffect } from 'react';
 import { View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export function ListingScreen({
   listing,
@@ -65,7 +64,7 @@ export function ListingScreen({
   }, [listingId, rest, user.id, listing, authenticated]);
 
   return listing ? (
-    <View className='py-4'>
+    <View className="py-4">
       <FullListingCard {...listing} />
       {!authenticated ? <LoginPopover /> : <></>}
     </View>
@@ -75,17 +74,11 @@ export function ListingScreen({
 }
 
 export function ListingDetailedScreenHeader({ title }: { title: string }) {
-  const { top } = useSafeAreaInsets();
   return (
-    <Header height={'auto'}>
-      <View
-        className="flex-row items-center pb-4"
-        style={{ paddingTop: top + 16 }}
-      >
-        <View className="h-12 flex-row items-center gap-4">
-          <BackButton />
-          <HeaderTitle>{title}</HeaderTitle>
-        </View>
+    <Header>
+      <View className="flex-row items-center gap-4">
+        <BackButton />
+        <HeaderTitle>{title}</HeaderTitle>
       </View>
     </Header>
   );

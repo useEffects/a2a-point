@@ -12,15 +12,10 @@ import {
   getListingsCountForUser,
 } from 'app/lib/misc/queries';
 import { useGlobalSearchParams, useNavigation } from 'expo-router';
-import { ScrollView } from 'app/components/utils/virtual-lists';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useEffect } from 'react';
-import { ListingsScreenHeader } from 'app/screens/listings';
+import { Stacked } from '@/components/stacked';
 
-const Stack = createNativeStackNavigator();
-
-function ListingDetailedScreenComponent() {
+export default function ListingDetailedScreenComponent() {
   const { id } = useGlobalSearchParams();
   const { rest } = directusStore();
   const navigation = useNavigation();
@@ -53,15 +48,8 @@ function ListingDetailedScreenComponent() {
     enabled: !!data,
   });
 
-  useEffect(() => {
-    data &&
-      navigation.setOptions({
-        header: () => <ListingDetailedScreenHeader title={data.title} />,
-      });
-  }, [navigation, data]);
-
   return data && metrics && usersMetrics ? (
-    <ScrollView>
+    <Stacked header={() => <ListingDetailedScreenHeader title={data.title} />}>
       <ListingScreenBase
         listing={{
           ...data,
@@ -70,20 +58,8 @@ function ListingDetailedScreenComponent() {
           ratingsCount: usersMetrics![1],
         }}
       />
-    </ScrollView>
+    </Stacked>
   ) : (
     <></>
-  );
-}
-
-export default function ListingDetailedScreen() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Listing Detailed"
-        component={ListingDetailedScreenComponent}
-        options={{ header: () => null }}
-      />
-    </Stack.Navigator>
   );
 }

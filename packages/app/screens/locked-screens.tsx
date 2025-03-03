@@ -1,4 +1,3 @@
-import { Header, HeaderTitle } from 'app/components/header';
 import { ArrowUpRight } from 'app/components/icons';
 import { Button, ButtonProps } from 'app/components/ui/button';
 import { Separator } from 'app/components/ui/separator';
@@ -7,14 +6,8 @@ import { useColorScheme } from 'app/hooks/color-scheme';
 import { useRouter } from 'app/hooks/router';
 import { cn } from 'app/lib/utils';
 import { ReactNode } from 'react';
-import {
-  Dimensions,
-  ImageSourcePropType,
-  Platform,
-  View,
-  Image,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Dimensions, ImageSourcePropType, Platform, View } from 'react-native';
+import { Image } from 'expo-image';
 
 type LockedScreenProps = {
   className?: string;
@@ -28,48 +21,27 @@ type LockedScreenProps = {
 
 export default function LockedScreen(props: LockedScreenProps) {
   const { width, height } = Dimensions.get('window');
-  const { bottom } = useSafeAreaInsets();
-  const { isDarkColorScheme } = useColorScheme();
   const Bottom = props.bottomComponent;
-  const FinalHeader = props.header;
 
-  const dimensions = Platform.select({
-    web: {
-      width: '100%',
-      height: '100%',
-    },
-    default: {
-      width: width,
-      height: height,
-    },
-  });
-
-  // prettier-ignore
   return (
-    <View className="flex-1 relative h-screen" style={{paddingBottom: bottom}}>
-      {/** @ts-ignore */}
-      <View style={dimensions}
-        className="absolute top-0 left-0 bottom-0 right-0"
-      >
-        {/** @ts-ignore */}
-        <Image
-          source={props.image}
-          width={dimensions.width}
-          height={dimensions.height}
-          alt="locked screen bg"
-        />
-      </View>
+    <View className="flex-1 relative">
+      <Image
+        source={props.image}
+        alt="locked screen bg"
+        style={{
+          width,
+          height,
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          top: 0,
+        }}
+      />
       <View
         style={{ opacity: 0.95 }}
-        className={cn('absolute top-0 left-0 bottom-0 right-0 bg-background')}
+        className={cn('absolute top-0 left-0 -bottom-4 right-0 bg-background')}
       />
-      {/* {FinalHeader ? (
-        <FinalHeader />
-      ) : (
-        <Header>
-          <HeaderTitle>{props.headerTitle}</HeaderTitle>
-        </Header>
-      )} */}
       <View className="flex-grow px-4 flex-col justify-center max-w-md mx-auto">
         <View className="flex-col gap-4">
           <Text className="text-2xl font-bold text-primary text-center">
