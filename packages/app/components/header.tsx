@@ -31,11 +31,11 @@ export const BackButton = () => {
 };
 
 export const Header = ({ children }: { children: ReactNode }) => {
-  const { top: paddingTop } = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
 
   return (
     <>
-      <View style={{ paddingTop }} className="bg-card pb-4 px-4">
+      <View style={{ paddingTop: top + 16 }} className="bg-card pb-4 px-4">
         <View className="h-12 flex-row items-center">{children}</View>
       </View>
       <Separator />
