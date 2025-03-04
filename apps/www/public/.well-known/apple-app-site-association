@@ -1,0 +1,17 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "7LFNS9SLJW.com.a2apoint.community",
+        "paths": ["/listings", "/agents", "/locations", "/listings/*", "/agents/*", "/locations/*"]
+      }
+    ]
+  },
+  "activitycontinuation": {
+    "apps": ["7LFNS9SLJW.com.a2apoint.community"]
+  },
+  "webcredentials": {
+    "apps": ["7LFNS9SLJW.com.a2apoint.community"]
+  }
+}
