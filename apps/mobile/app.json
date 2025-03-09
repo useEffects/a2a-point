@@ -25,6 +25,20 @@
         "backgroundColor": "#FAF9F8"
       },
       "package": "com.a2apoint.community",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "a2apoint.com",
+              "pathPrefix": "/records"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ],
       "versionCode": 7
     },
     "web": {

@@ -13,7 +13,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { ReactNode, useContext, useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import { Providers } from 'app/components/providers';
-import { AuthContext } from 'app/context/auth';
+import { AuthContext, kcRefreshTokenKey } from 'app/context/auth';
 import * as navigationBar from 'expo-navigation-bar';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import '../../../packages/tailwind-theme/theme.css';
@@ -30,11 +30,12 @@ import * as FileSystem from 'expo-file-system';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const [ready, setReady] = useState(false);
   useEffect(() => {
-    checkForUpdateAndDelete();
+    Promise.all([checkForUpdateAndDelete()]).then(() => setReady(true));
   }, []);
 
-  return (
+  return ready ? (
     <>
       <GestureHandlerRootView>
         <Providers>
@@ -74,6 +75,8 @@ export default function RootLayout() {
         </Providers>
       </GestureHandlerRootView>
     </>
+  ) : (
+    <></>
   );
 }
 
@@ -204,7 +207,7 @@ const checkForUpdateAndDelete = async () => {
   const currentVersion = getVersion();
 
   if (storedVersion !== currentVersion) {
-    await AsyncStorage.clear();
+    await AsyncStorage.removeItem(kcRefreshTokenKey);
     await AsyncStorage.setItem('app_version', currentVersion);
     FileSystem.cacheDirectory &&
       (await FileSystem.deleteAsync(FileSystem.cacheDirectory, {
