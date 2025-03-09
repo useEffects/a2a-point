@@ -1,0 +1,13 @@
+[
+    {
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.a2apoint.community",
+        "sha256_cert_fingerprints": [
+            "19:7E:A2:9D:D8:5C:94:A6:86:F2:49:8C:4A:3F:52:A9:99:67:BA:A7:E6:8D:D3:DE:C8:7D:D4:2D:1A:C1:B7:E1"
+        ]
+      }
+    }
+  ]
+  
