@@ -1,11 +1,7 @@
 import { deleteItem, readItems } from '@directus/sdk';
 import ProfileImgDark from 'app/assets/locked-screens/dark/profile.jpg';
 import ProfileImgLight from 'app/assets/locked-screens/light/profile.jpg';
-import {
-  BackButton,
-  Header,
-  HeaderTitle,
-} from 'app/components/header';
+import { BackButton, Header, HeaderTitle } from 'app/components/header';
 import {
   ArrowUp,
   Bell,
@@ -31,7 +27,13 @@ import { UserChip } from 'app/components/user-chip';
 import { FlatList, ScrollView } from 'app/components/utils/virtual-lists';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { useRouter } from 'app/hooks/router';
-import { directusUrl, KC_CLIENT_ID, KC_REALM, KC_URL } from 'app/lib/constants';
+import {
+  directusUrl,
+  KC_CLIENT_ID,
+  KC_REALM,
+  KC_URL,
+  NEXT_URL,
+} from 'app/lib/constants';
 import { buildAssetUrl, timeAgo } from 'app/lib/helpers';
 import { getListingsCountForUser } from 'app/lib/misc/queries';
 import { ListingCardMetrics } from 'app/lib/props';
@@ -176,22 +178,22 @@ export function Profile({
                 <Text className="text-subtext">Last Seen</Text>
               </View>
             </View>
-            <View className="flex-row w-full justify-between px-4">
+            <View className="flex-row w-full justify-between px-4 gap-4">
               <Button
                 onPress={() =>
                   Linking.openURL(`${directusUrl}/admin/users/${user.id}`)
                 }
                 size="sm"
-                style={{ width: buttonWidth }}
+                className="flex-1"
               >
-                <Text>Open in dashboard</Text>
+                <Text>Dashboard</Text>
               </Button>
               {user.id === currentUser.id ? (
                 <Button
                   onPress={() => router.push('/agents/me/activity')}
                   variant={'default'}
                   size="sm"
-                  style={{ width: buttonWidth }}
+                  className="flex-1"
                 >
                   <Text>Your activity</Text>
                 </Button>
@@ -199,12 +201,22 @@ export function Profile({
                 <Button
                   onPress={() => router.push(`/agents/feedbacks/${user.id}`)}
                   size={'sm'}
-                  style={{ width: buttonWidth }}
                   variant={'default'}
+                  className="flex-1"
                 >
                   <Text>Give feedback</Text>
                 </Button>
               )}
+              <Button
+                onPress={() =>
+                  Linking.openURL(`${NEXT_URL}/agents/${currentUser.id}`)
+                }
+                variant={'default'}
+                size="sm"
+                className="flex-1"
+              >
+                <Text>Share Profile</Text>
+              </Button>
             </View>
           </View>
         </Collapsible>

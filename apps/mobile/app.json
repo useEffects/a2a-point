@@ -45,21 +45,6 @@
               "scheme": "https",
               "host": "a2apoint.com",
               "pathPrefix": "/locations"
-            },
-            {
-              "scheme": "https",
-              "host": "a2apoint.com",
-              "pathPrefix": "/listings/*"
-            },
-            {
-              "scheme": "https",
-              "host": "a2apoint.com",
-              "pathPrefix": "/agents/*"
-            },
-            {
-              "scheme": "https",
-              "host": "a2apoint.com",
-              "pathPrefix": "/locations/*"
             }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
