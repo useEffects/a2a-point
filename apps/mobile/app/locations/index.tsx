@@ -9,7 +9,6 @@ import {
   LocationsListScreenHeader,
 } from 'app/screens/locations-list';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigation } from 'expo-router';
 import { Stacked } from '@/components/stacked';
 
 export default function LocationsScreen() {
