@@ -1,36 +1,13 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ScrollView } from 'app/components/utils/virtual-lists';
+import { Stacked } from '@/components/stacked';
 import {
-  LoginScreen as LoginScreenBase,
+  LoginScreen as LoginScreenComponent,
   LoginScreenHeader,
 } from 'app/screens/auth/login';
-import { useNavigation } from 'expo-router';
-import { useEffect } from 'react';
-
-const Stack = createNativeStackNavigator();
-
-function LoginScreenComponent() {
-  const navigation = useNavigation();
-  useEffect(() => {
-    navigation.setOptions({
-      header: () => <LoginScreenHeader />,
-    });
-  }, [navigation]);
-  return (
-    <ScrollView contentContainerStyle={{ flex: 1 }}>
-      <LoginScreenBase />
-    </ScrollView>
-  );
-}
 
 export default function LoginScreen() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="login"
-        component={LoginScreenComponent}
-        options={{ header: () => null }}
-      />
-    </Stack.Navigator>
+    <Stacked header={() => <LoginScreenHeader />}>
+      <LoginScreenComponent />
+    </Stacked>
   );
 }

@@ -18,13 +18,15 @@ import { cn } from 'app/lib/utils';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from 'app/components/ui/card';
-import { BackButton, Header, HeaderTitle } from 'app/components/header';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  BackButton,
+  Header,
+  HeaderTitle,
+} from 'app/components/header';
 
 export const MembershipApplyScreen = () => {
   const { user } = userStore();
@@ -153,17 +155,11 @@ export const MembershipApplyScreen = () => {
 };
 
 export function MembershipApplyScreenHeader() {
-  const { top } = useSafeAreaInsets();
   return (
-    <Header height={'auto'}>
-      <View
-        className="flex-row items-center pb-4"
-        style={{ paddingTop: top + 16 }}
-      >
-        <View className="h-12 flex-row items-center gap-4">
-          <BackButton />
-          <HeaderTitle>Membership</HeaderTitle>
-        </View>
+    <Header>
+      <View className="flex-row items-center gap-4">
+        <BackButton />
+        <HeaderTitle>Membership</HeaderTitle>
       </View>
     </Header>
   );

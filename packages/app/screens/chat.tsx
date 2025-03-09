@@ -14,12 +14,12 @@ import { useColorScheme } from 'app/hooks/color-scheme';
 import { useRouter } from 'app/hooks/router';
 import { buildAssetUrl, getDMRoomId, timeAgo } from 'app/lib/helpers';
 import { renderCardsQuery } from 'app/lib/misc/queries';
-import { Message, Room, User } from 'app/lib/types';
+import { Room, User } from 'app/lib/types';
 import { directusStore } from 'app/store/directus';
 import userStore from 'app/store/user';
 import { uniqBy } from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
-import { Image, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { View } from 'react-native';
 import {
   NavigationState,
   Route,
@@ -30,7 +30,6 @@ import { useDebounce } from 'use-debounce';
 import LockedScreen from './locked-screens';
 import { ChatMessage, withId, withUri } from 'app/components/chat-ui';
 import { AsyncImage } from 'app/components/async-image';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const ChatLocked = () => {
   const { isDarkColorScheme } = useColorScheme();
@@ -105,6 +104,7 @@ function ChatScreenComponent() {
               <FlatList
                 data={uniqBy(contacts, 'id')}
                 renderItem={({ item }) => <ContactListRow {...item} />}
+                scrollEnabled={false}
               />
             </View>
           ) : (
@@ -116,6 +116,7 @@ function ChatScreenComponent() {
               <FlatList
                 data={uniqBy(groups, 'id')}
                 renderItem={({ item }) => <GroupListRow {...item} />}
+                scrollEnabled={false}
               />
             </View>
           ) : (
@@ -130,17 +131,9 @@ function ChatScreenComponent() {
 }
 
 export function ChatScreenHeader() {
-  const { top } = useSafeAreaInsets();
   return (
-    <Header shouldntGoBack height={'auto'}>
-      <View
-        style={{ paddingTop: top + 16 }}
-        className="pb-4 flex-row items-center"
-      >
-        <View className="h-12 flex-row items-center">
-          <HeaderTitle>Chat</HeaderTitle>
-        </View>
-      </View>
+    <Header>
+      <HeaderTitle>Chat</HeaderTitle>
     </Header>
   );
 }
@@ -216,6 +209,7 @@ const ChatList = ({ data }: { data: RoomSubscribed[] }) => {
       ItemSeparatorComponent={() => <Separator />}
       bounces={false}
       overScrollMode="never"
+      scrollEnabled={false}
     />
   );
 };

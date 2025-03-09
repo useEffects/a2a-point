@@ -14,19 +14,17 @@ import {
   kcRefreshTokenKey,
 } from 'app/context/auth';
 import { URLSearchParams } from 'app/lib/helpers';
-import { directusStore, initialDirectusStore } from 'app/store/directus';
+import { directusStore } from 'app/store/directus';
 import { Button } from 'app/components/ui/button';
 import { Text } from 'app/components/ui/text';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BackButton, Header, HeaderTitle } from 'app/components/header';
-import { AsyncImage } from 'app/components/async-image';
 import Logo from 'app/components/svg/logo';
 import * as Linking from 'expo-linking';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import LoginDarkImg from 'app/assets/login/dark/Frame_135_2_hzjyas_c_scale,w_1085.jpg';
 import LoginLightImg from 'app/assets/login/light/light_c9pqo8_c_scale,w_1029.jpg';
 import { useRouter } from 'app/context/router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -137,17 +135,11 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
 }
 
 export function LoginScreenHeader() {
-  const { top } = useSafeAreaInsets();
   return (
-    <Header height={'auto'}>
-      <View
-        className="flex-row items-center pb-4"
-        style={{ paddingTop: top + 16 }}
-      >
-        <View className="h-12 flex-row items-center gap-4">
-          <BackButton />
-          <HeaderTitle>Login</HeaderTitle>
-        </View>
+    <Header>
+      <View className="flex-row items-center gap-4">
+        <BackButton />
+        <HeaderTitle>Login</HeaderTitle>
       </View>
     </Header>
   );

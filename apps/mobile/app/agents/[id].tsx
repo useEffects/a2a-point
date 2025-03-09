@@ -2,18 +2,12 @@ import { useQuery } from '@tanstack/react-query';
 import { directusStore } from 'app/store/directus';
 import { directusUrl } from 'app/lib/constants';
 import { ProfileScreen, ProfileScreenHeader } from 'app/screens/profile';
-import { useGlobalSearchParams, useNavigation } from 'expo-router';
-import { ScrollView } from 'app/components/utils/virtual-lists';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useEffect } from 'react';
+import { useGlobalSearchParams } from 'expo-router';
+import { Stacked } from '@/components/stacked';
 
-const Stack = createNativeStackNavigator();
-
-function ProfileDetailedScreenComponent() {
+export default function ProfileDetailedScreenComponent() {
   const params = useGlobalSearchParams<{ id: string }>();
   const { rest } = directusStore();
-  const navigation = useNavigation();
 
   const fields = ['*', 'company.*', 'document.*'].join(',');
   const { data } = useQuery({
@@ -31,30 +25,11 @@ function ProfileDetailedScreenComponent() {
     enabled: !!params.id,
   });
 
-  useEffect(() => {
-    data &&
-      navigation.setOptions({
-        header: () => <ProfileScreenHeader user={data} />,
-      });
-  }, [navigation, data]);
-
   return data ? (
-    <ScrollView>
+    <Stacked header={() => <ProfileScreenHeader user={data} />}>
       <ProfileScreen user={data} />
-    </ScrollView>
+    </Stacked>
   ) : (
     <></>
-  );
-}
-
-export default function ProfileDetailedScreen() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Agent"
-        component={ProfileDetailedScreenComponent}
-        options={{ header: () => null }}
-      />
-    </Stack.Navigator>
   );
 }

@@ -2,10 +2,10 @@ import { deleteItem, readItems } from '@directus/sdk';
 import ProfileImgDark from 'app/assets/locked-screens/dark/profile.jpg';
 import ProfileImgLight from 'app/assets/locked-screens/light/profile.jpg';
 import {
-  RenderUserTileProps,
-  useAutoCompleteItem,
-} from 'app/components/formComponents';
-import { BackButton, Header, HeaderTitle } from 'app/components/header';
+  BackButton,
+  Header,
+  HeaderTitle,
+} from 'app/components/header';
 import {
   ArrowUp,
   Bell,
@@ -83,18 +83,9 @@ import { AsyncImage } from 'app/components/async-image';
 import { AuthContext, kcRefreshTokenKey } from 'app/context/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { keycloakStore } from 'app/store/keycloak';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const LockedProfileScreen = ({ userId }: { userId: string }) => {
+const LockedProfileScreen = () => {
   const { isDarkColorScheme } = useColorScheme();
-
-  const userDetails = useAutoCompleteItem(
-    'users',
-    userId,
-  ) as RenderUserTileProps | null;
-  const title = userDetails
-    ? `${userDetails.first_name} ${userDetails.last_name}`
-    : 'Profile';
 
   return (
     <LockedScreen
@@ -114,11 +105,7 @@ export const ProfileScreen = (props: {
 }) => {
   const { authenticated } = directusStore();
 
-  return authenticated ? (
-    <Profile {...props} />
-  ) : (
-    <LockedProfileScreen userId={props.user.id} />
-  );
+  return authenticated ? <Profile {...props} /> : <LockedProfileScreen />;
 };
 
 export function Profile({
@@ -300,15 +287,11 @@ export function Profile({
 
 export const ProfileScreenHeader = ({ user }: { user: User }) => {
   const { user: currentUser } = userStore();
-  const { top } = useSafeAreaInsets();
   return (
-    <Header shouldntGoBack height={'auto'}>
-      <View
-        style={{ paddingTop: top + 16 }}
-        className="w-full pb-4 flex-row items-center gap-4"
-      >
+    <Header>
+      <View className="w-full flex-row items-center gap-4">
         {currentUser.id !== user.id && <BackButton />}
-        <View className="flex-row items-center justify-between flex-grow h-12">
+        <View className="flex-row items-center justify-between flex-grow">
           <HeaderTitle>
             {currentUser.id !== user.id
               ? `${user.first_name} ${user.last_name}`

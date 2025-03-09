@@ -4,7 +4,11 @@ import {
   bodies,
   commonFilters,
 } from 'app/components/cards/molecules/listings';
-import { BackButton, Header, HeaderTitle } from 'app/components/header';
+import {
+  BackButton,
+  Header,
+  HeaderTitle,
+} from 'app/components/header';
 import { Bookmark, Eye } from 'app/components/icons';
 import { Button } from 'app/components/ui/button';
 import { Separator } from 'app/components/ui/separator';
@@ -51,15 +55,10 @@ export function ActivityScreen() {
 export function ActivityScreenHeader() {
   const { top } = useSafeAreaInsets();
   return (
-    <Header height={'auto'}>
-      <View
-        className="flex-row items-center pb-4"
-        style={{ paddingTop: top + 16 }}
-      >
-        <View className="flex-row items-center gap-4 h-12">
-          <BackButton />
-          <HeaderTitle>Activity</HeaderTitle>
-        </View>
+    <Header>
+      <View className="flex-row items-center gap-4">
+        <BackButton />
+        <HeaderTitle>Activity</HeaderTitle>
       </View>
     </Header>
   );
@@ -73,6 +72,7 @@ const RenderViewed = () => (
     flatListProps={{
       contentContainerClassName: 'px-4',
       ItemSeparatorComponent: () => <Separator className="my-4" />,
+      scrollEnabled: false,
     }}
     initialData={[]}
     infinite
@@ -87,6 +87,7 @@ const RenderSaved = () => (
     flatListProps={{
       contentContainerClassName: 'px-4',
       ItemSeparatorComponent: () => <Separator className="my-4" />,
+      scrollEnabled: false,
     }}
     initialData={[]}
     infinite

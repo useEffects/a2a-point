@@ -37,8 +37,6 @@ import { useColorScheme } from 'app/hooks/color-scheme';
 import { useLocaleString } from 'app/hooks/locale-string';
 import {
   useRouter,
-  useLocalSearchParams,
-  useNavigation,
   useGlobalSearchParams,
 } from 'app/hooks/router';
 import { memberRole } from 'app/lib/constants';
@@ -68,7 +66,6 @@ import {
 } from 'react-native-tab-view';
 import { useDebounce } from 'use-debounce';
 import { GoToLoginButton } from './locked-screens';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export enum FilterKeys {
   Cost = 'cost',
@@ -305,17 +302,11 @@ export function ListingsScreen({
 }
 
 export function ListingsScreenHeader() {
-  const { top } = useSafeAreaInsets();
   return (
-    <Header height={'auto'} shouldntGoBack>
-      <View
-        style={{ paddingTop: top + 16 }}
-        className="pb-4 flex-row items-center"
-      >
-        <View className="flex-row flex-1 justify-between items-center h-12">
-          <HeaderTitle>Listings</HeaderTitle>
-          <GoToPostButtonUi />
-        </View>
+    <Header>
+      <View className="flex-row justify-between items-center w-full">
+        <HeaderTitle>Listings</HeaderTitle>
+        <GoToPostButtonUi />
       </View>
     </Header>
   );

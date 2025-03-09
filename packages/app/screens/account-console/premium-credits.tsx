@@ -1,11 +1,14 @@
-import { BackButton, Header, HeaderTitle } from 'app/components/header';
+import {
+  BackButton,
+  Header,
+  HeaderTitle,
+} from 'app/components/header';
 import { Button } from 'app/components/ui/button';
 import { Text } from 'app/components/ui/text';
 import { View } from 'react-native';
 import * as Linking from 'expo-linking';
 import { portfolioUrl, products, ProductType } from 'app/lib/constants';
 import userStore from 'app/store/user';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const PremiumCreditsScreen = () => {
   const { user } = userStore();
@@ -33,17 +36,11 @@ export const PremiumCreditsScreen = () => {
 };
 
 export function PremiumCreditsScreenHeader() {
-  const { top } = useSafeAreaInsets();
   return (
-    <Header height={'auto'}>
-      <View
-        className="flex-row items-center pb-4"
-        style={{ paddingTop: top + 16 }}
-      >
-        <View className="h-12 flex-row items-center gap-4">
-          <BackButton />
-          <HeaderTitle>Premium</HeaderTitle>
-        </View>
+    <Header>
+      <View className="flex-row items-center gap-4">
+        <BackButton />
+        <HeaderTitle>Premium</HeaderTitle>
       </View>
     </Header>
   );

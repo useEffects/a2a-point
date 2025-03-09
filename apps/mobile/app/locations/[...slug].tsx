@@ -1,3 +1,4 @@
+import { Stacked } from '@/components/stacked';
 import { readItem } from '@directus/sdk';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
@@ -27,7 +28,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Stack = createNativeStackNavigator();
 
-function LocationSlug() {
+export default function LocationSlugScreen() {
   const params = useGlobalSearchParams<{ slug?: string[] }>();
   const { slug } = params;
   const [id, ...rest] = slug!;
@@ -41,7 +42,6 @@ function LocationSlug() {
 
 const LocationDetailedScreenComponent = ({ id }: { id: string }) => {
   const { rest } = directusStore();
-  const navigation = useNavigation();
   const { data: room } = useQuery({
     queryKey: ['LocationDetailed', id],
     queryFn: async () =>
@@ -94,37 +94,18 @@ const LocationDetailedScreenComponent = ({ id }: { id: string }) => {
     initialData: [],
   });
 
-  useEffect(() => {
-    room &&
-      navigation.setOptions({
-        header: () => <LocationDetailedScreenHeader title={room.title} />,
-      });
-  }, [room, navigation]);
-
   return room && totalMembers !== undefined && totalMembers !== null ? (
-    <ScrollView>
+    <Stacked header={() => <LocationDetailedScreenHeader title={room.title} />}>
       <LocationDetailedComponent
         room={room}
         totalMembers={totalMembers}
         listings={listings}
       />
-    </ScrollView>
+    </Stacked>
   ) : (
     <></>
   );
 };
-
-export default function LocationSlugScreen() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Location Slug"
-        component={LocationSlug}
-        options={{ header: () => null }}
-      />
-    </Stack.Navigator>
-  );
-}
 
 const MembersScreen = ({ id }: { id: string }) => {
   return <View></View>;

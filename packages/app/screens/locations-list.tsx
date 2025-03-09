@@ -50,17 +50,11 @@ export const LocationsList = ({
 };
 
 export function LocationsListScreenHeader() {
-  const { top } = useSafeAreaInsets();
   return (
-    <Header height={'auto'}>
-      <View
-        className="flex-row items-center pb-4"
-        style={{ paddingTop: top + 16 }}
-      >
-        <View className="h-12 flex-row items-center gap-4">
-          <BackButton />
-          <HeaderTitle>Locations</HeaderTitle>
-        </View>
+    <Header>
+      <View className="flex-row items-center gap-4">
+        <BackButton />
+        <HeaderTitle>Locations</HeaderTitle>
       </View>
     </Header>
   );

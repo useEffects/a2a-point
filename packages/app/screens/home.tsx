@@ -23,12 +23,11 @@ import { SeparatorText } from 'app/components/separator-text';
 // import { Button } from 'app/components/ui/button';
 import { Text } from 'app/components/ui/text';
 import { ViewAllButton } from 'app/components/utils/common-ui';
-import { FlatList, ScrollView } from 'app/components/utils/virtual-lists';
+import { FlatList } from 'app/components/utils/virtual-lists';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { useRouter } from 'app/hooks/router';
 import { directusUrl, portfolioUrl } from 'app/lib/constants';
 import {
-  getCompaniesCount,
   getCompaniesWithAgents,
   getListingMetrics,
   getListingsCount,
@@ -49,10 +48,8 @@ import userStore from 'app/store/user';
 import * as Linking from 'expo-linking';
 import opacity from 'hex-color-opacity';
 import { View } from 'react-native';
-import { Link } from 'expo-router';
 import { FilterKeys } from './listings';
 import { Button } from 'app/components/ui/button';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export function HomeScreen() {
   const { authenticated } = directusStore();
@@ -143,7 +140,7 @@ export function HomeScreen() {
   });
 
   return (
-    <View className="flex-grow flex-col gap-8 pb-8">
+    <View className="flex-grow flex-col gap-8 pb-8 pt-8">
       <Text className="text-2xl font-bold text-wrap px-4">
         {authenticated
           ? `Welcome back ${user.first_name} ${user.last_name}`
@@ -252,17 +249,9 @@ export function HomeScreen() {
 }
 
 export const HomeScreenHeader = () => {
-  const { top } = useSafeAreaInsets();
   return (
-    <Header shouldntGoBack height={'auto'}>
-      <View
-        style={{ paddingTop: top + 16 }}
-        className="pb-4 flex-row items-center"
-      >
-        <View className="h-12 flex-row items-center">
-          <HeaderTitle>A2A Point</HeaderTitle>
-        </View>
-      </View>
+    <Header>
+      <HeaderTitle>A2A Point</HeaderTitle>
     </Header>
   );
 };
