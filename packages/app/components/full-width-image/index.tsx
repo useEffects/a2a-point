@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Dimensions, Image } from 'react-native';
 import { AsyncImage } from '../async-image';
+import * as Sentry from '@sentry/react-native';
 
 interface FullWidthImageProps {
   source: {
@@ -33,7 +34,8 @@ export const FullWidthImage: React.FC<FullWidthImageProps> = ({
           setImageUri(source.uri);
         }
       } catch (error) {
-        console.error(`Error resolving image URI: ${error}`);
+        Sentry.captureException(error);
+        console.error("Error resolving image URI:", error);;
       }
     };
 
@@ -49,6 +51,7 @@ export const FullWidthImage: React.FC<FullWidthImageProps> = ({
           setLoading(false);
         },
         (error) => {
+          Sentry.captureException(error);
           console.error(`Couldn't get the image size: ${error?.message}`);
           setLoading(false);
         },

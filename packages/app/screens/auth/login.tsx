@@ -25,6 +25,7 @@ import { useColorScheme } from 'app/hooks/color-scheme';
 import LoginDarkImg from 'app/assets/login/dark/Frame_135_2_hzjyas_c_scale,w_1085.jpg';
 import LoginLightImg from 'app/assets/login/light/light_c9pqo8_c_scale,w_1029.jpg';
 import { useRouter } from 'app/context/router';
+import * as Sentry from '@sentry/react-native';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -75,8 +76,9 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
           await AsyncStorage.setItem(kcRefreshTokenKey, refreshToken);
           router.push(`auth/callback?redirect=${redirect}`);
         })
-        .catch(console.error);
+        .catch();
     } else if (response?.type === 'error') {
+      Sentry.captureException(response.error);
       console.error('Authentication error: ', response.error);
     } else {
       console.log(response);

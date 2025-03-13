@@ -27,6 +27,7 @@ import { KeycloakStore, keycloakStore } from 'app/store/keycloak';
 import { createContext, ReactNode, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import userStore from 'app/store/user';
+import * as Sentry from '@sentry/react-native';
 
 export const AuthContext = createContext({
   keycloakQueryResult: {} as DefinedUseQueryResult<AuthTokens>,
@@ -49,6 +50,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             return { ...tokens };
           }
         } catch (error) {
+          Sentry.captureException(error);
           console.error(error);
           await AsyncStorage.removeItem(kcRefreshTokenKey);
           return initalAuthTokensState;
@@ -109,18 +111,20 @@ const refreshKeycloakTokens = async (
       body: body.toString(),
     });
 
+    const respJson = await response.json();
+
     if (!response.ok) {
-      const error = await response.json();
-      console.error(error);
-      throw new Error(error);
+      Sentry.captureMessage(respJson);
+      console.error(respJson);
+      throw new Error(respJson);
     }
 
-    const data = await response.json();
     return {
-      accessToken: data.access_token,
-      refreshToken: data.refresh_token,
+      accessToken: respJson.access_token,
+      refreshToken: respJson.refresh_token,
     };
   } catch (error) {
+    Sentry.captureException(error);
     console.error(error);
     throw error;
   }
@@ -146,8 +150,10 @@ export const authOnSuccess = async (
           },
         },
       );
+      const directusAccessTokenRespJson = await directusAccessTokenResp.json();
       if (!directusAccessTokenResp.ok) {
-        console.error(await directusAccessTokenResp.json());
+        Sentry.captureMessage(directusAccessTokenRespJson);
+        console.error(directusAccessTokenRespJson);
         setKeyCloakStore({ active: false });
         setDirectusStore(initialDirectusStore);
         throw new Error('Error getting access token from directus');
@@ -200,8 +206,8 @@ export const authOnSuccess = async (
           userStore.setState((p) => ({ ...p, document: document }));
         }
       } else {
+        Sentry.captureMessage('Unable to fetch users data');
         console.error('Unable to fetch users data');
-        console.log(await usersFetchResp.json());
       }
 
       setKeyCloakStore({ active: true });
@@ -218,9 +224,9 @@ export const authOnSuccess = async (
       setDirectusStore(initialDirectusStore);
     }
   } catch (error) {
-    console.error(error);
     setKeyCloakStore({ active: false });
     setDirectusStore(initialDirectusStore);
+    console.error(error);
     throw error;
   }
 };

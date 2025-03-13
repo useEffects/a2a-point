@@ -85,6 +85,7 @@ import { AsyncImage } from 'app/components/async-image';
 import { AuthContext, kcRefreshTokenKey } from 'app/context/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { keycloakStore } from 'app/store/keycloak';
+import * as Sentry from '@sentry/react-native';
 
 const LockedProfileScreen = () => {
   const { isDarkColorScheme } = useColorScheme();
@@ -661,6 +662,7 @@ const ProfileDropdown = () => {
         await AsyncStorage.removeItem(kcRefreshTokenKey);
       }
     } catch (error) {
+      Sentry.captureException(error);
       console.error(error);
       throw error;
     }

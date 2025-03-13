@@ -1,5 +1,6 @@
 import { useState, useEffect, FC } from 'react';
 import { Image, ImageProps, ImageURISource } from 'react-native';
+import * as Sentry from '@sentry/react-native';
 
 export type AsyncImageSourceType = (
   | Omit<ImageURISource, 'uri'>
@@ -25,6 +26,7 @@ export const AsyncImage: FC<AsyncImageProps> = ({ source, ...props }) => {
           const uri = await source.uri;
           setResolvedUri(uri);
         } catch (error) {
+          Sentry.captureException(error);
           console.error('Failed to load async URI:', error);
         }
       } else if (source?.uri) {

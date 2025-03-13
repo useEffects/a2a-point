@@ -18,6 +18,7 @@ import {
 import { Document } from './types';
 import { savesCountKey } from './misc/queries';
 import { filesize } from 'filesize';
+import * as Sentry from '@sentry/react-native';
 
 TimeAgo.addLocale(en);
 
@@ -251,6 +252,7 @@ export const checkCollectionId = async (
     }
     return false;
   } catch (error) {
+    Sentry.captureException(error);
     console.error(error);
     return false;
   }
