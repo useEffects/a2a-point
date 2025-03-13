@@ -1,4 +1,4 @@
-const { getDefaultConfig } = require('expo/metro-config');
+const { getSentryExpoConfig } = require('@sentry/react-native/metro');
 const { withNativeWind } = require('nativewind/metro');
 const path = require('path');
 
@@ -7,7 +7,7 @@ const projectRoot = __dirname;
 // This can be replaced with `find-yarn-workspace-root`
 const monorepoRoot = path.resolve(projectRoot, '../..');
 
-const config = getDefaultConfig(projectRoot);
+const config = getSentryExpoConfig(projectRoot);
 
 // 1. Watch all files within the monorepo
 config.watchFolders = [monorepoRoot];
@@ -17,6 +17,9 @@ config.resolver.nodeModulesPaths = [
   path.resolve(monorepoRoot, 'node_modules'),
 ];
 
-const cssPath = path.resolve(monorepoRoot, "./packages/tailwind-theme/theme.css")
+const cssPath = path.resolve(
+  monorepoRoot,
+  './packages/tailwind-theme/theme.css',
+);
 
 module.exports = withNativeWind(config, { input: cssPath });

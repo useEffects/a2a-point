@@ -71,6 +71,14 @@
             "backgroundColor": "#0E0D0D"
           }
         }
+      ],
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "a2apoint",
+          "project": "a2apoint",
+          "url": "https://glitchtip.a2apoint.com"
+        }
       ]
     ],
     "experiments": {

@@ -4,6 +4,7 @@ import {
   useGlobalSearchParams,
   useLocalSearchParams,
   useNavigation,
+  useNavigationContainerRef,
   usePathname,
   useRootNavigationState,
   useRouter,
@@ -26,14 +27,36 @@ import { PortalHost } from 'app/components/primitives/portal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getVersion } from 'react-native-device-info';
 import * as FileSystem from 'expo-file-system';
+import * as Sentry from '@sentry/react-native';
+import { isRunningInExpoGo } from 'expo';
+import { GLITCHTIP_DSN } from 'app/lib/constants';
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+const navigationIntegration = Sentry.reactNavigationIntegration({
+  enableTimeToInitialDisplay: !isRunningInExpoGo(),
+});
+
+Sentry.init({
+  dsn: GLITCHTIP_DSN,
+  tracesSampleRate: 1.0,
+  integrations: [navigationIntegration],
+  enableNativeFramesTracking: !isRunningInExpoGo(),
+  enabled: process.env.NODE_ENV === 'production',
+  attachStacktrace: true,
+});
+
+function RootLayout() {
   const [ready, setReady] = useState(false);
+  const ref = useNavigationContainerRef();
   useEffect(() => {
-    Promise.all([checkForUpdateAndDelete()]).then(() => setReady(true));
-  }, []);
+    if (ref?.current) {
+      navigationIntegration.registerNavigationContainer(ref);
+    }
+    if (!ready) {
+      Promise.all([checkForUpdateAndDelete()]).then(() => setReady(true));
+    }
+  }, [ready, ref]);
 
   return ready ? (
     <>
@@ -79,6 +102,8 @@ export default function RootLayout() {
     <></>
   );
 }
+
+export default Sentry.wrap(RootLayout);
 
 function HideSplashScreen({ children }: { children: ReactNode }) {
   const [splashScreenHidden, setSplashScreenHidden] = useState(false);
@@ -140,12 +165,6 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
   }, [colors]);
 
   useEffect(() => {
-    // console.log({
-    //   isDirectusQueryFetching,
-    //   isDirectusQueryLoading,
-    //   isKeycloakQueryFetching,
-    //   isKeycloakQueryLoading,
-    // });
     if (
       !authReady &&
       !(
