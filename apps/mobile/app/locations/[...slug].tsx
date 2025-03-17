@@ -1,4 +1,4 @@
-import { Stacked } from '@/components/stacked';
+import { Stacked } from '../../components/stacked';
 import { readItem } from '@directus/sdk';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
@@ -7,12 +7,10 @@ import {
   CommonFilters,
   commonFilters,
 } from 'app/components/cards/molecules/listings';
-import { ScrollView } from 'app/components/utils/virtual-lists';
 import {
   getListingMetrics,
   getMembersCountForLocation,
   renderCardsQuery,
-  useRenderCardQuery,
 } from 'app/lib/misc/queries';
 import { ListingCardMetrics, mediumListingsFields } from 'app/lib/props';
 import {
@@ -21,10 +19,8 @@ import {
   LocationDetailedScreenHeader,
 } from 'app/screens/location-detailed';
 import { directusStore } from 'app/store/directus';
-import { useGlobalSearchParams, useNavigation } from 'expo-router';
-import { useEffect } from 'react';
+import { useGlobalSearchParams } from 'expo-router';
 import { View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Stack = createNativeStackNavigator();
 

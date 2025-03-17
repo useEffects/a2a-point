@@ -1,4 +1,4 @@
-import { Stacked } from '@/components/stacked';
+import { Stacked } from '../../../components/stacked';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
   ActivityScreen as ActivityScreenComponent,

@@ -12,8 +12,7 @@ import {
   getListingsCountForUser,
 } from 'app/lib/misc/queries';
 import { useGlobalSearchParams, useNavigation } from 'expo-router';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Stacked } from '@/components/stacked';
+import { Stacked } from '../../components/stacked';
 
 export default function ListingDetailedScreenComponent() {
   const { id } = useGlobalSearchParams();

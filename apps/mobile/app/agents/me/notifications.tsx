@@ -1,4 +1,4 @@
-import { Stacked } from '@/components/stacked';
+import { Stacked } from '../../../components/stacked';
 import {
   NotificationsListScreen as NotificationsListScreenComponent,
   NotificationsListScreenHeader,

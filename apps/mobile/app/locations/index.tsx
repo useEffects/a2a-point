@@ -9,7 +9,7 @@ import {
   LocationsListScreenHeader,
 } from 'app/screens/locations-list';
 import { useQuery } from '@tanstack/react-query';
-import { Stacked } from '@/components/stacked';
+import { Stacked } from '../../components/stacked';
 
 export default function LocationsScreen() {
   const { data } = useQuery({

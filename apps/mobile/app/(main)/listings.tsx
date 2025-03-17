@@ -6,7 +6,7 @@ import {
   ListingsScreenHeader,
 } from 'app/screens/listings';
 import { useQuery } from '@tanstack/react-query';
-import { Stacked } from '@/components/stacked';
+import { Stacked } from '../../components/stacked';
 
 export default function ListingsScreen() {
   const { data } = useQuery({

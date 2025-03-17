@@ -3,7 +3,7 @@ import { directusStore } from 'app/store/directus';
 import { directusUrl } from 'app/lib/constants';
 import { ProfileScreen, ProfileScreenHeader } from 'app/screens/profile';
 import { useGlobalSearchParams } from 'expo-router';
-import { Stacked } from '@/components/stacked';
+import { Stacked } from '../../components/stacked';
 
 export default function ProfileDetailedScreenComponent() {
   const params = useGlobalSearchParams<{ id: string }>();

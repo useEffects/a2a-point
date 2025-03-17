@@ -3,7 +3,7 @@ import {
   HomeScreenHeader,
 } from 'app/screens/home';
 
-import { Stacked } from '@/components/stacked';
+import { Stacked } from '../../components/stacked';
 
 export default function HomeScreen() {
   return (
