@@ -42,7 +42,9 @@ Sentry.init({
   tracesSampleRate: 1.0,
   integrations: [navigationIntegration],
   enableNativeFramesTracking: !isRunningInExpoGo(),
-  enabled: process.env.NODE_ENV === 'production',
+  enabled:
+    process.env.NODE_ENV === 'production' ||
+    process.env.EXPO_PUBLIC_NODE_ENV === 'production',
   attachStacktrace: true,
 });
 
