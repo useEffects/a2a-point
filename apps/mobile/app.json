@@ -2,7 +2,7 @@
   "expo": {
     "name": "A2APoint",
     "slug": "a2apoint-community",
-    "version": "2.1.5",
+    "version": "2.1.6",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "a2apoint-community",
@@ -11,7 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.a2apoint.community",
-      "buildNumber": "2.10",
+      "buildNumber": "2.11",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSAppTransportSecurity": {
@@ -50,7 +50,7 @@
           "category": ["BROWSABLE", "DEFAULT"]
         }
       ],
-      "versionCode": 10
+      "versionCode": 11
     },
     "web": {
       "bundler": "metro",
