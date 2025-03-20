@@ -1,6 +1,6 @@
 import { RoomDetailedScreen as RoomDetailedScreenBase } from 'app/screens/room-detailed';
 import { useGlobalSearchParams } from 'app/context/router';
-import { Stacked } from '@/components/stacked';
+import { Stacked } from '../../components/stacked';
 
 export default function RoomDetailedScreenComponent() {
   const { id } = useGlobalSearchParams();

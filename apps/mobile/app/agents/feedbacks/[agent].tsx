@@ -9,7 +9,7 @@ import {
 } from 'app/screens/post-feedback';
 import { useLocalSearchParams } from 'expo-router';
 import { useGlobalSearchParams } from 'app/context/router';
-import { Stacked } from '@/components/stacked';
+import { Stacked } from '../../../components/stacked';
 
 export default function PostFeedbackScreenComponent() {
   const { feedbackId } = useLocalSearchParams();

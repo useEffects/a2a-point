@@ -1,4 +1,4 @@
-import { Stacked } from '@/components/stacked';
+import { Stacked } from '../../components/stacked';
 import {
   LoginScreen as LoginScreenComponent,
   LoginScreenHeader,

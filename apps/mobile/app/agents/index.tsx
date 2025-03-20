@@ -1,4 +1,4 @@
-import { Stacked } from '@/components/stacked';
+import { Stacked } from '../../components/stacked';
 import { useMediumUsersQuery } from 'app/components/cards/utils/users';
 import {
   UsersListScreen as UsersListScreenBase,
