@@ -87,7 +87,7 @@
     "react-native-mmkv": "^3.2.0",
     "react-native-otp-textinput": "^1.1.6",
     "react-native-outside-press": "^1.2.2",
-    "react-native-reanimated": "3.16.6",
+    "react-native-reanimated": "3.16.7",
     "react-native-reanimated-carousel": "^3.5.1",
     "react-native-screens": "^4.4.0",
     "react-native-star-rating-widget": "^1.9.2",
