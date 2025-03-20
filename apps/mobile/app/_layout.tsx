@@ -26,7 +26,6 @@ import { RouterContext } from 'app/context/router';
 import { PortalHost } from 'app/components/primitives/portal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getVersion } from 'react-native-device-info';
-import * as FileSystem from 'expo-file-system';
 import * as Sentry from '@sentry/react-native';
 import { isRunningInExpoGo } from 'expo';
 import { GLITCHTIP_DSN } from 'app/lib/constants';
@@ -230,9 +229,5 @@ const checkForUpdateAndDelete = async () => {
   if (storedVersion !== currentVersion) {
     await AsyncStorage.removeItem(kcRefreshTokenKey);
     await AsyncStorage.setItem('app_version', currentVersion);
-    FileSystem.cacheDirectory &&
-      (await FileSystem.deleteAsync(FileSystem.cacheDirectory, {
-        idempotent: true,
-      }));
   }
 };

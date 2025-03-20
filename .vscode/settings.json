@@ -37,5 +37,6 @@
     "typescriptreact",
     "scss"
   ],
-  "prettier.configPath": "prettier.config.js"
+  "prettier.configPath": "prettier.config.js",
+  "java.configuration.updateBuildConfiguration": "disabled"
 }

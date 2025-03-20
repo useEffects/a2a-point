@@ -81,7 +81,7 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
       Sentry.captureException(response.error);
       console.error('Authentication error: ', response.error);
     } else {
-      console.log(response);
+      // console.log(response);
     }
   }, [response, discovery]);
 
@@ -107,7 +107,11 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
             style={{ width: 350, height: 350 }}
           />
         </View>
-        <Button onPress={() => promptAsync()} className="w-full">
+        <Button
+          disabled={!request}
+          onPress={() => promptAsync()}
+          className="w-full"
+        >
           <Text>Login or create account</Text>
         </Button>
         <View className="flex-col gap-2 w-full items-center">
