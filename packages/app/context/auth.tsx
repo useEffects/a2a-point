@@ -159,10 +159,7 @@ export const authOnSuccess = async (
         throw new Error('Error getting access token from directus');
       }
 
-      const resp = (await directusAccessTokenResp.json()) as {
-        access_token: string;
-      };
-      const { access_token: directusAccessToken } = resp;
+      const { access_token: directusAccessToken } = directusAccessTokenRespJson;
 
       const usersFetchResp = await fetch(`${DIRECTUS_URL}/users/me?fields=*`, {
         headers: {
@@ -218,7 +215,7 @@ export const authOnSuccess = async (
           .with(rest())
           .with(staticToken(directusAccessToken)),
       });
-      return resp;
+      return directusAccessTokenResp;
     } else {
       setKeyCloakStore({ active: false });
       setDirectusStore(initialDirectusStore);
