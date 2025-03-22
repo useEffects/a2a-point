@@ -640,33 +640,8 @@ const ProfileDropdown = () => {
   const [_, setOpen] = useState(false);
 
   const { colors } = useColorScheme();
-  const { setDirectusStore } = directusStore();
-  const { setKeyCloakStore, active } = keycloakStore();
-  const { keycloakQueryResult } = useContext(AuthContext);
-
-  const logout = async () => {
-    try {
-      const accessToken = keycloakQueryResult.data.accessToken;
-      const res = await fetch(
-        `${KC_URL}/realms/${KC_REALM}/protocol/openid-connect/logout?client_id=${KC_CLIENT_ID}`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
-      if (res.ok) {
-        setDirectusStore(initialDirectusStore);
-        setKeyCloakStore({ active: false });
-        await AsyncStorage.removeItem(kcRefreshTokenKey);
-      }
-    } catch (error) {
-      Sentry.captureException(error);
-      console.error(error);
-      throw error;
-    }
-  };
+  const { active } = keycloakStore();
+  const { logout } = useContext(AuthContext);
 
   return active ? (
     <DropdownMenu onOpenChange={setOpen}>

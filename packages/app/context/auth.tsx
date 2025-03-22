@@ -32,11 +32,39 @@ import * as Sentry from '@sentry/react-native';
 export const AuthContext = createContext({
   keycloakQueryResult: {} as DefinedUseQueryResult<AuthTokens>,
   directusQueryResult: {} as UseQueryResult,
+  logout: () => {},
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { setKeyCloakStore } = keycloakStore();
   const { setDirectusStore } = directusStore();
+
+  const logout = async () => {
+    try {
+      const accessToken = keycloakQueryResult.data.accessToken;
+      const res = await fetch(
+        `${KC_URL}/realms/${KC_REALM}/protocol/openid-connect/logout?client_id=${KC_CLIENT_ID}`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      if (res.ok) {
+        setDirectusStore(initialDirectusStore);
+        setKeyCloakStore({ active: false });
+        await AsyncStorage.removeItem(kcRefreshTokenKey);
+      }
+    } catch (error) {
+      setDirectusStore(initialDirectusStore);
+      setKeyCloakStore({ active: false });
+      await AsyncStorage.removeItem(kcRefreshTokenKey);
+      Sentry.captureException(error);
+      console.error(error);
+      throw error;
+    }
+  };
 
   const keycloakQueryResult = useQuery<AuthTokens>({
     queryKey: authQueryKey,
@@ -87,7 +115,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [keycloakQueryResult.error, directusQueryResult.error]);
 
   return (
-    <AuthContext.Provider value={{ keycloakQueryResult, directusQueryResult }}>
+    <AuthContext.Provider
+      value={{ keycloakQueryResult, directusQueryResult, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

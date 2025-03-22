@@ -20,7 +20,6 @@ import { CompanyStats } from 'app/components/company-stats';
 import { Header, HeaderTitle } from 'app/components/header';
 import { ArrowUpRight, ExternalLink } from 'app/components/icons';
 import { SeparatorText } from 'app/components/separator-text';
-// import { Button } from 'app/components/ui/button';
 import { Text } from 'app/components/ui/text';
 import { ViewAllButton } from 'app/components/utils/common-ui';
 import { FlatList } from 'app/components/utils/virtual-lists';
@@ -50,6 +49,8 @@ import opacity from 'hex-color-opacity';
 import { View } from 'react-native';
 import { FilterKeys } from './listings';
 import { Button } from 'app/components/ui/button';
+import { useContext, useEffect } from 'react';
+import { AuthContext } from 'app/context/auth';
 
 export function HomeScreen() {
   const { authenticated } = directusStore();
@@ -57,6 +58,13 @@ export function HomeScreen() {
   const { colors } = useColorScheme();
   const { rest } = directusStore();
   const router = useRouter();
+  const { logout } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (authenticated && !(user.first_name || user.last_name)) {
+      logout();
+    }
+  }, [authenticated, user.first_name, user.last_name]);
 
   const { data: news } = useQuery<News[]>({
     queryKey: ['Fetch news'],
