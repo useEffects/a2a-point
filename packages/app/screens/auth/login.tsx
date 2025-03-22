@@ -76,7 +76,7 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
           await AsyncStorage.setItem(kcRefreshTokenKey, refreshToken);
           router.push(`auth/callback?redirect=${redirect}`);
         })
-        .catch();
+        .catch(Sentry.captureException);
     } else if (response?.type === 'error') {
       Sentry.captureException(response.error);
       console.error('Authentication error: ', response.error);

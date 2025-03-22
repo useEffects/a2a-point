@@ -56,6 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           return initalAuthTokensState;
         }
       }
+      await AsyncStorage.removeItem(kcRefreshTokenKey);
       return initalAuthTokensState;
     },
     initialData: initalAuthTokensState,
@@ -76,6 +77,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         keycloakQueryResult.data.refreshToken,
     ),
   });
+
+  useEffect(() => {
+    if (directusQueryResult.error || keycloakQueryResult.error) {
+      setDirectusStore(initialDirectusStore);
+      setKeyCloakStore({ active: false });
+      AsyncStorage.removeItem(kcRefreshTokenKey);
+    }
+  }, [keycloakQueryResult.error, directusQueryResult.error]);
 
   return (
     <AuthContext.Provider value={{ keycloakQueryResult, directusQueryResult }}>
@@ -154,6 +163,7 @@ export const authOnSuccess = async (
       if (!directusAccessTokenResp.ok) {
         Sentry.captureMessage(directusAccessTokenRespJson);
         console.error(directusAccessTokenRespJson);
+        await AsyncStorage.removeItem(kcRefreshTokenKey);
         setKeyCloakStore({ active: false });
         setDirectusStore(initialDirectusStore);
         throw new Error('Error getting access token from directus');
@@ -217,10 +227,15 @@ export const authOnSuccess = async (
       });
       return directusAccessTokenResp;
     } else {
+      await AsyncStorage.removeItem(kcRefreshTokenKey);
       setKeyCloakStore({ active: false });
       setDirectusStore(initialDirectusStore);
+      Sentry.captureMessage(
+        `authOnSuccess failed ${accessToken} ${refreshToken}`,
+      );
     }
   } catch (error) {
+    await AsyncStorage.removeItem(kcRefreshTokenKey);
     setKeyCloakStore({ active: false });
     setDirectusStore(initialDirectusStore);
     console.error(error);
