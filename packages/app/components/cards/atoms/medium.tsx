@@ -1,6 +1,6 @@
 import { Edit, Lock, MessageCircleMore, Trash } from 'app/components/icons';
-import { UserChip } from 'app/components/user-chip';
-import { LocationChip } from 'app/components/utils/chips';
+import { UserChip, UserChipSkeleton } from 'app/components/user-chip';
+import { LocationChip, LocationChipSkeleton } from 'app/components/utils/chips';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { useLocalizedCost } from 'app/hooks/locale-string';
 import { useRouter } from 'app/hooks/router';
@@ -13,6 +13,7 @@ import { Pressable, View } from 'react-native';
 import { Button } from '../../ui/button';
 import { Text } from '../../ui/text';
 import { RenderMetrics } from './small';
+import { Skeleton } from 'app/components/skeleton';
 
 export type MediumListingCardProps = Pick<
   Listing,
@@ -63,7 +64,7 @@ export const MediumListingCard = (
   const router = useRouter();
 
   return (
-    <View className="w-full flex-col gap-2 p-4">
+    <View className="w-full flex-col gap-2 p-4 h-[300px] justify-between">
       <View className="flex flex-wrap gap-4 flex-row items-center justify-between">
         <UserChip user={item.user_created} />
         {authenticated ? (
@@ -102,12 +103,12 @@ export const MediumListingCard = (
             </View>
           )}
         </View>
-        <View className="flex-col gap-1 bg-card rounded-2xl p-4 mt-2 w-full">
+        <View className="flex-col gap-1 bg-card h-[150px] rounded-2xl p-4 mt-2 w-full">
           <View className="flex-row justify-between">
             <Text className="text-success">AED {localizedCost}</Text>
             <Text className="text-primary capitalize">{item.deal_type}</Text>
           </View>
-          <Text>{shortString(item.description, 150)}</Text>
+          <Text>{shortString(item.description, 200)}</Text>
         </View>
       </Pressable>
       <View className="m-0 p-0 px-2 flex-row justify-between w-full items-center">
@@ -115,6 +116,26 @@ export const MediumListingCard = (
         <Text className="text-xs text-subtext">
           {timeAgo.format(new Date(item.date_created))}
         </Text>
+      </View>
+    </View>
+  );
+};
+
+export const MediumListingCardSkeleton = () => {
+  return (
+    <View className="h-[300px] w-full flex-col p-4 gap-2">
+      <UserChipSkeleton />
+      <View className="flex-col gap-4">
+        <Skeleton className="w-3/4 h-4" />
+        <LocationChipSkeleton />
+      </View>
+      <Skeleton className="rounded-2xl w-full flex-1 h-[150px]" />
+      <View className="flex-row justify-between items-center">
+        <View className="flex-row gap-4">
+          <Skeleton className="w-5 h-5 rounded-full" />
+          <Skeleton className="w-5 h-5 rounded-full" />
+        </View>
+        <Skeleton className="h-[12px] w-20" />
       </View>
     </View>
   );

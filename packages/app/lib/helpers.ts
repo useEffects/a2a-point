@@ -207,6 +207,7 @@ export function uriToBlob(uri: string): Promise<Blob> {
 
 export const shortString = (str: string | undefined | null, maxLength = 20) => {
   if (!str) return '';
+  str = str.replaceAll('\n', ' ');
   return str.length > maxLength ? str.slice(0, maxLength) + '...' : str;
 };
 

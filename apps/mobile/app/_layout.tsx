@@ -29,6 +29,7 @@ import { getVersion } from 'react-native-device-info';
 import * as Sentry from '@sentry/react-native';
 import { isRunningInExpoGo } from 'expo';
 import { GLITCHTIP_DSN } from 'app/lib/constants';
+import { prefetchQueries } from '../lib/helpers';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -45,18 +46,14 @@ Sentry.init({
 });
 
 function RootLayout() {
-  const [ready, setReady] = useState(false);
   const ref = useNavigationContainerRef();
   useEffect(() => {
     if (ref?.current) {
       navigationIntegration.registerNavigationContainer(ref);
     }
-    if (!ready) {
-      Promise.all([checkForUpdateAndDelete()]).then(() => setReady(true));
-    }
-  }, [ready, ref]);
+  }, [ref]);
 
-  return ready ? (
+  return (
     <>
       <GestureHandlerRootView>
         <Providers>
@@ -96,8 +93,6 @@ function RootLayout() {
         </Providers>
       </GestureHandlerRootView>
     </>
-  ) : (
-    <></>
   );
 }
 
@@ -105,6 +100,7 @@ export default Sentry.wrap(RootLayout);
 
 function HideSplashScreen({ children }: { children: ReactNode }) {
   const [splashScreenHidden, setSplashScreenHidden] = useState(false);
+  const [queriesPrefetched, setQueriesPrefetched] = useState(false);
   const { colorScheme, setColorScheme, colors } = useColorScheme();
   const [authReady, setAuthReady] = useState(false);
   const [colorSchemeReady, setColorSchemeReady] = useState(false);
@@ -135,6 +131,7 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    prefetchQueries().then(() => setQueriesPrefetched(true));
     (async () => {
       if (!colorSchemeReady) {
         const _theme = await AsyncStorage.getItem('theme');
@@ -182,7 +179,12 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
   ]);
 
   useEffect(() => {
-    if (authReady && colorSchemeReady && !splashScreenHidden) {
+    if (
+      authReady &&
+      colorSchemeReady &&
+      !splashScreenHidden &&
+      queriesPrefetched
+    ) {
       setSplashScreenHidden(true);
       SplashScreen.hide();
     }
@@ -217,14 +219,4 @@ export const RouterProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
     </RouterContext.Provider>
   );
-};
-
-const checkForUpdateAndDelete = async () => {
-  const storedVersion = await AsyncStorage.getItem('app_version');
-  const currentVersion = getVersion();
-
-  if (storedVersion !== currentVersion) {
-    await AsyncStorage.removeItem(kcRefreshTokenKey);
-    await AsyncStorage.setItem('app_version', currentVersion);
-  }
 };

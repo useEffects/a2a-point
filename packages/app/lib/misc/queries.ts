@@ -181,6 +181,7 @@ export type RenderCardsType = {
   limit?: number;
   searchText?: string;
   deep?: Record<string, any>;
+  queryKey?: string;
 };
 
 export const viewsCountKey = (listingId: string) => ['views-count', listingId];
@@ -243,6 +244,7 @@ export const renderCardsQuery = async <R>(props: RenderCardsType) => {
     offset = 0,
     searchText = '',
     deep = {},
+    queryKey = new Date(),
   } = props;
 
   const finalCollection = ['users'].includes(collection)
@@ -250,19 +252,20 @@ export const renderCardsQuery = async <R>(props: RenderCardsType) => {
     : `items/${collection}`;
 
   const url = `${directusUrl}/${finalCollection}/?fields=${fields.join(',')}&limit=${limit}&filter=${JSON.stringify(filter)}&sort=${sort.join(',')}&offset=${offset}&search=${searchText}&deep=${JSON.stringify(deep)}`;
-  const res = (await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((res) => res.json())
-    .then((res) => {
-      if (!res.data) {
-        console.log(res);
-      }
-      return res.data;
-    })) as R[];
-  return res;
+
+  const res = await queryClient.fetchQuery({
+    queryKey: [queryKey],
+    queryFn: () =>
+      fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((res) => res.data),
+  });
+
+  return res as R[];
 };
 
 export const renderCardsQuery2 = async <R>(

@@ -1,11 +1,10 @@
-import * as WebBrowser from 'expo-web-browser';
 import {
   makeRedirectUri,
   useAuthRequest,
   useAutoDiscovery,
 } from 'expo-auth-session';
 import { Image, View } from 'react-native';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { KC_URL, KC_REALM, KC_CLIENT_ID } from 'app/lib/constants';
 import { keycloakStore } from 'app/store/keycloak';
 import {
@@ -27,18 +26,11 @@ import LoginLightImg from 'app/assets/login/light/light_c9pqo8_c_scale,w_1029.jp
 import { useRouter } from 'app/context/router';
 import * as Sentry from '@sentry/react-native';
 
-WebBrowser.maybeCompleteAuthSession();
-
 export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
   const router = useRouter();
-  const { active, setKeyCloakStore } = keycloakStore();
+  const { setKeyCloakStore } = keycloakStore();
   const { setDirectusStore } = directusStore();
-  const {
-    keycloakQueryResult: {
-      data: { accessToken },
-    },
-  } = useContext(AuthContext);
-  const [shouldRedirectNow, setShouldRedirectNow] = useState(false);
+  const { logout } = useContext(AuthContext);
 
   const discovery = useAutoDiscovery(`${KC_URL}/realms/${KC_REALM}`);
   const redirectUri = makeRedirectUri({
@@ -56,6 +48,10 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
   );
 
   const { isDarkColorScheme } = useColorScheme();
+
+  const handleLogin = () => {
+    logout().then(() => promptAsync());
+  };
 
   useEffect(() => {
     if (response?.type === 'success') {
@@ -107,11 +103,7 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
             style={{ width: 350, height: 350 }}
           />
         </View>
-        <Button
-          disabled={!request}
-          onPress={() => promptAsync()}
-          className="w-full"
-        >
+        <Button disabled={!request} onPress={handleLogin} className="w-full">
           <Text>Login or create account</Text>
         </Button>
         <View className="flex-col gap-2 w-full items-center">

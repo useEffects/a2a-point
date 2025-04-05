@@ -36,6 +36,7 @@ export default function MainLayout() {
           justifyContent: 'space-evenly',
           alignItems: 'center',
         },
+        lazy: false,
       }}
       initialRouteName="index"
     >

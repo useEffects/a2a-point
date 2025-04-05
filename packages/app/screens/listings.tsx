@@ -2,7 +2,10 @@
 
 import { RangeSlider } from '@react-native-assets/slider';
 import BottomSheet from 'app/components/bottomsheet';
-import { MediumListingCardProps } from 'app/components/cards/atoms/medium';
+import {
+  MediumListingCardProps,
+  MediumListingCardSkeleton,
+} from 'app/components/cards/atoms/medium';
 import {
   CommonFilters,
   commonFilters,
@@ -35,10 +38,7 @@ import { Text } from 'app/components/ui/text';
 import { GoToPostButtonUi } from 'app/components/utils/common-ui';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { useLocaleString } from 'app/hooks/locale-string';
-import {
-  useRouter,
-  useGlobalSearchParams,
-} from 'app/hooks/router';
+import { useRouter, useGlobalSearchParams } from 'app/hooks/router';
 import { memberRole } from 'app/lib/constants';
 import { ListingCardMetrics, mediumListingsFields } from 'app/lib/props';
 import { cn } from 'app/lib/utils';
@@ -184,7 +184,8 @@ export function ListingsScreen({
         | ConfirmedAdvertisementCardProps
       >
         initialItems={[]}
-        component={(item) => <RenderMediumListingsAds {...item} />}
+        component={RenderMediumListingsAds}
+        skeletonComponent={MediumListingCardSkeleton}
         queryFn={mediumCardListingsWithAds}
         queryKey={[
           'Listings page medium cards with ads',

@@ -32,7 +32,7 @@ import * as Sentry from '@sentry/react-native';
 export const AuthContext = createContext({
   keycloakQueryResult: {} as DefinedUseQueryResult<AuthTokens>,
   directusQueryResult: {} as UseQueryResult,
-  logout: () => {},
+  logout: async () => {},
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -41,28 +41,51 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async () => {
     try {
+      // Get the current access token (needed to perform the logout request)
       const accessToken = keycloakQueryResult.data.accessToken;
-      const res = await fetch(
-        `${KC_URL}/realms/${KC_REALM}/protocol/openid-connect/logout?client_id=${KC_CLIENT_ID}`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
-      if (res.ok) {
-        setDirectusStore(initialDirectusStore);
-        setKeyCloakStore({ active: false });
-        await AsyncStorage.removeItem(kcRefreshTokenKey);
+      const refreshToken = await AsyncStorage.getItem('refresh_token');
+
+      // If there's no access token, no need to proceed with logout
+      if (!accessToken) {
+        console.log('No access token available, cannot log out');
+        return;
       }
-    } catch (error) {
-      setDirectusStore(initialDirectusStore);
-      setKeyCloakStore({ active: false });
-      await AsyncStorage.removeItem(kcRefreshTokenKey);
-      Sentry.captureException(error);
-      console.error(error);
-      throw error;
+
+      // Construct the logout request URL
+      const logoutUrl = `${KC_URL}/realms/${KC_REALM}/protocol/openid-connect/logout`;
+
+      // Prepare form data for the request (session revocation)
+      const formData = new URLSearchParams();
+      formData.append('client_id', KC_CLIENT_ID!); // The client ID you use in Keycloak
+      formData.append('refresh_token', refreshToken!); // Include refresh token for session revocation
+
+      // Send the logout request to invalidate the session
+      const response = await fetch(logoutUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Accept: 'application/json',
+        },
+        body: formData.toString(),
+      });
+
+      if (response.ok) {
+        console.log('Session has been revoked and user logged out.');
+        // Clear local session data (tokens, user info, etc.)
+        await AsyncStorage.removeItem('access_token');
+        await AsyncStorage.removeItem('refresh_token');
+        await AsyncStorage.removeItem(kcRefreshTokenKey); // Optional, if you store refresh token explicitly
+
+        // Redirect the user to the login screen or any desired screen
+        // router.push('/login');
+      } else {
+        const json = await response.json();
+        console.error('Failed to logout session: ', json);
+        throw new Error(json);
+      }
+    } catch (e) {
+      Sentry.captureException(e);
+      console.error('Logout failed: ', e);
     }
   };
 

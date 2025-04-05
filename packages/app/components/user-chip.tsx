@@ -6,6 +6,7 @@ import { Image, Pressable, View } from 'react-native';
 import { Link } from 'expo-router';
 import { Text } from './ui/text';
 import { AsyncImage } from './async-image';
+import { Skeleton } from './skeleton';
 
 export const UserChip = ({
   user,
@@ -22,7 +23,7 @@ export const UserChip = ({
   return (
     <Pressable
       onPress={() => router.push(`/agents/${user.id}`)}
-      className={cn('flex flex-row items-center gap-2', className)}
+      className={cn('flex flex-row items-center gap-2 h-6', className)}
     >
       <View className="flex flex-row items-center gap-1">
         <AsyncImage
@@ -46,5 +47,14 @@ export const UserChip = ({
         </Text>
       )}
     </Pressable>
+  );
+};
+
+export const UserChipSkeleton = () => {
+  return (
+    <View className="h-6 w-40 flex-row items-center gap-2">
+      <Skeleton className="rounded-full w-6 h-full" />
+      <Skeleton className="w-20 h-[12px]" />
+    </View>
   );
 };

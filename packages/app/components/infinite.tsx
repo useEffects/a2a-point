@@ -18,6 +18,7 @@ interface InfiniteListProps<T> {
   queryFn: queryFnType<T>;
   queryFnArgs: Query<any, T>;
   initialItems: T[];
+  skeletonComponent: React.FC<{}>;
   infinite?: boolean;
   flatListProps?: Omit<FlatListProps<T>, 'data' | 'renderItem'>;
   viewAllLink?: string;
@@ -31,6 +32,7 @@ export default function InfiniteList<
     queryKey,
     queryFn,
     initialItems,
+    skeletonComponent: SkeletonComponent,
     infinite = false,
     flatListProps,
     viewAllLink,
@@ -38,7 +40,7 @@ export default function InfiniteList<
   } = props;
   const { limit = defaultLimit } = queryFnArgs;
 
-  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery<{
+  const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery<{
     items: T[];
     page: unknown;
   }>({
@@ -80,7 +82,7 @@ export default function InfiniteList<
     }
   };
 
-  return (
+  return finalData.length ? (
     <FlatList
       data={finalData}
       renderItem={({ item }) => <RenderComponent {...item} />}
@@ -95,6 +97,12 @@ export default function InfiniteList<
           viewAllLink={viewAllLink}
         />
       }
+      {...flatListProps}
+    />
+  ) : (
+    <FlatList
+      data={Array([2, 2, 3][Math.floor(Math.random() * 3)])}
+      renderItem={() => <SkeletonComponent />}
       {...flatListProps}
     />
   );
