@@ -40,34 +40,35 @@ export default function InfiniteList<
   } = props;
   const { limit = defaultLimit } = queryFnArgs;
 
-  const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery<{
-    items: T[];
-    page: unknown;
-  }>({
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages, lastPageParam) => {
-      if (lastPage.items.length < limit) {
-        return null;
-      }
-      return Number(lastPageParam) + 1;
-    },
-    queryKey: cloneDeep(queryKey),
-    queryFn: async ({ pageParam = 0 }) => {
-      const res = await queryFn({
-        ...queryFnArgs,
-        offset: Number(pageParam) * limit,
-      });
-      return {
-        items: res,
-        page: pageParam,
-      };
-    },
-    initialData: {
-      pages: [{ items: initialItems, page: 0 }],
-      pageParams: [0],
-    },
-    enabled: infinite,
-  });
+  const { data, fetchNextPage, hasNextPage, isLoading, isFetching, isPending } =
+    useInfiniteQuery<{
+      items: T[];
+      page: unknown;
+    }>({
+      initialPageParam: 0,
+      getNextPageParam: (lastPage, allPages, lastPageParam) => {
+        if (!lastPage.items.length || lastPage.items.length < limit) {
+          return null;
+        }
+        return Number(lastPageParam) + 1;
+      },
+      queryKey: cloneDeep(queryKey),
+      queryFn: async ({ pageParam = 0 }) => {
+        const res = await queryFn({
+          ...queryFnArgs,
+          offset: Number(pageParam) * limit,
+        });
+        return {
+          items: res,
+          page: pageParam,
+        };
+      },
+      initialData: {
+        pages: [{ items: initialItems, page: 0 }],
+        pageParams: [0],
+      },
+      enabled: infinite,
+    });
 
   const finalData = useMemo(() => {
     return uniqBy(
@@ -82,7 +83,13 @@ export default function InfiniteList<
     }
   };
 
-  return finalData.length ? (
+  return isFetching ? (
+    <FlatList
+      data={Array([2, 2, 3][Math.floor(Math.random() * 3)])}
+      renderItem={() => <SkeletonComponent />}
+      {...flatListProps}
+    />
+  ) : (
     <FlatList
       data={finalData}
       renderItem={({ item }) => <RenderComponent {...item} />}
@@ -97,12 +104,6 @@ export default function InfiniteList<
           viewAllLink={viewAllLink}
         />
       }
-      {...flatListProps}
-    />
-  ) : (
-    <FlatList
-      data={Array([2, 2, 3][Math.floor(Math.random() * 3)])}
-      renderItem={() => <SkeletonComponent />}
       {...flatListProps}
     />
   );

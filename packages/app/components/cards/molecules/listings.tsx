@@ -361,6 +361,14 @@ export const RenderListings = <R extends ListCardProps>({
   );
 };
 
+export const NomoreItemsToShow = () => {
+  return (
+    <View className="w-full h-20 flex-col justify-center items-center">
+      <Text className="text-destructive">No more items to show</Text>
+    </View>
+  );
+};
+
 export const BottomLoader = ({
   endReached,
   onEndReached,
@@ -370,9 +378,7 @@ export const BottomLoader = ({
 }) => {
   const { colors } = useColorScheme();
   return endReached ? (
-    <View className="w-full h-20 flex-col justify-center items-center">
-      <Text className="text-destructive">No more items to show</Text>
-    </View>
+    <NomoreItemsToShow />
   ) : (
     <InViewPort onEnter={onEndReached}>
       <View className="w-full h-20 flex-col justify-center items-center">
