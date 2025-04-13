@@ -18,7 +18,12 @@ import { useSmallLocationsQuery } from 'app/components/cards/utils/locations';
 import { useSmallUsersQuery } from 'app/components/cards/utils/users';
 import { CompanyStats } from 'app/components/company-stats';
 import { Header, HeaderTitle } from 'app/components/header';
-import { ArrowUpRight, ExternalLink } from 'app/components/icons';
+import {
+  ArrowUpRight,
+  Clock,
+  ExternalLink,
+  MoveRight,
+} from 'app/components/icons';
 import { SeparatorText } from 'app/components/separator-text';
 import { Text } from 'app/components/ui/text';
 import { ViewAllButton } from 'app/components/utils/common-ui';
@@ -49,8 +54,12 @@ import opacity from 'hex-color-opacity';
 import { View } from 'react-native';
 import { FilterKeys } from './listings';
 import { Button } from 'app/components/ui/button';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from 'app/context/auth';
+import { getTimeofDay } from 'app/lib/helpers';
+import { keycloakStore } from 'app/store/keycloak';
+import { lowerCase, startCase } from 'lodash';
+import { ActivityScreen } from './activity';
 
 export function HomeScreen() {
   const { authenticated } = directusStore();
@@ -59,6 +68,7 @@ export function HomeScreen() {
   const { rest } = directusStore();
   const router = useRouter();
   const { logout } = useContext(AuthContext);
+  const [timeOfDay] = useState(getTimeofDay());
 
   useEffect(() => {
     if (authenticated && !(user.first_name || user.last_name)) {
@@ -148,12 +158,8 @@ export function HomeScreen() {
   });
 
   return (
-    <View className="flex-grow flex-col gap-8 pb-8 pt-8">
-      <Text className="text-2xl font-bold text-wrap px-4">
-        {authenticated
-          ? `Welcome back ${user.first_name} ${user.last_name}`
-          : 'The one stop for all agents'}
-      </Text>
+    <View className="flex-grow flex-col gap-8 py-8 px-4">
+      <Greeting />
       <RenderListings<PhotoListingProps & ListingCardMetrics>
         render={bodies.photo}
         initialData={photoListingsInitialData}
@@ -261,6 +267,38 @@ export const HomeScreenHeader = () => {
     <Header>
       <HeaderTitle>A2A Point</HeaderTitle>
     </Header>
+  );
+};
+
+const Greeting = () => {
+  const [timeOfDay] = useState(startCase(lowerCase(getTimeofDay())));
+  const { user } = userStore();
+  const { authenticated } = directusStore();
+  const { colors } = useColorScheme();
+
+  return authenticated ? (
+    <View className="flex-col gap-2 p-2 rounded bg-surface border-border">
+      <Text className="font-medium text-3xl">
+        Good {timeOfDay}, {user.first_name}
+      </Text>
+      <Text className="text-subtext">
+        Looking for a villa in MBR City today?
+      </Text>
+      <View className="flex-row gap-2 items-center">
+        <Clock color={colors.foreground} />
+        <Text> Continue your search </Text>
+      </View>
+    </View>
+  ) : (
+    <></>
+  );
+};
+
+const ContinueToSearch = () => {
+  return (
+    <View>
+      <ActivityScreen />
+    </View>
   );
 };
 

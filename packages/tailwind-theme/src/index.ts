@@ -1,6 +1,5 @@
 import postcss, { Plugin } from 'postcss';
 import { theme } from './colors';
-import { writeFileSync } from 'fs';
 import convert from 'color-convert';
 
 export * from './colors';

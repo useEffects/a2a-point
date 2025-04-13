@@ -464,3 +464,11 @@ export class URLSearchParams {
     return this.entries();
   }
 }
+
+export function getTimeofDay(): string {
+  const hour = new Date().getHours();
+
+  if (hour < 12) return 'morning';
+  if (hour < 18) return 'afternoon';
+  return 'evening';
+}

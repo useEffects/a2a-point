@@ -3,11 +3,7 @@ import {
   getMediumUsersCardArgs,
   mediumUsersCardsQuery,
 } from 'app/components/cards/molecules2/agents';
-import {
-  BackButton,
-  Header,
-  HeaderTitle,
-} from 'app/components/header';
+import { BackButton, Header, HeaderTitle } from 'app/components/header';
 import InfiniteList from 'app/components/infinite';
 import SearchBar from 'app/components/searchbar';
 import { Separator } from 'app/components/ui/separator';
@@ -43,7 +39,9 @@ export const UsersListScreen = ({
           ItemSeparatorComponent: () => <Separator className="my-8" />,
           contentContainerClassName: 'p-4 max-w-xl',
           showsVerticalScrollIndicator: true,
+          scrollEnabled: false,
         }}
+        skeletonComponent={() => <></>}
       />
     </View>
   );
