@@ -476,7 +476,7 @@ const Footer = (
       ) : (
         <></>
       )}
-      <View className="flex-row gap-4 native:h-16 h-14 w-full py-2 px-4 items-center bg-card">
+      <View className="flex-row gap-4 native:h-16 h-14 w-full py-2 px-4 items-center bg-accent">
         {disabled && (
           <>
             <FooterDropDownMenu
@@ -533,7 +533,7 @@ const Footer = (
         onBackdropPress={() => setOpenBottomSheet(false)}
         setOpen={setOpenBottomSheet}
       >
-        <View className="p-4 bg-card flex-col gap-8">
+        <View className="p-4 bg-accent flex-col gap-8">
           <View className="flex-row justify-between">
             <Text>
               Generate <Text className="text-primary">Agent to Agent</Text>{' '}

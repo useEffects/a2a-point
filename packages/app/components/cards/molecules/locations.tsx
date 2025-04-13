@@ -49,8 +49,8 @@ const SmallLocationCard = ({ item }: { item: SmallLocationCardProps }) => {
           source={{ uri: buildAssetUrl(item.avatar!) }}
           className="w-16 h-16 rounded-full"
         />
-        <View className="absolute bg-card flex-row justify-center items-center rounded-full w-8 h-8 left-auto -right-2 top-auto -bottom-2">
-          <Text className="!text-xs !text-card-foreground">{count}</Text>
+        <View className="absolute bg-accent flex-row justify-center items-center rounded-full w-8 h-8 left-auto -right-2 top-auto -bottom-2">
+          <Text className="!text-xs !text-accent-foreground">{count}</Text>
         </View>
       </Pressable>
       <Text className="text-sm text-center">
@@ -110,7 +110,7 @@ export const MediumLocationCard = ({
   return (
     <Pressable
       onPress={() => router.push(`/locations/${item.id}`)}
-      className="flex-row rounded-xl bg-card justify-start items-start w-full aspect-video"
+      className="flex-row rounded-xl bg-accent justify-start items-start w-full aspect-video"
     >
       <AsyncImage
         source={{ uri: buildAssetUrl(item.avatar) }}

@@ -55,7 +55,7 @@ export const NewsCard = ({
         </View>
         <View
           className={cn(
-            'bg-card p-4 rounded-bl-xl rounded-br-xl',
+            'bg-accent p-4 rounded-bl-xl rounded-br-xl',
             isFirst
               ? 'w-1/2 self-center bg-transparent max-w-sm mx-auto'
               : 'w-full native:h-40',

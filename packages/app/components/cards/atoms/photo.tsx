@@ -40,7 +40,7 @@ export const PhotoListingCard = (item: PhotoListingProps) => {
   return (
     <Pressable
       onPress={() => router.push(`/listings/${item.id}`)}
-      className="rounded-xl bg-card text-wrap"
+      className="rounded-xl bg-accent text-wrap"
     >
       <AsyncImage
         source={{ uri: buildAssetUrl(photo) }}

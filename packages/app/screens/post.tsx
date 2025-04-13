@@ -889,7 +889,7 @@ export const RenderAmenity = ({
   const { icon, label } = amenity;
 
   return (
-    <View className="w-full border border-border rounded-2xl flex-col gap-4 p-4 bg-card">
+    <View className="w-full border border-border rounded-2xl flex-col gap-4 p-4 bg-accent">
       <View className="flex-row gap-4">
         <MaterialSymbolIcon name={icon} fill={colors.info} />
         <Text>{label}</Text>

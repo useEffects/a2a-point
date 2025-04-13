@@ -103,7 +103,7 @@ export const MediumListingCard = (
             </View>
           )}
         </View>
-        <View className="flex-col gap-1 bg-card rounded-2xl p-4 mt-2 w-full">
+        <View className="flex-col gap-1 bg-accent rounded-2xl p-4 mt-2 w-full">
           <View className="flex-row justify-between">
             <Text className="text-success">AED {localizedCost}</Text>
             <Text className="text-primary capitalize">{item.deal_type}</Text>

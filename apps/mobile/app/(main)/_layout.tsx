@@ -25,7 +25,7 @@ export default function MainLayout() {
         headerShown: false,
         header: () => null,
         tabBarStyle: {
-          backgroundColor: colors.card,
+          backgroundColor: colors.accent,
           borderTopColor: colors.border,
           borderTopWidth: StyleSheet.hairlineWidth,
         },

@@ -22,11 +22,7 @@ import {
   CardHeader,
   CardTitle,
 } from 'app/components/ui/card';
-import {
-  BackButton,
-  Header,
-  HeaderTitle,
-} from 'app/components/header';
+import { BackButton, Header, HeaderTitle } from 'app/components/header';
 
 export const MembershipApplyScreen = () => {
   const { user } = userStore();
@@ -124,7 +120,7 @@ export const MembershipApplyScreen = () => {
               <Button
                 variant={'base'}
                 size={'none'}
-                className="flex-row gap-2 rounded-full border border-border p-1 bg-card items-center"
+                className="flex-row gap-2 rounded-full border border-border p-1 bg-accent items-center"
               >
                 <Switch checked={yearly} onCheckedChange={setYearly} />
                 {yearly ? (
@@ -237,7 +233,7 @@ export const MembershipCard = ({
   const amount = isYearly ? yearlyAmount : monthlyAmount;
   const discountedAmount = Math.round((discount / 100) * amount * 100) / 100;
   const fg = isPro ? 'text-primary-foreground' : 'text-primary';
-  const bg = isPro ? 'bg-primary' : 'bg-card';
+  const bg = isPro ? 'bg-primary' : 'bg-accent';
 
   return (
     <View

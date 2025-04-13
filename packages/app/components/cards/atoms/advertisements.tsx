@@ -32,7 +32,7 @@ export const AdvertisementCard = (props: AdvertisementCardProps) => {
         (await Linking.canOpenURL(props.link_to_open)) &&
         Linking.openURL(props.link_to_open)
       }
-      className="flex-col gap-4 bg-card py-6"
+      className="flex-col gap-4 bg-accent py-6"
     >
       <View className="flex-row justify-between items-center px-4">
         <UserChip user={props.user_created} />

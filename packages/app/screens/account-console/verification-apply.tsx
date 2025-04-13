@@ -2,11 +2,7 @@
 import { createItem } from '@directus/sdk';
 import { Asset, withUri } from 'app/components/chat-ui';
 import { FormInput } from 'app/components/formComponents';
-import {
-  BackButton,
-  Header,
-  HeaderTitle,
-} from 'app/components/header';
+import { BackButton, Header, HeaderTitle } from 'app/components/header';
 import { X } from 'app/components/icons';
 import { SeparatorText } from 'app/components/separator-text';
 import { Button } from 'app/components/ui/button';
@@ -141,7 +137,7 @@ export const VerificationApplyScreen = () => {
             </CardContent>
             <CardFooter>
               <View className="flex-col gap-4 w-full">
-                <Text className="text-card-foreground">
+                <Text className="text-accent-foreground">
                   You can still try with another attempt
                 </Text>
                 <Button
@@ -150,7 +146,7 @@ export const VerificationApplyScreen = () => {
                   size={'sm'}
                   variant={'ghost'}
                 >
-                  <Text className="text-card-foreground">Attempt again</Text>
+                  <Text className="text-accent-foreground">Attempt again</Text>
                 </Button>
               </View>
             </CardFooter>

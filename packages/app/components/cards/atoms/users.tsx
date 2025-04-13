@@ -64,12 +64,12 @@ export const SmallUsersCard = (item: SmallUsersCardProps) => {
           <Text className="text-primary text-xs">Pro</Text>
         </View>
       </View>
-      <View className="h-8 w-full bg-card rounded-tl-xl rounded-tr-xl" />
+      <View className="h-8 w-full bg-accent rounded-tl-xl rounded-tr-xl" />
       <AsyncImage
         className="rounded-full w-20 h-20 absolute top-0 z-10 left-12 border border-background border-4"
         source={{ uri: buildAssetUrl(item.avatar) }}
       />
-      <View className="p-4 bg-card flex-col justify-between rounded-bl-xl rounded-br-xl h-[175px] w-full">
+      <View className="p-4 bg-accent flex-col justify-between rounded-bl-xl rounded-br-xl h-[175px] w-full">
         <Text className="font-medium">
           {item.first_name} {item.last_name}
         </Text>
@@ -126,7 +126,7 @@ export const MediumUsersCard = (
                 source={{ uri: buildAssetUrl(item.avatar) }}
               />
             </View>
-            <View className="bg-card w-full pl-20 flex-row items-center justify-between gap-4 pr-4 rounded-tl-xl flex-grow">
+            <View className="bg-accent w-full pl-20 flex-row items-center justify-between gap-4 pr-4 rounded-tl-xl flex-grow">
               <View className="flex-row gap-1 items-center">
                 <Star
                   size={18}
@@ -143,7 +143,7 @@ export const MediumUsersCard = (
               </View>
             </View>
           </View>
-          <View className="w-full flex-col gap-4 p-4 bg-card rounded-bl-xl flex-1">
+          <View className="w-full flex-col gap-4 p-4 bg-accent rounded-bl-xl flex-1">
             <View className="flex-col gap-2">
               <Text className="font-medium">
                 {item.first_name} {item.last_name}
@@ -174,7 +174,7 @@ export const MediumUsersCard = (
               </View>
             )}
           </View>
-          <View className="p-4 pt-2 flex-1 flex-col justify-evenly gap-2 items-start rounded-tr-xl rounded-br-xl bg-card">
+          <View className="p-4 pt-2 flex-1 flex-col justify-evenly gap-2 items-start rounded-tr-xl rounded-br-xl bg-accent">
             {item.last_access ? (
               <Text className="text-sm text-subtext">
                 last seen {timeAgo.format(new Date(item.last_access))}

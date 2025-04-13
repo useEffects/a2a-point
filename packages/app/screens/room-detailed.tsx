@@ -329,7 +329,7 @@ export function RoomDetailedScreen({ roomId }: { roomId: string }) {
 //             </DropdownMenuContent>
 //         </DropdownMenu>
 //         <BottomSheet isVisible={bottomSheetVisible} onBackdropPress={() => setBottomSheetVisible(false)}>
-//             <View className="bg-card flex-col gap-4 py-4">
+//             <View className="bg-accent flex-col gap-4 py-4">
 //                 <View className="flex-row justify-between px-4">
 //                     <Text>Members</Text>
 //                     <Button onPress={() => setBottomSheetVisible(false)} variant={"destructive"} size={"icon"} className="w-6 h-6">

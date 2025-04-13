@@ -228,7 +228,7 @@ export function ListingsScreen({
                     size={18}
                     color={
                       filters.length
-                        ? colors.card
+                        ? colors.accent
                         : bottomSheetVisible
                           ? colors['info-foreground']
                           : colors.info
@@ -251,7 +251,7 @@ export function ListingsScreen({
         onBackdropPress={() => setBottomSheetVisible(false)}
         setOpen={setBottomSheetVisible}
       >
-        <View className="py-4 flex-col gap-8 bg-card w-full">
+        <View className="py-4 flex-col gap-8 bg-accent w-full">
           <View className="flex-row items-center justify-between px-4">
             <Text className="text-lg">Filter leads</Text>
             <Button
@@ -766,7 +766,7 @@ export const LoginPopover = () => {
       setOpen={setIsOpen}
       onBackdropPress={handleClose}
     >
-      <View className="p-4 bg-card flex-col gap-4 w-full">
+      <View className="p-4 bg-accent flex-col gap-4 w-full">
         <View className="flex-row justify-between w-full">
           <View className="flex-row gap-2">
             <Sparkles fill={colors.primary} className="text-primary" />
@@ -888,7 +888,7 @@ const RenderChips = ({
   };
 
   return (
-    <View className="flex-row gap-2 flex-wrap w-full px-4 py-2 bg-card">
+    <View className="flex-row gap-2 flex-wrap w-full px-4 py-2 bg-accent">
       {filters
         .sort((a, b) => a.key.localeCompare(b.key))
         .map((filter, index) => (

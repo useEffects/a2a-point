@@ -351,7 +351,7 @@ const InfoTab = ({
   return (
     <View className="p-4 flex-col gap-4 w-full">
       {company ? (
-        <View className="rounded p-4 bg-card border border-border gap-4">
+        <View className="rounded p-4 bg-accent border border-border gap-4">
           <Text className="text-xl font-semibold">Company</Text>
           <WithLabel label="Title">
             <Text>{company.title}</Text>

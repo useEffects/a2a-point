@@ -29,7 +29,7 @@ export default function AccountConsoleLayout() {
       screenOptions={{
         header: () => null,
         tabBarStyle: {
-          backgroundColor: colors.card,
+          backgroundColor: colors.accent,
           borderTopColor: colors.border,
           borderTopWidth: StyleSheet.hairlineWidth,
         },

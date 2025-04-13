@@ -120,7 +120,7 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
     colors: {
       background: colors.background,
       border: colors.border,
-      card: colors.card,
+      card: colors.accent,
       notification: colors.accent,
       primary: colors.primary,
       text: colors.foreground,
@@ -152,7 +152,7 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (Platform.OS === 'android') {
-      navigationBar.setBackgroundColorAsync(colors.card);
+      navigationBar.setBackgroundColorAsync(colors.accent);
       navigationBar.setButtonStyleAsync(
         colorScheme === 'dark' ? 'light' : 'dark',
       );
@@ -198,7 +198,7 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider value={theme}>
       {children}
-      <StatusBar backgroundColor={colors.card} />
+      <StatusBar backgroundColor={colors.accent} />
     </ThemeProvider>
   );
 }

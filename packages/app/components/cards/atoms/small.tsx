@@ -79,7 +79,7 @@ export const SmallListingCard = (
   return (
     <Pressable
       onPress={() => router.push(`/listings/${item.id}`)}
-      className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-card items-start rounded native:w-[400px]"
+      className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-accent items-start rounded native:w-[400px]"
     >
       <AsyncImage
         source={{ uri: buildAssetUrl(item.user_created.avatar) }}

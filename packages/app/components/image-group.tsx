@@ -127,10 +127,10 @@ const ImageTile = ({
       onPress={() => handleOnPress(asset)}
       variant={'base'}
       size={'none'}
-      className="px-4 h-12 bg-card rounded-2xl flex-row gap-1 justify-center items-center"
+      className="px-4 h-12 bg-accent rounded-2xl flex-row gap-1 justify-center items-center"
     >
-      <File size={18} className="!text-card-foreground" />
-      <Text className="text-card-foreground text-xs">
+      <File size={18} className="!text-accent-foreground" />
+      <Text className="text-accent-foreground text-xs">
         {shortString(asset.name, 40)}
       </Text>
     </Button>
