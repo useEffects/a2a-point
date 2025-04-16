@@ -64,7 +64,7 @@ export const MediumListingCard = (
   const router = useRouter();
 
   return (
-    <View className="w-full flex-col gap-2 p-4 h-[300px] justify-between">
+    <View className="w-full flex-col gap-2 min-h-[275px] justify-between">
       <View className="flex flex-wrap gap-4 flex-row items-center justify-between">
         <UserChip user={item.user_created} />
         {authenticated ? (
@@ -123,7 +123,7 @@ export const MediumListingCard = (
 
 export const MediumListingCardSkeleton = () => {
   return (
-    <View className="h-[300px] w-full flex-col p-4 gap-2">
+    <View className="h-[275px] w-full flex-col gap-2">
       <UserChipSkeleton />
       <View className="flex-col gap-4">
         <Skeleton className="w-3/4 h-4" />

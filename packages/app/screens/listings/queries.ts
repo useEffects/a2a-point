@@ -18,13 +18,14 @@ import {
   mediumListingsFields,
   smallListingsFields,
 } from 'app/lib/props';
+import * as _ from 'lodash';
 
 export const listingsScreenQuery = <
   T extends
     | (MediumListingCardProps & ListingCardMetrics)
     | ConfirmedAdvertisementCardProps,
 >(
-  query: Query<any, T[]> = { limit: defaultLimit },
+  query: Query<any, T[]>,
 ): UseInfiniteQueryOptions<
   {
     items: T[];
@@ -46,18 +47,24 @@ export const listingsScreenQuery = <
     },
     initialPageParam: 0,
     queryFn: async ({ pageParam = 0 }) => {
+      if (!query.limit) query.limit = defaultLimit;
+
       const adsLimit = Math.ceil(query.limit! / 5);
       const adsOffset = Number(pageParam) * adsLimit;
       const listingsLimit = query.limit!;
       const listingsOffset = Number(pageParam) * query.limit!;
 
-      const listings = await renderCardsQuery2<MediumListingCardProps>({
-        collection: 'listings',
-        fields: mediumListingsFields,
-        ...query,
-        limit: listingsLimit,
-        offset: listingsOffset,
-      }).then((res) =>
+      const listings = await renderCardsQuery2<MediumListingCardProps>(
+        _.merge(
+          {
+            collection: 'listings',
+            fields: mediumListingsFields,
+            limit: listingsLimit,
+            offset: listingsOffset,
+          },
+          query,
+        ),
+      ).then((res) =>
         Promise.all(
           res.map(async (r) => {
             const metrics = await getListingMetrics(r.id);

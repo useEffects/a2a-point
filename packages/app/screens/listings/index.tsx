@@ -135,12 +135,14 @@ export function ListingsScreen({
     setBottomSheetVisible(false);
   };
 
-  const listingsInfiniteQueryOptions = listingsScreenQuery();
-
-  const finalFilters = useMemo(
-    () => filters.map((f) => expandFilterValue(f.key, f.value)),
-    [filters],
-  );
+  const listingsInfiniteQueryOptions = useMemo(() => {
+    setCurrentFilters(filters);
+    const finalFilters = filters.map((f) => expandFilterValue(f.key, f.value));
+    return listingsScreenQuery({
+      filter: commonFilters[CommonFilters.Custom](finalFilters),
+      search: debouncedSearchText,
+    });
+  }, [filters, debouncedSearchText]);
 
   useEffect(() => {
     let parsedFilters: unknown;
@@ -181,12 +183,47 @@ export function ListingsScreen({
     }
   }, [filtersFromParams]);
 
-  useEffect(() => {
-    setCurrentFilters(filters);
-  }, [filters, debouncedSearchText]);
-
   return (
-    <View className={cn('flex-1', className)}>
+    <View className={cn('flex-1 bg-accent', className)}>
+      <View className="pb-4 bg-accent">
+        <View className="flex-row items-center justify-between gap-4 w-full px-4">
+          <SearchBar
+            searchText={searchText}
+            setSearchText={setSearchText}
+            searchBarProps={{
+              inputContainerStyle: {
+                backgroundColor: colors.background,
+              },
+            }}
+          />
+          <Button
+            onPress={() => setBottomSheetVisible(true)}
+            variant={'base'}
+            size={'icon'}
+            className={cn(
+              'rounded-full border bg-background',
+              !filters.length ? 'border-info' : 'border-success bg-success',
+              bottomSheetVisible && 'border-info bg-info',
+            )}
+          >
+            <ListFilter
+              size={18}
+              color={
+                filters.length
+                  ? colors.accent
+                  : bottomSheetVisible
+                    ? colors['info-foreground']
+                    : colors.info
+              }
+            />
+          </Button>
+        </View>
+        {filters.length ? (
+          <RenderChips filters={filters} setFilters={updateParams} />
+        ) : (
+          <></>
+        )}
+      </View>
       <InfiniteList<
         | (MediumListingCardProps & ListingCardMetrics)
         | ConfirmedAdvertisementCardProps
@@ -196,46 +233,8 @@ export function ListingsScreen({
         skeletonComponent={MediumListingCardSkeleton}
         flatListProps={{
           ItemSeparatorComponent: () => <Separator className="my-8" />,
-          contentContainerClassName: 'max-w-xl',
+          contentContainerClassName: 'max-w-xl px-4 py-8 bg-background flex-1',
           scrollEnabled: false,
-          ListHeaderComponent: (
-            <View className="py-4">
-              <View className="flex-row items-center justify-between gap-4 w-full px-4">
-                <SearchBar
-                  searchText={searchText}
-                  setSearchText={setSearchText}
-                />
-                <Button
-                  onPress={() => setBottomSheetVisible(true)}
-                  variant={'base'}
-                  size={'icon'}
-                  className={cn(
-                    'rounded-full border',
-                    !filters.length
-                      ? 'border-info'
-                      : 'border-success bg-success',
-                    bottomSheetVisible && 'border-info bg-info',
-                  )}
-                >
-                  <ListFilter
-                    size={18}
-                    color={
-                      filters.length
-                        ? colors.accent
-                        : bottomSheetVisible
-                          ? colors['info-foreground']
-                          : colors.info
-                    }
-                  />
-                </Button>
-              </View>
-              {filters.length ? (
-                <RenderChips filters={filters} setFilters={updateParams} />
-              ) : (
-                <></>
-              )}
-            </View>
-          ),
         }}
         infinite
       />
@@ -297,7 +296,7 @@ export function ListingsScreen({
 
 export function ListingsScreenHeader() {
   return (
-    <Header>
+    <Header hideSeparator>
       <View className="flex-row justify-between items-center w-full">
         <HeaderTitle>Listings</HeaderTitle>
         <GoToPostButtonUi />
@@ -881,7 +880,7 @@ const RenderChips = ({
   };
 
   return (
-    <View className="flex-row gap-2 flex-wrap w-full px-4 py-2 bg-accent">
+    <View className="flex-row gap-2 flex-wrap w-full px-4 pt-2 bg-accent">
       {filters
         .sort((a, b) => a.key.localeCompare(b.key))
         .map((filter, index) => (

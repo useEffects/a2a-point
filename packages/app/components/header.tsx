@@ -30,7 +30,13 @@ export const BackButton = () => {
   );
 };
 
-export const Header = ({ children }: { children: ReactNode }) => {
+export const Header = ({
+  children,
+  hideSeparator = false,
+}: {
+  children: ReactNode;
+  hideSeparator?: boolean;
+}) => {
   const { top } = useSafeAreaInsets();
 
   return (
@@ -38,7 +44,7 @@ export const Header = ({ children }: { children: ReactNode }) => {
       <View style={{ paddingTop: top + 8 }} className="bg-accent pb-2 px-4">
         <View className="h-12 flex-row items-center">{children}</View>
       </View>
-      <Separator />
+      {hideSeparator ? <></> : <Separator />}
     </>
   );
 };
