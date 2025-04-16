@@ -20,7 +20,7 @@ import { FilterParam } from 'app/screens/listings';
 import { directusStore } from 'app/store/directus';
 import userStore from 'app/store/user';
 import { uniqBy } from 'lodash';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, FlatListProps, Platform, View } from 'react-native';
 import {
   AdvertisementCard,
@@ -377,15 +377,18 @@ export const BottomLoader = ({
   onEndReached: () => void;
 }) => {
   const { colors } = useColorScheme();
+  useEffect(() => {
+    if (!endReached) {
+      onEndReached();
+    }
+  }, [endReached, onEndReached]);
   return endReached ? (
     <NomoreItemsToShow />
   ) : (
-    <InViewPort onEnter={onEndReached}>
-      <View className="w-full h-20 flex-col justify-center items-center">
-        <ActivityIndicator color={colors.info} />
-        <Text className="text-center text-info">loading please wait ...</Text>
-      </View>
-    </InViewPort>
+    <View className="w-full h-20 flex-col justify-center items-center">
+      <ActivityIndicator color={colors.info} />
+      <Text className="text-center text-info">loading please wait ...</Text>
+    </View>
   );
 };
 

@@ -282,3 +282,7 @@ export const SmallUsersCardSkeleton = () => {
     </View>
   );
 };
+
+export const MediumUsersCardSkeleton = () => {
+  return <View></View>;
+};

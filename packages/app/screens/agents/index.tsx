@@ -1,16 +1,17 @@
-import { MediumUsersCard } from 'app/components/cards/atoms/users';
 import {
-  getMediumUsersCardArgs,
-  mediumUsersCardsQuery,
-} from 'app/components/cards/molecules2/agents';
+  MediumUsersCard,
+  MediumUsersCardSkeleton,
+} from 'app/components/cards/atoms/users';
+import { getMediumUsersCardArgs } from 'app/components/cards/molecules2/agents';
 import { BackButton, Header, HeaderTitle } from 'app/components/header';
 import InfiniteList from 'app/components/infinite';
 import SearchBar from 'app/components/searchbar';
 import { Separator } from 'app/components/ui/separator';
 import { MediumUsersCardProps, UsersCardMetrics } from 'app/lib/props';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { useDebounce } from 'use-debounce';
+import { mediumUsersQuery } from './queries';
 
 export const UsersListScreen = ({
   data,
@@ -19,9 +20,10 @@ export const UsersListScreen = ({
 }) => {
   const [searchText, setSearchText] = useState('');
   const [debouncedSearchText] = useDebounce(searchText, 500);
-  const queryArgs = getMediumUsersCardArgs({
-    search: debouncedSearchText,
-  });
+  const mediumUsersCardsQueryOptions = useMemo(
+    () => mediumUsersQuery({ search: debouncedSearchText }),
+    [debouncedSearchText],
+  );
 
   return (
     <View className="flex-1 flex-col justify-start">
@@ -29,11 +31,9 @@ export const UsersListScreen = ({
         <SearchBar searchText={searchText} setSearchText={setSearchText} />
       </View>
       <InfiniteList<MediumUsersCardProps & UsersCardMetrics>
-        initialItems={data}
         component={(item) => <MediumUsersCard {...item} />}
-        queryFn={mediumUsersCardsQuery}
-        queryKey={['users list', queryArgs]}
-        queryFnArgs={queryArgs}
+        infiniteQueryOptions={mediumUsersCardsQueryOptions}
+        skeletonComponent={MediumUsersCardSkeleton}
         infinite
         flatListProps={{
           ItemSeparatorComponent: () => <Separator className="my-8" />,
@@ -41,7 +41,6 @@ export const UsersListScreen = ({
           showsVerticalScrollIndicator: true,
           scrollEnabled: false,
         }}
-        skeletonComponent={() => <></>}
       />
     </View>
   );

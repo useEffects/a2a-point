@@ -7,12 +7,13 @@ import {
 import { useRouter } from 'app/hooks/router';
 import { uniqBy } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
-import { FlatListProps, Platform } from 'react-native';
+import { FlatListProps, Platform, View } from 'react-native';
 import { FlatList, HorizontalFlatList } from './utils/virtual-lists';
 import { BottomLoader } from './cards/molecules/listings';
 import { Button } from './ui/button';
 import { ViewAllButton } from './utils/common-ui';
 import { HorizontalFlatListProps } from '@idiosync/horizontal-flatlist/dist/horizontal-flat-list';
+import { useIntersectionObserver } from 'app/hooks/intersection-observer';
 
 export type queryFnType<T> = (apiOptions: Query<any, T>) => Promise<T[]>;
 
@@ -49,7 +50,7 @@ export default function InfiniteList<
     viewAllLink,
   } = props;
 
-  const { data, fetchNextPage, hasNextPage, isFetching } =
+  const { data, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage } =
     useInfiniteQuery(infiniteQueryOptions);
 
   const finalData = useMemo(() => {
@@ -72,7 +73,6 @@ export default function InfiniteList<
       () => ({
         data: finalData,
         renderItem: ({ item }: { item: T }) => <RenderComponent {...item} />,
-        onEndReached: () => !isWeb && handleEndReached(),
         keyExtractor: (item: T) => item.id,
         ListFooterComponent: (
           <ListFooterComponent
@@ -88,7 +88,7 @@ export default function InfiniteList<
       [finalData, handleEndReached, infinite, hasNextPage],
     );
 
-  return isFetching ? (
+  return isLoading && !isFetchingNextPage ? (
     <FlatList
       data={Array(
         props.skeletonCount ?? [2, 2, 3][Math.floor(Math.random() * 3)],
@@ -129,11 +129,15 @@ const ListFooterComponent = ({
     throw new Error('viewAllLink is required when infinite is false');
   }
 
+  const [ref, isVisible] = useIntersectionObserver({ threshold: 0.2 });
+
   return infinite ? (
-    <BottomLoader
-      endReached={endReached}
-      onEndReached={() => isWeb && onEndReached()}
-    />
+    <View ref={ref}>
+      <BottomLoader
+        endReached={endReached}
+        onEndReached={() => isVisible && onEndReached()}
+      />
+    </View>
   ) : (
     <ViewAllButton
       horizontal={horizontal}

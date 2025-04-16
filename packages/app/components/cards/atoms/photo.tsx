@@ -44,12 +44,14 @@ export const PhotoListingCard = (item: PhotoListingProps) => {
       className="rounded-xl bg-accent text-wrap border-border flex-col justify-between border-[1px] border-solid border-border"
       style={{ height: imageHeight * 2 }}
     >
-      <AsyncImage
-        source={{ uri: buildAssetUrl(photo) }}
-        width={imageWidth}
-        height={imageHeight}
-        className="rounded-tl-xl rounded-tr-xl"
-      />
+      <View style={{ width: imageWidth, height: imageHeight }}>
+        <AsyncImage
+          source={{ uri: buildAssetUrl(photo) }}
+          width={imageWidth}
+          height={imageHeight}
+          className="rounded-tl-xl rounded-tr-xl"
+        />
+      </View>
       <View
         className="flex-col gap-2 px-2 py-4 items-start w-full"
         style={{ width: imageWidth }}

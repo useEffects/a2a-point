@@ -234,6 +234,12 @@ export function ListingsScreen({
         flatListProps={{
           ItemSeparatorComponent: () => <Separator className="my-8" />,
           contentContainerClassName: 'max-w-xl px-4 py-8 bg-background flex-1',
+          contentContainerStyle: {
+            backgroundColor: colors.background,
+            flex: 1,
+            paddingVertical: 32,
+            paddingHorizontal: 16,
+          },
           scrollEnabled: false,
         }}
         infinite
