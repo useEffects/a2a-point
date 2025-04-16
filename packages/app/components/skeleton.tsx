@@ -1,6 +1,8 @@
+import { useColorScheme } from 'app/hooks/color-scheme';
 import { cn } from 'app/lib/utils';
 import * as React from 'react';
-import Animated, {
+import { Animated } from 'react-native';
+import {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
@@ -30,7 +32,7 @@ function Skeleton({
   return (
     <Animated.View
       style={style}
-      className={cn('rounded-md bg-black', className)}
+      className={cn('rounded-md bg-border', className)}
       {...props}
     />
   );

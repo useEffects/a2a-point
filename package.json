@@ -8,9 +8,9 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
-    "prettier": "^3.2.5",
-    "turbo": "^2.3.3",
-    "typescript": "5.5.4"
+    "prettier": "^3.5.3",
+    "turbo": "^2.5.0",
+    "typescript": "5.8.3"
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {
@@ -18,12 +18,14 @@
   },
   "pnpm": {
     "overrides": {
-      "react-native": "0.76.5",
+      "react-native": "0.76.6",
       "react": "18.3.1",
       "react-dom": "18.3.1",
       "@types/react": "18.3.1",
       "@types/react-dom": "18.3.1",
-      "expo-router": "4.0.20"
+      "expo-router": "4.0.20",
+      "expo": "52.0.46",
+      "react-native-screens": "4.4.0"
     }
   }
 }
