@@ -5,6 +5,7 @@ import { Image, Pressable, View } from 'react-native';
 import { Text } from '../ui/text';
 import { AsyncImage } from '../async-image';
 import { Skeleton } from '../skeleton';
+import { cn } from 'app/lib/utils';
 
 export const LocationChip = ({
   avatar,
@@ -26,12 +27,15 @@ export const LocationChip = ({
   );
 };
 
-export const LocationChipSkeleton = () => {
+export const LocationChipSkeleton = ({
+  className = '',
+}: {
+  className?: string;
+}) => {
   return (
-    <View className="h-6 w-60 flex-row items-center gap-2">
+    <View className={cn('h-6 w-60 flex-row items-center gap-2', className)}>
       <Skeleton className="rounded-full w-6 h-full" />
       <Skeleton className="flex-1 h-[12px]" />
     </View>
   );
 };
-

@@ -1,6 +1,7 @@
 import { AsyncImage } from 'app/components/async-image';
+import { Skeleton } from 'app/components/skeleton';
 import { Text } from 'app/components/ui/text';
-import { UserChip } from 'app/components/user-chip';
+import { UserChip, UserChipSkeleton } from 'app/components/user-chip';
 import { useLocalizedCost } from 'app/hooks/locale-string';
 import { useRouter } from 'app/hooks/router';
 import { buildAssetUrl } from 'app/lib/helpers';
@@ -40,7 +41,8 @@ export const PhotoListingCard = (item: PhotoListingProps) => {
   return (
     <Pressable
       onPress={() => router.push(`/listings/${item.id}`)}
-      className="rounded-xl bg-accent text-wrap"
+      className="rounded-xl bg-accent text-wrap border-border flex-col justify-between border-[1px] border-solid border-border"
+      style={{ height: imageHeight * 2 }}
     >
       <AsyncImage
         source={{ uri: buildAssetUrl(photo) }}
@@ -49,7 +51,7 @@ export const PhotoListingCard = (item: PhotoListingProps) => {
         className="rounded-tl-xl rounded-tr-xl"
       />
       <View
-        className="flex-col gap-2 px-2 py-4 items-start w-full flex-grow"
+        className="flex-col gap-2 px-2 py-4 items-start w-full"
         style={{ width: imageWidth }}
       >
         <UserChip user={item.user_created} />
@@ -62,3 +64,30 @@ export const PhotoListingCard = (item: PhotoListingProps) => {
     </Pressable>
   );
 };
+
+export const PhotoListingCardSkeleton = () => {
+  const windowWidth = Dimensions.get('window').width;
+  const imageWidth = windowWidth / 2;
+  const imageHeight = (9 / 16) * imageWidth;
+  return (
+    <View
+      className="border-border flex-col justify-between bg-accent rounded border-solid border-[1px]"
+      style={{ width: imageWidth, height: imageHeight * 2 }}
+    >
+      <View style={{ width: imageWidth, height: imageHeight }}>
+        <Skeleton className="w-full h-full" />
+      </View>
+      <View className="p-4 flex-col gap-2 items-start w-full">
+        <UserChipSkeleton />
+        <Skeleton className="w-[90%] h-4" />
+        <View className="flex-row justify-between w-full">
+          <Skeleton className="h-4 w-28" />
+          <Skeleton className="h-4 w-12" />
+        </View>
+      </View>
+    </View>
+  );
+};
+
+export const PriceSkeleton = () => <Skeleton className="h-4 w-28" />;
+export const ListingTypeSkeleton = () => <Skeleton className="h-4 w-12" />;

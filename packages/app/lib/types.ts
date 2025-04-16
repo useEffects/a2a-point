@@ -245,7 +245,7 @@ export type CourseRef = {
   course_lessons: string[];
 };
 
-export type News = {
+export type NewsProps = {
   id: string;
   status: string;
   user_created: string;

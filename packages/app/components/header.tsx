@@ -35,7 +35,7 @@ export const Header = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
-      <View style={{ paddingTop: top + 16 }} className="bg-accent pb-4 px-4">
+      <View style={{ paddingTop: top + 8 }} className="bg-accent pb-2 px-4">
         <View className="h-12 flex-row items-center">{children}</View>
       </View>
       <Separator />

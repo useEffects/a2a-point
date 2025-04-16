@@ -37,6 +37,8 @@ import opacity from 'hex-color-opacity';
 import { Image, Pressable, View } from 'react-native';
 import { CompanyChip } from './company';
 import { AsyncImage } from 'app/components/async-image';
+import { Skeleton } from 'app/components/skeleton';
+import { LocationChipSkeleton } from 'app/components/utils/chips';
 
 export const SmallUsersCard = (item: SmallUsersCardProps) => {
   const { colors } = useColorScheme();
@@ -53,7 +55,7 @@ export const SmallUsersCard = (item: SmallUsersCardProps) => {
   return (
     <Pressable
       onPress={() => router.push(`/agents/${item.id}`)}
-      className={cn('rounded-xl relative w-44')}
+      className={cn('rounded-xl relative w-48 h-[250px]')}
     >
       <View className="w-full h-10 flex-col justify-center items-start">
         <View
@@ -66,10 +68,10 @@ export const SmallUsersCard = (item: SmallUsersCardProps) => {
       </View>
       <View className="h-8 w-full bg-accent rounded-tl-xl rounded-tr-xl" />
       <AsyncImage
-        className="rounded-full w-20 h-20 absolute top-0 z-10 left-12 border border-background border-4"
+        className="rounded-full w-20 h-20 absolute top-0 z-10 left-14 border border-background border-4"
         source={{ uri: buildAssetUrl(item.avatar) }}
       />
-      <View className="p-4 bg-accent flex-col justify-between rounded-bl-xl rounded-br-xl h-[175px] w-full">
+      <View className="p-4 bg-accent flex-col justify-between rounded-bl-xl rounded-br-xl h-[175px] w-full flex-1">
         <Text className="font-medium">
           {item.first_name} {item.last_name}
         </Text>
@@ -258,5 +260,25 @@ export const MediumUsersCard = (
         </View>
       </View>
     </Pressable>
+  );
+};
+
+export const SmallUsersCardSkeleton = () => {
+  return (
+    <View className="w-48 h-[250px] rounded-xl relative">
+      <View className="flex-row items-start h-20">
+        <Skeleton className="h-4 w-8 rounded mt-4" />
+        <View className="rounded-full w-20 h-20 absolute top-0 z-10 left-14 bg-background">
+          <Skeleton className="rounded-full w-full h-full border border-background border-4" />
+        </View>
+        <View className="w-full absolute h-10 top-10 rounded-tl-xl rounded-tr-xl border-border border-solid border-[1px] border-b-0 bg-accent"></View>
+      </View>
+      <View className="flex-1 border-border border-solid border-[1px] border-t-0 flex-col gap-4 p-4 rounded-bl-xl rounded-br-xl bg-accent">
+        <Skeleton className="h-4 w-20" />
+        <Skeleton className="h-4 w-20 ml-auto mr-0" />
+        <LocationChipSkeleton className="w-28" />
+        <Skeleton className="h-4 w-20 mt-auto mb-0" />
+      </View>
+    </View>
   );
 };

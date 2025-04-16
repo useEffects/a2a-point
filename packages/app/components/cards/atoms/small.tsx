@@ -1,8 +1,9 @@
 import { AsyncImage } from 'app/components/async-image';
+import { Skeleton } from 'app/components/skeleton';
 import { Button } from 'app/components/ui/button';
 import { Separator } from 'app/components/ui/separator';
 import { Text } from 'app/components/ui/text';
-import { LocationChip } from 'app/components/utils/chips';
+import { LocationChip, LocationChipSkeleton } from 'app/components/utils/chips';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { useLocalizedCost } from 'app/hooks/locale-string';
 import { useRouter } from 'app/hooks/router';
@@ -11,7 +12,9 @@ import { ListingCardMetrics } from 'app/lib/props';
 import { Listing, Room, User } from 'app/lib/types';
 import opacity from 'hex-color-opacity';
 import { Bookmark, ExternalLink, Eye } from 'lucide-react-native';
-import { Image, Pressable, View } from 'react-native';
+import { Dimensions, Image, Platform, Pressable, View } from 'react-native';
+import { ListingTypeSkeleton, PriceSkeleton } from './photo';
+import { MetricsSkeleton } from './medium';
 
 export const OpenDetailsButton = ({
   id,
@@ -76,16 +79,20 @@ export const SmallListingCard = (
     item.price,
   );
 
+  const width =
+    Platform.OS !== 'web' ? Dimensions.get('window').width - 32 : undefined;
+
   return (
     <Pressable
       onPress={() => router.push(`/listings/${item.id}`)}
-      className="border-solid border-hairline border-border p-4 flex-row gap-4 bg-accent items-start rounded native:w-[400px]"
+      className="border-solid border-[1px] border-border p-4 flex-row gap-4 bg-accent items-start rounded w-[400px] h-[150px]"
+      style={{ width }}
     >
       <AsyncImage
         source={{ uri: buildAssetUrl(item.user_created.avatar) }}
         className="w-8 h-8 rounded-full"
       />
-      <View className="flex-col gap-4 flex-1">
+      <View className="flex-col justify-between flex-1 h-full">
         <View className="flex-col gap-1">
           <Text className="text-lg font-semibold text-wrap">{item.title}</Text>
           <View className="flex-row justify-between gap-4 items-center">
@@ -123,5 +130,29 @@ export const SmallListingCard = (
         </View>
       </View>
     </Pressable>
+  );
+};
+
+export const SmallListingCardSkeleton = () => {
+  const width =
+    Platform.OS !== 'web' ? Dimensions.get('window').width - 32 : undefined;
+  return (
+    <View
+      className="h-[150px] flex-row gap-4 p-4 w-[400px] rounded bg-accent"
+      style={{ width }}
+    >
+      <Skeleton className="w-8 h-8 rounded-full" />
+      <View className="flex-col h-full justify-between flex-1">
+        <Skeleton className="w-3/4 h-4" />
+        <View className="flex-row justify-between gap-4">
+          <PriceSkeleton />
+          <ListingTypeSkeleton />
+        </View>
+        <MetricsSkeleton />
+        <View className="flex-row justify-end">
+          <LocationChipSkeleton />
+        </View>
+      </View>
+    </View>
   );
 };

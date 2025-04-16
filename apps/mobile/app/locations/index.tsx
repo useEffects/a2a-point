@@ -7,7 +7,7 @@ import { MediumLocationCardProps, mediumLocationFields } from 'app/lib/props';
 import {
   LocationsList as LocationsListComponent,
   LocationsListScreenHeader,
-} from 'app/screens/locations-list';
+} from 'app/screens/locations';
 import { useQuery } from '@tanstack/react-query';
 import { Stacked } from '../../components/stacked';
 

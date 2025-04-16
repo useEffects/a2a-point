@@ -39,7 +39,7 @@ import { GoToPostButtonUi } from 'app/components/utils/common-ui';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { useLocaleString } from 'app/hooks/locale-string';
 import { useRouter, useGlobalSearchParams } from 'app/hooks/router';
-import { memberRole } from 'app/lib/constants';
+import { defaultLimit, memberRole } from 'app/lib/constants';
 import { ListingCardMetrics, mediumListingsFields } from 'app/lib/props';
 import { cn } from 'app/lib/utils';
 import { directusStore } from 'app/store/directus';
@@ -55,7 +55,14 @@ import {
   Sparkles,
   X,
 } from 'lucide-react-native';
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { View } from 'react-native';
 import { Circle, Svg } from 'react-native-svg';
 import {
@@ -65,7 +72,8 @@ import {
   TabView,
 } from 'react-native-tab-view';
 import { useDebounce } from 'use-debounce';
-import { GoToLoginButton } from './locked-screens';
+import { listingsScreenQuery } from './queries';
+import { GoToLoginButton } from '../locked-screens';
 
 export enum FilterKeys {
   Cost = 'cost',
@@ -109,7 +117,6 @@ export function ListingsScreen({
   const { authenticated } = directusStore();
   const [filters, setFilters] = useState([] as Filter[]);
   const [currentFilters, setCurrentFilters] = useState<Filter[]>([]);
-  const [key, setKey] = useState(0);
 
   const router = useRouter();
 
@@ -127,6 +134,8 @@ export function ListingsScreen({
     updateParams(currentFilters);
     setBottomSheetVisible(false);
   };
+
+  const listingsInfiniteQueryOptions = listingsScreenQuery();
 
   const finalFilters = useMemo(
     () => filters.map((f) => expandFilterValue(f.key, f.value)),
@@ -173,7 +182,6 @@ export function ListingsScreen({
   }, [filtersFromParams]);
 
   useEffect(() => {
-    setKey((p) => p + 1);
     setCurrentFilters(filters);
   }, [filters, debouncedSearchText]);
 
@@ -183,24 +191,9 @@ export function ListingsScreen({
         | (MediumListingCardProps & ListingCardMetrics)
         | ConfirmedAdvertisementCardProps
       >
-        initialItems={[]}
+        infiniteQueryOptions={listingsInfiniteQueryOptions}
         component={RenderMediumListingsAds}
         skeletonComponent={MediumListingCardSkeleton}
-        queryFn={mediumCardListingsWithAds}
-        queryKey={[
-          'Listings page medium cards with ads',
-          data.length,
-          filters,
-          debouncedSearchText,
-          key,
-        ]}
-        queryFnArgs={{
-          filter: filters.length
-            ? commonFilters[CommonFilters.Custom](finalFilters)
-            : undefined,
-          search: debouncedSearchText,
-          fields: mediumListingsFields,
-        }}
         flatListProps={{
           ItemSeparatorComponent: () => <Separator className="my-8" />,
           contentContainerClassName: 'max-w-xl',
@@ -696,7 +689,7 @@ const CategoryFilters = ({
   );
 };
 
-const categoryTiles = [
+export const categoryTiles = [
   {
     Icon: (props: LucideProps) => <Award {...props} />,
     title: 'Premium',

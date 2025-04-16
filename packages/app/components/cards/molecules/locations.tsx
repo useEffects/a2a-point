@@ -30,8 +30,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { FlatListProps, Image, Platform, Pressable, View } from 'react-native';
 import { BottomLoader } from './listings';
 import { AsyncImage } from 'app/components/async-image';
+import { Skeleton } from 'app/components/skeleton';
 
-const SmallLocationCard = ({ item }: { item: SmallLocationCardProps }) => {
+export const SmallLocationCard = (item: SmallLocationCardProps) => {
   const [count, setCount] = useState(0);
   const router = useRouter();
 
@@ -40,7 +41,7 @@ const SmallLocationCard = ({ item }: { item: SmallLocationCardProps }) => {
   }, []);
 
   return (
-    <View className="flex-col gap-4 items-center my-2">
+    <View className="flex-col gap-4 items-center">
       <Pressable
         className="relative h-16 w-16 rounded-full"
         onPress={() => router.push(`/locations/${item.id}`)}
@@ -49,7 +50,7 @@ const SmallLocationCard = ({ item }: { item: SmallLocationCardProps }) => {
           source={{ uri: buildAssetUrl(item.avatar!) }}
           className="w-16 h-16 rounded-full"
         />
-        <View className="absolute bg-accent flex-row justify-center items-center rounded-full w-8 h-8 left-auto -right-2 top-auto -bottom-2">
+        <View className="absolute bg-accent flex-row justify-center items-center rounded-full w-8 h-8 left-auto -right-2 top-auto -bottom-2 border-solid border-2 border-background">
           <Text className="!text-xs !text-accent-foreground">{count}</Text>
         </View>
       </Pressable>
@@ -77,7 +78,7 @@ export const SmallLocationCards = ({
     <HorizontalFlatList
       overScrollMode="never"
       data={data}
-      renderItem={({ item }) => <SmallLocationCard item={item} />}
+      renderItem={({ item }) => <SmallLocationCard {...item} />}
       ItemSeparatorComponent={() => <View className="w-4 h-4" />}
       numRows={2}
       keyExtractor={(item) => item.id}
@@ -284,11 +285,23 @@ export const MembersList = ({
           elevation: 10,
         }}
       >
-        <Text className="text-info-foreground text-xs">{total}+</Text>
+        <Text className="text-info-foreground !text-xs">{total}+</Text>
         {/* <ArrowUpRight className="text-info-foreground" size={12} /> */}
       </Pressable>
     </View>
   ) : (
     <Text className="text-warning">No members yet</Text>
+  );
+};
+
+export const SmallLocationCardSkeleton = () => {
+  return (
+    <View className="flex-col relative gap-4">
+      <Skeleton className="w-16 h-16 rounded-full" />
+      <Skeleton className="w-16 h-4" />
+      <View className="bg-background absolute left-auto -right-2 top-auto bottom-8 w-8 h-8 rounded-full">
+        <Skeleton className="border-2 border-background border-solid rounded-full w-full h-full" />
+      </View>
+    </View>
   );
 };

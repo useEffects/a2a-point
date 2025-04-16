@@ -19,6 +19,7 @@ import { Document } from './types';
 import { savesCountKey } from './misc/queries';
 import { filesize } from 'filesize';
 import * as Sentry from '@sentry/react-native';
+import { GetNextPageParamFunction } from '@tanstack/react-query';
 
 TimeAgo.addLocale(en);
 

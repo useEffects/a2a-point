@@ -3,7 +3,7 @@ import { useMediumUsersQuery } from 'app/components/cards/utils/users';
 import {
   UsersListScreen as UsersListScreenBase,
   UsersListScreenHeader,
-} from 'app/screens/users-list';
+} from 'app/screens/agents';
 
 export default function AgentsListScreenComponent() {
   const { data } = useMediumUsersQuery();

@@ -29,8 +29,8 @@ export const tailwindColorDefinitions = {
     foreground: 'hsl(var(--popover-foreground))',
   },
   card: {
-    DEFAULT: 'hsl(var(--accent))',
-    foreground: 'hsl(var(--accent-foreground))',
+    DEFAULT: 'hsl(var(--card))',
+    foreground: 'hsl(var(--card-foreground))',
   },
   warning: {
     DEFAULT: 'hsl(var(--warning))',

@@ -130,13 +130,17 @@ export const MediumListingCardSkeleton = () => {
         <LocationChipSkeleton />
       </View>
       <Skeleton className="rounded-2xl w-full flex-1 h-[150px]" />
-      <View className="flex-row justify-between items-center">
-        <View className="flex-row gap-4">
-          <Skeleton className="w-5 h-5 rounded-full" />
-          <Skeleton className="w-5 h-5 rounded-full" />
-        </View>
-        <Skeleton className="h-[12px] w-20" />
-      </View>
+      <MetricsSkeleton />
     </View>
   );
 };
+
+export const MetricsSkeleton = () => (
+  <View className="flex-row justify-between items-center">
+    <View className="flex-row gap-4">
+      <Skeleton className="w-5 h-5 rounded-full" />
+      <Skeleton className="w-5 h-5 rounded-full" />
+    </View>
+    <Skeleton className="h-[12px] w-20" />
+  </View>
+);

@@ -5,7 +5,7 @@ import { UserChip } from 'app/components/user-chip';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { useUserDetails } from 'app/hooks/user-details';
 import { buildAssetUrl, timeAgo } from 'app/lib/helpers';
-import { News } from 'app/lib/types';
+import { NewsProps } from 'app/lib/types';
 import { cn } from 'app/lib/utils';
 import opacity from 'hex-color-opacity';
 import { ReactNode } from 'react';
@@ -16,12 +16,9 @@ import { Link } from 'expo-router';
 import { AsyncImage } from 'app/components/async-image';
 
 export const NewsCard = ({
-  news,
-  isFirst,
-}: {
-  news: News;
-  isFirst?: boolean;
-}) => {
+  isFirst = false,
+  ...news
+}: NewsProps & { isFirst?: boolean }) => {
   const isNative = Platform.OS !== 'web';
   const windowWidth = Dimensions.get('window').width;
   const { colors } = useColorScheme();
@@ -109,4 +106,8 @@ export const NewsCard = ({
       </View>
     </Component>
   );
+};
+
+export const NewsCardSkeleton = () => {
+  return <View></View>;
 };
