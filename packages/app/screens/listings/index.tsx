@@ -229,10 +229,10 @@ export function ListingsScreen({
         | ConfirmedAdvertisementCardProps
       >
         infiniteQueryOptions={listingsInfiniteQueryOptions}
-        component={RenderMediumListingsAds}
+        component={MediumListingCardSkeleton}
         skeletonComponent={MediumListingCardSkeleton}
         flatListProps={{
-          ItemSeparatorComponent: () => <Separator className="my-8" />,
+          ItemSeparatorComponent: () => <Separator className="my-4" />,
           contentContainerClassName: 'max-w-xl px-4 py-8 bg-background flex-1',
           contentContainerStyle: {
             backgroundColor: colors.background,

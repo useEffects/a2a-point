@@ -129,14 +129,18 @@ export const MediumUsersCard = (
               />
             </View>
             <View className="bg-accent w-full pl-20 flex-row items-center justify-between gap-4 pr-4 rounded-tl-xl flex-grow">
-              <View className="flex-row gap-1 items-center">
-                <Star
-                  size={18}
-                  color={colors.success}
-                  className="text-success"
-                />
-                <Text className="text-success">{item.computed_rating}</Text>
-              </View>
+              {item.computed_rating ? (
+                <View className="flex-row gap-1 items-center">
+                  <Star
+                    size={18}
+                    color={colors.success}
+                    className="text-success"
+                  />
+                  <Text className="text-success">{item.computed_rating}</Text>
+                </View>
+              ) : (
+                <></>
+              )}
               <View className="flex-row gap-1 items-center">
                 <Text className="text-sm text-subtext">Ratings</Text>
                 <Text className="text-sm text-subtext">

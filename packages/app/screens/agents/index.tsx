@@ -12,6 +12,7 @@ import { useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { useDebounce } from 'use-debounce';
 import { mediumUsersQuery } from './queries';
+import { useColorScheme } from 'app/hooks/color-scheme';
 
 export const UsersListScreen = ({
   data,
@@ -24,11 +25,20 @@ export const UsersListScreen = ({
     () => mediumUsersQuery({ search: debouncedSearchText }),
     [debouncedSearchText],
   );
+  const { colors } = useColorScheme();
 
   return (
-    <View className="flex-1 flex-col justify-start">
-      <View className="p-4 py-4">
-        <SearchBar searchText={searchText} setSearchText={setSearchText} />
+    <View className="flex-1 flex-col justify-start bg-accent">
+      <View className="px-4 pb-4 bg-accent">
+        <SearchBar
+          searchText={searchText}
+          setSearchText={setSearchText}
+          searchBarProps={{
+            inputContainerStyle: {
+              backgroundColor: colors.background,
+            },
+          }}
+        />
       </View>
       <InfiniteList<MediumUsersCardProps & UsersCardMetrics>
         component={(item) => <MediumUsersCard {...item} />}
@@ -36,8 +46,14 @@ export const UsersListScreen = ({
         skeletonComponent={MediumUsersCardSkeleton}
         infinite
         flatListProps={{
-          ItemSeparatorComponent: () => <Separator className="my-8" />,
+          ItemSeparatorComponent: () => <Separator className="my-4" />,
           contentContainerClassName: 'p-4 max-w-xl',
+          contentContainerStyle: {
+            paddingHorizontal: 16,
+            paddingVertical: 32,
+            backgroundColor: colors.background,
+            flex: 1,
+          },
           showsVerticalScrollIndicator: true,
           scrollEnabled: false,
         }}
@@ -48,7 +64,7 @@ export const UsersListScreen = ({
 
 export function UsersListScreenHeader() {
   return (
-    <Header>
+    <Header hideSeparator>
       <View className="flex-row items-center gap-4">
         <BackButton />
         <HeaderTitle>Agents</HeaderTitle>

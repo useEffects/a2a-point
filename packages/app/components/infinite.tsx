@@ -50,8 +50,14 @@ export default function InfiniteList<
     viewAllLink,
   } = props;
 
-  const { data, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage } =
-    useInfiniteQuery(infiniteQueryOptions);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isLoading,
+    isFetchingNextPage,
+    isFetching,
+  } = useInfiniteQuery(infiniteQueryOptions);
 
   const finalData = useMemo(() => {
     return uniqBy(
@@ -88,7 +94,9 @@ export default function InfiniteList<
       [finalData, handleEndReached, infinite, hasNextPage],
     );
 
-  return isLoading && !isFetchingNextPage ? (
+  console.log({ isFetching });
+
+  return isFetching ? (
     <FlatList
       data={Array(
         props.skeletonCount ?? [2, 2, 3][Math.floor(Math.random() * 3)],
