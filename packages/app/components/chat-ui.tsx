@@ -458,7 +458,7 @@ const Footer = (
       {currentMessage.assets && currentMessage.assets.length ? (
         <View className="border-solid border-0 border-l-4 border-primary bg-accent p-2 flex-row justify-between items-center">
           <Text>
-            Selected {currentMessage.assets.length}{' '}
+            Selected {currentMessage.assets.length}
             {currentMessage.assets.length === 1 ? 'asset' : 'assets'}
           </Text>
           <Button
@@ -536,7 +536,7 @@ const Footer = (
         <View className="p-4 bg-accent flex-col gap-8">
           <View className="flex-row justify-between">
             <Text>
-              Generate <Text className="text-primary">Agent to Agent</Text>{' '}
+              Generate <Text className="text-primary">Agent to Agent</Text>
               agreement form
             </Text>
             <Button

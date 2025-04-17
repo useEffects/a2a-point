@@ -64,7 +64,7 @@ export const MembershipApplyScreen = () => {
               </CardHeader>
               <CardContent>
                 <Text>
-                  You are currently subscribed to{' '}
+                  You are currently subscribed to
                   <Text className="text-info">{user.plan}</Text> plan
                 </Text>
               </CardContent>
@@ -126,10 +126,7 @@ export const MembershipApplyScreen = () => {
                 {yearly ? (
                   <Text className="text-primary"> Yearly </Text>
                 ) : (
-                  <Text className="text-muted-foreground text-sm">
-                    {' '}
-                    Monthly{' '}
-                  </Text>
+                  <Text className="text-muted-foreground text-sm">Monthly</Text>
                 )}
               </Button>
               <Text className="text-info text-sm">

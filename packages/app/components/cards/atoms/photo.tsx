@@ -67,29 +67,39 @@ export const PhotoListingCard = (item: PhotoListingProps) => {
   );
 };
 
+// Re-usable skeletons for consistency (as provided)
+export const PriceSkeleton = () => <Skeleton className="h-4 w-20 rounded" />; // Slightly adjusted width
+export const ListingTypeSkeleton = () => (
+  <Skeleton className="h-4 w-16 rounded" />
+); // Slightly adjusted width
+
 export const PhotoListingCardSkeleton = () => {
+  // Calculate dimensions exactly like the original component
   const windowWidth = Dimensions.get('window').width;
   const imageWidth = windowWidth / 2;
   const imageHeight = (9 / 16) * imageWidth;
+
   return (
+    // Root View: Match Pressable styles precisely
     <View
-      className="border-border flex-col justify-between bg-accent rounded border-solid border-[1px]"
+      className="rounded-xl bg-accent border-border flex-col justify-between border-[1px] border-solid border-border"
       style={{ width: imageWidth, height: imageHeight * 2 }}
     >
       <View style={{ width: imageWidth, height: imageHeight }}>
-        <Skeleton className="w-full h-full" />
+        <Skeleton className="w-full h-full rounded-tl-xl rounded-tr-xl" />
       </View>
-      <View className="p-4 flex-col gap-2 items-start w-full">
+
+      <View
+        className="flex-col gap-2 px-2 py-4 items-start w-full flex-1"
+        style={{ width: imageWidth }}
+      >
         <UserChipSkeleton />
-        <Skeleton className="w-[90%] h-4" />
-        <View className="flex-row justify-between w-full">
-          <Skeleton className="h-4 w-28" />
-          <Skeleton className="h-4 w-12" />
+        <Skeleton className="w-[90%] h-4 rounded" /> {/* Added rounding */}
+        <View className="flex-row gap-4 justify-between w-full mt-auto mb-0">
+          <PriceSkeleton />
+          <ListingTypeSkeleton />
         </View>
       </View>
     </View>
   );
 };
-
-export const PriceSkeleton = () => <Skeleton className="h-4 w-28" />;
-export const ListingTypeSkeleton = () => <Skeleton className="h-4 w-12" />;

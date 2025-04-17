@@ -95,7 +95,7 @@ export const FullListingCard = (
                 style={{ backgroundColor: opacity(colors.info, 0.1) }}
                 className="p-1 rounded text-sm text-info"
               >
-                Expected broker fees: {props.expected_broker_fees} %{' '}
+                Expected broker fees: {props.expected_broker_fees} %
               </Text>
               <Text className="border border-solid border-foreground px-2 rounded-full self-start capitalize">
                 {props.deal_type}

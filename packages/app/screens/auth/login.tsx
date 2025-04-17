@@ -111,14 +111,14 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
             <Logo width={40} height={40} />
           </View>
           <Text className="text-sm text-subtext text-center">
-            By continuing, you agree to our{' '}
+            By continuing, you agree to our
             <Text
               onPress={() => Linking.openURL('https://a2apoint.com/terms')}
               className="text-sm text-info underline"
             >
               Terms of Service
-            </Text>{' '}
-            and that you have read our{' '}
+            </Text>
+            and that you have read our
             <Text
               onPress={() => Linking.openURL('https://a2apoint.com/privacy')}
               className="text-sm text-info underline"

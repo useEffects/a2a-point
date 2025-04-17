@@ -41,7 +41,7 @@ export const UsersListScreen = ({
         />
       </View>
       <InfiniteList<MediumUsersCardProps & UsersCardMetrics>
-        component={(item) => <MediumUsersCard {...item} />}
+        component={MediumUsersCard}
         infiniteQueryOptions={mediumUsersCardsQueryOptions}
         skeletonComponent={MediumUsersCardSkeleton}
         infinite

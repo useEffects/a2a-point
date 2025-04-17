@@ -229,7 +229,7 @@ export function ListingsScreen({
         | ConfirmedAdvertisementCardProps
       >
         infiniteQueryOptions={listingsInfiniteQueryOptions}
-        component={MediumListingCardSkeleton}
+        component={RenderMediumListingsAds}
         skeletonComponent={MediumListingCardSkeleton}
         flatListProps={{
           ItemSeparatorComponent: () => <Separator className="my-4" />,

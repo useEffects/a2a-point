@@ -1,18 +1,21 @@
 import {
+  MediumListingCard,
+  MediumListingCardProps,
+  MediumListingCardSkeleton,
+} from 'app/components/cards/atoms/medium';
+import {
   CommonFilters,
   RenderListings,
   bodies,
   commonFilters,
 } from 'app/components/cards/molecules/listings';
-import {
-  BackButton,
-  Header,
-  HeaderTitle,
-} from 'app/components/header';
+import { BackButton, Header, HeaderTitle } from 'app/components/header';
 import { Bookmark, Eye } from 'app/components/icons';
+import InfiniteList from 'app/components/infinite';
 import { Button } from 'app/components/ui/button';
 import { Separator } from 'app/components/ui/separator';
 import { Text } from 'app/components/ui/text';
+import { ListingCardMetrics } from 'app/lib/props';
 import { cn } from 'app/lib/utils';
 import { LucideIcon } from 'lucide-react-native';
 import { useState } from 'react';
@@ -25,6 +28,7 @@ import {
   SceneRendererProps,
   TabView,
 } from 'react-native-tab-view';
+import { seenByMeListingsQuery, savedByMeListingsQuery } from './queries';
 
 export function ActivityScreen() {
   const [navigationState, setNavigationState] = useState<
@@ -34,7 +38,7 @@ export function ActivityScreen() {
     routes: [{ key: 'viewed' }, { key: 'saved' }],
   });
   return (
-    <View className="flex-1">
+    <View className="flex-1 px-4 pb-8">
       <TabView
         renderTabBar={(props) => (
           <TabBar {...props} navigationState={navigationState} />
@@ -64,35 +68,37 @@ export function ActivityScreenHeader() {
   );
 }
 
-const RenderViewed = () => (
-  <RenderListings
-    render={bodies.medium}
-    filter={commonFilters[CommonFilters.ViewedByMe]()}
-    noAds
-    flatListProps={{
-      contentContainerClassName: 'px-4',
-      ItemSeparatorComponent: () => <Separator className="my-4" />,
-      scrollEnabled: false,
-    }}
-    initialData={[]}
-    infinite
-  />
-);
+const RenderViewed = () => {
+  const seenByMeListingsQueryOptions = seenByMeListingsQuery();
+  return (
+    <InfiniteList<MediumListingCardProps & ListingCardMetrics>
+      infiniteQueryOptions={seenByMeListingsQueryOptions}
+      component={MediumListingCard}
+      skeletonComponent={MediumListingCardSkeleton}
+      flatListProps={{
+        contentContainerClassName: 'flex-grow',
+        ItemSeparatorComponent: () => <Separator className="my-4" />,
+      }}
+      infinite
+    />
+  );
+};
 
-const RenderSaved = () => (
-  <RenderListings
-    render={bodies.medium}
-    filter={commonFilters[CommonFilters.SavedByMe]()}
-    noAds
-    flatListProps={{
-      contentContainerClassName: 'px-4',
-      ItemSeparatorComponent: () => <Separator className="my-4" />,
-      scrollEnabled: false,
-    }}
-    initialData={[]}
-    infinite
-  />
-);
+const RenderSaved = () => {
+  const savedByMeListingsQueryOptions = savedByMeListingsQuery();
+  return (
+    <InfiniteList<MediumListingCardProps & ListingCardMetrics>
+      infiniteQueryOptions={savedByMeListingsQueryOptions}
+      component={MediumListingCard}
+      skeletonComponent={MediumListingCardSkeleton}
+      flatListProps={{
+        contentContainerClassName: 'flex-grow',
+        ItemSeparatorComponent: () => <Separator className="my-4" />,
+      }}
+      infinite
+    />
+  );
+};
 
 const TabBar = (
   props: SceneRendererProps & { navigationState: NavigationState<Route> },
@@ -114,7 +120,7 @@ const TabBar = (
   };
 
   return (
-    <View className="flex-row w-full items-center h-24">
+    <View className="flex-row w-full items-center h-24 mb-4">
       {props.navigationState.routes.map((route, index) => {
         const { label, Icon } = map[route.key]!;
         return (

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { directusStore } from 'app/store/directus';
 import { directusUrl } from 'app/lib/constants';
-import { ProfileScreen, ProfileScreenHeader } from 'app/screens/profile';
+import { ProfileScreen, ProfileScreenHeader } from 'app/screens/agents/profile';
 import { useGlobalSearchParams } from 'expo-router';
 import { Stacked } from '../../components/stacked';
 

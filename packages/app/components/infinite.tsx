@@ -94,9 +94,7 @@ export default function InfiniteList<
       [finalData, handleEndReached, infinite, hasNextPage],
     );
 
-  console.log({ isFetching });
-
-  return isFetching ? (
+  return isFetching && !isFetchingNextPage ? (
     <FlatList
       data={Array(
         props.skeletonCount ?? [2, 2, 3][Math.floor(Math.random() * 3)],

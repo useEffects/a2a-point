@@ -267,26 +267,100 @@ export const MediumUsersCard = (
   );
 };
 
+// Placeholder for the chip skeleton, adjust if you have a specific one
+const ChipSkeleton = ({ className }: { className?: string }) => (
+  <Skeleton className={cn('h-6 w-24 rounded-full', className)} />
+);
+
 export const SmallUsersCardSkeleton = () => {
   return (
-    <View className="w-48 h-[250px] rounded-xl relative">
-      <View className="flex-row items-start h-20">
-        <Skeleton className="h-4 w-8 rounded mt-4" />
-        <View className="rounded-full w-20 h-20 absolute top-0 z-10 left-14 bg-background">
-          <Skeleton className="rounded-full w-full h-full border border-background border-4" />
-        </View>
-        <View className="w-full absolute h-10 top-10 rounded-tl-xl rounded-tr-xl border-border border-solid border-[1px] border-b-0 bg-accent"></View>
+    <View className="w-48 h-[250px] rounded-xl relative bg-accent">
+      <View className="h-10 w-full px-1 pt-1 flex-col items-start">
+        <Skeleton className="h-5 w-10 rounded" />
       </View>
-      <View className="flex-1 border-border border-solid border-[1px] border-t-0 flex-col gap-4 p-4 rounded-bl-xl rounded-br-xl bg-accent">
-        <Skeleton className="h-4 w-20" />
-        <Skeleton className="h-4 w-20 ml-auto mr-0" />
-        <LocationChipSkeleton className="w-28" />
-        <Skeleton className="h-4 w-20 mt-auto mb-0" />
+      <View className="h-8 w-full bg-accent rounded-tl-xl rounded-tr-xl absolute top-2 left-0 right-0" />
+
+      <Skeleton className="rounded-full w-20 h-20 absolute top-0 z-10 left-14 border border-background border-4" />
+
+      <View className="absolute top-10 left-0 right-0 bottom-0 p-4 bg-accent flex-col justify-between rounded-bl-xl rounded-br-xl border-t border-transparent">
+        <View className="mt-10">
+          <Skeleton className="h-4 w-3/4 mb-2" />
+          <View className="flex-row justify-between items-center mb-2">
+            <View className="flex-row items-center gap-1">
+              <Skeleton className="h-4 w-4 rounded-sm" />
+              <Skeleton className="h-4 w-6" />
+            </View>
+            <View className="flex-row items-center gap-1">
+              <Skeleton className="h-4 w-5" />
+              <Skeleton className="h-4 w-10" />
+            </View>
+          </View>
+          <ChipSkeleton className="w-28 mb-2" />
+        </View>
+
+        <View>
+          <Skeleton className="h-[1px] w-full my-2 bg-border" />
+          <View className="flex-row gap-1 items-center">
+            <Skeleton className="h-4 w-6" />
+            <Skeleton className="h-4 w-12" />
+          </View>
+        </View>
       </View>
     </View>
   );
 };
 
 export const MediumUsersCardSkeleton = () => {
-  return <View></View>;
+  return (
+    <View className="flex-col gap-4">
+      <View className="w-full flex-row justify-start min-h-[100px]">
+        <View className="w-1/2 h-full">
+          <View className="relative flex-col items-start w-full h-16">
+            <View className="h-8 bg-background w-full pl-20 flex-row items-center gap-1">
+              <Skeleton className="h-4 w-12 rounded" />
+            </View>
+            <View className="absolute" style={{ elevation: 100, zIndex: 100 }}>
+              <Skeleton className="w-16 h-16 rounded-full border border-background border-1" />
+            </View>
+            <View className="bg-accent w-full pl-20 flex-row items-center justify-between gap-4 pr-4 rounded-tl-xl flex-grow">
+              <Skeleton className="h-4 w-10 rounded" />
+              <Skeleton className="h-4 w-16 rounded" />
+            </View>
+          </View>
+          <View className="w-full flex-col gap-2 p-4 bg-accent rounded-bl-xl flex-1 justify-center">
+            <Skeleton className="h-5 w-3/4 rounded" />
+          </View>
+        </View>
+
+        <View className="w-1/2 bg-background flex-col h-full">
+          <View className="h-8 w-full flex-row justify-end items-center gap-2 pr-2">
+            <Skeleton className="h-5 w-10 rounded" />
+            <Skeleton className="h-5 w-14 rounded" />
+          </View>
+          <View className="p-4 pt-2 flex-1 flex-col justify-evenly gap-2 items-start rounded-tr-xl rounded-br-xl bg-accent">
+            <Skeleton className="h-4 w-1/2 rounded" />
+            <View className="flex-row gap-2 items-center flex-wrap">
+              <Skeleton className="h-5 w-10 rounded" />
+              <Skeleton className="h-5 w-12 rounded" />
+              <Skeleton className="h-5 w-8 rounded" />
+            </View>
+          </View>
+        </View>
+      </View>
+
+      <View className="flex-col gap-1 mt-1">
+        <Skeleton className="h-4 w-full rounded" />
+        <Skeleton className="h-4 w-5/6 rounded" />
+      </View>
+
+      <View className="w-full flex-row gap-4 items-center mt-2">
+        <LocationChipSkeleton className="w-32" />
+        <View className="flex-row gap-2 ml-auto mr-0">
+          <Skeleton className="w-8 h-8 rounded-full" />
+          <Skeleton className="w-8 h-8 rounded-full" />
+          <Skeleton className="w-8 h-8 rounded-full" />
+        </View>
+      </View>
+    </View>
+  );
 };

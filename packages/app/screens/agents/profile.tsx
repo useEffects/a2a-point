@@ -5,6 +5,7 @@ import { BackButton, Header, HeaderTitle } from 'app/components/header';
 import {
   ArrowUp,
   Bell,
+  Check,
   EllipsisVertical,
   Expand,
   Info,
@@ -13,6 +14,7 @@ import {
   Rows2,
   Shrink,
   UserCog2,
+  X,
 } from 'app/components/icons';
 import { ToggleTheme } from 'app/components/toggle-theme';
 import {
@@ -33,6 +35,7 @@ import {
   KC_REALM,
   KC_URL,
   NEXT_URL,
+  profilePicturesFolderId,
 } from 'app/lib/constants';
 import { buildAssetUrl, timeAgo } from 'app/lib/helpers';
 import { getListingsCountForUser } from 'app/lib/misc/queries';
@@ -52,6 +55,7 @@ import {
 } from 'react';
 import {
   DimensionValue,
+  Dimensions,
   Image,
   Linking,
   NativeScrollEvent,
@@ -70,22 +74,25 @@ import {
   TabView,
 } from 'react-native-tab-view';
 import { Link } from 'expo-router';
-import { ExtraSmallListingCardProps } from '../components/cards/atoms/extra-small';
-import { MediumListingCardProps } from '../components/cards/atoms/medium';
+import { ExtraSmallListingCardProps } from '../../components/cards/atoms/extra-small';
+import { MediumListingCardProps } from '../../components/cards/atoms/medium';
 import {
   CommonFilters,
   RenderListings,
   bodies,
   commonFilters,
-} from '../components/cards/molecules/listings';
-import { Button } from '../components/ui/button';
-import { FilterKeys } from './listings';
-import LockedScreen from './locked-screens';
+} from '../../components/cards/molecules/listings';
+import { Button } from '../../components/ui/button';
+import { FilterKeys } from '../listings';
+import LockedScreen from '../locked-screens';
 import { AsyncImage } from 'app/components/async-image';
 import { AuthContext, kcRefreshTokenKey } from 'app/context/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { keycloakStore } from 'app/store/keycloak';
 import * as Sentry from '@sentry/react-native';
+import { ProfilePic } from './components/profile-pic';
+import { Asset, withUri } from 'app/components/chat-ui';
+import { uploadFileToDirectus } from 'app/lib/file-upload';
 
 const LockedProfileScreen = () => {
   const { isDarkColorScheme } = useColorScheme();
@@ -125,10 +132,16 @@ export function Profile({
   const [listingsCount, setListingsCount] = useState<number | null>(0);
   const { width, height } = useWindowDimensions();
   const [collapsed, setCollapsed] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<Asset<withUri> | null>(
+    null,
+  );
+  const [selectedImageResLoading, setSelectedImageResLoading] = useState(false);
   const [big, setBig] = useState(false);
-  const { user: currentUser } = userStore();
+  const { user: currentUser, setUserStore } = userStore();
+  const { rest } = directusStore();
   const { authenticated } = directusStore();
   const router = useRouter();
+  const windowHeight = Dimensions.get('window').height;
 
   useEffect(() => {
     getListingsCountForUser(user.id).then(setListingsCount);
@@ -150,9 +163,9 @@ export function Profile({
         <Collapsible duration={500} collapsed={collapsed}>
           <View className="flex-col gap-8 my-8">
             <View className="flex-col gap-4 items-center">
-              <AsyncImage
-                source={{ uri: buildAssetUrl(user.avatar) }}
-                className="w-24 h-24 rounded-full"
+              <ProfilePic
+                selectedImage={selectedImage}
+                setSelectedImage={setSelectedImage}
               />
               <View className="flex-col items-center">
                 <Text className="text-primary font-semibold">
@@ -242,6 +255,40 @@ export function Profile({
     );
   };
 
+  const handleProfilePicChange = async () => {
+    if (!selectedImage) return;
+    setSelectedImageResLoading(true);
+    const fileId = await uploadFileToDirectus(
+      selectedImage,
+      profilePicturesFolderId,
+    );
+
+    const accessToken = await rest.getToken();
+    const res = await fetch(`${directusUrl}/users/${currentUser.id}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        data: {
+          avatar: fileId,
+        },
+      }),
+    });
+
+    const body = await res.json();
+
+    if (!res.ok) {
+      Sentry.captureMessage('Profile pic update did not succeed');
+      console.error('Profile pic update did not succeed');
+      console.error(body);
+    }
+
+    setUserStore({ user: { ...currentUser, avatar: fileId } });
+    setSelectedImage(null);
+    setSelectedImageResLoading(false);
+  };
+
   const RenderScene = (props: SceneRendererProps & { route: any }) => {
     const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       const { nativeEvent } = e;
@@ -271,7 +318,7 @@ export function Profile({
     );
   };
   return (
-    <View className="relative flex-1">
+    <View className="relative" style={{ height: windowHeight - 140 }}>
       <TabView
         style={{ height }}
         renderTabBar={TabBar}
@@ -283,17 +330,40 @@ export function Profile({
         onIndexChange={setIndex}
         initialLayout={{ width }}
       />
-      {collapsed ? (
-        <Button
-          onPress={() => setCollapsed(false)}
-          className="absolute bottom-8 right-4 top-auto left-auto rounded-full"
-          size={'icon'}
-        >
-          <ArrowUp size={18} color={colors['primary-foreground']} />
-        </Button>
-      ) : (
-        <></>
-      )}
+      <View className="absolute bottom-8 right-4 top-auto left-auto flex-col gap-4">
+        {selectedImage ? (
+          <View className="flex-row gap-4">
+            <Button
+              onPress={() => handleProfilePicChange()}
+              disabled={selectedImageResLoading}
+              className="rounded-full bg-success"
+              size={'icon'}
+            >
+              <Check size={18} color={colors['success-foreground']} />
+            </Button>
+            <Button
+              onPress={() => setSelectedImage(null)}
+              className="rounded-full bg-destructive"
+              size={'icon'}
+            >
+              <X size={18} color={colors['destructive-foreground']} />
+            </Button>
+          </View>
+        ) : (
+          <></>
+        )}
+        {collapsed ? (
+          <Button
+            onPress={() => setCollapsed(false)}
+            className="rounded-full ml-auto mr-0"
+            size={'icon'}
+          >
+            <ArrowUp size={18} color={colors['primary-foreground']} />
+          </Button>
+        ) : (
+          <></>
+        )}
+      </View>
     </View>
   );
 }

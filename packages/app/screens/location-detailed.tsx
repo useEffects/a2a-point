@@ -1,4 +1,8 @@
-import { MediumListingCardProps } from 'app/components/cards/atoms/medium';
+import {
+  MediumListingCard,
+  MediumListingCardProps,
+  MediumListingCardSkeleton,
+} from 'app/components/cards/atoms/medium';
 import {
   CommonFilters,
   RenderListings,
@@ -7,11 +11,7 @@ import {
 } from 'app/components/cards/molecules/listings';
 import { MembersList } from 'app/components/cards/molecules/locations';
 import { FullWidthImage } from 'app/components/full-width-image';
-import {
-  BackButton,
-  Header,
-  HeaderTitle,
-} from 'app/components/header';
+import { BackButton, Header, HeaderTitle } from 'app/components/header';
 import { SeparatorText } from 'app/components/separator-text';
 import { Button } from 'app/components/ui/button';
 import { Separator } from 'app/components/ui/separator';
@@ -26,6 +26,9 @@ import { ArrowUpRight } from 'lucide-react-native';
 import { Platform, View } from 'react-native';
 import { FilterKeys } from './listings';
 import { useColorScheme } from 'app/hooks/color-scheme';
+import { mediumListingsForGivenLocation } from './locations/queries';
+import { useMemo } from 'react';
+import InfiniteList from 'app/components/infinite';
 
 export type LocationListingProps = Pick<Room, 'id' | 'avatar' | 'title'> & {
   members: {
@@ -47,6 +50,10 @@ export function LocationDetailed(props: LocationDetailedProps) {
   const { authenticated } = directusStore();
   const router = useRouter();
   const { colors } = useColorScheme();
+  const listingsQueryOptions = useMemo(
+    () => mediumListingsForGivenLocation({}, props.room.id),
+    [props.room.id],
+  );
 
   const { room, totalMembers } = props;
 
@@ -79,19 +86,19 @@ export function LocationDetailed(props: LocationDetailedProps) {
           <SeparatorText hideLeft>
             <Text>Listings Posted</Text>
           </SeparatorText>
-          <RenderListings<MediumListingCardProps & ListingCardMetrics>
-            render={bodies.medium}
-            filter={commonFilters[CommonFilters.GroupId](room.id)}
+          <InfiniteList<MediumListingCardProps & ListingCardMetrics>
+            component={MediumListingCard}
+            skeletonComponent={MediumListingCardSkeleton}
+            infiniteQueryOptions={listingsQueryOptions}
             flatListProps={{
               scrollEnabled: Platform.OS === 'web',
               ItemSeparatorComponent: () => <Separator className="my-2" />,
             }}
-            paramFilters={[
+            viewAllLink={`/listings?filter=${JSON.stringify([
               {
                 [FilterKeys.Location]: room.id,
               },
-            ]}
-            initialData={props.listings}
+            ])}`}
           />
         </View>
       </ScrollView>

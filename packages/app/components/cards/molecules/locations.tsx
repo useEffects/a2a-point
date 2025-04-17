@@ -98,15 +98,13 @@ export const SmallLocationCards = ({
   );
 };
 
-export const MediumLocationCard = ({
-  item,
-}: {
-  item: MediumLocationCardProps & LocationCardMetrics;
-}) => {
+export const MediumLocationCard = (
+  item: MediumLocationCardProps & LocationCardMetrics,
+) => {
   const { authenticated } = directusStore();
   const router = useRouter();
 
-  item.members = item.members.filter((member) => member.directus_users_id);
+  const finalMembers = item.members.filter((member) => member.directus_users_id);
 
   return (
     <Pressable
@@ -125,7 +123,7 @@ export const MediumLocationCard = ({
         </Text>
         <MembersList
           locationId={item.id}
-          members={item.members.slice(0, 5)}
+          members={finalMembers.slice(0, 5)}
           total={item.membersCount}
         />
         <Button
@@ -143,110 +141,28 @@ export const MediumLocationCard = ({
   );
 };
 
-export const MediumLocationCards = ({
-  initialData,
-  limit = 5,
-  searchText = '',
-  infinite,
-  flatListProps,
-}: {
-  initialData: (MediumLocationCardProps & LocationCardMetrics)[];
-  limit?: number;
-  infinite?: boolean;
-  searchText?: string;
-  flatListProps?: Omit<
-    FlatListProps<MediumLocationCardProps & LocationCardMetrics>,
-    'data' | 'renderItem'
-  >;
-}) => {
-  const router = useRouter();
-
-  const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery<{
-    items: (MediumLocationCardProps & LocationCardMetrics)[];
-    page: unknown;
-  }>({
-    queryKey: [
-      'Fetching Locations for medium card',
-      searchText,
-      limit,
-      infinite,
-    ],
-    queryFn: async ({ pageParam }) => {
-      const res = await renderCardsQuery<MediumLocationCardProps>({
-        collection: 'rooms',
-        limit,
-        fields: mediumLocationFields,
-        filter: {
-          type: {
-            _eq: 'group',
-          },
-        },
-        offset: Number(pageParam) * limit,
-        searchText,
-        deep: {
-          members: {
-            _limit: 5,
-          },
-        },
-      }).then((res) =>
-        Promise.all(
-          res.map(async (r) => {
-            const listingsCount = await getListingsCountForLocation(r.id);
-            const membersCount = await getMembersCountForLocation(r.id);
-            return {
-              ...r,
-              listingsCount,
-              membersCount,
-            } as MediumLocationCardProps & LocationCardMetrics;
-          }),
-        ),
-      );
-      return {
-        items: res,
-        page: pageParam,
-      };
-    },
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages, lastPageParam) => {
-      if (lastPage.items.length < limit) return undefined;
-      else return Number(lastPageParam) + 1;
-    },
-    enabled: infinite,
-  });
-
-  const onEndReached = () => {
-    hasNextPage && fetchNextPage();
-  };
-
-  const items = data?.pages.map((page) => page.items).flat() ?? [];
-  const finalData = useMemo(() => {
-    return infinite ? items : initialData;
-  }, [items, initialData, infinite]);
-
+export const MediumLocationCardSkeleton = () => {
   return (
-    <FlatList
-      data={uniqBy(finalData, 'id')}
-      renderItem={({ item }) => <MediumLocationCard item={item} />}
-      ItemSeparatorComponent={() => <View className="w-4 h-4" />}
-      onEndReached={() => Platform.OS !== 'web' && infinite && onEndReached()}
-      ListFooterComponent={
-        infinite ? (
-          <BottomLoader
-            endReached={!hasNextPage}
-            onEndReached={() => Platform.OS === 'web' && onEndReached()}
-          />
-        ) : (
-          <ViewAllButton
-            horizontal={false}
-            button={(props) => (
-              <Button onPress={() => router.push('/locations')} {...props} />
-            )}
-          />
-        )
-      }
-      keyExtractor={(item) => item.id}
-      {...flatListProps}
-    />
+    // Root container matching MediumLocationCard's layout and aspect ratio
+    <View className="flex-row rounded-xl bg-accent justify-start items-start w-full aspect-video overflow-hidden">
+      <Skeleton className="w-1/2 h-full rounded-none" />
+      <View className="h-full flex-col justify-between p-4 w-1/2">
+        <View>
+          <Skeleton className="h-5 w-5/6 mb-2 rounded" />
+          <Skeleton className="h-4 w-1/2 mb-3 rounded" />
+          <View className="flex-row items-center mb-3">
+            <Skeleton className="h-12 w-12 rounded-full border-2 border-accent" />
+            <Skeleton className="h-12 w-12 rounded-full border-2 border-accent -ml-2" />
+            <Skeleton className="h-12 w-12 rounded-full border-2 border-accent -ml-2" />
+            <Skeleton className="h-12 w-12 rounded-full border-2 border-accent -ml-2" />
+          </View>
+        </View>
+
+        <View>
+          <Skeleton className="h-10 w-full rounded-md" />
+        </View>
+      </View>
+    </View>
   );
 };
 

@@ -14,6 +14,7 @@ import * as Linking from 'expo-linking';
 import { portfolioUrl } from 'app/lib/constants';
 import { Link } from 'expo-router';
 import { AsyncImage } from 'app/components/async-image';
+import { Skeleton } from 'app/components/skeleton';
 
 export const NewsCard = ({
   isFirst = false,
@@ -109,5 +110,70 @@ export const NewsCard = ({
 };
 
 export const NewsCardSkeleton = () => {
-  return <View></View>;
+  const isNative = Platform.OS !== 'web';
+  const windowWidth = Dimensions.get('window').width;
+
+  // Define dimensions based on typical non-'isFirst' card
+  const cardWidth = isNative ? windowWidth * 0.5 : undefined; // Mimic native width style
+  const imageHeight = isNative ? 'h-[200px]' : 'h-[300px]'; // Common non-'isFirst' heights
+
+  // Define gaps based on platform for the content area
+  const contentGap = isNative ? 'gap-1' : 'gap-4';
+  // Using flex-grow like web version for better structure handling
+  const contentFlex = isNative ? 'min-h-[160px]' : 'flex-grow'; // h-40 = 160px, or use flex-grow
+
+  return (
+    <View
+      style={{ width: cardWidth }}
+      className={cn('flex-col', !isNative && 'h-full')} // Mimic !isNative h-full
+    >
+      <Skeleton
+        className={cn(
+          'w-full',
+          imageHeight, // Use determined height
+          'rounded-tl-xl rounded-tr-xl', // Match rounding
+        )}
+      />
+
+      <View
+        className={cn(
+          'bg-accent p-4 rounded-bl-xl rounded-br-xl', // Common styles
+          'w-full', // Common style (non-isFirst)
+          'flex-col items-start', // Common style
+          contentGap, // Platform-specific gap
+          contentFlex, // Platform-specific flex/height
+          'justify-between', // Add justify-between to structure like web version
+        )}
+      >
+        <View className="w-full flex-col gap-2">
+          <View className="flex-row justify-between w-full items-center">
+            <Skeleton className="h-4 w-16 rounded" /> {/* Read time */}
+            <Skeleton className="h-3 w-20 rounded" /> {/* Date (text-sm) */}
+          </View>
+          <Skeleton className="h-6 w-5/6 rounded" />
+        </View>
+        <View
+          className={cn(
+            'w-full flex-col',
+            contentGap === 'gap-4' ? 'gap-4' : 'gap-2',
+          )}
+        >
+          <View className="flex-row flex-wrap gap-2">
+            <Skeleton className="h-6 w-20 rounded" />
+            <Skeleton className="h-6 w-16 rounded" />
+          </View>
+          <View className="flex-row flex-wrap gap-2">
+            <Skeleton className="h-5 w-12 rounded-xl" />
+            <Skeleton className="h-5 w-14 rounded-xl" />
+            <Skeleton className="h-5 w-10 rounded-xl" />
+          </View>
+          <View className="flex-col gap-1 mt-1">
+            <Skeleton className="h-4 w-full rounded" />
+            <Skeleton className="h-4 w-11/12 rounded" />
+          </View>
+        </View>
+        <Skeleton className="h-10 w-28 rounded" />
+      </View>
+    </View>
+  );
 };

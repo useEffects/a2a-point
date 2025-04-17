@@ -2,7 +2,7 @@ import { Stacked } from '../../../components/stacked';
 import {
   ProfileScreen as ProfileScreenComponent,
   ProfileScreenHeader,
-} from 'app/screens/profile';
+} from 'app/screens/agents/profile';
 import userStore from 'app/store/user';
 import React from 'react';
 

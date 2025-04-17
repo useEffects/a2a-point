@@ -121,26 +121,50 @@ export const MediumListingCard = (
   );
 };
 
-export const MediumListingCardSkeleton = () => {
-  return (
-    <View className="h-[275px] w-full flex-col gap-2">
-      <UserChipSkeleton />
-      <View className="flex-col gap-4">
-        <Skeleton className="w-3/4 h-4" />
-        <LocationChipSkeleton />
-      </View>
-      <Skeleton className="rounded-2xl w-full flex-1 h-[150px]" />
-      <MetricsSkeleton />
-    </View>
-  );
-};
-
+// Re-usable skeleton for metrics + timestamp (your existing one is good)
 export const MetricsSkeleton = () => (
-  <View className="flex-row justify-between items-center">
+  <View className="flex-row justify-between items-center w-full">
     <View className="flex-row gap-4">
       <Skeleton className="w-5 h-5 rounded-full" />
       <Skeleton className="w-5 h-5 rounded-full" />
     </View>
-    <Skeleton className="h-[12px] w-20" />
+    <Skeleton className="h-3 w-20 rounded" />
   </View>
 );
+
+export const MediumListingCardSkeleton = () => {
+  return (
+    // Mimic root View: w-full, flex-col, gap-2, min-h-[275px], justify-between
+    <View className="w-full flex-col gap-2 min-h-[275px] justify-between">
+      <View className="flex flex-wrap gap-4 flex-row items-center justify-between">
+        <UserChipSkeleton />
+        <Skeleton className="w-16 h-6 rounded" />
+      </View>
+
+      <View className="items-start flex-col gap-2 w-full">
+        <Skeleton className="h-6 w-3/5 rounded" />
+
+        <View className="flex-row justify-between w-full items-center">
+          <LocationChipSkeleton />
+          <View className="flex-row gap-4">
+            <Skeleton className="w-5 h-5 rounded-full" />
+            <Skeleton className="w-5 h-5 rounded-full" />
+          </View>
+        </View>
+
+        <View className="flex-col gap-1 bg-accent rounded-2xl p-4 mt-2 w-full">
+          <View className="flex-row justify-between mb-2">
+            <Skeleton className="h-4 w-1/3 rounded" />
+            <Skeleton className="h-4 w-1/4 rounded" />
+          </View>
+          <Skeleton className="h-4 w-full rounded" />
+          <Skeleton className="h-4 w-5/6 rounded mt-1" />
+        </View>
+      </View>
+
+      <View className="m-0 p-0 px-2 flex-row justify-between w-full items-center">
+        <MetricsSkeleton />
+      </View>
+    </View>
+  );
+};

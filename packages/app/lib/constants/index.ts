@@ -89,3 +89,5 @@ export const defaultLimit = 5;
 
 export const GLITCHTIP_DSN =
   'https://4a97d8300a684945afc9ac7ab5f50559@glitchtip.a2apoint.com/1';
+
+export const profilePicturesFolderId = '893fcc81-4a29-4b34-a42f-10d0d6591068';

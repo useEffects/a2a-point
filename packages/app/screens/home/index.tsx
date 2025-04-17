@@ -114,7 +114,6 @@ export function HomeScreen() {
     <View className="flex-grow flex-col gap-8 py-8">
       <Greeting />
 
-      {/* At your Glance */}
       <View className="px-4 flex-col gap-4">
         <SeparatorText hideLeft>
           <Text className="font-medium">At your Glance</Text>
@@ -122,7 +121,6 @@ export function HomeScreen() {
         <CompanyStats className="gap-4" />
       </View>
 
-      {/* Premium Listings CTA */}
       <View className="px-4">
         <SeparatorText hideRight>
           <Button
@@ -147,7 +145,6 @@ export function HomeScreen() {
         </SeparatorText>
       </View>
 
-      {/* Premium Listings */}
       <InfiniteList<SmallListingCardProps & ListingCardMetrics>
         flatListProps={{
           horizontal: true,
@@ -159,7 +156,6 @@ export function HomeScreen() {
         viewAllLink="/"
       />
 
-      {/* Popular Locations */}
       <View className="flex-col gap-4 bg-card p-4">
         <SeparatorText hideLeft>
           <Text className="font-medium">Browse popular locations</Text>
@@ -178,7 +174,6 @@ export function HomeScreen() {
         />
       </View>
 
-      {/* Top Rated Agents */}
       <View className="flex-col gap-4 px-4">
         <SeparatorText hideLeft>
           <Text className="font-medium">Top rated agents</Text>
@@ -195,7 +190,6 @@ export function HomeScreen() {
         />
       </View>
 
-      {/* News & Feeds */}
       <View className="flex-col gap-4 px-4">
         <SeparatorText hideLeft>
           <Text className="font-medium">News and feeds</Text>
@@ -212,7 +206,6 @@ export function HomeScreen() {
         />
       </View>
 
-      {/* Quick Links */}
       <View className="flex-col gap-4 px-4">
         <SeparatorText hideLeft>
           <Text className="font-medium">Quick links</Text>
@@ -276,10 +269,9 @@ const Greeting = () => {
             : 'Welcome to A2A Point'}
         </Text>
         <Text className="text-subtext font-medium">
-          {' '}
           {authenticated
             ? 'What are we looking at Today?'
-            : 'One stop for all Agents!'}{' '}
+            : 'One stop for all Agents!'}
         </Text>
         <View className="flex-row gap-2">
           {categoryTiles.map((cat, i) => (

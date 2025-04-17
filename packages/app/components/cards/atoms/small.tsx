@@ -134,23 +134,40 @@ export const SmallListingCard = (
 };
 
 export const SmallListingCardSkeleton = () => {
+  // Calculate width exactly like the original component
   const width =
     Platform.OS !== 'web' ? Dimensions.get('window').width - 32 : undefined;
+
   return (
+    // Root View: Match Pressable styles precisely
     <View
-      className="h-[150px] flex-row gap-4 p-4 w-[400px] rounded bg-accent"
+      className="border-solid border-[1px] border-border p-4 flex-row gap-4 bg-accent items-start rounded w-[400px] h-[150px]"
+      // Apply exact width style
       style={{ width }}
     >
       <Skeleton className="w-8 h-8 rounded-full" />
-      <View className="flex-col h-full justify-between flex-1">
-        <Skeleton className="w-3/4 h-4" />
-        <View className="flex-row justify-between gap-4">
-          <PriceSkeleton />
-          <ListingTypeSkeleton />
+
+      <View className="flex-col justify-between flex-1 h-full">
+        <View className="flex-col gap-1">
+          <Skeleton className="h-6 w-5/6 rounded" />
+          <View className="flex-row justify-between gap-4 items-center">
+            <PriceSkeleton />
+            <ListingTypeSkeleton />
+          </View>
+          <View className="flex-row gap-1 flex-wrap items-center mt-1">
+            <Skeleton className="h-4 w-10 rounded" />
+            <Skeleton className="h-4 w-14 rounded" />
+            <Skeleton className="h-4 w-12 rounded" />
+          </View>
         </View>
-        <MetricsSkeleton />
-        <View className="flex-row justify-end">
-          <LocationChipSkeleton />
+        <View className="h-[1px] w-full bg-border my-1" />
+        <View className="flex-row justify-between items-center">
+          <MetricsSkeleton />
+
+          <View className="ml-auto mr-0 flex-col gap-1 items-end">
+            <Skeleton className="h-3 w-28 rounded" />
+            <LocationChipSkeleton className="mt-1" />
+          </View>
         </View>
       </View>
     </View>
