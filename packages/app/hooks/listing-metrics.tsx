@@ -3,16 +3,15 @@ import {
   createItem,
   createNotification,
   deleteItem,
+  deleteItems,
   readItems,
 } from '@directus/sdk';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { directusStore } from 'app/store/directus';
-import { queryClient } from 'app/store/query';
 import userStore from 'app/store/user';
 import { Listing, User } from 'app/lib/types';
 
 const viewsCountKey = (listingId: string) => ['views-count', listingId];
-const savesCountKey = (listingId: string) => ['saves-count', listingId];
 const checkSavesKey = (listingId: string) => ['check-saved', listingId];
 
 export type UserCount = { count: { directus_users_id: string } };
@@ -20,12 +19,72 @@ export type UserCount = { count: { directus_users_id: string } };
 export const useListingMetrics = (listingId: string) => {
   const { rest } = directusStore();
   const { user } = userStore();
+  const queryClient = useQueryClient();
 
-  const { data: checkSavedRes } = useQuery({
-    queryKey: ['check-saved', listingId],
+  // Query: Check if this listing is bookmarked
+  const { data: checkSavedRes, isLoading } = useQuery({
+    queryKey: checkSavesKey(listingId),
     queryFn: async () =>
       await rest.request(
         readItems('listings_directus_users', {
+          filter: {
+            listings_id: { _eq: listingId },
+            directus_users_id: { _eq: user.id },
+          },
+          fields: ['id'],
+        }),
+      ),
+  });
+
+  console.log(checkSavedRes);
+
+  // Mutation: Add bookmark
+  const addBookmarkMutation = useMutation({
+    mutationFn: async ({
+      listing,
+      recipient,
+    }: {
+      listing: Pick<Listing, 'id' | 'title'>;
+      recipient: Pick<User, 'email' | 'id'>;
+    }) => {
+      const res = await rest.request(
+        createItem('listings_directus_users', {
+          listings_id: listing.id,
+          directus_users_id: user.id,
+        }),
+      );
+
+      if (user.id !== recipient.id) {
+        await rest.request(
+          createNotification({
+            collection: 'listings',
+            item: listing.id,
+            message: `You have a new bookmark on your listing ${listing.title} from ${user.email}`,
+            recipient: recipient.id,
+            sender: user.id,
+            subject: 'New Bookmark Received!',
+            type: 'user',
+            related_user: user.id,
+          }),
+        );
+      }
+
+      return res;
+    },
+    onSuccess: (res) => {
+      // update check saved state
+      queryClient.setQueryData(checkSavesKey(listingId), [{ id: res.id }]);
+      queryClient.invalidateQueries({
+        predicate: (q) => q.queryKey[0] === 'listings',
+      });
+    },
+  });
+
+  // Mutation: Delete bookmark
+  const deleteBookmarkMutation = useMutation({
+    mutationFn: async () => {
+      return await rest.request(
+        deleteItems('listings_directus_users', {
           filter: {
             listings_id: {
               _eq: listingId,
@@ -34,83 +93,25 @@ export const useListingMetrics = (listingId: string) => {
               _eq: user.id,
             },
           },
-          fields: ['id'],
         }),
-      ),
+      );
+    },
+    onSuccess: () => {
+      queryClient.setQueryData(checkSavesKey(listingId), []);
+      queryClient.invalidateQueries({
+        predicate: (q) => q.queryKey[0] === 'listings',
+      });
+    },
   });
 
-  const deleteBookmark = async (listingId: string, savedId: string) => {
-    await queryClient.fetchQuery({
-      queryKey: ['delete-listing', savedId],
-      queryFn: async () =>
-        await rest.request(deleteItem('listings_directus_users', savedId)),
-    });
-    queryClient.setQueryData(
-      savesCountKey(listingId),
-      ([prev]: UserCount[]) => {
-        return [
-          {
-            count: {
-              directus_users_id: Number(prev!.count.directus_users_id) - 1,
-            },
-          },
-        ];
-      },
-    );
-    queryClient.setQueryData(checkSavesKey(listingId), []);
-  };
-
-  const addBookmark = async (
-    listing: Pick<Listing, 'id' | 'title'>,
-    recipient: Pick<User, 'email' | 'id'>,
-  ) => {
-    const { id: listingId, title } = listing;
-    const res = await queryClient.fetchQuery({
-      queryKey: ['save-listing', listingId],
-      queryFn: async () =>
-        await rest.request(
-          createItem('listings_directus_users', {
-            listings_id: listingId,
-            directus_users_id: user.id,
-          }),
-        ),
-    });
-    if (user.id !== recipient.id) {
-      await queryClient.fetchQuery({
-        queryKey: ['Send notification for bookmark', listingId],
-        queryFn: async () =>
-          await rest.request(
-            createNotification({
-              collection: 'listings',
-              item: listingId,
-              message: `You have a new bookmark on your listing ${title} from ${user.email}`,
-              recipient: recipient.id,
-              sender: user.id,
-              subject: 'New Bookmark Received!',
-              type: 'user',
-              related_user: user.id,
-            }),
-          ),
-      });
-    }
-    await queryClient.setQueryData(
-      savesCountKey(listingId),
-      ([prev]: UserCount[]) => [
-        {
-          count: {
-            directus_users_id: Number(prev!.count.directus_users_id) + 1,
-          },
-        },
-      ],
-    );
-    await queryClient.setQueryData(checkSavesKey(listingId), [{ id: res.id }]);
-    return res;
-  };
-
   return {
-    deleteBookmark,
-    addBookmark,
     bookmarkId:
       checkSavedRes && checkSavedRes.length ? checkSavedRes[0]!.id : undefined,
+    addBookmark: addBookmarkMutation.mutateAsync,
+    deleteBookmark: () => deleteBookmarkMutation.mutateAsync(),
+    isLoading:
+      isLoading ||
+      addBookmarkMutation.isPending ||
+      deleteBookmarkMutation.isPending,
   };
 };

@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProviderProps } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { queryClient } from 'app/store/query';
 
 const asyncStoragePersister = createAsyncStoragePersister({
   storage: AsyncStorage,
@@ -12,7 +13,6 @@ const asyncStoragePersister = createAsyncStoragePersister({
 export const QueryClientProvider = (
   props: Omit<QueryClientProviderProps, 'client'>,
 ) => {
-  const queryClient = new QueryClient();
 
   return (
     <PersistQueryClientProvider

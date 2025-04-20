@@ -20,7 +20,7 @@ import {
 import { RenderAmenities } from 'app/screens/post';
 import { directusStore } from 'app/store/directus';
 import opacity from 'hex-color-opacity';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { Dimensions, Linking, View } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import { Button } from '../../ui/button';
@@ -52,9 +52,8 @@ export const ListingIconTile = ({
 export const FullListingCard = (
   props: FullListingDetailedProps & UsersCardMetrics & ListingCardMetrics,
 ) => {
-  const { addBookmark, deleteBookmark, bookmarkId } = useListingMetrics(
-    props.id,
-  );
+  const { addBookmark, deleteBookmark, bookmarkId, isLoading } =
+    useListingMetrics(props.id);
   const { colors } = useColorScheme();
   const { authenticated } = directusStore();
   const photos = useMemo(
@@ -71,15 +70,25 @@ export const FullListingCard = (
     props.budget,
     props.price,
   );
+  const [currentSaves, setCurrentSaves] = useState(Number(props.saves));
 
   const handleSave = async () => {
-    bookmarkId
-      ? await deleteBookmark(props.id, bookmarkId)
-      : await addBookmark(
-          { id: props.id, title: props.title },
-          { email: props.user_created.email, id: props.user_created.id },
-        );
+    if (bookmarkId) {
+      await deleteBookmark();
+      setCurrentSaves((p) => p - 1);
+    } else {
+      await addBookmark({
+        listing: { id: props.id, title: props.title },
+        recipient: {
+          email: props.user_created.email,
+          id: props.user_created.id,
+        },
+      });
+      setCurrentSaves((p) => p + 1);
+    }
   };
+
+  useEffect(() => console.log(currentSaves), [currentSaves]);
 
   return (
     <View className="flex-col gap-4 flex-1 pb-4">
@@ -238,7 +247,7 @@ export const FullListingCard = (
               <Text className="text-sm text-subtext">{props.views} views</Text>
             </View>
             <Button
-              disabled={!authenticated}
+              disabled={!authenticated || isLoading}
               variant={'base'}
               size={'none'}
               onPress={handleSave}
@@ -249,7 +258,7 @@ export const FullListingCard = (
                 className="!text-foreground"
                 size={18}
               />
-              <Text className="text-sm text-subtext">{props.saves} saves</Text>
+              <Text className="text-sm text-subtext">{currentSaves} saves</Text>
             </Button>
             <Button
               variant={'base'}
