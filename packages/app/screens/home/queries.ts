@@ -33,7 +33,7 @@ export const photoHistoryListingsQuery = <T = PhotoListingProps>(
     page: number;
   }>
 > => ({
-  queryKey: ['history listings for current user', query],
+  queryKey: ['listings', 'history listings for current user', query],
   queryFn: async ({ pageParam = 0 }) =>
     await renderCardsQuery2<PhotoListingProps>({
       collection: 'listings',
@@ -77,7 +77,7 @@ export const photoListingsQuery = <T = PhotoListingProps>(
     page: number;
   }>
 > => ({
-  queryKey: ['photo listings for user', query],
+  queryKey: ['listings', 'photo listings for user', query],
   queryFn: async ({ pageParam = 0 }) =>
     await renderCardsQuery2<PhotoListingProps>({
       collection: 'listings',
@@ -148,7 +148,7 @@ export const newsQuery = <T = NewsProps>(
     page: number;
   }>
 > => ({
-  queryKey: ['fetch news and feed', query],
+  queryKey: ['news', 'fetch news and feed', query],
   queryFn: async ({ pageParam = 0 }) =>
     await renderCardsQuery2<NewsProps>({
       collection: 'news',

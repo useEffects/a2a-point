@@ -134,7 +134,6 @@ export const MetricsSkeleton = () => (
 
 export const MediumListingCardSkeleton = () => {
   return (
-    // Mimic root View: w-full, flex-col, gap-2, min-h-[275px], justify-between
     <View className="w-full flex-col gap-2 min-h-[275px] justify-between">
       <View className="flex flex-wrap gap-4 flex-row items-center justify-between">
         <UserChipSkeleton />

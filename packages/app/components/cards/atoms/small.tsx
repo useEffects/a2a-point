@@ -139,10 +139,8 @@ export const SmallListingCardSkeleton = () => {
     Platform.OS !== 'web' ? Dimensions.get('window').width - 32 : undefined;
 
   return (
-    // Root View: Match Pressable styles precisely
     <View
       className="border-solid border-[1px] border-border p-4 flex-row gap-4 bg-accent items-start rounded w-[400px] h-[150px]"
-      // Apply exact width style
       style={{ width }}
     >
       <Skeleton className="w-8 h-8 rounded-full" />

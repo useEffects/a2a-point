@@ -39,7 +39,7 @@ export const smallLocationsCardQuery = <T extends SmallLocationCardProps>(
   }>
 > => {
   return {
-    queryKey: ['small locations query', query],
+    queryKey: ['rooms', 'small locations query', query],
     queryFn: ({ pageParam = 0 }) =>
       renderCardsQuery2<SmallLocationCardProps>(
         _.merge(
@@ -86,7 +86,7 @@ export const mediumLocationsCardQuery = <
 > => {
   if (!query.limit) query.limit = 15;
   return {
-    queryKey: ['medium locations query', query],
+    queryKey: ['rooms', 'medium locations query', query],
     queryFn: ({ pageParam = 0 }) =>
       renderCardsQuery2<MediumLocationCardProps>(
         _.merge(
@@ -144,7 +144,7 @@ export const mediumListingsForGivenLocation = <
   }>
 > => {
   return {
-    queryKey: ['medium listings for a given location', query],
+    queryKey: ['listings', 'medium listings for a given location', query],
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
       if (lastPage.items?.length < query.limit!) {
         return null;

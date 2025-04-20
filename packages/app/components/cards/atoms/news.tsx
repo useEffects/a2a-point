@@ -125,30 +125,30 @@ export const NewsCardSkeleton = () => {
   return (
     <View
       style={{ width: cardWidth }}
-      className={cn('flex-col', !isNative && 'h-full')} // Mimic !isNative h-full
+      className={cn('flex-col', !isNative && 'h-full')} 
     >
       <Skeleton
         className={cn(
           'w-full',
-          imageHeight, // Use determined height
-          'rounded-tl-xl rounded-tr-xl', // Match rounding
+          imageHeight, 
+          'rounded-tl-xl rounded-tr-xl', 
         )}
       />
 
       <View
         className={cn(
-          'bg-accent p-4 rounded-bl-xl rounded-br-xl', // Common styles
-          'w-full', // Common style (non-isFirst)
-          'flex-col items-start', // Common style
-          contentGap, // Platform-specific gap
-          contentFlex, // Platform-specific flex/height
-          'justify-between', // Add justify-between to structure like web version
+          'bg-accent p-4 rounded-bl-xl rounded-br-xl', 
+          'w-full', 
+          'flex-col items-start', 
+          contentGap, 
+          contentFlex,
+          'justify-between', 
         )}
       >
         <View className="w-full flex-col gap-2">
           <View className="flex-row justify-between w-full items-center">
-            <Skeleton className="h-4 w-16 rounded" /> {/* Read time */}
-            <Skeleton className="h-3 w-20 rounded" /> {/* Date (text-sm) */}
+            <Skeleton className="h-4 w-16 rounded" /> 
+            <Skeleton className="h-3 w-20 rounded" /> 
           </View>
           <Skeleton className="h-6 w-5/6 rounded" />
         </View>

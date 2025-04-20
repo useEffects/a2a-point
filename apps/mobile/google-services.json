@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "10256759815",
+    "project_id": "a2apoint-4cc6f",
+    "storage_bucket": "a2apoint-4cc6f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:10256759815:android:84f3cbf12a39275b46bea2",
+        "android_client_info": {
+          "package_name": "com.a2apoint.community"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByc41nI1be67fX1GkhOBLSsl48iqIRgsQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

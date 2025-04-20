@@ -143,7 +143,6 @@ export const MediumLocationCard = (
 
 export const MediumLocationCardSkeleton = () => {
   return (
-    // Root container matching MediumLocationCard's layout and aspect ratio
     <View className="flex-row rounded-xl bg-accent justify-start items-start w-full aspect-video overflow-hidden">
       <Skeleton className="w-1/2 h-full rounded-none" />
       <View className="h-full flex-col justify-between p-4 w-1/2">

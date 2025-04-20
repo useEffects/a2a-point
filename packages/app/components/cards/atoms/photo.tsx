@@ -68,10 +68,10 @@ export const PhotoListingCard = (item: PhotoListingProps) => {
 };
 
 // Re-usable skeletons for consistency (as provided)
-export const PriceSkeleton = () => <Skeleton className="h-4 w-20 rounded" />; // Slightly adjusted width
+export const PriceSkeleton = () => <Skeleton className="h-4 w-20 rounded" />; 
 export const ListingTypeSkeleton = () => (
   <Skeleton className="h-4 w-16 rounded" />
-); // Slightly adjusted width
+); 
 
 export const PhotoListingCardSkeleton = () => {
   // Calculate dimensions exactly like the original component
@@ -80,7 +80,6 @@ export const PhotoListingCardSkeleton = () => {
   const imageHeight = (9 / 16) * imageWidth;
 
   return (
-    // Root View: Match Pressable styles precisely
     <View
       className="rounded-xl bg-accent border-border flex-col justify-between border-[1px] border-solid border-border"
       style={{ width: imageWidth, height: imageHeight * 2 }}
@@ -94,7 +93,7 @@ export const PhotoListingCardSkeleton = () => {
         style={{ width: imageWidth }}
       >
         <UserChipSkeleton />
-        <Skeleton className="w-[90%] h-4 rounded" /> {/* Added rounding */}
+        <Skeleton className="w-[90%] h-4 rounded" />
         <View className="flex-row gap-4 justify-between w-full mt-auto mb-0">
           <PriceSkeleton />
           <ListingTypeSkeleton />

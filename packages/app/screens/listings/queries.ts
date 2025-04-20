@@ -38,7 +38,7 @@ export const listingsScreenQuery = <
   }>
 > => {
   return {
-    queryKey: ['listings screen query', query],
+    queryKey: ['listings', 'listings screen query', query],
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
       if (lastPage.items?.length < query.limit!) {
         return null;
@@ -135,7 +135,7 @@ export const premiumListingsSmallQuery = <
   }>
 > => {
   return {
-    queryKey: ['home screen premium listings small cards query', query],
+    queryKey: ['listings', 'home screen premium listings small cards query', query],
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
       if (lastPage.items?.length < query.limit!) {
         return null;

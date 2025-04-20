@@ -31,7 +31,7 @@ export const smallUsersQuery = <
   }>
 > => {
   return {
-    queryKey: ['small users query', query],
+    queryKey: ['users', 'small users query', query],
     queryFn: ({ pageParam = 0 }) =>
       renderCardsQuery2<SmallUsersCardProps>(
         _.merge(
@@ -88,7 +88,7 @@ export const mediumUsersQuery = <
 > => {
   if (!query.limit) query.limit = defaultLimit;
   return {
-    queryKey: ['medium users query', query],
+    queryKey: ['users', 'medium users query', query],
     queryFn: ({ pageParam = 0 }) =>
       renderCardsQuery2<MediumUsersCardProps>(
         _.merge(

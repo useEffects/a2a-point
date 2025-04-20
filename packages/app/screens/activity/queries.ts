@@ -35,7 +35,7 @@ export const seenByMeListingsQuery = <
   }>
 > => {
   return {
-    queryKey: ['activity screen seen by me listings small cards query', query],
+    queryKey: ['listings', 'activity screen seen by me listings small cards query', query],
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
       if (lastPage.items?.length < query.limit!) {
         return null;
@@ -101,7 +101,7 @@ export const savedByMeListingsQuery = <
   }>
 > => {
   return {
-    queryKey: ['activity screen saved by me listings small cards query', query],
+    queryKey: ['listings', 'activity screen saved by me listings small cards query', query],
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
       if (lastPage.items?.length < query.limit!) {
         return null;
