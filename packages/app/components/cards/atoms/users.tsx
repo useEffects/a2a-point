@@ -5,6 +5,7 @@ import {
   Check,
   MessageCircleMore,
   Phone,
+  Share2,
   Star,
 } from 'app/components/icons';
 import { Button } from 'app/components/ui/button';
@@ -39,6 +40,8 @@ import { CompanyChip } from './company';
 import { AsyncImage } from 'app/components/async-image';
 import { Skeleton } from 'app/components/skeleton';
 import { LocationChipSkeleton } from 'app/components/utils/chips';
+import Share from 'react-native-share';
+import { portfolioUrl } from 'app/lib/constants';
 
 export const SmallUsersCard = (item: SmallUsersCardProps) => {
   const { colors } = useColorScheme();
@@ -108,6 +111,16 @@ export const MediumUsersCard = (
   const handleChatRedirect = async (userId: string) => {
     const dmRoomId = await getDMRoomId([user.id, userId]);
     router.push(`/chat/${dmRoomId}`);
+  };
+
+  const shareAgent = () => {
+    const title = `Share the profile of agent - ${item.first_name} with other members in the A2A Point community!`;
+    Share.open({
+      title,
+      message: `${title}\n\n`,
+      url: `${portfolioUrl}/agents/${item.id}`,
+      failOnCancel: false,
+    });
   };
 
   return (
@@ -217,7 +230,16 @@ export const MediumUsersCard = (
             id={item.company.title}
           />
         )}
-        <View className="flex-row gap-4 ml-auto mr-0">
+        <View className="flex-row ml-auto mr-0">
+          <Button
+            onPress={shareAgent}
+            disabled={!authenticated}
+            className="rounded-full"
+            variant={'ghost'}
+            size={'icon'}
+          >
+            <Share2 size={18} className="text-foreground" />
+          </Button>
           {user.id !== item.id && (
             <Button
               onPress={() => handleChatRedirect(item.id)}
@@ -356,6 +378,7 @@ export const MediumUsersCardSkeleton = () => {
       <View className="w-full flex-row gap-4 items-center mt-2">
         <LocationChipSkeleton className="w-32" />
         <View className="flex-row gap-2 ml-auto mr-0">
+          <Skeleton className="w-8 h-8 rounded-full" />
           <Skeleton className="w-8 h-8 rounded-full" />
           <Skeleton className="w-8 h-8 rounded-full" />
           <Skeleton className="w-8 h-8 rounded-full" />

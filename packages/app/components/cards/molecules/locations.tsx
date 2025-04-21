@@ -3,7 +3,7 @@
 import { HorizontalFlatList } from '@idiosync/horizontal-flatlist';
 import { HorizontalFlatListProps } from '@idiosync/horizontal-flatlist/dist/horizontal-flat-list';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { ArrowUpRight } from 'app/components/icons';
+import { ArrowUpRight, Share2 } from 'app/components/icons';
 import { Button, ButtonProps } from 'app/components/ui/button';
 import { Text } from 'app/components/ui/text';
 import { ViewAllButton } from 'app/components/utils/common-ui';
@@ -31,6 +31,8 @@ import { FlatListProps, Image, Platform, Pressable, View } from 'react-native';
 import { BottomLoader } from './listings';
 import { AsyncImage } from 'app/components/async-image';
 import { Skeleton } from 'app/components/skeleton';
+import Share from 'react-native-share';
+import { portfolioUrl } from 'app/lib/constants';
 
 export const SmallLocationCard = (item: SmallLocationCardProps) => {
   const [count, setCount] = useState(0);
@@ -104,7 +106,18 @@ export const MediumLocationCard = (
   const { authenticated } = directusStore();
   const router = useRouter();
 
-  const finalMembers = item.members.filter((member) => member.directus_users_id);
+  const finalMembers = item.members.filter(
+    (member) => member.directus_users_id,
+  );
+
+  const shareLocation = () => {
+    const title = `Share the location - ${item.title} with other members in the A2A Point community!`;
+    Share.open({
+      title,
+      message: `${title}\n\n`,
+      url: `${portfolioUrl}/agents/${item.id}`,
+    });
+  };
 
   return (
     <Pressable
@@ -118,9 +131,20 @@ export const MediumLocationCard = (
       />
       <View className="h-full flex-col justify-start gap-2 p-4 w-1/2">
         <Text className="font-medium">{item.title}</Text>
-        <Text className="text-success">
-          {item.listingsCount} leads available
-        </Text>
+        <View className="flex-row gap-2 items-center">
+          <Button
+            onPress={shareLocation}
+            disabled={!authenticated}
+            className="rounded-full"
+            variant={'ghost'}
+            size={'icon'}
+          >
+            <Share2 size={18} className="text-foreground" />
+          </Button>
+          <Text className="text-success">
+            {item.listingsCount} leads available
+          </Text>
+        </View>
         <MembersList
           locationId={item.id}
           members={finalMembers.slice(0, 5)}
@@ -146,9 +170,12 @@ export const MediumLocationCardSkeleton = () => {
     <View className="flex-row rounded-xl bg-accent justify-start items-start w-full aspect-video overflow-hidden">
       <Skeleton className="w-1/2 h-full rounded-none" />
       <View className="h-full flex-col justify-between p-4 w-1/2">
-        <View>
+        <View className="flex-col gap-2">
           <Skeleton className="h-5 w-5/6 mb-2 rounded" />
-          <Skeleton className="h-4 w-1/2 mb-3 rounded" />
+          <View className="flex-row gap-2 items-center">
+            <Skeleton className="h-5 w-5 rounded-full" />
+            <Skeleton className="h-4 w-1/2 rounded" />
+          </View>
           <View className="flex-row items-center mb-3">
             <Skeleton className="h-12 w-12 rounded-full border-2 border-accent" />
             <Skeleton className="h-12 w-12 rounded-full border-2 border-accent -ml-2" />

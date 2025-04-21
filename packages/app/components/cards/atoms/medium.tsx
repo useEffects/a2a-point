@@ -1,4 +1,10 @@
-import { Edit, Lock, MessageCircleMore, Trash } from 'app/components/icons';
+import {
+  Edit,
+  Lock,
+  MessageCircleMore,
+  Share2,
+  Trash,
+} from 'app/components/icons';
 import { UserChip, UserChipSkeleton } from 'app/components/user-chip';
 import { LocationChip, LocationChipSkeleton } from 'app/components/utils/chips';
 import { useColorScheme } from 'app/hooks/color-scheme';
@@ -14,6 +20,9 @@ import { Button } from '../../ui/button';
 import { Text } from '../../ui/text';
 import { RenderMetrics } from './small';
 import { Skeleton } from 'app/components/skeleton';
+import Share from 'react-native-share';
+import { colors } from 'react-native-keyboard-controller/lib/typescript/components/KeyboardToolbar/colors';
+import { portfolioUrl } from 'app/lib/constants';
 
 export type MediumListingCardProps = Pick<
   Listing,
@@ -62,6 +71,17 @@ export const MediumListingCard = (
     item.price,
   );
   const router = useRouter();
+  const { colors } = useColorScheme();
+
+  const shareListing = () => {
+    const title = `Share the listing ${item.title} with other members in the A2A Point community!`;
+    Share.open({
+      title,
+      message: `${title}\n\n`,
+      url: `${portfolioUrl}/listings/${item.id}`,
+      failOnCancel: false,
+    });
+  };
 
   return (
     <View className="w-full flex-col gap-2 min-h-[275px] justify-between">
@@ -112,7 +132,18 @@ export const MediumListingCard = (
         </View>
       </Pressable>
       <View className="m-0 p-0 px-2 flex-row justify-between w-full items-center">
-        <RenderMetrics metrics={{ saves: item.saves, views: item.views }} />
+        <View className="flex-row items-center gap-4">
+          <RenderMetrics metrics={{ saves: item.saves, views: item.views }} />
+          <Button
+            onPress={shareListing}
+            disabled={!authenticated}
+            className="rounded-full"
+            variant={'ghost'}
+            size={'icon'}
+          >
+            <Share2 size={18} className="text-foreground" />
+          </Button>
+        </View>
         <Text className="text-xs text-subtext">
           {timeAgo.format(new Date(item.date_created))}
         </Text>
@@ -121,14 +152,11 @@ export const MediumListingCard = (
   );
 };
 
-// Re-usable skeleton for metrics + timestamp (your existing one is good)
+// Re-usable skeleton for metrics
 export const MetricsSkeleton = () => (
-  <View className="flex-row justify-between items-center w-full">
-    <View className="flex-row gap-4">
-      <Skeleton className="w-5 h-5 rounded-full" />
-      <Skeleton className="w-5 h-5 rounded-full" />
-    </View>
-    <Skeleton className="h-3 w-20 rounded" />
+  <View className="flex-row gap-8">
+    <Skeleton className="w-5 h-5 rounded-full" />
+    <Skeleton className="w-5 h-5 rounded-full" />
   </View>
 );
 
@@ -137,7 +165,7 @@ export const MediumListingCardSkeleton = () => {
     <View className="w-full flex-col gap-2 min-h-[275px] justify-between">
       <View className="flex flex-wrap gap-4 flex-row items-center justify-between">
         <UserChipSkeleton />
-        <Skeleton className="w-16 h-6 rounded" />
+        <Skeleton className="w-8 h-8 rounded-full" />
       </View>
 
       <View className="items-start flex-col gap-2 w-full">
@@ -162,7 +190,11 @@ export const MediumListingCardSkeleton = () => {
       </View>
 
       <View className="m-0 p-0 px-2 flex-row justify-between w-full items-center">
-        <MetricsSkeleton />
+        <View className="flex-row items-center gap-8">
+          <MetricsSkeleton />
+          <Skeleton className="w-5 h-5 rounded-full" />
+        </View>
+        <Skeleton className="w-16 h-4 rounded-full" />
       </View>
     </View>
   );

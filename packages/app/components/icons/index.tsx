@@ -64,6 +64,7 @@ import {
   CircleAlert,
   MoveRight,
   Redo2,
+  Share2,
 } from 'lucide-react-native';
 
 iconWithClassName(Check);
@@ -130,6 +131,7 @@ iconWithClassName(User);
 iconWithClassName(CircleAlert);
 iconWithClassName(MoveRight);
 iconWithClassName(Redo2);
+iconWithClassName(Share2);
 
 export {
   Check,
@@ -195,5 +197,6 @@ export {
   User,
   CircleAlert,
   MoveRight,
-  Redo2
+  Redo2,
+  Share2,
 };

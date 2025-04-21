@@ -77,8 +77,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (response.ok) {
         console.log('Session has been revoked and user logged out.');
         // Clear local session data (tokens, user info, etc.)
-        await AsyncStorage.removeItem('access_token');
-        await AsyncStorage.removeItem('refresh_token');
         await AsyncStorage.removeItem(kcRefreshTokenKey); // Optional, if you store refresh token explicitly
 
         // Redirect the user to the login screen or any desired screen
@@ -91,6 +89,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (e) {
       Sentry.captureException(e);
       console.error('Logout failed: ', e);
+    } finally {
+      setKeyCloakStore({ active: false });
+      setDirectusStore(initialDirectusStore);
     }
   };
 
