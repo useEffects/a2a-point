@@ -268,11 +268,10 @@ export function Profile({
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        data: {
-          avatar: fileId,
-        },
+        avatar: fileId,
       }),
     });
 
@@ -318,7 +317,7 @@ export function Profile({
     );
   };
   return (
-    <View className="relative" style={{ height: windowHeight - 140 }}>
+    <View className="relative" style={{ height: windowHeight - 196 }}>
       <TabView
         style={{ height }}
         renderTabBar={TabBar}
@@ -330,7 +329,18 @@ export function Profile({
         onIndexChange={setIndex}
         initialLayout={{ width }}
       />
-      <View className="absolute bottom-8 right-4 top-auto left-auto flex-col gap-4">
+      <View className="absolute bottom-12 right-4 top-auto left-auto flex-col gap-4">
+        {collapsed ? (
+          <Button
+            onPress={() => setCollapsed(false)}
+            className="rounded-full ml-auto mr-0"
+            size={'icon'}
+          >
+            <ArrowUp size={18} color={colors['primary-foreground']} />
+          </Button>
+        ) : (
+          <></>
+        )}
         {selectedImage ? (
           <View className="flex-row gap-4">
             <Button
@@ -349,17 +359,6 @@ export function Profile({
               <X size={18} color={colors['destructive-foreground']} />
             </Button>
           </View>
-        ) : (
-          <></>
-        )}
-        {collapsed ? (
-          <Button
-            onPress={() => setCollapsed(false)}
-            className="rounded-full ml-auto mr-0"
-            size={'icon'}
-          >
-            <ArrowUp size={18} color={colors['primary-foreground']} />
-          </Button>
         ) : (
           <></>
         )}
