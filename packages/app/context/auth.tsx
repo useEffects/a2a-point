@@ -31,6 +31,8 @@ import userStore from 'app/store/user';
 import * as Sentry from '@sentry/react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
+import { theme } from '@a2apoint/tailwind-theme/src/colors';
 
 export const AuthContext = createContext({
   keycloakQueryResult: {} as DefinedUseQueryResult<AuthTokens>,
@@ -382,6 +384,15 @@ async function registerForPushNotificationsAsync() {
   if (finalStatus !== 'granted') {
     console.warn('Failed to get push token for push notification!');
     return;
+  }
+
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: theme.light.primary,
+    });
   }
 
   token = (await Notifications.getExpoPushTokenAsync()).data;

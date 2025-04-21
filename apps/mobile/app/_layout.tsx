@@ -30,6 +30,7 @@ import * as Sentry from '@sentry/react-native';
 import { isRunningInExpoGo } from 'expo';
 import { GLITCHTIP_DSN } from 'app/lib/constants';
 import { prefetchQueries } from '../lib/helpers';
+import * as Notifications from 'expo-notifications';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -48,6 +49,13 @@ Sentry.init({
 function RootLayout() {
   const ref = useNavigationContainerRef();
   useEffect(() => {
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+      }),
+    });
     if (ref?.current) {
       navigationIntegration.registerNavigationContainer(ref);
     }
