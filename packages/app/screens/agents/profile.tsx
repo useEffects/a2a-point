@@ -174,8 +174,12 @@ export function Profile({
                 <Link href={`mailto:${user.email}`}>
                   <Text className="text-info underline">{user.email}</Text>
                 </Link>
-                <Text>{user.location}</Text>
-                <Text className="text-subtext">{user.title}</Text>
+                {user.location ? <Text>{user.location}</Text> : <></>}
+                {user.title ? (
+                  <Text className="text-subtext">{user.title}</Text>
+                ) : (
+                  <></>
+                )}
               </View>
             </View>
             <View className="flex-row w-full justify-evenly">
@@ -221,7 +225,7 @@ export function Profile({
                   <Text>Give feedback</Text>
                 </Button>
               )}
-              <Button
+              {/* <Button
                 onPress={() =>
                   Linking.openURL(`${NEXT_URL}/agents/${currentUser.id}`)
                 }
@@ -230,7 +234,7 @@ export function Profile({
                 className="flex-1"
               >
                 <Text>Share Profile</Text>
-              </Button>
+              </Button> */}
             </View>
           </View>
         </Collapsible>
