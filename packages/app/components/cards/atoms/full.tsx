@@ -88,8 +88,6 @@ export const FullListingCard = (
     }
   };
 
-  useEffect(() => console.log(currentSaves), [currentSaves]);
-
   return (
     <View className="flex-col gap-4 flex-1 pb-4">
       <View className="flex-col gap-8 flex-grow max-w-xl">
@@ -258,7 +256,9 @@ export const FullListingCard = (
                 className="!text-foreground"
                 size={18}
               />
-              <Text className="text-sm text-subtext">{currentSaves} saves</Text>
+              <Text className="!text-sm !text-subtext">
+                {currentSaves} saves
+              </Text>
             </Button>
             <Button
               variant={'base'}
@@ -271,7 +271,7 @@ export const FullListingCard = (
               className="flex-col gap-2 items-center"
             >
               <ExternalLink className="!text-foreground" size={18} />
-              <Text className="text-sm text-subtext">Dashboard</Text>
+              <Text className="!text-sm !text-subtext">Dashboard</Text>
             </Button>
           </View>
         ) : (

@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-query';
 import {
   DIRECTUS_URL,
+  directusUrl,
   KC_ACCESS_TOKEN_EXPIRY,
   KC_CLIENT_ID,
   KC_REALM,
@@ -28,6 +29,8 @@ import { createContext, ReactNode, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import userStore from 'app/store/user';
 import * as Sentry from '@sentry/react-native';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
 
 export const AuthContext = createContext({
   keycloakQueryResult: {} as DefinedUseQueryResult<AuthTokens>,
@@ -230,8 +233,8 @@ export const authOnSuccess = async (
         },
       });
 
+      const { data: user } = await usersFetchResp.json();
       if (usersFetchResp.ok) {
-        const { data: user } = await usersFetchResp.json();
         userStore.setState((p) => ({
           ...p,
           user: user,
@@ -270,6 +273,70 @@ export const authOnSuccess = async (
         console.error('Unable to fetch users data');
       }
 
+      const expoPushToken = await registerForPushNotificationsAsync();
+      if (expoPushToken) {
+        const loginDetailsResp = await fetch(
+          `${directusUrl}/items/login_details`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${directusAccessToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              device_token: expoPushToken,
+              device_model_name: Device.modelName,
+              last_accessed: new Date(),
+              user_id: user.id,
+            }),
+          },
+        );
+
+        const loginDetailsRespJson = await loginDetailsResp.json();
+
+        if (!loginDetailsResp.ok) {
+          const errorCode = loginDetailsRespJson?.errors?.[0]?.extensions?.code;
+          if (errorCode === 'RECORD_NOT_UNIQUE') {
+            console.debug(
+              'Updating last accessed for the current device token',
+            );
+            try {
+              const filter = {
+                device_token: { _eq: expoPushToken },
+                user_id: { _eq: user.id },
+              };
+
+              await fetch(
+                `${directusUrl}/items/login_details?filter=${encodeURIComponent(
+                  JSON.stringify(filter),
+                )}`,
+                {
+                  method: 'PATCH',
+                  headers: {
+                    Authorization: `Bearer ${directusAccessToken}`,
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    last_accessed: new Date(),
+                  }),
+                },
+              );
+            } catch (err) {
+              console.error('Error updating last_accessed field', err);
+              Sentry.captureException(err);
+            }
+          } else {
+            console.error(
+              'Error in setting login details',
+              loginDetailsRespJson,
+            );
+            Sentry.captureException(
+              `Error in setting login details, ${JSON.stringify(loginDetailsRespJson)}`,
+            );
+          }
+        }
+      }
+
       setKeyCloakStore({ active: true });
       setDirectusStore({
         authenticated: true,
@@ -295,3 +362,28 @@ export const authOnSuccess = async (
     throw error;
   }
 };
+
+async function registerForPushNotificationsAsync() {
+  let token;
+
+  if (!Device.isDevice) {
+    console.warn('Must use physical device for Push Notifications');
+    return;
+  }
+
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+
+  if (existingStatus !== 'granted') {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+  }
+
+  if (finalStatus !== 'granted') {
+    console.warn('Failed to get push token for push notification!');
+    return;
+  }
+
+  token = (await Notifications.getExpoPushTokenAsync()).data;
+  return token;
+}

@@ -337,8 +337,6 @@ const sortChatRooms =
             new Date(a.date_created).getTime(),
         )[0]?.date_created;
 
-    console.log(lastMessageDateCreated(a), lastMessageDateCreated(b));
-
     const aDate = lastMessageDateCreated(a);
     const bDate = lastMessageDateCreated(b);
     if (!aDate || !bDate) return 0;

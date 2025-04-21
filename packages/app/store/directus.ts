@@ -9,6 +9,7 @@ import {
 } from '@directus/sdk';
 import { DIRECTUS_URL } from 'app/lib/constants';
 import { create } from 'zustand';
+import * as _ from 'lodash';
 
 const publicToken = 'Mnh7gFAmU4QeNRt_TQhTBrDDBxFdjPNu';
 export const initialDirectusStore: Omit<DirectusStore, 'setDirectusStore'> = {

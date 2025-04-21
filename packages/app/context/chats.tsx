@@ -106,7 +106,6 @@ export const ChatsProvider = ({ children }: { children: ReactNode }) => {
           },
         }),
       );
-      console.log('WebSocket connection established');
     };
     ws?.addEventListener('message', (message) => {
       const data = JSON.parse(message.data) as {

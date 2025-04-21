@@ -20,7 +20,7 @@ export default function ListingDetailedScreenComponent() {
   const navigation = useNavigation();
 
   const { data } = useQuery({
-    queryKey: ['ListingDetailed', id],
+    queryKey: ['listings', 'ListingDetailed', id],
     queryFn: () => {
       return rest.request(
         readItem('listings' as never, id! as string, {
@@ -32,9 +32,11 @@ export default function ListingDetailedScreenComponent() {
   });
 
   const { data: metrics } = useQuery({
-    queryKey: ['ListingMetrics', id],
+    queryKey: ['listings', 'listings-metrics', id],
     queryFn: async () => await getListingMetrics(id! as string),
     enabled: !!id,
+    gcTime: 0,
+    staleTime: 0,
   });
 
   const { data: usersMetrics } = useQuery({
@@ -46,6 +48,10 @@ export default function ListingDetailedScreenComponent() {
       ]),
     enabled: !!data,
   });
+
+  if (id === '20c48b4c-874e-4941-a8ce-f6843ccc7494') {
+    console.log({ metrics });
+  }
 
   return data && metrics && usersMetrics ? (
     <Stacked header={() => <ListingDetailedScreenHeader title={data.title} />}>

@@ -2,21 +2,13 @@ import { ChatsProvider } from 'app/context/chats';
 import { directusStore } from 'app/store/directus';
 import { EventProvider } from 'react-native-outside-press';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from 'app/context/auth';
-import { queryStore } from 'app/store/query';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode } from 'react';
+import { QueryClientProvider } from 'app/context/query';
 
 export const Providers = ({ children }: { children: ReactNode }) => {
-  const [queryClient, setQueryClient] = useState<QueryClient>();
-  useEffect(() => {
-    const _client = new QueryClient();
-    queryStore.setState(_client);
-    setQueryClient(_client);
-  }, []);
-
-  return queryClient ? (
-    <QueryClientProvider client={queryClient}>
+  return (
+    <QueryClientProvider>
       <AuthProvider>
         <EventProvider>
           <ChatsProviderComponent>
@@ -27,8 +19,6 @@ export const Providers = ({ children }: { children: ReactNode }) => {
         </EventProvider>
       </AuthProvider>
     </QueryClientProvider>
-  ) : (
-    <></>
   );
 };
 

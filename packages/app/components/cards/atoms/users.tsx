@@ -158,7 +158,7 @@ export const MediumUsersCard = (
           </View>
         </View>
         <View className="w-1/2 bg-background flex-col h-full">
-          <View className="h-8 w-full flex-row justify-end items-center gap-4">
+          <View className="h-8 w-full flex-row justify-end items-center gap-1">
             {isUserPro(item.plan) && (
               <View className="bg-primary/10 text-primary text-sm py-[2px] px-1 rounded flex-row gap-1 items-center">
                 <Award

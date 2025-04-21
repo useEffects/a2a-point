@@ -191,46 +191,47 @@ export const getListingMetrics = async (
   listingId: string,
 ): Promise<ListingCardMetrics> => {
   const { rest } = directusStore.getState();
-  const [viewsRes] = await queryClient.fetchQuery({
-    queryKey: viewsCountKey(listingId),
-    queryFn: async () =>
-      await rest.request(
-        aggregate('listings_directus_users_1', {
-          aggregate: {
-            count: ['directus_users_id'],
+
+  const viewsRes = await rest.request(
+    aggregate('listings_directus_users_1', {
+      aggregate: {
+        count: ['directus_users_id'],
+      },
+      query: {
+        filter: {
+          listings_id: {
+            _eq: listingId,
           },
-          query: {
-            filter: {
-              listings_id: {
-                _eq: listingId,
-              },
-            },
+        },
+      },
+    }),
+  );
+
+  const savesRes = await rest.request(
+    aggregate('listings_directus_users', {
+      aggregate: {
+        count: ['directus_users_id'],
+      },
+      query: {
+        filter: {
+          listings_id: {
+            _eq: listingId,
           },
-        }),
-      ),
-  });
-  const [savesRes] = await queryClient.fetchQuery({
-    queryKey: savesCountKey(listingId),
-    queryFn: async () =>
-      await rest.request(
-        aggregate('listings_directus_users', {
-          aggregate: {
-            count: ['directus_users_id'],
-          },
-          query: {
-            filter: {
-              listings_id: {
-                _eq: listingId,
-              },
-            },
-          },
-        }),
-      ),
-  });
-  return {
-    views: viewsRes!.count['directus_users_id'],
-    saves: savesRes!.count['directus_users_id'],
+        },
+      },
+    }),
+  );
+
+  const res = {
+    views: viewsRes[0]!.count['directus_users_id'],
+    saves: savesRes[0]!.count['directus_users_id'],
   };
+
+  // if (listingId === '20c48b4c-874e-4941-a8ce-f6843ccc7494') {
+  //   console.log({ res, savesRes });
+  // }
+
+  return res;
 };
 
 export const renderCardsQuery = async <R>(props: RenderCardsType) => {

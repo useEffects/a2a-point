@@ -115,7 +115,6 @@ export const listingsScreenQuery = <
         },
       ],
     },
-    enabled: true,
   };
 };
 
@@ -135,7 +134,11 @@ export const premiumListingsSmallQuery = <
   }>
 > => {
   return {
-    queryKey: ['listings', 'home screen premium listings small cards query', query],
+    queryKey: [
+      'listings',
+      'home screen premium listings small cards query',
+      query,
+    ],
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
       if (lastPage.items?.length < query.limit!) {
         return null;

@@ -11,7 +11,6 @@ import { directusStore } from 'app/store/directus';
 import userStore from 'app/store/user';
 import { Listing, User } from 'app/lib/types';
 
-const viewsCountKey = (listingId: string) => ['views-count', listingId];
 const checkSavesKey = (listingId: string) => ['check-saved', listingId];
 
 export type UserCount = { count: { directus_users_id: string } };
@@ -35,8 +34,6 @@ export const useListingMetrics = (listingId: string) => {
         }),
       ),
   });
-
-  console.log(checkSavedRes);
 
   // Mutation: Add bookmark
   const addBookmarkMutation = useMutation({
@@ -68,10 +65,13 @@ export const useListingMetrics = (listingId: string) => {
           }),
         );
       }
-
       return res;
     },
     onSuccess: (res) => {
+      if (listingId === '20c48b4c-874e-4941-a8ce-f6843ccc7494') {
+        console.log(res);
+      }
+
       // update check saved state
       queryClient.setQueryData(checkSavesKey(listingId), [{ id: res.id }]);
       queryClient.invalidateQueries({
@@ -96,19 +96,22 @@ export const useListingMetrics = (listingId: string) => {
         }),
       );
     },
-    onSuccess: () => {
+    onSuccess: (res) => {
+      console.log('delete res', res);
+
       queryClient.setQueryData(checkSavesKey(listingId), []);
       queryClient.invalidateQueries({
         predicate: (q) => q.queryKey[0] === 'listings',
       });
     },
+    onError: console.error,
   });
 
   return {
     bookmarkId:
       checkSavedRes && checkSavedRes.length ? checkSavedRes[0]!.id : undefined,
     addBookmark: addBookmarkMutation.mutateAsync,
-    deleteBookmark: () => deleteBookmarkMutation.mutateAsync(),
+    deleteBookmark: deleteBookmarkMutation.mutateAsync,
     isLoading:
       isLoading ||
       addBookmarkMutation.isPending ||
