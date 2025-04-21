@@ -29,7 +29,7 @@ export const UsersListScreen = ({
 
   return (
     <View className="flex-1 flex-col justify-start bg-accent">
-      <View className="px-4 pb-4 bg-accent">
+      <View className="px-4 bg-accent">
         <SearchBar
           searchText={searchText}
           setSearchText={setSearchText}
@@ -39,6 +39,7 @@ export const UsersListScreen = ({
             },
           }}
         />
+        <Separator className="mt-4" />
       </View>
       <InfiniteList<MediumUsersCardProps & UsersCardMetrics>
         component={MediumUsersCard}

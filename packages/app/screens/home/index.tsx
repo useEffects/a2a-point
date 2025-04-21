@@ -275,22 +275,22 @@ const Greeting = () => {
         </Text>
         <View className="flex-row gap-2">
           {categoryTiles.map((cat, i) => (
-            <View
-              onClick={() =>
+            <Button
+              key={i}
+              onPress={() =>
                 router.push(
-                  `/listings/?filter=${JSON.stringify([
+                  `/listings?filters=${JSON.stringify([
                     {
                       [cat.key]: cat.value,
                     },
                   ])}`,
                 )
               }
-              key={i}
+              variant={'secondary'}
+              size={'sm'}
             >
-              <Button variant={'secondary'} size={'sm'}>
-                <Text>{cat.title}</Text>
-              </Button>
-            </View>
+              <Text>{cat.title}</Text>
+            </Button>
           ))}
         </View>
       </View>

@@ -44,6 +44,9 @@ Sentry.init({
   integrations: [navigationIntegration],
   enableNativeFramesTracking: !isRunningInExpoGo(),
   attachStacktrace: true,
+  enabled:
+    process.env.NODE_ENV === 'production' ||
+    process.env.EXPO_PUBLC_NODE_ENV === 'production',
 });
 
 function RootLayout() {

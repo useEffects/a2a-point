@@ -185,7 +185,7 @@ export function ListingsScreen({
 
   return (
     <View className={cn('flex-1 bg-accent', className)}>
-      <View className="pb-4 bg-accent">
+      <View className="bg-accent">
         <View className="flex-row items-center justify-between gap-4 w-full px-4">
           <SearchBar
             searchText={searchText}
@@ -223,6 +223,7 @@ export function ListingsScreen({
         ) : (
           <></>
         )}
+        <Separator className="mt-4" />
       </View>
       <InfiniteList<
         | (MediumListingCardProps & ListingCardMetrics)

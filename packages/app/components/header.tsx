@@ -1,7 +1,7 @@
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { cn } from 'app/lib/utils';
 import { useNavigation, useRouter } from 'app/hooks/router';
-import { MoveLeft } from 'lucide-react-native';
+import { MoveLeft, Home } from 'lucide-react-native';
 import { ReactNode } from 'react';
 import { DimensionValue, Platform, View } from 'react-native';
 import { Button } from './ui/button';
@@ -26,7 +26,14 @@ export const BackButton = () => {
       <MoveLeft size={18} color={colors.primary} />
     </Button>
   ) : (
-    <></>
+    <Button
+      size={'icon'}
+      className="rounded-full"
+      variant={'ghost'}
+      onPress={() => router.navigate('/')}
+    >
+      <Home size={18} color={colors.primary} />
+    </Button>
   );
 };
 

@@ -31,7 +31,7 @@ export const LocationsList = ({
 
   return (
     <View className="flex-1">
-      <View className="pb-4 px-4 bg-accent">
+      <View className="px-4 bg-accent">
         <SearchBar
           searchText={searchText}
           setSearchText={setSearchText}
@@ -39,6 +39,7 @@ export const LocationsList = ({
             inputContainerStyle: { backgroundColor: colors.background },
           }}
         />
+        <Separator className="mt-4" />
       </View>
       <View className="flex-1 max-w-xl">
         <InfiniteList<MediumLocationCardProps & LocationCardMetrics>
