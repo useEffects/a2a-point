@@ -39,8 +39,8 @@ export async function generateStaticParams() {
     return fetchAllData<{ id: string }>("listings", {}, ["id"])
 }
 
-export async function generateMetaData({ params }: { params: { id: string } }) {
-    const {id} = params
+export async function generateMetaData({ params }: { params: Promise<{ id: string }> }) {
+    const {id} = await params
     const listing = await fetchListing(id)
     const listingImage =  listing.photo_1 || listing.photo_2 || listing.photo_3
     const image = listingImage ? buildAssetUrl(listingImage) : "https://a2apoint-misc.nyc3.digitaloceanspaces.com/app/logo.svg"

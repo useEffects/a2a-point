@@ -58,8 +58,8 @@ export async function generateStaticParams() {
     }, ["id"])
 }
 
-export async function generateMetaData({ params }: { params: { id: string } }) {
-    const {id} = params
+export async function generateMetaData({ params }: { params: Promise<{ id: string }> }) {
+    const {id} = await params
     const location = await fetchLocation(id)
     const locationImage = location.avatar
     const image = locationImage ? buildAssetUrl(locationImage) : "https://a2apoint-misc.nyc3.digitaloceanspaces.com/app/logo.svg"
