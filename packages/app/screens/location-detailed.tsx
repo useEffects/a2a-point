@@ -3,12 +3,6 @@ import {
   MediumListingCardProps,
   MediumListingCardSkeleton,
 } from 'app/components/cards/atoms/medium';
-import {
-  CommonFilters,
-  RenderListings,
-  bodies,
-  commonFilters,
-} from 'app/components/cards/molecules/listings';
 import { MembersList } from 'app/components/cards/molecules/locations';
 import { FullWidthImage } from 'app/components/full-width-image';
 import { BackButton, Header, HeaderTitle } from 'app/components/header';
@@ -94,7 +88,7 @@ export function LocationDetailed(props: LocationDetailedProps) {
               scrollEnabled: Platform.OS === 'web',
               ItemSeparatorComponent: () => <Separator className="my-2" />,
             }}
-            viewAllLink={`/listings?filter=${JSON.stringify([
+            viewAllLink={`/listings?filters=${JSON.stringify([
               {
                 [FilterKeys.Location]: room.id,
               },

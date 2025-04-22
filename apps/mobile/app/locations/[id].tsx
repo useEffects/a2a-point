@@ -22,18 +22,9 @@ import { directusStore } from 'app/store/directus';
 import { useGlobalSearchParams } from 'expo-router';
 import { View } from 'react-native';
 
-const Stack = createNativeStackNavigator();
-
 export default function LocationSlugScreen() {
-  const params = useGlobalSearchParams<{ slug?: string[] }>();
-  const { slug } = params;
-  const [id, ...rest] = slug!;
-
-  return rest.join('') === 'members' ? (
-    <MembersScreen id={id!} />
-  ) : (
-    <LocationDetailedScreenComponent id={id!} />
-  );
+  const { id } = useGlobalSearchParams();
+  return id ? <LocationDetailedScreenComponent id={id as string} /> : <></>;
 }
 
 const LocationDetailedScreenComponent = ({ id }: { id: string }) => {

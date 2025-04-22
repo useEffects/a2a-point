@@ -52,13 +52,6 @@ Sentry.init({
 function RootLayout() {
   const ref = useNavigationContainerRef();
   useEffect(() => {
-    Notifications.setNotificationHandler({
-      handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: false,
-      }),
-    });
     if (ref?.current) {
       navigationIntegration.registerNavigationContainer(ref);
     }
@@ -68,9 +61,9 @@ function RootLayout() {
     <>
       <GestureHandlerRootView>
         <Providers>
-          <SafeAreaProvider>
-            <HideSplashScreen>
-              <RouterProvider>
+          <RouterProvider>
+            <SafeAreaProvider>
+              <HideSplashScreen>
                 <Stack
                   screenOptions={{
                     headerShown: false,
@@ -98,9 +91,9 @@ function RootLayout() {
                   <Stack.Screen name="auth/callback" />
                 </Stack>
                 <PortalHost />
-              </RouterProvider>
-            </HideSplashScreen>
-          </SafeAreaProvider>
+              </HideSplashScreen>
+            </SafeAreaProvider>
+          </RouterProvider>
         </Providers>
       </GestureHandlerRootView>
     </>
@@ -125,6 +118,7 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
       isFetching: isDirectusQueryFetching,
     },
   } = useContext(AuthContext);
+  const router = useContext(RouterContext).router();
 
   const theme: Theme = {
     dark: colorScheme === 'dark',
@@ -143,6 +137,20 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     prefetchQueries().then(() => setQueriesPrefetched(true));
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+      }),
+    });
+    Notifications.addNotificationResponseReceivedListener((response) => {
+      const url = response.notification.request.content.data.url;
+      if (!url) return;
+
+      const internalPath = url.replace(/^https?:\/\/[^/]+/, '');
+      router.push(internalPath);
+    });
     (async () => {
       if (!colorSchemeReady) {
         const _theme = await AsyncStorage.getItem('theme');
@@ -159,7 +167,7 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
         setColorSchemeReady(true);
       }
     })();
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (Platform.OS === 'android') {
