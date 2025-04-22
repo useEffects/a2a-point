@@ -47,12 +47,12 @@ export async function generateMetaData({ params }: { params: { id: string } }) {
 
     return {
         title: agent.first_name,
-        description: '',
+        description: agent.description,
         metadataBase: new URL(`${portfolioUrl}/agents/${id}`),
         icons: image,
         openGraph: {
             title: agent.first_name,
-            description: '',
+            description: agent.description,
             type: "website",
             url: `${portfolioUrl}/agents/${id}`,
             locale: "en_US",
