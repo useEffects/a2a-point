@@ -74,10 +74,9 @@ export const MediumListingCard = (
   const { colors } = useColorScheme();
 
   const shareListing = () => {
-    const title = `Share the listing ${item.title} with other members in the A2A Point community!`;
     Share.open({
-      title,
-      message: `${title}\n\n`,
+      title: item.title,
+      message: `${item.title}\n${item.description}\n`,
       url: `${portfolioUrl}/listings/${item.id}`,
       failOnCancel: false,
     });

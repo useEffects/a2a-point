@@ -111,10 +111,9 @@ export const MediumLocationCard = (
   );
 
   const shareLocation = () => {
-    const title = `Share the location - ${item.title} with other members in the A2A Point community!`;
     Share.open({
-      title,
-      message: `${title}\n\n`,
+      title: item.title!,
+      message: `${item.title}\n`,
       url: `${portfolioUrl}/agents/${item.id}`,
     });
   };

@@ -56,7 +56,7 @@ export const useListingMetrics = (listingId: string) => {
           createNotification({
             collection: 'listings',
             item: listing.id,
-            message: `You have a new bookmark on your listing ${listing.title} from ${user.email}`,
+            message: `🚀 Your listing ${listing.title} just got bookmarked from ${user.email}`,
             recipient: recipient.id,
             sender: user.id,
             subject: 'New Bookmark Received!',

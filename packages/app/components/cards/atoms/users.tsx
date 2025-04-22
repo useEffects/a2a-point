@@ -114,10 +114,9 @@ export const MediumUsersCard = (
   };
 
   const shareAgent = () => {
-    const title = `Share the profile of agent - ${item.first_name} with other members in the A2A Point community!`;
     Share.open({
-      title,
-      message: `${title}\n\n`,
+      title: item.first_name,
+      message: `${item.first_name}\n${item.email}\n`,
       url: `${portfolioUrl}/agents/${item.id}`,
       failOnCancel: false,
     });

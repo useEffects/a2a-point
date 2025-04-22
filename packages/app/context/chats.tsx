@@ -316,7 +316,7 @@ async function sendNotification(
       recipients.map((recipient) => ({
         recipient: recipient,
         sender: user.id,
-        subject: `New message from ${user.first_name} ${user.last_name}`,
+        subject: `💬 You have a new message from ${user.first_name} ${user.last_name}`,
         message: message.content || 'Open app to view attachment',
         collection: 'directus_users',
         item: user.id,

@@ -204,7 +204,11 @@ export const authOnSuccess = async (
   setDirectusStore: (props: Partial<DirectusStore>) => void,
 ) => {
   try {
+    console.debug('Starting authOnSuccess...');
+
     if (accessToken && refreshToken) {
+      console.debug('accessToken and refreshToken are available');
+
       const directusAccessTokenResp = await fetch(
         `${DIRECTUS_URL}/extended-api/exchange-keycloak-token`,
         {
@@ -218,8 +222,16 @@ export const authOnSuccess = async (
           },
         },
       );
+
+      console.debug('Fetched directus access token response');
+
       const directusAccessTokenRespJson = await directusAccessTokenResp.json();
+
       if (!directusAccessTokenResp.ok) {
+        console.debug(
+          'Failed to get directus token',
+          directusAccessTokenRespJson,
+        );
         Sentry.captureMessage(directusAccessTokenRespJson);
         console.error(directusAccessTokenRespJson);
         await AsyncStorage.removeItem(kcRefreshTokenKey);
@@ -229,6 +241,7 @@ export const authOnSuccess = async (
       }
 
       const { access_token: directusAccessToken } = directusAccessTokenRespJson;
+      console.debug('Successfully received directus access token');
 
       const usersFetchResp = await fetch(`${DIRECTUS_URL}/users/me?fields=*`, {
         headers: {
@@ -236,13 +249,19 @@ export const authOnSuccess = async (
         },
       });
 
+      console.debug('Fetching user details');
+
       const { data: user } = await usersFetchResp.json();
+
       if (usersFetchResp.ok) {
+        console.debug('User fetched successfully', user);
         userStore.setState((p) => ({
           ...p,
           user: user,
         }));
+
         if (user.company) {
+          console.debug('Fetching user company details...');
           const company = await fetch(
             `${DIRECTUS_URL}/items/companies/${user.company}`,
             {
@@ -253,12 +272,15 @@ export const authOnSuccess = async (
           )
             .then((res) => res.json())
             .then((res) => res.data);
+          console.debug('Company details fetched', company);
           userStore.setState((p) => ({
             ...p,
             company: company,
           }));
         }
+
         if (user.document) {
+          console.debug('Fetching user document details...');
           const document = await fetch(
             `${DIRECTUS_URL}/items/documents/${user.document}`,
             {
@@ -269,15 +291,20 @@ export const authOnSuccess = async (
           )
             .then((res) => res.json())
             .then((res) => res.data);
+          console.debug('Document details fetched', document);
           userStore.setState((p) => ({ ...p, document: document }));
         }
       } else {
+        console.debug('Unable to fetch users data');
         Sentry.captureMessage('Unable to fetch users data');
         console.error('Unable to fetch users data');
       }
 
       const expoPushToken = await registerForPushNotificationsAsync();
+      console.debug('Got expo push token:', expoPushToken);
+
       if (expoPushToken) {
+        console.debug('Saving login details for push notifications...');
         const loginDetailsResp = await fetch(
           `${directusUrl}/items/login_details`,
           {
@@ -301,7 +328,7 @@ export const authOnSuccess = async (
           const errorCode = loginDetailsRespJson?.errors?.[0]?.extensions?.code;
           if (errorCode === 'RECORD_NOT_UNIQUE') {
             console.debug(
-              'Updating last accessed for the current device token',
+              'Device already registered, updating last_accessed timestamp...',
             );
             try {
               const filter = {
@@ -324,11 +351,17 @@ export const authOnSuccess = async (
                   }),
                 },
               );
+              console.debug('last_accessed field updated successfully');
             } catch (err) {
+              console.debug('Error updating last_accessed field', err);
               console.error('Error updating last_accessed field', err);
               Sentry.captureException(err);
             }
           } else {
+            console.debug(
+              'Unknown error occurred while setting login details',
+              loginDetailsRespJson,
+            );
             console.error(
               'Error in setting login details',
               loginDetailsRespJson,
@@ -340,6 +373,8 @@ export const authOnSuccess = async (
         }
       }
 
+      console.debug('Finalizing login state...');
+
       setKeyCloakStore({ active: true });
       setDirectusStore({
         authenticated: true,
@@ -348,8 +383,11 @@ export const authOnSuccess = async (
           .with(rest())
           .with(staticToken(directusAccessToken)),
       });
+
+      console.debug('authOnSuccess complete');
       return directusAccessTokenResp;
     } else {
+      console.debug('accessToken or refreshToken missing');
       await AsyncStorage.removeItem(kcRefreshTokenKey);
       setKeyCloakStore({ active: false });
       setDirectusStore(initialDirectusStore);
@@ -358,6 +396,7 @@ export const authOnSuccess = async (
       );
     }
   } catch (error) {
+    console.debug('Exception caught in authOnSuccess', error);
     await AsyncStorage.removeItem(kcRefreshTokenKey);
     setKeyCloakStore({ active: false });
     setDirectusStore(initialDirectusStore);
