@@ -114,9 +114,9 @@ export const MediumUsersCard = (
   };
 
   const shareAgent = () => {
-    Share.open({
+    ({
       title: item.first_name,
-      message: `${item.first_name}\n${item.email}\n`,
+      message: `Connect with ${item.first_name}!\nView full details on A2A Point.\n`,
       url: `${portfolioUrl}/agents/${item.id}`,
       failOnCancel: false,
     });

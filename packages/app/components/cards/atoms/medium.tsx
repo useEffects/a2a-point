@@ -76,7 +76,7 @@ export const MediumListingCard = (
   const shareListing = () => {
     Share.open({
       title: item.title,
-      message: `${item.title}\n${item.description}\n`,
+      message: `${item.title}\n${item.description}\nView full details on A2A Point.\n`,
       url: `${portfolioUrl}/listings/${item.id}`,
       failOnCancel: false,
     });
