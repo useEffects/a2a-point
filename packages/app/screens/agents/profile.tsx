@@ -141,7 +141,6 @@ export function Profile({
   const { rest } = directusStore();
   const { authenticated } = directusStore();
   const router = useRouter();
-  const windowHeight = Dimensions.get('window').height;
 
   useEffect(() => {
     getListingsCountForUser(user.id).then(setListingsCount);
@@ -321,9 +320,9 @@ export function Profile({
     );
   };
   return (
-    <View className="relative" style={{ height: windowHeight - 196 }}>
+    <View className="relative">
       <TabView
-        style={{ height }}
+        style={{ height: height - 132 }}
         renderTabBar={TabBar}
         navigationState={{
           index,
