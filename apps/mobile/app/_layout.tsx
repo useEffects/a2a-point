@@ -137,6 +137,7 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     prefetchQueries().then(() => setQueriesPrefetched(true));
+    let notificationListener: Notifications.EventSubscription;
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
         shouldShowAlert: true,
@@ -144,13 +145,14 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
         shouldSetBadge: false,
       }),
     });
-    Notifications.addNotificationResponseReceivedListener((response) => {
-      const url = response.notification.request.content.data.url;
-      if (!url) return;
+    notificationListener =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        const url = response.notification.request.content.data.url;
+        if (!url) return;
 
-      const internalPath = url.replace(/^https?:\/\/[^/]+/, '');
-      router.push(internalPath);
-    });
+        const internalPath = url.replace(/^https?:\/\/[^/]+/, '');
+        router.push(internalPath);
+      });
     (async () => {
       if (!colorSchemeReady) {
         const _theme = await AsyncStorage.getItem('theme');
@@ -167,6 +169,12 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
         setColorSchemeReady(true);
       }
     })();
+
+    return () => {
+      if (notificationListener) {
+        Notifications.removeNotificationSubscription(notificationListener);
+      }
+    };
   }, [router]);
 
   useEffect(() => {

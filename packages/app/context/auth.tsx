@@ -33,6 +33,7 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import { theme } from '@a2apoint/tailwind-theme/src/colors';
+import Constants from 'expo-constants';
 
 export const AuthContext = createContext({
   keycloakQueryResult: {} as DefinedUseQueryResult<AuthTokens>,
@@ -434,7 +435,18 @@ async function registerForPushNotificationsAsync() {
       lightColor: theme.light.primary,
     });
   }
+  const projectId =
+    Constants?.expoConfig?.extra?.eas?.projectId ??
+    Constants?.easConfig?.projectId;
+  if (!projectId) {
+    console.error('Project id not found');
+    return;
+  }
 
-  token = (await Notifications.getExpoPushTokenAsync()).data;
+  token = (
+    await Notifications.getExpoPushTokenAsync({
+      projectId,
+    })
+  ).data;
   return token;
 }
