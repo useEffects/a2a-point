@@ -1,9 +1,8 @@
-import { kcRefreshTokenKey } from 'app/context/auth';
-import { AuthTokenSet } from 'app/infra/queries/tokens/types';
 import {
   kcAccessTokenKey,
   directusAccessTokenKey,
   directusRefreshTokenKey,
+  kcRefreshTokenKey,
 } from 'app/infra/queries/tokens/utils';
 import { secureStorage } from 'app/infra/storage';
 import { KC_URL, KC_REALM, KC_CLIENT_ID } from 'app/lib/constants';

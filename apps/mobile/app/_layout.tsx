@@ -9,12 +9,11 @@ import {
   useRootNavigationState,
   useRouter,
   useSegments,
+  SplashScreen,
 } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
 import { ReactNode, useContext, useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import { Providers } from 'app/components/providers';
-import { AuthContext, kcRefreshTokenKey } from 'app/context/auth';
 import * as navigationBar from 'expo-navigation-bar';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import '../../../packages/tailwind-theme/theme.css';
@@ -33,7 +32,7 @@ import { prefetchQueries } from '../lib/helpers';
 import * as Notifications from 'expo-notifications';
 import { useAuthFlow } from 'app/application/auth/hooks';
 
-SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync().catch(console.warn);
 
 const navigationIntegration = Sentry.reactNavigationIntegration({
   enableTimeToInitialDisplay: !isRunningInExpoGo(),

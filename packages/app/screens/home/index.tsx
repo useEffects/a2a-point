@@ -1,5 +1,3 @@
-import { readItems } from '@directus/sdk';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { NewsCard, NewsCardSkeleton } from 'app/components/cards/atoms/news';
 import {
   PhotoListingCard,
@@ -11,50 +9,21 @@ import {
   SmallListingCardProps,
   SmallListingCardSkeleton,
 } from 'app/components/cards/atoms/small';
-import {
-  bodies,
-  CommonFilters,
-  commonFilters,
-  RenderListings,
-} from 'app/components/cards/molecules/listings';
+import { CommonFilters } from 'app/components/cards/molecules/listings';
 import {
   SmallLocationCard,
-  SmallLocationCards,
   SmallLocationCardSkeleton,
 } from 'app/components/cards/molecules/locations';
-import {
-  RenderUsers,
-  Mode as UsersRenderMode,
-} from 'app/components/cards/molecules/users';
-import { useSmallLocationsQuery } from 'app/components/cards/utils/locations';
-import { useSmallUsersQuery } from 'app/components/cards/utils/users';
 import { CompanyStats } from 'app/components/company-stats';
 import { Header, HeaderTitle } from 'app/components/header';
-import {
-  ArrowUpRight,
-  Clock,
-  ExternalLink,
-  MoveRight,
-} from 'app/components/icons';
+import { ArrowUpRight, Clock, ExternalLink } from 'app/components/icons';
 import { SeparatorText } from 'app/components/separator-text';
 import { Text } from 'app/components/ui/text';
-import { ViewAllButton } from 'app/components/utils/common-ui';
-import { FlatList } from 'app/components/utils/virtual-lists';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { useRouter } from 'app/hooks/router';
 import { directusUrl, portfolioUrl } from 'app/lib/constants';
 import {
-  getCompaniesWithAgents,
-  getListingMetrics,
-  getListingsCount,
-  getLocationsCount,
-  getUsersCount,
-  renderCardsQuery,
-} from 'app/lib/misc/queries';
-import {
   ListingCardMetrics,
-  photoListingsFields,
-  smallListingsFields,
   SmallLocationCardProps,
   SmallUsersCardProps,
   UsersCardMetrics,
@@ -67,14 +36,10 @@ import opacity from 'hex-color-opacity';
 import { View } from 'react-native';
 import { categoryTiles, FilterKeys } from '../listings';
 import { Button } from 'app/components/ui/button';
-import { useContext, useEffect, useMemo, useState } from 'react';
-import { AuthContext } from 'app/context/auth';
+import { useState } from 'react';
 import { getTimeofDay } from 'app/lib/helpers';
-import { keycloakStore } from 'app/store/keycloak';
 import { lowerCase, startCase } from 'lodash';
-import { ActivityScreen } from '../activity';
 import Logo from 'app/components/svg/logo';
-import { TypeAnimation } from 'react-native-type-animation';
 import InfiniteList from 'app/components/infinite';
 import {
   newsQuery,

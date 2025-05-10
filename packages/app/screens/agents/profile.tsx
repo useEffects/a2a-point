@@ -31,31 +31,25 @@ import { useColorScheme } from 'app/hooks/color-scheme';
 import { useRouter } from 'app/hooks/router';
 import {
   directusUrl,
-  KC_CLIENT_ID,
-  KC_REALM,
-  KC_URL,
-  NEXT_URL,
   profilePicturesFolderId,
 } from 'app/lib/constants';
-import { buildAssetUrl, timeAgo } from 'app/lib/helpers';
+import { timeAgo } from 'app/lib/helpers';
 import { getListingsCountForUser } from 'app/lib/misc/queries';
 import { ListingCardMetrics } from 'app/lib/props';
 import { Company, Document, Feedback, User } from 'app/lib/types';
 import { cn } from 'app/lib/utils';
 import { StarIcon } from 'app/screens/post-feedback';
-import { directusStore, initialDirectusStore } from 'app/store/directus';
+import { directusStore } from 'app/store/directus';
 import { queryClient } from 'app/store/query';
 import userStore from 'app/store/user';
 import {
   Dispatch,
   SetStateAction,
-  useContext,
   useEffect,
   useState,
 } from 'react';
 import {
   DimensionValue,
-  Dimensions,
   Image,
   Linking,
   NativeScrollEvent,
@@ -85,9 +79,6 @@ import {
 import { Button } from '../../components/ui/button';
 import { FilterKeys } from '../listings';
 import LockedScreen from '../locked-screens';
-import { AsyncImage } from 'app/components/async-image';
-import { AuthContext, kcRefreshTokenKey } from 'app/context/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { keycloakStore } from 'app/store/keycloak';
 import * as Sentry from '@sentry/react-native';
 import { ProfilePic } from './components/profile-pic';
