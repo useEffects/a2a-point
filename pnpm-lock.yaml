@@ -183,6 +183,9 @@ importers:
       react-native-reanimated:
         specifier: ^3.17.4
         version: 3.17.4(@babel/core@7.26.10)(react-native@0.76.6(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1)
+      react-native-restart:
+        specifier: ^0.0.27
+        version: 0.0.27(react-native@0.76.6(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1)
       react-native-safe-area-context:
         specifier: ^5.4.0
         version: 5.4.0(react-native@0.76.6(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1)
@@ -630,6 +633,9 @@ importers:
       react-native-reanimated-carousel:
         specifier: ^4.0.2
         version: 4.0.2(react-native-gesture-handler@2.25.0(react-native@0.76.6(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1))(react-native-reanimated@3.17.4(@babel/core@7.26.10)(react-native@0.76.6(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1))(react-native@0.76.6(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1)
+      react-native-restart:
+        specifier: ^0.0.27
+        version: 0.0.27(react-native@0.76.6(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1)
       react-native-safe-area-context:
         specifier: 5.4.0
         version: 5.4.0(react-native@0.76.6(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1)
@@ -7756,6 +7762,12 @@ packages:
     resolution: {integrity: sha512-vmkG/N5KZrexHr4v0rZB7ohPVseGVNaCXjGxoRo+NYKgC9+mIZAkg/QIfy9xxfJ73FfTrryO9iYUrxks3ZfKbA==}
     peerDependencies:
       '@babel/core': ^7.0.0-0
+      react: 18.3.1
+      react-native: 0.76.6
+
+  react-native-restart@0.0.27:
+    resolution: {integrity: sha512-8KScVICrXwcTSJ1rjWkqVTHyEKQIttm5AIMGSK1QG1+RS5owYlE4z/1DykOTdWfVl9l16FIk0w9Xzk9ZO6jxlA==}
+    peerDependencies:
       react: 18.3.1
       react-native: 0.76.6
 
@@ -17498,6 +17510,11 @@ snapshots:
       react-native-is-edge-to-edge: 1.1.7(react-native@0.76.6(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - supports-color
+
+  react-native-restart@0.0.27(react-native@0.76.6(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-native: 0.76.6(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@types/react@18.3.1)(react@18.3.1)
 
   react-native-safe-area-context@5.4.0(react-native@0.76.6(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1):
     dependencies:

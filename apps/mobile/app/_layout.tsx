@@ -31,6 +31,7 @@ import { isRunningInExpoGo } from 'expo';
 import { GLITCHTIP_DSN } from 'app/lib/constants';
 import { prefetchQueries } from '../lib/helpers';
 import * as Notifications from 'expo-notifications';
+import { useAuthFlow } from 'app/application/auth/hooks';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -119,6 +120,8 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
     },
   } = useContext(AuthContext);
   const router = useContext(RouterContext).router();
+
+  const {} = useAuthFlow();
 
   const theme: Theme = {
     dark: colorScheme === 'dark',

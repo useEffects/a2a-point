@@ -4,37 +4,26 @@ import {
   useAutoDiscovery,
 } from 'expo-auth-session';
 import { Image, View } from 'react-native';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { KC_URL, KC_REALM, KC_CLIENT_ID } from 'app/lib/constants';
-import { keycloakStore } from 'app/store/keycloak';
-import {
-  AuthContext,
-  authOnSuccess,
-  kcRefreshTokenKey,
-} from 'app/context/auth';
 import { URLSearchParams } from 'app/lib/helpers';
-import { directusStore } from 'app/store/directus';
 import { Button } from 'app/components/ui/button';
 import { Text } from 'app/components/ui/text';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BackButton, Header, HeaderTitle } from 'app/components/header';
 import Logo from 'app/components/svg/logo';
 import * as Linking from 'expo-linking';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import LoginDarkImg from 'app/assets/login/dark/Frame_135_2_hzjyas_c_scale,w_1085.jpg';
 import LoginLightImg from 'app/assets/login/light/light_c9pqo8_c_scale,w_1029.jpg';
-import { useRouter } from 'app/context/router';
 import * as Sentry from '@sentry/react-native';
+import RNRestart from 'react-native-restart';
+import { storage } from 'app/infra/storage';
+import { kcAccessTokenKey, kcRefreshTokenKey } from 'app/infra/queries/tokens/utils';
 
-export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
-  const router = useRouter();
-  const { setKeyCloakStore } = keycloakStore();
-  const { setDirectusStore } = directusStore();
-  const { logout } = useContext(AuthContext);
-
+export function LoginScreen() {
   const discovery = useAutoDiscovery(`${KC_URL}/realms/${KC_REALM}`);
   const redirectUri = makeRedirectUri({
-    path: `auth/callback?redirect=${redirect}`,
+    path: `auth/login`,
   });
 
   const [request, response, promptAsync] = useAuthRequest(
@@ -49,9 +38,7 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
 
   const { isDarkColorScheme } = useColorScheme();
 
-  const handleLogin = () => {
-    logout().then(() => promptAsync());
-  };
+  const handleLogin = () => promptAsync();
 
   useEffect(() => {
     if (response?.type === 'success') {
@@ -61,23 +48,18 @@ export function LoginScreen({ redirect = '/' }: { redirect?: string }) {
         codeVerifier: request?.codeVerifier!,
         redirectUri,
       })
-        .then(async (res) => {
-          const { refresh_token: refreshToken, access_token: accessToken } =
-            res;
-          authOnSuccess(
-            { accessToken, refreshToken },
-            setKeyCloakStore,
-            setDirectusStore,
-          );
-          await AsyncStorage.setItem(kcRefreshTokenKey, refreshToken);
-          router.push(`auth/callback?redirect=${redirect}`);
-        })
+        .then((res) =>
+          Promise.all([
+            storage.setItem(kcAccessTokenKey, res.access_token),
+            storage.setItem(kcRefreshTokenKey, res.refresh_token),
+          ]).then(() => RNRestart.restart()),
+        )
         .catch(Sentry.captureException);
     } else if (response?.type === 'error') {
       Sentry.captureException(response.error);
       console.error('Authentication error: ', response.error);
     } else {
-      // console.log(response);
+      console.debug(response);
     }
   }, [response, discovery]);
 

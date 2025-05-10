@@ -6,7 +6,7 @@ import { tryCatch } from 'app/shared/utils/tryCatch';
 import {
   directusTokenFlow,
   exchangeKcTokenWithDirectus,
-  initializeStores,
+  runAuthEffects,
 } from './utils';
 
 export const useAuthFlow = () =>
@@ -21,15 +21,14 @@ export const useAuthFlow = () =>
 const runAuthFlow = async (): Promise<boolean> => {
   const tokens = await queryClient.fetchQuery(createTokensQOpts());
 
-  const directusOK = await directusTokenFlow({
-    accessToken: tokens.directusAccessToken,
-    refreshToken: tokens.directusRefreshToken,
-  }).catch((err) => {
-    console.warn('Directus token validation failed', err);
-    return null;
-  });
+  const [directusOK] = await tryCatch(
+    directusTokenFlow({
+      accessToken: tokens.directusAccessToken,
+      refreshToken: tokens.directusRefreshToken,
+    }),
+  );
 
-  if (directusOK) return initializeStores(tokens);
+  if (directusOK) return runAuthEffects(tokens);
 
   if (!tokens.kcAccessToken || !tokens.kcRefreshToken) return false;
 
@@ -54,5 +53,5 @@ const runAuthFlow = async (): Promise<boolean> => {
     return false;
   }
 
-  return initializeStores(newTokens);
+  return runAuthEffects(newTokens);
 };
