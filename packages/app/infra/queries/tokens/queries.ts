@@ -7,7 +7,7 @@ import {
   kcRefreshTokenKey,
 } from './utils';
 import { AuthTokenSet } from './types';
-import { storage } from 'app/infra/storage';
+import { secureStorage } from 'app/infra/storage';
 
 export const createTokensQOpts = (
   queryOptions: Partial<UseQueryOptions<AuthTokenSet>> = {},
@@ -16,12 +16,12 @@ export const createTokensQOpts = (
     {
       queryKey: ['TOKENS FROM (SECURE) STORAGE'],
       queryFn: async () => {
-        const kcAccessToken = await storage.getItem(kcAccessTokenKey);
-        const kcRefreshToken = await storage.getItem(kcRefreshTokenKey);
-        const directusAccessToken = await storage.getItem(
+        const kcAccessToken = await secureStorage.getItem(kcAccessTokenKey);
+        const kcRefreshToken = await secureStorage.getItem(kcRefreshTokenKey);
+        const directusAccessToken = await secureStorage.getItem(
           directusAccessTokenKey,
         );
-        const directusRefreshToken = await storage.getItem(
+        const directusRefreshToken = await secureStorage.getItem(
           directusRefreshTokenKey,
         );
 

@@ -109,19 +109,9 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
   const { colorScheme, setColorScheme, colors } = useColorScheme();
   const [authReady, setAuthReady] = useState(false);
   const [colorSchemeReady, setColorSchemeReady] = useState(false);
-  const {
-    keycloakQueryResult: {
-      isLoading: isKeycloakQueryLoading,
-      isFetching: isKeycloakQueryFetching,
-    },
-    directusQueryResult: {
-      isLoading: isDirectusQueryLoading,
-      isFetching: isDirectusQueryFetching,
-    },
-  } = useContext(AuthContext);
   const router = useContext(RouterContext).router();
 
-  const {} = useAuthFlow();
+  const { isPending: authFlowIsPending } = useAuthFlow();
 
   const theme: Theme = {
     dark: colorScheme === 'dark',
@@ -190,23 +180,10 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
   }, [colors]);
 
   useEffect(() => {
-    if (
-      !authReady &&
-      !(
-        isDirectusQueryLoading ||
-        isKeycloakQueryLoading ||
-        isDirectusQueryFetching ||
-        isKeycloakQueryFetching
-      )
-    ) {
+    if (!authReady && !authFlowIsPending) {
       setAuthReady(true);
     }
-  }, [
-    isKeycloakQueryLoading,
-    isDirectusQueryLoading,
-    isDirectusQueryFetching,
-    isKeycloakQueryFetching,
-  ]);
+  }, [!authFlowIsPending]);
 
   useEffect(() => {
     if (
@@ -216,14 +193,9 @@ function HideSplashScreen({ children }: { children: ReactNode }) {
       queriesPrefetched
     ) {
       setSplashScreenHidden(true);
-      SplashScreen.hide();
+      SplashScreen.hideAsync();
     }
-  }, [
-    authReady,
-    colorSchemeReady,
-    isDirectusQueryLoading,
-    isKeycloakQueryLoading,
-  ]);
+  }, [authReady, colorSchemeReady]);
 
   return (
     <ThemeProvider value={theme}>

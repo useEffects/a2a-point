@@ -15,7 +15,9 @@ const crossStorage: IStorage = {
   removeItem: AsyncStorage.removeItem,
 };
 
-export const storage = Platform.select({
+export const secureStorage = Platform.select({
   native: mobileStorage,
   default: crossStorage,
 });
+
+export const storage = crossStorage;

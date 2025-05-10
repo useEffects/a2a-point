@@ -99,22 +99,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const keycloakQueryResult = useQuery<AuthTokens>({
     queryKey: authQueryKey,
     queryFn: async () => {
-      const refreshToken = await AsyncStorage.getItem(kcRefreshTokenKey);
-      if (refreshToken) {
-        try {
-          const tokens = await refreshKeycloakTokens(refreshToken);
-          if (tokens.accessToken && tokens.refreshToken) {
-            await AsyncStorage.setItem(kcRefreshTokenKey, tokens.refreshToken);
-            return { ...tokens };
-          }
-        } catch (error) {
-          Sentry.captureException(error);
-          console.error(error);
-          await AsyncStorage.removeItem(kcRefreshTokenKey);
-          return initalAuthTokensState;
-        }
-      }
-      await AsyncStorage.removeItem(kcRefreshTokenKey);
+      // const refreshToken = await AsyncStorage.getItem(kcRefreshTokenKey);
+      // if (refreshToken) {
+      //   try {
+      //     const tokens = await refreshKeycloakTokens(refreshToken);
+      //     if (tokens.accessToken && tokens.refreshToken) {
+      //       await AsyncStorage.setItem(kcRefreshTokenKey, tokens.refreshToken);
+      //       return { ...tokens };
+      //     }
+      //   } catch (error) {
+      //     Sentry.captureException(error);
+      //     console.error(error);
+      //     await AsyncStorage.removeItem(kcRefreshTokenKey);
+      //     return initalAuthTokensState;
+      //   }
+      // }
+      // await AsyncStorage.removeItem(kcRefreshTokenKey);
       return initalAuthTokensState;
     },
     initialData: initalAuthTokensState,
@@ -203,208 +203,7 @@ export const authOnSuccess = async (
   { accessToken, refreshToken }: AuthTokens,
   setKeyCloakStore: (props: Partial<KeycloakStore>) => void,
   setDirectusStore: (props: Partial<DirectusStore>) => void,
-) => {
-  try {
-    console.debug('Starting authOnSuccess...');
-
-    if (accessToken && refreshToken) {
-      console.debug('accessToken and refreshToken are available');
-
-      const directusAccessTokenResp = await fetch(
-        `${DIRECTUS_URL}/extended-api/exchange-keycloak-token`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            accessToken: accessToken,
-            clientId: KC_CLIENT_ID,
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-
-      console.debug('Fetched directus access token response');
-
-      const directusAccessTokenRespJson = await directusAccessTokenResp.json();
-
-      if (!directusAccessTokenResp.ok) {
-        console.debug(
-          'Failed to get directus token',
-          directusAccessTokenRespJson,
-        );
-        Sentry.captureMessage(directusAccessTokenRespJson);
-        console.error(directusAccessTokenRespJson);
-        await AsyncStorage.removeItem(kcRefreshTokenKey);
-        setKeyCloakStore({ active: false });
-        setDirectusStore(initialDirectusStore);
-        throw new Error('Error getting access token from directus');
-      }
-
-      const { access_token: directusAccessToken } = directusAccessTokenRespJson;
-      console.debug('Successfully received directus access token');
-
-      const usersFetchResp = await fetch(`${DIRECTUS_URL}/users/me?fields=*`, {
-        headers: {
-          Authorization: `Bearer ${directusAccessToken}`,
-        },
-      });
-
-      console.debug('Fetching user details');
-
-      const { data: user } = await usersFetchResp.json();
-
-      if (usersFetchResp.ok) {
-        console.debug('User fetched successfully', user);
-        userStore.setState((p) => ({
-          ...p,
-          user: user,
-        }));
-
-        if (user.company) {
-          console.debug('Fetching user company details...');
-          const company = await fetch(
-            `${DIRECTUS_URL}/items/companies/${user.company}`,
-            {
-              headers: {
-                Authorization: `Bearer ${directusAccessToken}`,
-              },
-            },
-          )
-            .then((res) => res.json())
-            .then((res) => res.data);
-          console.debug('Company details fetched', company);
-          userStore.setState((p) => ({
-            ...p,
-            company: company,
-          }));
-        }
-
-        if (user.document) {
-          console.debug('Fetching user document details...');
-          const document = await fetch(
-            `${DIRECTUS_URL}/items/documents/${user.document}`,
-            {
-              headers: {
-                Authorization: `Bearer ${directusAccessToken}`,
-              },
-            },
-          )
-            .then((res) => res.json())
-            .then((res) => res.data);
-          console.debug('Document details fetched', document);
-          userStore.setState((p) => ({ ...p, document: document }));
-        }
-      } else {
-        console.debug('Unable to fetch users data');
-        Sentry.captureMessage('Unable to fetch users data');
-        console.error('Unable to fetch users data');
-      }
-
-      const expoPushToken = await registerForPushNotificationsAsync();
-      console.debug('Got expo push token:', expoPushToken);
-
-      if (expoPushToken) {
-        console.debug('Saving login details for push notifications...');
-        const loginDetailsResp = await fetch(
-          `${directusUrl}/items/login_details`,
-          {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${directusAccessToken}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              device_token: expoPushToken,
-              device_model_name: Device.modelName,
-              last_accessed: new Date(),
-              user_id: user.id,
-            }),
-          },
-        );
-
-        const loginDetailsRespJson = await loginDetailsResp.json();
-
-        if (!loginDetailsResp.ok) {
-          const errorCode = loginDetailsRespJson?.errors?.[0]?.extensions?.code;
-          if (errorCode === 'RECORD_NOT_UNIQUE') {
-            console.debug(
-              'Device already registered, updating last_accessed timestamp...',
-            );
-            try {
-              const filter = {
-                device_token: { _eq: expoPushToken },
-                user_id: { _eq: user.id },
-              };
-
-              await fetch(
-                `${directusUrl}/items/login_details?filter=${encodeURIComponent(
-                  JSON.stringify(filter),
-                )}`,
-                {
-                  method: 'PATCH',
-                  headers: {
-                    Authorization: `Bearer ${directusAccessToken}`,
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    last_accessed: new Date(),
-                  }),
-                },
-              );
-              console.debug('last_accessed field updated successfully');
-            } catch (err) {
-              console.debug('Error updating last_accessed field', err);
-              console.error('Error updating last_accessed field', err);
-              Sentry.captureException(err);
-            }
-          } else {
-            console.debug(
-              'Unknown error occurred while setting login details',
-              loginDetailsRespJson,
-            );
-            console.error(
-              'Error in setting login details',
-              loginDetailsRespJson,
-            );
-            Sentry.captureException(
-              `Error in setting login details, ${JSON.stringify(loginDetailsRespJson)}`,
-            );
-          }
-        }
-      }
-
-      console.debug('Finalizing login state...');
-
-      setKeyCloakStore({ active: true });
-      setDirectusStore({
-        authenticated: true,
-        rest: createDirectus(DIRECTUS_URL)
-          .with(authentication())
-          .with(rest())
-          .with(staticToken(directusAccessToken)),
-      });
-
-      console.debug('authOnSuccess complete');
-      return directusAccessTokenResp;
-    } else {
-      console.debug('accessToken or refreshToken missing');
-      await AsyncStorage.removeItem(kcRefreshTokenKey);
-      setKeyCloakStore({ active: false });
-      setDirectusStore(initialDirectusStore);
-      Sentry.captureMessage(
-        `authOnSuccess failed ${accessToken} ${refreshToken}`,
-      );
-    }
-  } catch (error) {
-    console.debug('Exception caught in authOnSuccess', error);
-    await AsyncStorage.removeItem(kcRefreshTokenKey);
-    setKeyCloakStore({ active: false });
-    setDirectusStore(initialDirectusStore);
-    console.error(error);
-    throw error;
-  }
-};
+) => {};
 
 async function registerForPushNotificationsAsync() {
   let token;

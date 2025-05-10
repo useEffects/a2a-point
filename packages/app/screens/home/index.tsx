@@ -90,18 +90,8 @@ import {
 } from 'app/components/cards/atoms/users';
 
 export function HomeScreen() {
-  const { authenticated } = directusStore();
-  const { user } = userStore();
   const { colors } = useColorScheme();
-  const { rest } = directusStore();
   const router = useRouter();
-  const { logout } = useContext(AuthContext);
-
-  useEffect(() => {
-    if (authenticated && !(user.first_name || user.last_name)) {
-      logout();
-    }
-  }, [authenticated, user.first_name, user.last_name]);
 
   const smallLocationsQueryOptions = smallLocationsCardQuery({
     limit: 16,

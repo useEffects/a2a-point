@@ -17,8 +17,11 @@ import LoginDarkImg from 'app/assets/login/dark/Frame_135_2_hzjyas_c_scale,w_108
 import LoginLightImg from 'app/assets/login/light/light_c9pqo8_c_scale,w_1029.jpg';
 import * as Sentry from '@sentry/react-native';
 import RNRestart from 'react-native-restart';
-import { storage } from 'app/infra/storage';
-import { kcAccessTokenKey, kcRefreshTokenKey } from 'app/infra/queries/tokens/utils';
+import { secureStorage } from 'app/infra/storage';
+import {
+  kcAccessTokenKey,
+  kcRefreshTokenKey,
+} from 'app/infra/queries/tokens/utils';
 
 export function LoginScreen() {
   const discovery = useAutoDiscovery(`${KC_URL}/realms/${KC_REALM}`);
@@ -48,13 +51,16 @@ export function LoginScreen() {
         codeVerifier: request?.codeVerifier!,
         redirectUri,
       })
-        .then((res) =>
+        .then((res) => {
           Promise.all([
-            storage.setItem(kcAccessTokenKey, res.access_token),
-            storage.setItem(kcRefreshTokenKey, res.refresh_token),
-          ]).then(() => RNRestart.restart()),
-        )
-        .catch(Sentry.captureException);
+            secureStorage.setItem(kcAccessTokenKey, res.access_token),
+            secureStorage.setItem(kcRefreshTokenKey, res.refresh_token),
+          ]).then(() => RNRestart.restart());
+        })
+        .catch((err) => {
+          console.error('code verifier failed on successfull auth', err);
+          Sentry.captureException(err);
+        });
     } else if (response?.type === 'error') {
       Sentry.captureException(response.error);
       console.error('Authentication error: ', response.error);

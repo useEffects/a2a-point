@@ -1,7 +1,7 @@
 import { tryCatch } from 'app/shared/utils/tryCatch';
 import { AuthTokenSet, TokenSet } from '../../infra/queries/tokens/types';
 import { DIRECTUS_URL, KC_CLIENT_ID } from 'app/lib/constants';
-import { User } from 'app/lib/types';
+import { Company, User } from 'app/lib/types';
 import userStore from 'app/store/user';
 import { directusStore, initialDirectusStore } from 'app/store/directus';
 import {
@@ -37,18 +37,17 @@ export const directusTokenFlow = async ({
 
 export const exchangeKcTokenWithDirectus = async (
   tokens: TokenSet,
-): Promise<AuthTokenSet | null> => {
-  const [newTokensRes] = await tryCatch(
-    fetch(`${DIRECTUS_URL}/extended-api/exchange-keycloak-tokens`, {
-      method: 'POST',
-      body: JSON.stringify({
-        clientId: KC_CLIENT_ID,
-        ...tokens,
-      }),
-    }).then((res) => res.json() as Promise<AuthTokenSet>),
-  );
-
-  return newTokensRes;
+): Promise<AuthTokenSet> => {
+  return fetch(`${DIRECTUS_URL}/extended-api/exchange-keycloak-tokens`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      clientId: KC_CLIENT_ID,
+      ...tokens,
+    }),
+  }).then((res) => res.json() as Promise<AuthTokenSet>);
 };
 
 /**
@@ -56,17 +55,27 @@ export const exchangeKcTokenWithDirectus = async (
  */
 export const runAuthEffects = async (tokens: AuthTokenSet) => {
   try {
-    const profileDetails = await fetch(
-      `${DIRECTUS_URL}/users/me?fields=[*,company.*]`,
-      {
-        headers: {
-          Authorization: `Bearer ${tokens.directusAccessToken}`,
-        },
+    const profileDetails = await fetch(`${DIRECTUS_URL}/users/me?fields=*`, {
+      headers: {
+        Authorization: `Bearer ${tokens.directusAccessToken}`,
       },
-    ).then((res) => res.json());
+    })
+      .then((res) => res.json())
+      .then((res) => res.data);
+
+    let company = {} as Company;
+
+    if (profileDetails.company) {
+      company = await fetch(
+        `${DIRECTUS_URL}/items/company/${profileDetails.company}`,
+      )
+        .then((res) => res.json())
+        .then((res) => res.data);
+    }
 
     userStore.setState({
       user: profileDetails,
+      company: company,
     });
 
     directusStore.setState({
@@ -88,13 +97,17 @@ export const runAuthEffects = async (tokens: AuthTokenSet) => {
     console.error('Failed to run auth effects', error);
     Sentry.captureException(error);
 
-    userStore.setState({ user: undefined });
-    keycloakStore.setState({ active: false });
-    directusStore.setState(initialDirectusStore);
+    setStoresInitial();
 
     return false;
   }
 };
+
+export async function setStoresInitial() {
+  userStore.setState({ user: undefined });
+  keycloakStore.setState({ active: false });
+  directusStore.setState(initialDirectusStore);
+}
 
 async function postLoginDetails({
   tokens,

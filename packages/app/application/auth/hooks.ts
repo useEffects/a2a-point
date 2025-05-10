@@ -28,18 +28,27 @@ const runAuthFlow = async (): Promise<boolean> => {
     }),
   );
 
-  if (directusOK) return runAuthEffects(tokens);
+  if (directusOK) {
+    console.debug('Directus Token Flow initial attempt failed');
+    return runAuthEffects(tokens);
+  }
 
-  if (!tokens.kcAccessToken || !tokens.kcRefreshToken) return false;
+  if (!tokens.kcAccessToken || !tokens.kcRefreshToken) {
+    console.debug('No keycloak tokens found');
+    return false;
+  }
 
-  const [newTokens] = await tryCatch(
+  const [newTokens, newTokensErr] = await tryCatch(
     exchangeKcTokenWithDirectus({
       accessToken: tokens.kcAccessToken,
       refreshToken: tokens.kcRefreshToken,
     }),
   );
 
-  if (!newTokens) return false;
+  if (newTokensErr) {
+    console.debug('Keycloak exchange token failed', newTokensErr);
+    return false;
+  }
 
   const [_, err] = await tryCatch(
     directusTokenFlow({

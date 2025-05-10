@@ -93,6 +93,7 @@ import * as Sentry from '@sentry/react-native';
 import { ProfilePic } from './components/profile-pic';
 import { Asset, withUri } from 'app/components/chat-ui';
 import { uploadFileToDirectus } from 'app/lib/file-upload';
+import { logout } from 'app/application/auth/logout';
 
 const LockedProfileScreen = () => {
   const { isDarkColorScheme } = useColorScheme();
@@ -713,7 +714,6 @@ const ProfileDropdown = () => {
 
   const { colors } = useColorScheme();
   const { active } = keycloakStore();
-  const { logout } = useContext(AuthContext);
 
   return active ? (
     <DropdownMenu onOpenChange={setOpen}>
