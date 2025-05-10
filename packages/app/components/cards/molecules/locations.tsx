@@ -112,8 +112,8 @@ export const MediumLocationCard = (
 
   const shareLocation = () => {
     Share.open({
-      title: `Discover listings in ${item.title}!\nView full details on A2A Point.`,
-      message: `${item.title}\n`,
+      title: `${item.title}\n`,
+      message: `Discover listings in ${item.title}!\n\nView full details on A2A Point.`,
       url: `${portfolioUrl}/agents/${item.id}`,
     });
   };

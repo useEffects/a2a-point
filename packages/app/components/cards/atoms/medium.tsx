@@ -21,8 +21,10 @@ import { Text } from '../../ui/text';
 import { RenderMetrics } from './small';
 import { Skeleton } from 'app/components/skeleton';
 import Share from 'react-native-share';
-import { colors } from 'react-native-keyboard-controller/lib/typescript/components/KeyboardToolbar/colors';
-import { portfolioUrl } from 'app/lib/constants';
+import { directusUrl, portfolioUrl } from 'app/lib/constants';
+import * as Linking from 'expo-linking';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { deleteItem } from '@directus/sdk';
 
 export type MediumListingCardProps = Pick<
   Listing,
@@ -64,23 +66,38 @@ export const MediumListingCard = (
   item: MediumListingCardProps & ListingCardMetrics,
 ) => {
   const { user } = userStore();
-  const { authenticated } = directusStore();
+  const queryClient = useQueryClient();
+  const { authenticated, rest } = directusStore();
   const localizedCost = useLocalizedCost(
     item.deal_type,
     item.budget,
     item.price,
   );
   const router = useRouter();
-  const { colors } = useColorScheme();
 
   const shareListing = () => {
     Share.open({
       title: item.title,
-      message: `${item.title}\n${item.description}\nView full details on A2A Point.\n`,
+      message: `${item.title}\n${item.description}\n\nView full details on A2A Point.\n`,
       url: `${portfolioUrl}/listings/${item.id}`,
       failOnCancel: false,
     });
   };
+
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      await rest.request(deleteItem('listings', item.id));
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['listings'] });
+    },
+  });
+
+  const editListing = () => {
+    Linking.openURL(`${directusUrl}/admin/content/listings/${item.id}`);
+  };
+
+  const deleteListing = () => deleteMutation.mutateAsync();
 
   return (
     <View className="w-full flex-col gap-2 min-h-[275px] justify-between">
@@ -112,11 +129,21 @@ export const MediumListingCard = (
         <View className="flex-row justify-between w-full">
           <LocationChip {...item.location} />
           {user.id === item.user_created.id && authenticated && (
-            <View className="flex-row gap-4">
-              <Button variant={'base'} size={'none'}>
+            <View className="flex-row">
+              <Button
+                onPress={editListing}
+                variant={'ghost'}
+                size={'icon'}
+                className="rounded-full"
+              >
                 <Edit size={18} className="text-info" />
               </Button>
-              <Button variant={'base'} size={'none'}>
+              <Button
+                onPress={deleteListing}
+                variant={'ghost'}
+                size={'icon'}
+                className="rounded-full"
+              >
                 <Trash size={18} className="text-destructive" />
               </Button>
             </View>

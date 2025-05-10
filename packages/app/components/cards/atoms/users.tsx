@@ -113,14 +113,13 @@ export const MediumUsersCard = (
     router.push(`/chat/${dmRoomId}`);
   };
 
-  const shareAgent = () => {
-    ({
+  const shareAgent = () =>
+    Share.open({
       title: item.first_name,
-      message: `Connect with ${item.first_name}!\nView full details on A2A Point.\n`,
+      message: `Connect with ${item.first_name}!\n\nView full details on A2A Point.\n`,
       url: `${portfolioUrl}/agents/${item.id}`,
       failOnCancel: false,
     });
-  };
 
   return (
     <Pressable
