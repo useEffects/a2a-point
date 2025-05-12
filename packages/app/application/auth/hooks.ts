@@ -16,6 +16,9 @@ export const useAuthFlow = () =>
       const isAuthenticated = await runAuthFlow();
       return { isAuthenticated };
     },
+    initialData: {
+      isAuthenticated: false,
+    },
   });
 
 const runAuthFlow = async (): Promise<boolean> => {
