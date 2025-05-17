@@ -27,9 +27,10 @@ import {
   TabView,
 } from 'react-native-tab-view';
 import { useDebounce } from 'use-debounce';
-import LockedScreen from './locked-screens';
+import LockedScreen from '../locked-screens';
 import { ChatMessage, withId, withUri } from 'app/components/chat-ui';
 import { AsyncImage } from 'app/components/async-image';
+import { useAuthFlow } from 'app/application/auth/hooks';
 
 export const ChatLocked = () => {
   const { isDarkColorScheme } = useColorScheme();
@@ -44,12 +45,14 @@ export const ChatLocked = () => {
 };
 
 export function ChatScreen() {
-  const { authenticated } = directusStore();
+  const {
+    data: { isAuthenticated },
+  } = useAuthFlow();
 
-  return authenticated ? <ChatScreenComponent /> : <ChatLocked />;
+  return isAuthenticated ? <ChatScreenComponent /> : <ChatLocked />;
 }
 
-function ChatScreenComponent() {
+export function ChatScreenComponent() {
   const { rest } = directusStore();
   const [searchText, setSearchText] = useState('');
   const [debouncedSearchText] = useDebounce(searchText, 500);

@@ -32,6 +32,7 @@ export const logout = async () => {
     await secureStorage.removeItem(directusRefreshTokenKey);
 
     setStoresInitial();
+    queryClient.clear();
 
     RNRestart.restart();
   } catch (error) {

@@ -5,17 +5,23 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { directusStore } from 'app/store/directus';
-import { chatFields, getChatQueryKeyForRoomId } from '../utils';
+import {
+  chatFields,
+  fetchLimit,
+  getChatQueryKeyForRoomId,
+  SocketMessageSchema,
+} from '../utils';
 import { useWS } from './useWS';
 import { useAuthFlow } from 'app/application/auth/hooks';
 import { createItem, readItems } from '@directus/sdk';
 import { Asset, ChatMessage, withId, withUri } from 'app/components/chat-ui';
-import { Message } from 'app/lib/types';
+import { Message, Room } from 'app/lib/types';
 import { uploadFileToDirectus } from 'app/lib/file-upload';
 import { messagesFolderId } from 'app/lib/constants';
 import { useEffect } from 'react';
+import { renderCardsQuery2 } from 'app/lib/misc/queries';
 
-export const useChat = (roomId: string) => {
+export const useChat = (roomId: Room['id']) => {
   const {
     data: { isAuthenticated },
   } = useAuthFlow();
@@ -24,27 +30,28 @@ export const useChat = (roomId: string) => {
   const { socket } = useWS();
 
   const chatQueryData = useInfiniteQuery({
-    queryKey: getChatQueryKeyForRoomId(roomId).concat(['']),
+    queryKey: getChatQueryKeyForRoomId(roomId),
     queryFn: async ({ pageParam = 0 }) => {
-      const messages = await rest.request(
-        readItems('messages', {
-          fields: chatFields,
-          offset: fetchLimit * pageParam,
-          filter: {
-            room: {
-              _eq: roomId,
-            },
+      const messages = await renderCardsQuery2<
+        Omit<ChatMessage<withId>, 'sent'>
+      >({
+        collection: 'messages',
+        fields: chatFields,
+        offset: fetchLimit * pageParam,
+        filter: {
+          room: {
+            _eq: roomId,
           },
-        }),
-      );
+        },
+      });
 
-      return {
-        items: messages as ChatMessage<withId>[],
-        page: Number(pageParam),
-      };
+      return messages.map((m) => ({
+        ...m,
+        sent: true,
+      })) as ChatMessage<withId>[];
     },
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
-      if (lastPage.items?.length < fetchLimit) {
+      if (lastPage?.length < fetchLimit) {
         return null;
       }
       return Number(lastPageParam) + 1;
@@ -52,12 +59,7 @@ export const useChat = (roomId: string) => {
     initialPageParam: 0,
     initialData: {
       pageParams: [0],
-      pages: [
-        {
-          items: [],
-          page: 0,
-        },
-      ],
+      pages: [],
     },
     enabled: isAuthenticated && Boolean(socket),
     gcTime: Infinity,
@@ -67,6 +69,19 @@ export const useChat = (roomId: string) => {
   const addMessageMutation = useMutation({
     mutationKey: ['CHAT MESSAGE ADD', roomId],
     mutationFn: async (message: ChatMessage<withUri>) => {
+      // Optimisitically set the new message
+      queryClient.setQueryData(
+        getChatQueryKeyForRoomId(roomId),
+        (data: InfiniteData<ChatMessage<withId | withUri>>) => {
+          return {
+            pageParams: data.pageParams.concat([
+              Number(data.pageParams[data.pageParams.length - 1]) + 1,
+            ]),
+            pages: data.pages.concat([newMessage]),
+          } as InfiniteData<ChatMessage<withId | withUri>>;
+        },
+      );
+
       let assetsIds: { uri: string; id: string }[] = [];
       if (message.assets?.length) {
         assetsIds = await Promise.all(
@@ -114,30 +129,37 @@ export const useChat = (roomId: string) => {
     },
   });
 
-  const addMessageMutationOptimistic = useMutation({
-    mutationKey: ['CHAT MESSAGE ADD OPTIMISTIC', roomId],
-    mutationFn: async (newMessage: ChatMessage<withUri>) => {
-      queryClient.setQueryData(
-        getChatQueryKeyForRoomId(roomId),
-        (data: InfiniteData<ChatMessage<withId | withUri>>) => {
-          return {
-            pageParams: data.pageParams.concat([
-              Number(data.pageParams[data.pageParams.length - 1]) + 1,
-            ]),
-            pages: data.pages.concat([newMessage]),
-          } as InfiniteData<ChatMessage<withId | withUri>>;
-        },
-      );
-    },
-  });
-
   useEffect(() => {
     if (!isAuthenticated || !socket) return;
 
-    socket.onmessage();
-  }, [isAuthenticated, socket]);
+    socket.addEventListener('message', (socketMessage) => {
+      const data = SocketMessageSchema.parse(socketMessage);
+      if (data.type === 'subscription' && data.event === 'create') {
+        data.data.forEach((message) => {
+          queryClient.setQueryData(
+            getChatQueryKeyForRoomId(roomId),
+            (data: InfiniteData<ChatMessage<withId | withUri>>) => {
+              const lastPageParam = data.pageParams.length - 1;
+              return {
+                pageParams: data.pageParams.concat([lastPageParam + 1]),
+                pages: data.pages.concat([
+                  {
+                    ...message,
+                    sent: true,
+                    assets: message.assets.map((asset) => ({
+                      id: asset.directus_files_id.id,
+                      mimeType: asset.directus_files_id.type,
+                      name: asset.directus_files_id.filename_download,
+                    })),
+                  } satisfies ChatMessage<withId>,
+                ]),
+              } as InfiniteData<ChatMessage<withId | withUri>>;
+            },
+          );
+        });
+      }
+    });
+  }, [isAuthenticated, socket, queryClient]);
 
-  return { chatQueryData, addMessageMutation, addMessageMutationOptimistic };
+  return { chatQueryData, addMessageMutation };
 };
-
-const fetchLimit = 30;

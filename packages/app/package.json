@@ -121,10 +121,12 @@
   "dependencies": {
     "expo-constants": "~17.0.8",
     "expo-device": "^7.0.3",
+    "expo-image": "~2.0.7",
     "expo-notifications": "^0.29.14",
     "expo-secure-store": "^14.2.3",
     "react-native-restart": "^0.0.27",
     "react-native-share": "^12.0.9",
-    "react-native-url-polyfill": "^2.0.0"
+    "react-native-url-polyfill": "^2.0.0",
+    "zod": "^3.24.2"
   }
 }

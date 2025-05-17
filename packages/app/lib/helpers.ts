@@ -25,7 +25,7 @@ TimeAgo.addLocale(en);
 
 export const timeAgo = new TimeAgo('ar-AE');
 
-export const buildAssetUrl = async (id: string | null) => {
+export const buildAssetUrl = async (id: string | null | undefined) => {
   if (!id) {
     return 'https://a2apoint-misc.nyc3.digitaloceanspaces.com/app/no-image-available.png';
   }
