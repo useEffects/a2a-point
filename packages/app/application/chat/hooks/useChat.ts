@@ -20,6 +20,7 @@ import { uploadFileToDirectus } from 'app/lib/file-upload';
 import { messagesFolderId } from 'app/lib/constants';
 import { useEffect } from 'react';
 import { renderCardsQuery2 } from 'app/lib/misc/queries';
+import { tryCatch } from 'app/shared/utils/tryCatch';
 
 export const useChat = (roomId: Room['id']) => {
   const {
@@ -62,8 +63,6 @@ export const useChat = (roomId: Room['id']) => {
       pages: [],
     },
     enabled: isAuthenticated && Boolean(socket),
-    gcTime: Infinity,
-    staleTime: Infinity,
   });
 
   const addMessageMutation = useMutation({
@@ -132,9 +131,12 @@ export const useChat = (roomId: Room['id']) => {
   useEffect(() => {
     if (!isAuthenticated || !socket) return;
 
-    socket.addEventListener('message', (socketMessage) => {
-      const data = SocketMessageSchema.parse(socketMessage);
-      if (data.type === 'subscription' && data.event === 'create') {
+    socket.addEventListener('message', async (socketMessage) => {
+      const [data] = await tryCatch(
+        Promise.resolve(SocketMessageSchema.parse(socketMessage)),
+      );
+
+      if (data?.type === 'subscription' && data.event === 'create') {
         data.data.forEach((message) => {
           queryClient.setQueryData(
             getChatQueryKeyForRoomId(roomId),

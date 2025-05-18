@@ -16,7 +16,7 @@ export const createRoomsSubscribedQOpts = ({
   query = {},
 }: {
   queryOptions?: Omit<
-    UseInfiniteQueryOptions,
+    UseInfiniteQueryOptions<RoomSubscribed[]>,
     'queryKey' | 'getNextPageParam' | 'initialPageParam'
   >;
   query?: Query<any, RoomSubscribed>;
@@ -41,9 +41,9 @@ export const createRoomsSubscribedQOpts = ({
           limit: defaultLimit,
           ...query,
         });
-        return roomsSubscribed as RoomSubscribed[];
+        return roomsSubscribed;
       },
-      getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      getNextPageParam: (lastPage, _allPages, lastPageParam) => {
         if (lastPage.length < fetchLimit) {
           return null;
         }
@@ -51,10 +51,10 @@ export const createRoomsSubscribedQOpts = ({
       },
       initialPageParam: 0,
       initialData: {
-        pageParams: [],
         pages: [],
+        pageParams: [],
       },
     } as UseInfiniteQueryOptions<RoomSubscribed[]>,
     queryOptions,
-  ) as UseInfiniteQueryOptions<RoomSubscribed[]>;
+  );
 };

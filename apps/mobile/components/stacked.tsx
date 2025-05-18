@@ -7,18 +7,24 @@ const Stack = createNativeStackNavigator();
 interface StackedProps {
   children: ReactNode;
   header?: (props: any) => ReactNode;
+  shouldWrap?: boolean;
 }
 
-export const Stacked = ({ header, children }: StackedProps) => {
+export const Stacked = ({
+  header,
+  children,
+  shouldWrap = true,
+}: StackedProps) => {
   const WrappedComponent = () => (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>{children}</ScrollView>
   );
+
   return (
     <Stack.Navigator initialRouteName="index">
       <Stack.Screen
         name="index"
         options={{ header: header }}
-        component={WrappedComponent}
+        component={shouldWrap ? WrappedComponent : () => children}
       />
     </Stack.Navigator>
   );

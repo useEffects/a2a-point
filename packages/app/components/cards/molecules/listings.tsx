@@ -33,6 +33,7 @@ import {
 import { MediumListingCard, MediumListingCardProps } from '../atoms/medium';
 import { PhotoListingCard, PhotoListingProps } from '../atoms/photo';
 import { SmallListingCard, SmallListingCardProps } from '../atoms/small';
+import { SeparatorText } from 'app/components/separator-text';
 
 type ListCardProps =
   | SmallListingCardProps
@@ -364,7 +365,9 @@ export const RenderListings = <R extends ListCardProps>({
 export const NomoreItemsToShow = () => {
   return (
     <View className="w-full h-20 flex-col justify-center items-center">
-      <Text className="text-destructive">No more items to show</Text>
+      <SeparatorText separatorClassName="bg-destructive" wrapperClassName="p-4">
+        <Text className="text-destructive">No more items to show</Text>
+      </SeparatorText>
     </View>
   );
 };

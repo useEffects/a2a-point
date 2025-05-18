@@ -40,16 +40,27 @@ export const RoomsSubcribed = () => {
   });
 
   return (
-    <View className="flex-col gap-4">
-      {filterPills.map((pill) => (
-        <Button key={pill} onPress={() => setActivePill(pill)}>
-          <Text>{pill}</Text>
-        </Button>
-      ))}
+    <View className="flex-col gap-4 flex-1">
+      <View className="flex-row gap-4 px-4">
+        {filterPills.map((pill) => (
+          <Button
+            key={pill}
+            onPress={() => setActivePill(pill)}
+            className="px-2"
+            variant={activePill === pill ? 'secondary' : 'outline'}
+            size={'none'}
+          >
+            <Text>{pill}</Text>
+          </Button>
+        ))}
+      </View>
       <CardList
         infiniteQueryOptions={queryOptions}
         component={ChatListRow}
         skeletonComponent={ChatListRowSkeleton}
+        flatListProps={{
+          scrollEnabled: true,
+        }}
       />
     </View>
   );

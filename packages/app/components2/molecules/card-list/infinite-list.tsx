@@ -2,10 +2,11 @@ import { HorizontalFlatListProps } from '@idiosync/horizontal-flatlist/dist/hori
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { uniqBy } from 'lodash';
 import { useMemo, useCallback } from 'react';
-import { FlatListProps, FlatList, View } from 'react-native';
+import { FlatListProps, View } from 'react-native';
 import { useIntersectionObserver } from 'app/hooks/intersection-observer';
 import { BottomLoader } from 'app/components/cards/molecules/listings';
 import { InfiniteListProps } from './types';
+import { FlatList } from 'app/components/utils/virtual-lists';
 
 export function InfiniteCardList<T extends { id: string }>({
   component: RenderComponent,
@@ -19,7 +20,8 @@ export function InfiniteCardList<T extends { id: string }>({
     useInfiniteQuery(infiniteQueryOptions);
 
   const finalData = useMemo(() => {
-    return uniqBy(data ?? [], 'id');
+    // @ts-expect-error some weird tanstack issue
+    return uniqBy((data?.pages.flat() as T[]) ?? [], 'id');
   }, [data]);
 
   const handleEndReached = useCallback(() => {

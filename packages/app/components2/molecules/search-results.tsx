@@ -11,8 +11,6 @@ import SearchBarBase from 'app/components/searchbar';
 import { useDebounce } from 'use-debounce';
 import { UseQueryOptions } from '@tanstack/react-query';
 import { CardList } from './card-list/card-list';
-import { Query } from '@directus/sdk';
-import { renderCardsQuery2 } from 'app/lib/misc/queries';
 import { SearchBarProps } from '@rneui/base';
 import { FlatListProps } from 'react-native';
 
@@ -52,42 +50,13 @@ SearchResults.SearchBar = function SearchBar({
   );
 };
 
-SearchResults.Results = function Results<
-  T extends JSX.IntrinsicAttributes & { id: string },
->({
-  query,
-  component,
-  skeletonComponent,
-  flatListProps = {},
+SearchResults.Results = function Results({
+  children,
 }: {
-  query: Query<any, T> & { collection: string };
-  component: FC<T>;
-  skeletonComponent: FC<{}>;
-  flatListProps?: Omit<FlatListProps<T>, 'data' | 'renderItem'>;
+  children: (props: { debouncedSearchText: string }) => ReactNode;
 }) {
   const { searchText } = useContext(SearchContext);
   const [debouncedSearchText] = useDebounce(searchText, 500);
 
-  const queryOptions = {
-    queryKey: [
-      'Fetching searchable results',
-      query.collection,
-      debouncedSearchText,
-    ],
-    queryFn: async () =>
-      renderCardsQuery2<T>({ ...query, search: debouncedSearchText }),
-    initialData: [],
-  } as UseQueryOptions<T[]>;
-
-  return (
-    <CardList
-      component={component}
-      skeletonComponent={skeletonComponent}
-      flatListProps={{
-        scrollEnabled: false,
-        ...flatListProps,
-      }}
-      queryOptions={queryOptions}
-    />
-  );
+  return children({ debouncedSearchText });
 };

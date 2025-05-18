@@ -66,9 +66,13 @@ export const ChatListRow = (room: RoomSubscribed) => {
       <View className="flex-1 justify-center">
         <View className="flex-row justify-between items-center">
           <Text className="!text-base">{displayName}</Text>
-          <Text className="!text-sm text-subtext">
-            {timeAgo.format(new Date(lastMessage!.date_created))}
-          </Text>
+          {lastMessage ? (
+            <Text className="!text-sm text-subtext">
+              {timeAgo.format(new Date(lastMessage!.date_created))}
+            </Text>
+          ) : (
+            <></>
+          )}
         </View>
 
         <Text className="!text-sm text-subtext !font-normal">

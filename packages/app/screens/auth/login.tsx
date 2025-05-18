@@ -1,10 +1,11 @@
 import {
+  AuthSessionResult,
   makeRedirectUri,
   useAuthRequest,
   useAutoDiscovery,
 } from 'expo-auth-session';
 import { Image, View } from 'react-native';
-import { useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { KC_URL, KC_REALM, KC_CLIENT_ID } from 'app/lib/constants';
 import { URLSearchParams } from 'app/lib/helpers';
 import { Button } from 'app/components/ui/button';
@@ -22,6 +23,7 @@ import {
   kcAccessTokenKey,
   kcRefreshTokenKey,
 } from 'app/infra/queries/tokens/utils';
+import { useNavigation } from 'app/context/router';
 
 export function LoginScreen() {
   const discovery = useAutoDiscovery(`${KC_URL}/realms/${KC_REALM}`);
@@ -29,7 +31,7 @@ export function LoginScreen() {
     path: `auth/login`,
   });
 
-  const [request, response, promptAsync] = useAuthRequest(
+  const [request, _, promptAsync] = useAuthRequest(
     {
       clientId: KC_CLIENT_ID!,
       redirectUri,
@@ -41,33 +43,35 @@ export function LoginScreen() {
 
   const { isDarkColorScheme } = useColorScheme();
 
-  const handleLogin = () => promptAsync();
-
-  useEffect(() => {
-    if (response?.type === 'success') {
-      const { code } = response.params;
-      getToken({
-        code: code!,
-        codeVerifier: request?.codeVerifier!,
-        redirectUri,
+  const handleLogin = () =>
+    promptAsync()
+      .then((response) => {
+        if (response?.type === 'success') {
+          const { code } = response.params;
+          getToken({
+            code: code!,
+            codeVerifier: request?.codeVerifier!,
+            redirectUri,
+          })
+            .then(async (res) => {
+              await Promise.all([
+                secureStorage.setItem(kcAccessTokenKey, res.access_token),
+                secureStorage.setItem(kcRefreshTokenKey, res.refresh_token),
+              ]);
+              RNRestart.restart();
+            })
+            .catch((err) => {
+              console.error('code verifier failed on successfull auth', err);
+              Sentry.captureException(err);
+            });
+        } else if (response?.type === 'error') {
+          Sentry.captureException(response.error);
+          console.error('Authentication error: ', response.error);
+        } else {
+          console.warn('Prompt async failed', response);
+        }
       })
-        .then((res) => {
-          Promise.all([
-            secureStorage.setItem(kcAccessTokenKey, res.access_token),
-            secureStorage.setItem(kcRefreshTokenKey, res.refresh_token),
-          ]).then(() => RNRestart.restart());
-        })
-        .catch((err) => {
-          console.error('code verifier failed on successfull auth', err);
-          Sentry.captureException(err);
-        });
-    } else if (response?.type === 'error') {
-      Sentry.captureException(response.error);
-      console.error('Authentication error: ', response.error);
-    } else {
-      console.debug(response);
-    }
-  }, [response, discovery]);
+      .catch(console.warn);
 
   return (
     <View className="flex-1 grow">

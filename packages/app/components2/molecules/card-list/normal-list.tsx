@@ -17,10 +17,9 @@ export function NormalCardList<T extends { id: string }>({
   queryOptions,
 }: NormalCardListProps<T>) {
   const { data, isLoading, isFetching } = useQuery(queryOptions);
-  const finalData = useMemo(() => data ?? [], [data]);
 
   const flatListFinalProps: FlatListProps<T> | HorizontalFlatListProps<T> = {
-    data: finalData,
+    data: data ?? [],
     renderItem: ({ item }: { item: T }) => <RenderComponent {...item} />,
     keyExtractor: (item: T) => item.id,
     ListFooterComponent: (

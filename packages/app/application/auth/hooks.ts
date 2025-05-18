@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
 import { createTokensQOpts } from '../../infra/queries/tokens/queries';
 import { queryClient } from 'app/store/query';

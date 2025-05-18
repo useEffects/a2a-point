@@ -4,7 +4,7 @@ import { Stacked } from '../../components/stacked';
 
 export default function ChatScreen() {
   return (
-    <Stacked header={() => <ChatScreenHeader />}>
+    <Stacked header={() => <ChatScreenHeader />} shouldWrap={false}>
       <ChatScreenComponent />
     </Stacked>
   );
