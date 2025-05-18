@@ -3,12 +3,10 @@ import {
   HomeScreenHeader,
 } from 'app/screens/home';
 
-import { Stacked } from '../../components/stacked';
+import { useHeader } from '../../hooks/use-header';
 
 export default function HomeScreen() {
-  return (
-    <Stacked header={() => <HomeScreenHeader />}>
-      <HomeScreenComponent />
-    </Stacked>
-  );
+  useHeader(HomeScreenHeader);
+
+  return <HomeScreenComponent />;
 }

@@ -64,11 +64,7 @@ function RootLayout() {
           <RouterProvider>
             <SafeAreaProvider>
               <HideSplashScreen>
-                <Stack
-                  screenOptions={{
-                    headerShown: false,
-                  }}
-                >
+                <Stack>
                   <Stack.Screen name="(main)" />
 
                   <Stack.Screen name="account-console" />

@@ -192,11 +192,11 @@ export function HomeScreen() {
 export const HomeScreenHeader = () => {
   return (
     <Header>
-      <View className="flex-row items-center gap-2">
+      <View className="flex-row items-center gap-2 justify-between flex-1">
+        <HeaderTitle>A2A Point</HeaderTitle>
         <View className="rounded-full bg-light p-1 border-border">
           <Logo height={28} width={28} />
         </View>
-        <HeaderTitle>A2A Point</HeaderTitle>
       </View>
     </Header>
   );

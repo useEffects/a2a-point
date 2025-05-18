@@ -1,30 +1,40 @@
-import { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
-import { useColorScheme } from 'app/hooks/color-scheme';
-import { Tabs } from 'expo-router';
-import { Dimensions, Text, View } from 'react-native';
-import { directusStore } from 'app/store/directus';
-import { LucideIcon } from 'lucide-react-native';
+import {
+  MaterialTopTabNavigationEventMap,
+  MaterialTopTabNavigationOptions,
+  createMaterialTopTabNavigator,
+} from '@react-navigation/material-top-tabs';
+import { withLayoutContext } from 'expo-router';
+import { ParamListBase, TabNavigationState } from '@react-navigation/native';
 import {
   Construction,
   Home,
-  Lock,
+  LucideIcon,
   MessageCircleMore,
   TrendingUp,
   User,
-} from 'app/components/icons';
-import { StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+} from 'lucide-react-native';
+import { createTabBarOptions } from '../../lib/layout-utils';
+import { useColorScheme } from 'app/hooks/color-scheme';
+import { Dimensions, StyleSheet } from 'react-native';
 
-export default function MainLayout() {
+const { Navigator } = createMaterialTopTabNavigator();
+
+export const MaterialTopTabs = withLayoutContext<
+  MaterialTopTabNavigationOptions,
+  typeof Navigator,
+  TabNavigationState<ParamListBase>,
+  MaterialTopTabNavigationEventMap
+>(Navigator);
+
+export default function TabLayout() {
   const { colors } = useColorScheme();
   const { width } = Dimensions.get('window');
-  const { bottom } = useSafeAreaInsets();
   return (
-    <Tabs
+    <MaterialTopTabs
+      tabBarPosition="bottom"
       screenOptions={{
-        headerShown: false,
-        header: () => null,
         tabBarStyle: {
+          height: 60,
           backgroundColor: colors.accent,
           borderTopColor: colors.border,
           borderTopWidth: StyleSheet.hairlineWidth,
@@ -40,96 +50,31 @@ export default function MainLayout() {
       }}
       initialRouteName="index"
     >
-      <Tabs.Screen
+      <MaterialTopTabs.Screen
         name="chat"
-        options={{ ...getTabItemsOptions('Chat', MessageCircleMore) }}
+        options={getTabItemsOptions('Chat', MessageCircleMore)}
       />
-      <Tabs.Screen
+      <MaterialTopTabs.Screen
         name="offplans"
-        options={{ ...getTabItemsOptions('Offplans', Construction) }}
+        options={getTabItemsOptions('Offplans', Construction)}
       />
-      <Tabs.Screen
+      <MaterialTopTabs.Screen
         name="index"
-        options={{
-          ...getTabItemsOptions('Home', Home),
-        }}
+        options={getTabItemsOptions('Home', Home)}
       />
-      <Tabs.Screen
+      <MaterialTopTabs.Screen
         name="listings"
-        options={{ ...getTabItemsOptions('Listings', TrendingUp) }}
+        options={getTabItemsOptions('Listings', TrendingUp)}
       />
-      <Tabs.Screen
+      <MaterialTopTabs.Screen
         name="agents/me"
-        options={{ ...getTabItemsOptions('Profile', User) }}
+        options={getTabItemsOptions('Profile', User)}
       />
-    </Tabs>
+    </MaterialTopTabs>
   );
 }
 
-const getTabItemsOptions = (label: string, Icon: LucideIcon) =>
+export const getTabItemsOptions = (label: string, Icon: LucideIcon) =>
   createTabBarOptions(label, Icon, navigableTabs);
-
-export const createTabBarOptions = (
-  label: string,
-  Icon: LucideIcon,
-  navigableTabs: string[],
-): BottomTabNavigationOptions => {
-  return {
-    tabBarIcon: ({ focused }) => {
-      const { authenticated } = directusStore();
-      const { colors } = useColorScheme();
-      const navigable = authenticated || navigableTabs.includes(label);
-      const activeColor = focused
-        ? navigable
-          ? colors.primary
-          : colors.subtext
-        : colors['card-foreground'];
-      const fillColor = focused
-        ? navigable
-          ? colors.primary
-          : colors.subtext
-        : 'transparent';
-
-      return (
-        <View
-          style={{
-            paddingHorizontal: 16,
-            paddingVertical: 4,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          {navigable ? (
-            <></>
-          ) : (
-            <Lock
-              color={activeColor}
-              size={10}
-              style={{
-                position: 'absolute',
-                top: 0,
-                right: 'auto',
-                left: 0,
-              }}
-            />
-          )}
-          <Icon color={activeColor} fill={fillColor} size={20} />
-        </View>
-      );
-    },
-    tabBarLabel: ({ focused }) => {
-      const { authenticated } = directusStore();
-      const { colors } = useColorScheme();
-      const navigable = authenticated || navigableTabs.includes(label);
-      const activeColor = focused
-        ? navigable
-          ? colors.primary
-          : colors.subtext
-        : colors['card-foreground'];
-
-      return <Text style={{ color: activeColor, fontSize: 12 }}>{label}</Text>;
-    },
-  };
-};
 
 const navigableTabs = ['Home', 'Listings'];
