@@ -1,8 +1,8 @@
 import { useIsFocused } from '@react-navigation/native';
 import { useNavigation } from 'app/context/router';
-import { FC, useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 
-export const useHeader = (header: FC<{}>) => {
+export const useHeader = (header: ReactNode) => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
@@ -10,7 +10,7 @@ export const useHeader = (header: FC<{}>) => {
     const parent = navigation?.getParent();
 
     if (isFocused) {
-      parent?.setOptions({ header });
+      parent?.setOptions({ header: () => header });
     }
   }, [navigation, isFocused]);
 };

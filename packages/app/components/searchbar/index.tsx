@@ -4,14 +4,15 @@ import { Dispatch, SetStateAction } from 'react';
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import { X, Search } from 'lucide-react-native';
 import { Button } from '../ui/button';
+import { merge } from 'lodash';
 
 export default function SearchBar({
   searchText,
   setSearchText,
-  searchBarProps,
+  searchBarProps = {},
 }: {
   searchText: string;
-  setSearchText: Dispatch<SetStateAction<string>>;
+  setSearchText: (newSearchText: string) => void;
   searchBarProps?: SearchBarProps;
 }) {
   const { colors } = useColorScheme();
@@ -26,13 +27,13 @@ export default function SearchBar({
     // width: 1
   };
   const inputContainerStyle: StyleProp<ViewStyle> = {
-    backgroundColor: colors.accent,
+    backgroundColor: colors.card,
     borderWidth: 1,
     borderStyle: 'solid' as 'solid' | 'dotted' | 'dashed' | undefined,
-    borderRadius: 9999,
+    borderRadius: 8,
     borderBottomWidth: 1,
     flexGrow: 1,
-    borderColor: colors.accent,
+    borderColor: colors.card,
     height: 40,
   };
   const inputStyle: StyleProp<TextStyle> = {
@@ -61,22 +62,18 @@ export default function SearchBar({
 
   return (
     <RNESearchBar
-      value={searchText}
-      placeholder="Search ..."
-      onChangeText={setSearchText}
-      searchIcon={<SearchIcon />}
-      clearIcon={<CancelIcon />}
-      selectionColor={colors.primary}
-      placeholderTextColor={colors['accent-foreground']}
-      containerStyle={Object.assign(
+      {...merge(searchBarProps, {
+        value: searchText,
+        placeholder: 'Search ...',
+        onChangeText: setSearchText,
+        searchIcon: <SearchIcon />,
+        clearIcon: <CancelIcon />,
+        selectionColor: colors.primary,
+        placeholderTextColor: colors['accent-foreground'],
         containerStyle,
-        searchBarProps?.containerStyle,
-      )}
-      inputContainerStyle={Object.assign(
         inputContainerStyle,
-        searchBarProps?.inputContainerStyle,
-      )}
-      inputStyle={Object.assign(inputStyle!, searchBarProps?.inputStyle)}
+        inputStyle: inputStyle!,
+      } as SearchBarProps)}
     />
   );
 }

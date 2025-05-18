@@ -195,7 +195,7 @@ export const HomeScreenHeader = () => {
       <View className="flex-row items-center gap-2 justify-between flex-1">
         <HeaderTitle>A2A Point</HeaderTitle>
         <View className="rounded-full bg-light p-1 border-border">
-          <Logo height={28} width={28} />
+          <Logo height={32} width={32} />
         </View>
       </View>
     </Header>

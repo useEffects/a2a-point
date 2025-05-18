@@ -35,7 +35,7 @@ import SearchBar from 'app/components/searchbar';
 import { Button } from 'app/components/ui/button';
 import { Separator } from 'app/components/ui/separator';
 import { Text } from 'app/components/ui/text';
-import { GoToPostButtonUi } from 'app/components/utils/common-ui';
+import { GoToPostButton } from 'app/components/utils/common-ui';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { useLocaleString } from 'app/hooks/locale-string';
 import { useRouter, useGlobalSearchParams } from 'app/hooks/router';
@@ -186,7 +186,7 @@ export function ListingsScreen({
   return (
     <View className={cn('flex-1 bg-accent', className)}>
       <View className="bg-accent">
-        <View className="flex-row items-center justify-between gap-4 w-full px-4">
+        {/* <View className="flex-row items-center justify-between gap-4 w-full px-4">
           <SearchBar
             searchText={searchText}
             setSearchText={setSearchText}
@@ -217,13 +217,12 @@ export function ListingsScreen({
               }
             />
           </Button>
-        </View>
+        </View> */}
         {filters.length ? (
           <RenderChips filters={filters} setFilters={updateParams} />
         ) : (
           <></>
         )}
-        <Separator className="mt-4" />
       </View>
       <InfiniteList<
         | (MediumListingCardProps & ListingCardMetrics)
@@ -306,7 +305,7 @@ export function ListingsScreenHeader() {
     <Header hideSeparator>
       <View className="flex-row justify-between items-center w-full">
         <HeaderTitle>Listings</HeaderTitle>
-        <GoToPostButtonUi />
+        <GoToPostButton />
       </View>
     </Header>
   );

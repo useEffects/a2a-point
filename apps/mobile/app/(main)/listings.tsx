@@ -1,10 +1,9 @@
-import {
-  ListingsScreen as ListingsScreenComponent,
-  ListingsScreenHeader,
-} from 'app/screens/listings';
+import { ListingsScreen as ListingsScreenComponent } from 'app/screens/listings';
 import { useHeader } from '../../hooks/use-header';
+import { ListingsHeader } from 'app/components2/templates/listings/header';
 
 export default function ListingsScreen() {
-  useHeader(ListingsScreenHeader);
+  useHeader(<ListingsHeader />);
+
   return <ListingsScreenComponent data={[]} />;
 }

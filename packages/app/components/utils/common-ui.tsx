@@ -37,7 +37,7 @@ export const ViewAllButton = ({
   );
 };
 
-export const GoToPostButtonUi = () => {
+export const GoToPostButton = () => {
   const [key, setKey] = useState('Buy');
   const [open, setOpen] = useState(false);
   const { colors } = useColorScheme();
@@ -65,7 +65,7 @@ export const GoToPostButtonUi = () => {
       <DialogTrigger asChild={Platform.OS === 'web' ? undefined : true}>
         <ButtonComponent>
           <Plus
-            size={24}
+            size={18}
             color={colors['primary-foreground']}
             className="text-primary-foreground"
           />

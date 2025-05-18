@@ -6,7 +6,7 @@ import {
 import { useHeader } from '../../hooks/use-header';
 
 export default function HomeScreen() {
-  useHeader(HomeScreenHeader);
+  useHeader(<HomeScreenHeader />);
 
   return <HomeScreenComponent />;
 }
