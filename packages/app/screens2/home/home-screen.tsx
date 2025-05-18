@@ -42,14 +42,6 @@ import { lowerCase, startCase } from 'lodash';
 import Logo from 'app/components/svg/logo';
 import InfiniteList from 'app/components/infinite';
 import {
-  newsQuery,
-  photoHistoryListingsQuery,
-  photoListingsQuery,
-} from './queries';
-import { premiumListingsSmallQuery } from '../listings/queries';
-import { smallLocationsCardQuery } from '../locations/queries';
-import { smallUsersQuery } from '../agents/queries';
-import {
   SmallUsersCardSkeleton,
   SmallUsersCard,
 } from 'app/components/cards/atoms/users';
@@ -58,13 +50,6 @@ import { Greeting } from 'app/components2/organisms/home/greeting';
 export function HomeScreen() {
   const { colors } = useColorScheme();
   const router = useRouter();
-
-  const smallLocationsQueryOptions = smallLocationsCardQuery({
-    limit: 16,
-  });
-  const smallUsersQueryOptions = smallUsersQuery();
-  const premiumListingsSmallQueryOptions = premiumListingsSmallQuery();
-  const newsQueryOptions = newsQuery();
 
   return (
     <View className="flex-grow flex-col gap-8 py-8">
@@ -101,65 +86,22 @@ export function HomeScreen() {
         </SeparatorText>
       </View>
 
-      <InfiniteList<SmallListingCardProps & ListingCardMetrics>
-        flatListProps={{
-          horizontal: true,
-          ListHeaderComponent: () => <View className="w-4 h-4" />,
-        }}
-        component={SmallListingCard}
-        skeletonComponent={SmallListingCardSkeleton}
-        infiniteQueryOptions={premiumListingsSmallQueryOptions}
-        viewAllLink="/"
-      />
-
       <View className="flex-col gap-4 bg-card p-4">
         <SeparatorText hideLeft>
           <Text className="font-medium">Browse popular locations</Text>
         </SeparatorText>
-        <InfiniteList<SmallLocationCardProps>
-          component={SmallLocationCard}
-          skeletonComponent={SmallLocationCardSkeleton}
-          infiniteQueryOptions={smallLocationsQueryOptions}
-          flatListProps={{
-            horizontal: true,
-            ItemSeparatorComponent: () => <View className="w-4 h-4" />,
-          }}
-          viewAllLink="/locations"
-          numRows={2}
-          skeletonCount={16}
-        />
       </View>
 
       <View className="flex-col gap-4 px-4">
         <SeparatorText hideLeft>
           <Text className="font-medium">Top rated agents</Text>
         </SeparatorText>
-        <InfiniteList<SmallUsersCardProps & UsersCardMetrics>
-          component={SmallUsersCard}
-          skeletonComponent={SmallUsersCardSkeleton}
-          flatListProps={{
-            horizontal: true,
-            ItemSeparatorComponent: () => <View className="w-4 h-4" />,
-          }}
-          infiniteQueryOptions={smallUsersQueryOptions}
-          viewAllLink="/agents"
-        />
       </View>
 
       <View className="flex-col gap-4 px-4">
         <SeparatorText hideLeft>
           <Text className="font-medium">News and feeds</Text>
         </SeparatorText>
-        <InfiniteList<NewsProps>
-          component={NewsCard}
-          infiniteQueryOptions={newsQueryOptions}
-          skeletonComponent={NewsCardSkeleton}
-          flatListProps={{
-            horizontal: true,
-            ItemSeparatorComponent: () => <View className="w-4 h-4" />,
-          }}
-          viewAllLink="https://a2apoint.com/news"
-        />
       </View>
 
       <View className="flex-col gap-4 px-4">
