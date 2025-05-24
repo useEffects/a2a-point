@@ -27,7 +27,20 @@ export const MaterialTopTabs = withLayoutContext<
   MaterialTopTabNavigationEventMap
 >(Navigator);
 
-export default function TabLayout() {
+const tabs = [
+  { name: 'chat', label: 'Chat', icon: MessageCircleMore },
+  { name: 'offplans', label: 'Offplans', icon: Construction },
+  { name: 'index', label: 'Home', icon: Home },
+  { name: 'listings', label: 'Listings', icon: TrendingUp },
+  { name: 'agents/me', label: 'Profile', icon: User },
+];
+
+const navigableTabs = ['Home', 'Listings'];
+
+const getTabItemsOptions = (label: string, Icon: LucideIcon) =>
+  createTabBarOptions(label, Icon, navigableTabs);
+
+export default function MainTabLayout() {
   const { colors } = useColorScheme();
   const { width } = Dimensions.get('window');
   const { bottom: paddingBottom } = useSafeAreaInsets();
@@ -59,31 +72,13 @@ export default function TabLayout() {
       }}
       initialRouteName="index"
     >
-      <MaterialTopTabs.Screen
-        name="chat"
-        options={getTabItemsOptions('Chat', MessageCircleMore)}
-      />
-      <MaterialTopTabs.Screen
-        name="offplans"
-        options={getTabItemsOptions('Offplans', Construction)}
-      />
-      <MaterialTopTabs.Screen
-        name="index"
-        options={getTabItemsOptions('Home', Home)}
-      />
-      <MaterialTopTabs.Screen
-        name="listings"
-        options={getTabItemsOptions('Listings', TrendingUp)}
-      />
-      <MaterialTopTabs.Screen
-        name="agents/me"
-        options={getTabItemsOptions('Profile', User)}
-      />
+      {tabs.map(({ name, label, icon }) => (
+        <MaterialTopTabs.Screen
+          key={name}
+          name={name}
+          options={getTabItemsOptions(label, icon)}
+        />
+      ))}
     </MaterialTopTabs>
   );
 }
-
-export const getTabItemsOptions = (label: string, Icon: LucideIcon) =>
-  createTabBarOptions(label, Icon, navigableTabs);
-
-const navigableTabs = ['Home', 'Listings'];

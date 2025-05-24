@@ -31,9 +31,7 @@ import { FilterKeys } from '../listings';
 import { Button } from 'app/components/ui/button';
 import Logo from 'app/components/svg/logo';
 import InfiniteList from 'app/components/infinite';
-import {
-  newsQuery,
-} from './queries';
+import { newsQuery } from './queries';
 import { premiumListingsSmallQuery } from '../listings/queries';
 import { smallLocationsCardQuery } from '../locations/queries';
 import { smallUsersQuery } from '../agents/queries';
@@ -42,6 +40,7 @@ import {
   SmallUsersCard,
 } from 'app/components/cards/atoms/users';
 import { Greeting } from 'app/components2/organisms/home/greeting';
+import { Screen } from 'app/components2/molecules/screen';
 
 export function HomeScreen() {
   const { colors } = useColorScheme();
@@ -55,126 +54,131 @@ export function HomeScreen() {
   const newsQueryOptions = newsQuery();
 
   return (
-    <View className="flex-grow flex-col gap-8 py-8">
-      <Greeting />
+    <Screen>
+      <View className="flex-grow flex-col gap-8 py-8">
+        <Greeting />
+        <View className="px-4 flex-col gap-4">
+          <SeparatorText hideLeft>
+            <Text className="font-medium">At your Glance</Text>
+          </SeparatorText>
+          <CompanyStats className="gap-4" />
+        </View>
 
-      <View className="px-4 flex-col gap-4">
-        <SeparatorText hideLeft>
-          <Text className="font-medium">At your Glance</Text>
-        </SeparatorText>
-        <CompanyStats className="gap-4" />
-      </View>
-
-      <View className="px-4">
-        <SeparatorText hideRight>
-          <Button
-            onPress={() =>
-              router.push(
-                `/listings?filters=${JSON.stringify([
-                  {
-                    [FilterKeys.Premium]: CommonFilters.Premium,
-                  },
-                ])}`,
-              )
-            }
-            variant="base"
-            size="none"
-            className="flex-row gap-1 items-center w-60 ml-auto mr-0"
-          >
-            <Text className="text-right text-subtext">
-              Premium listings curated by {'\n'} A2A Point
-            </Text>
-            <ArrowUpRight size={24} className="text-info" color={colors.info} />
-          </Button>
-        </SeparatorText>
-      </View>
-
-      <InfiniteList<SmallListingCardProps & ListingCardMetrics>
-        flatListProps={{
-          horizontal: true,
-          ListHeaderComponent: () => <View className="w-4 h-4" />,
-        }}
-        component={SmallListingCard}
-        skeletonComponent={SmallListingCardSkeleton}
-        infiniteQueryOptions={premiumListingsSmallQueryOptions}
-        viewAllLink="/"
-      />
-
-      <View className="flex-col gap-4 bg-card p-4">
-        <SeparatorText hideLeft>
-          <Text className="font-medium">Browse popular locations</Text>
-        </SeparatorText>
-        <InfiniteList<SmallLocationCardProps>
-          component={SmallLocationCard}
-          skeletonComponent={SmallLocationCardSkeleton}
-          infiniteQueryOptions={smallLocationsQueryOptions}
-          flatListProps={{
-            horizontal: true,
-            ItemSeparatorComponent: () => <View className="w-4 h-4" />,
-          }}
-          viewAllLink="/locations"
-          numRows={2}
-          skeletonCount={16}
-        />
-      </View>
-
-      <View className="flex-col gap-4 px-4">
-        <SeparatorText hideLeft>
-          <Text className="font-medium">Top rated agents</Text>
-        </SeparatorText>
-        <InfiniteList<SmallUsersCardProps & UsersCardMetrics>
-          component={SmallUsersCard}
-          skeletonComponent={SmallUsersCardSkeleton}
-          flatListProps={{
-            horizontal: true,
-            ItemSeparatorComponent: () => <View className="w-4 h-4" />,
-          }}
-          infiniteQueryOptions={smallUsersQueryOptions}
-          viewAllLink="/agents"
-        />
-      </View>
-
-      <View className="flex-col gap-4 px-4">
-        <SeparatorText hideLeft>
-          <Text className="font-medium">News and feeds</Text>
-        </SeparatorText>
-        <InfiniteList<NewsProps>
-          component={NewsCard}
-          infiniteQueryOptions={newsQueryOptions}
-          skeletonComponent={NewsCardSkeleton}
-          flatListProps={{
-            horizontal: true,
-            ItemSeparatorComponent: () => <View className="w-4 h-4" />,
-          }}
-          viewAllLink="https://a2apoint.com/news"
-        />
-      </View>
-
-      <View className="flex-col gap-4 px-4">
-        <SeparatorText hideLeft>
-          <Text className="font-medium">Quick links</Text>
-        </SeparatorText>
-        <View className="flex-row justify-between">
-          {externalLinks.map(({ label, href }, index) => (
+        <View className="px-4">
+          <SeparatorText hideRight>
             <Button
-              key={index}
+              onPress={() =>
+                router.push(
+                  `/listings?filters=${JSON.stringify([
+                    {
+                      [FilterKeys.Premium]: CommonFilters.Premium,
+                    },
+                  ])}`,
+                )
+              }
               variant="base"
               size="none"
-              style={{ backgroundColor: opacity(colors.info, 0.1) }}
-              className="flex-row gap-1 py-1 px-2 rounded"
-              onPress={() => Linking.openURL(href)}
+              className="flex-row gap-1 items-center w-60 ml-auto mr-0"
             >
-              <Text className="text-info">{label}</Text>
-              <ExternalLink
-                size={18}
+              <Text className="text-right text-subtext">
+                Premium listings curated by {'\n'} A2A Point
+              </Text>
+              <ArrowUpRight
+                size={24}
                 className="text-info"
                 color={colors.info}
               />
             </Button>
-          ))}
+          </SeparatorText>
+        </View>
+
+        <InfiniteList<SmallListingCardProps & ListingCardMetrics>
+          flatListProps={{
+            horizontal: true,
+            ListHeaderComponent: () => <View className="w-4 h-4" />,
+          }}
+          component={SmallListingCard}
+          skeletonComponent={SmallListingCardSkeleton}
+          infiniteQueryOptions={premiumListingsSmallQueryOptions}
+          viewAllLink="/"
+        />
+
+        <View className="flex-col gap-4 bg-card p-4">
+          <SeparatorText hideLeft>
+            <Text className="font-medium">Browse popular locations</Text>
+          </SeparatorText>
+          <InfiniteList<SmallLocationCardProps>
+            component={SmallLocationCard}
+            skeletonComponent={SmallLocationCardSkeleton}
+            infiniteQueryOptions={smallLocationsQueryOptions}
+            flatListProps={{
+              horizontal: true,
+              ItemSeparatorComponent: () => <View className="w-4 h-4" />,
+            }}
+            viewAllLink="/locations"
+            numRows={2}
+            skeletonCount={16}
+          />
+        </View>
+
+        <View className="flex-col gap-4 px-4">
+          <SeparatorText hideLeft>
+            <Text className="font-medium">Top rated agents</Text>
+          </SeparatorText>
+          <InfiniteList<SmallUsersCardProps & UsersCardMetrics>
+            component={SmallUsersCard}
+            skeletonComponent={SmallUsersCardSkeleton}
+            flatListProps={{
+              horizontal: true,
+              ItemSeparatorComponent: () => <View className="w-4 h-4" />,
+            }}
+            infiniteQueryOptions={smallUsersQueryOptions}
+            viewAllLink="/agents"
+          />
+        </View>
+
+        <View className="flex-col gap-4 px-4">
+          <SeparatorText hideLeft>
+            <Text className="font-medium">News and feeds</Text>
+          </SeparatorText>
+          <InfiniteList<NewsProps>
+            component={NewsCard}
+            infiniteQueryOptions={newsQueryOptions}
+            skeletonComponent={NewsCardSkeleton}
+            flatListProps={{
+              horizontal: true,
+              ItemSeparatorComponent: () => <View className="w-4 h-4" />,
+            }}
+            viewAllLink="https://a2apoint.com/news"
+          />
+        </View>
+
+        <View className="flex-col gap-4 px-4">
+          <SeparatorText hideLeft>
+            <Text className="font-medium">Quick links</Text>
+          </SeparatorText>
+          <View className="flex-row justify-between">
+            {externalLinks.map(({ label, href }, index) => (
+              <Button
+                key={index}
+                variant="base"
+                size="none"
+                style={{ backgroundColor: opacity(colors.info, 0.1) }}
+                className="flex-row gap-1 py-1 px-2 rounded"
+                onPress={() => Linking.openURL(href)}
+              >
+                <Text className="text-info">{label}</Text>
+                <ExternalLink
+                  size={18}
+                  className="text-info"
+                  color={colors.info}
+                />
+              </Button>
+            ))}
+          </View>
         </View>
       </View>
-    </View>
+    </Screen>
   );
 }
 
