@@ -62,18 +62,23 @@ export default function SearchBar({
 
   return (
     <RNESearchBar
-      {...merge(searchBarProps, {
-        value: searchText,
-        placeholder: 'Search ...',
-        onChangeText: setSearchText,
-        searchIcon: <SearchIcon />,
-        clearIcon: <CancelIcon />,
-        selectionColor: colors.primary,
-        placeholderTextColor: colors['accent-foreground'],
-        containerStyle,
-        inputContainerStyle,
-        inputStyle: inputStyle!,
-      } as SearchBarProps)}
+      {...merge(
+        {
+          searchIcon: searchBarProps.searchIcon ?? <SearchIcon />,
+          clearIcon: searchBarProps.clearIcon ?? <CancelIcon />,
+        } as SearchBarProps,
+        {
+          value: searchText,
+          placeholder: 'Search ...',
+          onChangeText: setSearchText,
+          selectionColor: colors.primary,
+          placeholderTextColor: colors['accent-foreground'],
+          containerStyle,
+          inputContainerStyle,
+          inputStyle: inputStyle!,
+        } as SearchBarProps,
+        searchBarProps,
+      )}
     />
   );
 }

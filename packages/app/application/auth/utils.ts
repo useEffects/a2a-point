@@ -47,7 +47,10 @@ export const exchangeKcTokenWithDirectus = async (
       clientId: KC_CLIENT_ID,
       ...tokens,
     }),
-  }).then((res) => res.json() as Promise<AuthTokenSet>);
+  }).then((res) => {
+    if (res.ok) return res.json() as Promise<AuthTokenSet>;
+    throw new Error(res.statusText);
+  });
 };
 
 /**

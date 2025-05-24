@@ -186,7 +186,7 @@ export function ListingsScreen({
   return (
     <View className={cn('flex-1 bg-accent', className)}>
       <View className="bg-accent">
-        {/* <View className="flex-row items-center justify-between gap-4 w-full px-4">
+        <View className="flex-row items-center justify-between gap-4 w-full px-4">
           <SearchBar
             searchText={searchText}
             setSearchText={setSearchText}
@@ -217,7 +217,7 @@ export function ListingsScreen({
               }
             />
           </Button>
-        </View> */}
+        </View>
         {filters.length ? (
           <RenderChips filters={filters} setFilters={updateParams} />
         ) : (

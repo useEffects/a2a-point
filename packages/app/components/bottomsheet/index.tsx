@@ -6,7 +6,7 @@ import { merge } from 'lodash';
 
 export default function BottomSheet(props: {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: (newState: boolean) => void;
   onBackdropPress: () => void;
   children: ReactNode;
   bottomSheetProps?: BottomSheetProps;

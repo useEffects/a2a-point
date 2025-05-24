@@ -16,6 +16,7 @@ import {
 import { createTabBarOptions } from '../../lib/layout-utils';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { Dimensions, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { Navigator } = createMaterialTopTabNavigator();
 
@@ -29,15 +30,18 @@ export const MaterialTopTabs = withLayoutContext<
 export default function TabLayout() {
   const { colors } = useColorScheme();
   const { width } = Dimensions.get('window');
+  const { bottom: paddingBottom } = useSafeAreaInsets();
+
   return (
     <MaterialTopTabs
       tabBarPosition="bottom"
       screenOptions={{
         tabBarStyle: {
-          height: 60,
+          height: 56 + paddingBottom,
           backgroundColor: colors.accent,
           borderTopColor: colors.border,
           borderTopWidth: StyleSheet.hairlineWidth,
+          paddingBottom: paddingBottom,
         },
         tabBarItemStyle: {
           width: width / 5,
@@ -47,6 +51,11 @@ export default function TabLayout() {
           alignItems: 'center',
         },
         lazy: false,
+        tabBarAndroidRipple: {
+          radius: 0,
+          color: 'transparent',
+        },
+        tabBarIndicator: () => null,
       }}
       initialRouteName="index"
     >

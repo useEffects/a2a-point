@@ -1,35 +1,24 @@
 import { Header, HeaderTitle } from 'app/components/header';
-import SearchBar from 'app/components/searchbar';
 import { Button } from 'app/components/ui/button';
 import { GoToPostButton } from 'app/components/utils/common-ui';
-import { useGlobalSearchParams, useRouter } from 'app/context/router';
+import { SearchBarWithQuery } from 'app/components2/molecules/searchbar-with-query';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { ArrowLeft, ListFilter, Search } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { View } from 'react-native';
-import { useDebounce } from 'use-debounce';
+import { ListingsFilterTemplate } from './filters';
+import BottomSheet from 'app/components/bottomsheet';
 
 export const ListingsHeader = () => {
   const { colors } = useColorScheme();
   const [searchMode, setSearchMode] = useState(false);
-  const params = useGlobalSearchParams();
-  const router = useRouter();
-  const [searchText, setSearchText] = useState(
-    (params?.searchText as string) ?? '',
-  );
-
-  useEffect(() => {
-    router.setParams({ searchText });
-  }, [searchText]);
 
   return (
     <Header>
       <View className="flex-row justify-between flex-1 items-center">
         {searchMode ? (
           <>
-            <SearchBar
-              searchText={searchText}
-              setSearchText={setSearchText}
+            <SearchBarWithQuery
               searchBarProps={{
                 searchIcon: (
                   <Button
@@ -37,7 +26,7 @@ export const ListingsHeader = () => {
                     size={'icon'}
                     onPress={() => setSearchMode(false)}
                   >
-                    <ArrowLeft color={colors.secondary} size={18} />
+                    <ArrowLeft color={colors.subtext} size={18} />
                   </Button>
                 ),
               }}
@@ -54,14 +43,34 @@ export const ListingsHeader = () => {
               >
                 <Search color={colors.secondary} size={18} />
               </Button>
-              <Button variant={'ghost'} size={'icon'}>
-                <ListFilter color={colors.secondary} size={18} />
-              </Button>
+              <ListingsFilterButton />
               <GoToPostButton />
             </View>
           </>
         )}
       </View>
     </Header>
+  );
+};
+
+const ListingsFilterButton = () => {
+  const { colors } = useColorScheme();
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button variant={'ghost'} size={'icon'} onPress={() => setOpen(true)}>
+        <ListFilter
+          color={open ? colors.foreground : colors.subtext}
+          size={18}
+        />
+      </Button>
+      <BottomSheet
+        open={open}
+        setOpen={setOpen}
+        onBackdropPress={() => setOpen(false)}
+      >
+        <ListingsFilterTemplate onClose={() => setOpen(false)} />
+      </BottomSheet>
+    </>
   );
 };
