@@ -1,10 +1,5 @@
 import { NewsCard, NewsCardSkeleton } from 'app/components/cards/atoms/news';
 import {
-  PhotoListingCard,
-  PhotoListingCardSkeleton,
-  PhotoListingProps,
-} from 'app/components/cards/atoms/photo';
-import {
   SmallListingCard,
   SmallListingCardProps,
   SmallListingCardSkeleton,
@@ -16,7 +11,7 @@ import {
 } from 'app/components/cards/molecules/locations';
 import { CompanyStats } from 'app/components/company-stats';
 import { Header, HeaderTitle } from 'app/components/header';
-import { ArrowUpRight, Clock, ExternalLink } from 'app/components/icons';
+import { ArrowUpRight, ExternalLink } from 'app/components/icons';
 import { SeparatorText } from 'app/components/separator-text';
 import { Text } from 'app/components/ui/text';
 import { useColorScheme } from 'app/hooks/color-scheme';
@@ -29,22 +24,15 @@ import {
   UsersCardMetrics,
 } from 'app/lib/props';
 import { NewsProps } from 'app/lib/types';
-import { directusStore } from 'app/store/directus';
-import userStore from 'app/store/user';
 import * as Linking from 'expo-linking';
 import opacity from 'hex-color-opacity';
 import { View } from 'react-native';
-import { categoryTiles, FilterKeys } from '../listings';
+import { FilterKeys } from '../listings';
 import { Button } from 'app/components/ui/button';
-import { useState } from 'react';
-import { getTimeofDay } from 'app/lib/helpers';
-import { lowerCase, startCase } from 'lodash';
 import Logo from 'app/components/svg/logo';
 import InfiniteList from 'app/components/infinite';
 import {
   newsQuery,
-  photoHistoryListingsQuery,
-  photoListingsQuery,
 } from './queries';
 import { premiumListingsSmallQuery } from '../listings/queries';
 import { smallLocationsCardQuery } from '../locations/queries';
