@@ -1,16 +1,16 @@
 import { hairlineWidth } from 'nativewind/theme';
 import { tailwindColorDefinitions } from '@a2apoint/tailwind-theme/src/tailwind-config-colors';
-import plugin from 'tailwindcss/plugin';
-import defaultTheme from 'tailwindcss/defaultTheme';
 
 export default {
   darkMode: 'class',
   content: [
     './app/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
-    '../../packages/app/components/**/*.{ts,tsx}',
-    '../../packages/app/screens/**/*.{ts,tsx}',
     './screens/**/*.{ts,tsx}',
+    '../../packages/app/components/**/*.{ts,tsx}',
+    '../../packages/app/components2/**/*.{ts,tsx}',
+    '../../packages/app/screens/**/*.{ts,tsx}',
+    '../../packages/app/screens2/**/*.{ts,tsx}',
   ],
   presets: [require('nativewind/preset')],
   corePlugin: {

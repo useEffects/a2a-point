@@ -34,7 +34,7 @@ import userStore from 'app/store/user';
 import * as Linking from 'expo-linking';
 import opacity from 'hex-color-opacity';
 import { View } from 'react-native';
-import { categoryTiles, FilterKeys } from '../listings';
+import { categoryTiles, FilterKeys } from '../listing';
 import { Button } from 'app/components/ui/button';
 import { useState } from 'react';
 import { getTimeofDay } from 'app/lib/helpers';
