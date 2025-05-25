@@ -3,7 +3,6 @@ import { directusStore } from 'app/store/directus';
 import { useEffect, useRef, useState } from 'react';
 import { directusOrigin } from '../utils';
 import { z } from 'zod';
-import { tryCatch } from 'app/shared/utils/tryCatch';
 
 export function useWS() {
   const socketRef = useRef<WebSocket | null>(null);

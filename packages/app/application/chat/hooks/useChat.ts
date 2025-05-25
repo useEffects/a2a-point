@@ -20,7 +20,7 @@ import { uploadFileToDirectus } from 'app/lib/file-upload';
 import { messagesFolderId } from 'app/lib/constants';
 import { useEffect } from 'react';
 import { renderCardsQuery2 } from 'app/lib/misc/queries';
-import { tryCatch } from 'app/shared/utils/tryCatch';
+import { tryCatch } from 'app/shared/utils/try-catch';
 
 export const useChat = (roomId: Room['id']) => {
   const {

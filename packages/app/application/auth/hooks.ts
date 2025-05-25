@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
 import { createTokensQOpts } from '../../infra/queries/tokens/queries';
 import { queryClient } from 'app/store/query';
-import { tryCatch } from 'app/shared/utils/tryCatch';
+import { tryCatch } from 'app/shared/utils/try-catch';
 import {
   directusTokenFlow,
   exchangeKcTokenWithDirectus,

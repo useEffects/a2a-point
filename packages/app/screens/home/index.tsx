@@ -41,6 +41,7 @@ import {
 } from 'app/components/cards/atoms/users';
 import { Greeting } from 'app/components2/organisms/home/greeting';
 import { Screen } from 'app/components2/molecules/screen';
+import { CreatePhotoListingsQOPts } from 'app/components2/organisms/home/photo-history-listings/queries';
 
 export function HomeScreen() {
   const { colors } = useColorScheme();
@@ -52,6 +53,8 @@ export function HomeScreen() {
   const smallUsersQueryOptions = smallUsersQuery();
   const premiumListingsSmallQueryOptions = premiumListingsSmallQuery();
   const newsQueryOptions = newsQuery();
+
+  const photoListingsQPts = new CreatePhotoListingsQOPts();
 
   return (
     <Screen>

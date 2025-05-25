@@ -1,4 +1,4 @@
-import { tryCatch } from 'app/shared/utils/tryCatch';
+import { tryCatch } from 'app/shared/utils/try-catch';
 import { AuthTokenSet, TokenSet } from '../../infra/queries/tokens/types';
 import { DIRECTUS_URL, KC_CLIENT_ID } from 'app/lib/constants';
 import { Company, User } from 'app/lib/types';
