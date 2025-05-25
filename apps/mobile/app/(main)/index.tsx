@@ -1,12 +1,15 @@
-import {
-  HomeScreen as HomeScreenComponent,
-  HomeScreenHeader,
-} from 'app/screens/home';
+import { HomeScreenHeader } from 'app/components2/organisms/home/header';
+import { HomeScreenTemplate } from 'app/components2/templates/home/template';
+import { Screen } from 'app/components2/molecules/screen';
 
 import { useHeader } from '../../hooks/use-header';
 
 export default function HomeScreen() {
   useHeader(<HomeScreenHeader />);
 
-  return <HomeScreenComponent />;
+  return (
+    <Screen>
+      <HomeScreenTemplate />
+    </Screen>
+  );
 }

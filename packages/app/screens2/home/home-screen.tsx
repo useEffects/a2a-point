@@ -1,134 +1,20 @@
-import { NewsCard, NewsCardSkeleton } from 'app/components/cards/atoms/news';
-import {
-  PhotoListingCard,
-  PhotoListingCardSkeleton,
-  PhotoListingProps,
-} from 'app/components/cards/atoms/photo';
-import {
-  SmallListingCard,
-  SmallListingCardProps,
-  SmallListingCardSkeleton,
-} from 'app/components/cards/atoms/small';
-import { CommonFilters } from 'app/components/cards/molecules/listings';
-import {
-  SmallLocationCard,
-  SmallLocationCardSkeleton,
-} from 'app/components/cards/molecules/locations';
-import { CompanyStats } from 'app/components/company-stats';
 import { Header, HeaderTitle } from 'app/components/header';
-import { ArrowUpRight, Clock, ExternalLink } from 'app/components/icons';
-import { SeparatorText } from 'app/components/separator-text';
-import { Text } from 'app/components/ui/text';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { useRouter } from 'app/hooks/router';
 import { directusUrl, portfolioUrl } from 'app/lib/constants';
-import {
-  ListingCardMetrics,
-  SmallLocationCardProps,
-  SmallUsersCardProps,
-  UsersCardMetrics,
-} from 'app/lib/props';
-import { NewsProps } from 'app/lib/types';
-import { directusStore } from 'app/store/directus';
-import userStore from 'app/store/user';
-import * as Linking from 'expo-linking';
-import opacity from 'hex-color-opacity';
 import { View } from 'react-native';
-import { categoryTiles, FilterKeys } from '../listing';
-import { Button } from 'app/components/ui/button';
-import { useState } from 'react';
-import { getTimeofDay } from 'app/lib/helpers';
-import { lowerCase, startCase } from 'lodash';
 import Logo from 'app/components/svg/logo';
-import InfiniteList from 'app/components/infinite';
-import {
-  SmallUsersCardSkeleton,
-  SmallUsersCard,
-} from 'app/components/cards/atoms/users';
-import { Greeting } from 'app/components2/organisms/home/greeting';
+import { Screen } from 'app/components2/molecules/screen';
+import { HomeScreenTemplate } from 'app/components2/templates/home/template';
 
 export function HomeScreen() {
   const { colors } = useColorScheme();
   const router = useRouter();
 
   return (
-    <View className="flex-grow flex-col gap-8 py-8">
-      <Greeting />
-
-      <View className="px-4 flex-col gap-4">
-        <SeparatorText hideLeft>
-          <Text className="font-medium">At your Glance</Text>
-        </SeparatorText>
-        <CompanyStats className="gap-4" />
-      </View>
-
-      <View className="px-4">
-        <SeparatorText hideRight>
-          <Button
-            onPress={() =>
-              router.push(
-                `/listings?filters=${JSON.stringify([
-                  {
-                    [FilterKeys.Premium]: CommonFilters.Premium,
-                  },
-                ])}`,
-              )
-            }
-            variant="base"
-            size="none"
-            className="flex-row gap-1 items-center w-60 ml-auto mr-0"
-          >
-            <Text className="text-right text-subtext">
-              Premium listings curated by {'\n'} A2A Point
-            </Text>
-            <ArrowUpRight size={24} className="text-info" color={colors.info} />
-          </Button>
-        </SeparatorText>
-      </View>
-
-      <View className="flex-col gap-4 bg-card p-4">
-        <SeparatorText hideLeft>
-          <Text className="font-medium">Browse popular locations</Text>
-        </SeparatorText>
-      </View>
-
-      <View className="flex-col gap-4 px-4">
-        <SeparatorText hideLeft>
-          <Text className="font-medium">Top rated agents</Text>
-        </SeparatorText>
-      </View>
-
-      <View className="flex-col gap-4 px-4">
-        <SeparatorText hideLeft>
-          <Text className="font-medium">News and feeds</Text>
-        </SeparatorText>
-      </View>
-
-      <View className="flex-col gap-4 px-4">
-        <SeparatorText hideLeft>
-          <Text className="font-medium">Quick links</Text>
-        </SeparatorText>
-        <View className="flex-row justify-between">
-          {externalLinks.map(({ label, href }, index) => (
-            <Button
-              key={index}
-              variant="base"
-              size="none"
-              style={{ backgroundColor: opacity(colors.info, 0.1) }}
-              className="flex-row gap-1 py-1 px-2 rounded"
-              onPress={() => Linking.openURL(href)}
-            >
-              <Text className="text-info">{label}</Text>
-              <ExternalLink
-                size={18}
-                className="text-info"
-                color={colors.info}
-              />
-            </Button>
-          ))}
-        </View>
-      </View>
-    </View>
+    <Screen>
+      <HomeScreenTemplate />
+    </Screen>
   );
 }
 

@@ -69,34 +69,6 @@ export const Greeting = () => {
           ))}
         </View>
       </View>
-
-      <View className="flex-col justify-start gap-4 px-4 bg-card py-8">
-        <SeparatorText hideLeft>
-          <View className="flex-row items-center gap-2">
-            {authenticated ? (
-              <>
-                <Clock color={colors.foreground} />
-                <Text className="font-medium">Continue your search</Text>
-              </>
-            ) : (
-              <>
-                <Text className="font-medium">View popular listings</Text>
-              </>
-            )}
-          </View>
-        </SeparatorText>
-        <InfiniteList<PhotoListingProps>
-          component={PhotoListingCard}
-          infiniteQueryOptions={queryOptions}
-          skeletonComponent={PhotoListingCardSkeleton}
-          flatListProps={{
-            horizontal: true,
-            showsHorizontalScrollIndicator: false,
-            ItemSeparatorComponent: () => <View className="w-4 h-4" />,
-          }}
-          viewAllLink="/listings"
-        />
-      </View>
     </View>
   );
 };

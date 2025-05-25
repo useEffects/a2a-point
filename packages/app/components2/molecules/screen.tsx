@@ -1,6 +1,6 @@
 import { ScrollView } from 'app/components/utils/virtual-lists';
 import { ReactNode } from 'react';
-import { Platform, ScrollViewProps } from 'react-native';
+import { ScrollViewProps } from 'react-native';
 
 export const Screen = ({
   children,
@@ -9,8 +9,5 @@ export const Screen = ({
   children: ReactNode;
   scrollViewProps?: ScrollViewProps;
 }) => {
-  return Platform.select({
-    native: <ScrollView {...scrollViewProps}>{children}</ScrollView>,
-    web: children,
-  });
+  return <ScrollView {...scrollViewProps}>{children}</ScrollView>;
 };
