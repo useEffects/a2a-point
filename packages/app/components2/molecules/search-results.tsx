@@ -6,6 +6,7 @@ import {
   Dispatch,
   SetStateAction,
   FC,
+  useEffect,
 } from 'react';
 import SearchBarBase from 'app/components/searchbar';
 import { useDebounce } from 'use-debounce';
