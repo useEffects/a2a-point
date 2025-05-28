@@ -2,6 +2,7 @@ import { Pressable } from 'app/components/pressable';
 import { Button } from 'app/components/ui/button';
 import { Separator } from 'app/components/ui/separator';
 import { Text } from 'app/components/ui/text';
+import { TabBar } from 'app/components2/molecules/tabbar';
 import { ApplyButton } from 'app/components2/organisms/listings/filters/apply-button';
 import { ListingsFiltersAutoCompletes } from 'app/components2/organisms/listings/filters/auto-completes/component';
 import { FiltersProvider } from 'app/components2/organisms/listings/filters/context';
@@ -11,7 +12,7 @@ import { useColorScheme } from 'app/hooks/color-scheme';
 import { directusUrl } from 'app/lib/constants';
 import { cn } from 'app/lib/utils';
 import { Link } from 'expo-router';
-import { X } from 'lucide-react-native';
+import { ArrowLeft, ArrowRight, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { Dimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -49,7 +50,7 @@ export const ListingsFilterTemplate = ({
           renderScene={renderScene}
           navigationState={{ index, routes }}
           onIndexChange={setIndex}
-          renderTabBar={TabBar}
+          renderTabBar={FiltersTabBar}
           pagerStyle={{
             paddingVertical: 16,
           }}
@@ -77,25 +78,7 @@ const routes = [
   { key: '2', title: '2' },
 ];
 
-const TabBar = (props: TabBarProps<{ key: string }>) => {
-  const activeIndex = props.navigationState.index;
-  return (
-    <View className="flex-row gap-4 items-center">
-      {routes.map(({ key }) => (
-        <Pressable
-          onPress={() => props.jumpTo(key)}
-          key={key}
-          className={cn(
-            'w-4 h-4 rounded-full',
-            routes.findIndex((r) => r.key === key) === activeIndex
-              ? 'bg-secondary'
-              : 'bg-popover',
-          )}
-        />
-      ))}
-    </View>
-  );
-};
+const FiltersTabBar = TabBar(routes);
 
 const FirstFiltersPage = () => {
   return (
