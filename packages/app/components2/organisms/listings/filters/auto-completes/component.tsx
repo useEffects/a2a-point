@@ -7,8 +7,10 @@ import { FiltersProvider } from '../context';
 
 export const ListingsFiltersAutoCompletes = () => {
   return (
-    <View className="flex-col gap-4 py-4">
+    <View className="flex-col gap-4">
       <Text className="text-lg">Search</Text>
+      <SearchLocations />
+      <SearchLocations />
       <SearchLocations />
     </View>
   );

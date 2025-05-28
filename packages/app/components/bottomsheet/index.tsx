@@ -1,7 +1,7 @@
 import { BottomSheetProps, BottomSheet as RNEBottomSheet } from '@rneui/themed';
 import { Dispatch, ReactNode, SetStateAction } from 'react';
 import { Separator } from '../ui/separator';
-import { Platform } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 import { merge } from 'lodash';
 
 export default function BottomSheet(props: {
@@ -11,6 +11,7 @@ export default function BottomSheet(props: {
   children: ReactNode;
   bottomSheetProps?: BottomSheetProps;
 }) {
+  const { height: windowHeight } = Dimensions.get('window');
   return (
     <RNEBottomSheet
       {...merge(
@@ -18,7 +19,9 @@ export default function BottomSheet(props: {
           isVisible: props.open,
           onBackdropPress: props.onBackdropPress,
           backdropStyle: { backgroundColor: 'transparent' },
-          containerStyle: { backgroundColor: 'transparent' },
+          containerStyle: {
+            backgroundColor: 'transparent',
+          },
           scrollViewProps: {
             bounces: false,
             overScrollMode: 'never',

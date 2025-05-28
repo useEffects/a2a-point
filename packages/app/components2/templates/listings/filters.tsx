@@ -1,3 +1,4 @@
+import { Pressable } from 'app/components/pressable';
 import { Button } from 'app/components/ui/button';
 import { Separator } from 'app/components/ui/separator';
 import { Text } from 'app/components/ui/text';
@@ -7,9 +8,20 @@ import { FiltersProvider } from 'app/components2/organisms/listings/filters/cont
 import { RangeSelectors } from 'app/components2/organisms/listings/filters/range-selectors/component';
 import { SelectPurpose } from 'app/components2/organisms/listings/filters/select-purpose/component';
 import { useColorScheme } from 'app/hooks/color-scheme';
-import { Apple, X } from 'lucide-react-native';
-import { View } from 'react-native';
+import { directusUrl } from 'app/lib/constants';
+import { cn } from 'app/lib/utils';
+import { Link } from 'expo-router';
+import { X } from 'lucide-react-native';
+import { useState } from 'react';
+import { Dimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  Route,
+  SceneMap,
+  SceneRendererProps,
+  TabBarProps,
+  TabView,
+} from 'react-native-tab-view';
 
 export const ListingsFilterTemplate = ({
   onClose,
@@ -18,6 +30,7 @@ export const ListingsFilterTemplate = ({
 }) => {
   const { colors } = useColorScheme();
   const { bottom: safeAreaBottom } = useSafeAreaInsets();
+  const [index, setIndex] = useState(0);
 
   return (
     <FiltersProvider>
@@ -26,14 +39,30 @@ export const ListingsFilterTemplate = ({
         style={{ paddingBottom: safeAreaBottom }}
       >
         <View className="flex-row items-center justify-between">
-          <Text className="text-lg font-medium">Filter Leads</Text>
+          <Text className="text-xl font-semibold">Filter Leads</Text>
           <Button variant={'destructive'} size={'smallIcon'} onPress={onClose}>
             <X color={colors['destructive-foreground']} size={18} />
           </Button>
         </View>
-        <ListingsFiltersAutoCompletes />
-        <SelectPurpose />
-        <RangeSelectors />
+        <TabView
+          style={{ height: 400 }}
+          renderScene={renderScene}
+          navigationState={{ index, routes }}
+          onIndexChange={setIndex}
+          renderTabBar={TabBar}
+          pagerStyle={{
+            paddingVertical: 16,
+          }}
+        />
+        <Text>
+          Find more powerful filters on the A2A Point{' '}
+          <Link
+            className="underline text-info"
+            href={`${directusUrl}/admin/listings`}
+          >
+            dashboard!
+          </Link>
+        </Text>
         <View className="flex-col gap-4">
           <Separator />
           <ApplyButton />
@@ -42,3 +71,50 @@ export const ListingsFilterTemplate = ({
     </FiltersProvider>
   );
 };
+
+const routes = [
+  { key: '1', title: '1' },
+  { key: '2', title: '2' },
+];
+
+const TabBar = (props: TabBarProps<{ key: string }>) => {
+  const activeIndex = props.navigationState.index;
+  return (
+    <View className="flex-row gap-4 items-center">
+      {routes.map(({ key }) => (
+        <Pressable
+          onPress={() => props.jumpTo(key)}
+          key={key}
+          className={cn(
+            'w-4 h-4 rounded-full',
+            routes.findIndex((r) => r.key === key) === activeIndex
+              ? 'bg-secondary'
+              : 'bg-popover',
+          )}
+        />
+      ))}
+    </View>
+  );
+};
+
+const FirstFiltersPage = () => {
+  return (
+    <View className="flex-col gap-4 flex-1">
+      <ListingsFiltersAutoCompletes />
+      <SelectPurpose />
+    </View>
+  );
+};
+
+const SecondFiltersPage = () => {
+  return (
+    <View className="flex-col flex-1">
+      <RangeSelectors />
+    </View>
+  );
+};
+
+const renderScene = SceneMap({
+  '1': FirstFiltersPage,
+  '2': SecondFiltersPage,
+});
