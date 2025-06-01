@@ -5,16 +5,13 @@ import {
 } from 'app/screens/agents/profile';
 import userStore from 'app/store/user';
 import React from 'react';
+import { useHeader } from '../../../hooks/use-header';
 
 export default function ProfileScreen() {
   const { user, company, document } = userStore();
+  useHeader(<ProfileScreenHeader user={user} />);
+
   return (
-    <Stacked header={() => <ProfileScreenHeader user={user} />}>
-      <ProfileScreenComponent
-        user={user}
-        company={company}
-        document={document}
-      />
-    </Stacked>
+    <ProfileScreenComponent user={user} company={company} document={document} />
   );
 }

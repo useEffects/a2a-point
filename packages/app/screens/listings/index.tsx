@@ -186,38 +186,6 @@ export function ListingsScreen({
   return (
     <View className={cn('flex-1 bg-accent', className)}>
       <View className="bg-accent">
-        <View className="flex-row items-center justify-between gap-4 w-full px-4">
-          <SearchBar
-            searchText={searchText}
-            setSearchText={setSearchText}
-            searchBarProps={{
-              inputContainerStyle: {
-                backgroundColor: colors.background,
-              },
-            }}
-          />
-          <Button
-            onPress={() => setBottomSheetVisible(true)}
-            variant={'base'}
-            size={'icon'}
-            className={cn(
-              'rounded-full border bg-background',
-              !filters.length ? 'border-info' : 'border-success bg-success',
-              bottomSheetVisible && 'border-info bg-info',
-            )}
-          >
-            <ListFilter
-              size={18}
-              color={
-                filters.length
-                  ? colors.accent
-                  : bottomSheetVisible
-                    ? colors['info-foreground']
-                    : colors.info
-              }
-            />
-          </Button>
-        </View>
         {filters.length ? (
           <RenderChips filters={filters} setFilters={updateParams} />
         ) : (

@@ -3,11 +3,9 @@ import {
   OffplansScreenHeader,
 } from 'app/screens/offplans';
 import { Stacked } from '../../components/stacked';
+import { useHeader } from '../../hooks/use-header';
 
 export default function OffPlansScreen() {
-  return (
-    <Stacked header={() => <OffplansScreenHeader />}>
-      <OffPlansScreenComponent />
-    </Stacked>
-  );
+  useHeader(<OffplansScreenHeader />);
+  return <OffPlansScreenComponent />;
 }
