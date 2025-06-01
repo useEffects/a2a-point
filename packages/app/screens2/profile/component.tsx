@@ -4,33 +4,47 @@ import { View } from 'react-native';
 import Animated, {
   Extrapolation,
   interpolate,
+  runOnJS,
   SharedValue,
   useAnimatedScrollHandler,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
 } from 'react-native-reanimated';
 import { ProfileScreenProps } from './types';
 import {
   ProfileDetails,
   profileDetailsHeight,
-} from 'app/components2/organisms/profile/profile-details';
+} from 'app/components2/templates/profile/profile-details';
 import { ScrollViewDefaultProps } from 'app/components/utils/virtual-lists';
+import { useState } from 'react';
+import { Separator } from 'app/components/ui/separator';
+import { Portal } from 'app/components/primitives/portal';
+import { profileScreenHeaderPortalName } from 'app/components2/templates/profile/header';
 
 export const ProfileScreen = (props: ProfileScreenProps) => {
   const { colors } = useColorScheme();
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const scrollY = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => (scrollY.value = event.contentOffset.y),
   });
+  useDerivedValue(() => {
+    const collapsed = scrollY.value * SPEED_MULTIPLIER >= INPUT_RANGE_MAX;
+    runOnJS(setIsCollapsed)(collapsed);
+  }, [scrollY]);
 
   const hideOnScrollStyle = useProfileScreenAnimatedStyle(scrollY);
   return (
     <View className="flex-1">
+      <Portal hostName={profileScreenHeaderPortalName} name="slot-1">
+        {isCollapsed ? <Separator /> : <></>}
+      </Portal>
       <Animated.ScrollView
+        {...ScrollViewDefaultProps}
         style={{ backgroundColor: colors.accent }}
         onScroll={scrollHandler}
         scrollEventThrottle={16}
-        {...ScrollViewDefaultProps}
       >
         <Animated.View style={[hideOnScrollStyle, { overflow: 'hidden' }]}>
           <ProfileDetails user={props.user} />
@@ -42,8 +56,6 @@ export const ProfileScreen = (props: ProfileScreenProps) => {
 };
 
 const useProfileScreenAnimatedStyle = (scrollY: SharedValue<number>) => {
-  const SPEED_MULTIPLIER = 0.5;
-  const INPUT_RANGE_MAX = 25;
   return useAnimatedStyle(() => {
     return {
       opacity: interpolate(
@@ -71,3 +83,6 @@ const useProfileScreenAnimatedStyle = (scrollY: SharedValue<number>) => {
     };
   });
 };
+
+const SPEED_MULTIPLIER = 0.25;
+const INPUT_RANGE_MAX = 100;

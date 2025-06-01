@@ -1,30 +1,54 @@
-import { View } from 'react-native';
+import { Dimensions, View } from 'react-native';
 import { ProfileTemplateProps } from './types';
 import { Text } from 'app/components/ui/text';
+import { CompanyLabels } from 'app/components2/organisms/profile/company-labels';
+import { profileTabBarRoutes } from 'app/components2/organisms/profile/utils';
+import {
+  LucideIcon,
+  BriefcaseBusiness,
+  TrendingUp,
+  MessageSquare,
+} from 'lucide-react-native';
+import { TabBarWithIcon } from 'app/components2/molecules/tabbar-icon';
+import { SceneMap, TabView } from 'react-native-tab-view';
+import { FC, useState } from 'react';
 
 export const ProfileTemplate = ({
   user,
   company,
   document,
 }: ProfileTemplateProps) => {
+  const [index, setIndex] = useState(0);
+  const { height: windowHeight } = Dimensions.get('window');
   return (
-    <View>
-      <View className="bg-background min-h-[1500] rounded-tr-3xl rounded-tl-3xl p-4">
-        <Text>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam optio
-          sint eos, sunt distinctio eligendi id perferendis tenetur eaque minus
-          vitae cupiditate maiores fugit alias temporibus est quisquam. Soluta
-          blanditiis quos sit veniam qui delectus temporibus molestias mollitia
-          inventore voluptas, laboriosam libero minus. Tenetur, labore modi?
-          Tempora officia obcaecati dicta dolore cumque rem quaerat quia culpa.
-          Veritatis, quas ex! Excepturi nulla nobis corrupti tempore unde illo
-          natus aspernatur, quia obcaecati iure distinctio, veniam itaque
-          sapiente eaque saepe quod? Vero perspiciatis autem, explicabo
-          architecto nostrum fuga ullam cupiditate doloribus saepe obcaecati
-          recusandae similique sunt voluptate soluta, quidem, laudantium totam?
-          Architecto, tempora?
-        </Text>
-      </View>
+    <View
+      className="bg-background rounded-tr-3xl rounded-tl-3xl p-4"
+      style={{ height: windowHeight - 96 - 32 - 8 }}
+    >
+      <TabView
+        navigationState={{ index, routes }}
+        onIndexChange={setIndex}
+        renderTabBar={TabBar}
+        renderScene={renderScene}
+      />
     </View>
   );
 };
+
+type KeyType = (typeof profileTabBarRoutes)[number]['key'];
+
+const iconMap: Record<KeyType, LucideIcon> = {
+  first: BriefcaseBusiness,
+  second: TrendingUp,
+  third: MessageSquare,
+};
+
+const routes = profileTabBarRoutes.map((r) => ({ ...r }));
+
+const TabBar = TabBarWithIcon(routes, iconMap);
+
+const renderScene = SceneMap({
+  first: CompanyLabels,
+  second: CompanyLabels,
+  third: CompanyLabels,
+} as Record<KeyType, FC>);
