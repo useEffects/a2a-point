@@ -1,4 +1,3 @@
-import { Pressable } from 'app/components/pressable';
 import { Button } from 'app/components/ui/button';
 import { Separator } from 'app/components/ui/separator';
 import { Text } from 'app/components/ui/text';
@@ -10,17 +9,13 @@ import { RangeSelectors } from 'app/components2/organisms/listings/filters/range
 import { SelectPurpose } from 'app/components2/organisms/listings/filters/select-purpose/component';
 import { useColorScheme } from 'app/hooks/color-scheme';
 import { directusUrl } from 'app/lib/constants';
-import { cn } from 'app/lib/utils';
 import { Link } from 'expo-router';
-import { ArrowLeft, ArrowRight, X } from 'lucide-react-native';
+import { X } from 'lucide-react-native';
 import { useState } from 'react';
-import { Dimensions, View } from 'react-native';
+import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
-  Route,
   SceneMap,
-  SceneRendererProps,
-  TabBarProps,
   TabView,
 } from 'react-native-tab-view';
 

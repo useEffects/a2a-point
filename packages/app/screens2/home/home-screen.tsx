@@ -1,6 +1,4 @@
 import { Header, HeaderTitle } from 'app/components/header';
-import { useColorScheme } from 'app/hooks/color-scheme';
-import { useRouter } from 'app/hooks/router';
 import { directusUrl, portfolioUrl } from 'app/lib/constants';
 import { View } from 'react-native';
 import Logo from 'app/components/svg/logo';
@@ -8,9 +6,6 @@ import { Screen } from 'app/components2/molecules/screen';
 import { HomeScreenTemplate } from 'app/components2/templates/home/template';
 
 export function HomeScreen() {
-  const { colors } = useColorScheme();
-  const router = useRouter();
-
   return (
     <Screen>
       <HomeScreenTemplate />
