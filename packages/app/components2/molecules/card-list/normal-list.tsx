@@ -6,6 +6,7 @@ import { FlatListProps, FlatList } from 'react-native';
 import { Button } from 'app/components/ui/button';
 import { NormalCardListProps } from './types';
 import { HorizontalFlatList } from 'app/components/utils/virtual-lists';
+import { NomoreItemsToShow } from '../bottom-loader';
 
 export function NormalCardList<T extends { id: string }>({
   component: RenderComponent,
@@ -15,8 +16,10 @@ export function NormalCardList<T extends { id: string }>({
   numRows,
   skeletonCount,
   queryOptions,
+  noMoreClassName,
 }: NormalCardListProps<T>) {
-  const { data, isLoading, isFetching } = useQuery(queryOptions);
+  const { data, isLoading, isFetching, isFetchedAfterMount } =
+    useQuery(queryOptions);
 
   const flatListFinalProps: FlatListProps<T> | HorizontalFlatListProps<T> = {
     data: data ?? [],
@@ -33,6 +36,9 @@ export function NormalCardList<T extends { id: string }>({
 
   const skeletonLength =
     skeletonCount ?? [2, 2, 3][Math.floor(Math.random() * 3)];
+
+  if (isFetchedAfterMount && !data?.length)
+    return <NomoreItemsToShow className={noMoreClassName} />;
 
   return isLoading || isFetching ? (
     <FlatList

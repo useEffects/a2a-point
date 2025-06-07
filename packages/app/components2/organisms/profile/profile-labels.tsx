@@ -14,19 +14,31 @@ export const ProfileLabels = ({ user }: { user: User }) => {
   const router = useRouter();
 
   return (
-    <View className="flex-col items-center justify-between w-full flex-1">
+    <View className="flex-col items-center justify-between w-full gap-4">
       <View className="flex-col gap-2 items-center">
         <Text className="text-secondary font-semibold">
           {user.first_name} {user.last_name}
         </Text>
-        <Link href={`mailto:${user.email}`}>
-          <Text className="text-info underline">{user.email}</Text>
-        </Link>
-        <Link href={`phoneto:${user.phone}`}>
-          <Text className="text-info underline">{user.phone}</Text>
-        </Link>
-        <Text>{user.location}</Text>
-        <Text className="text-subtext">{user.title}</Text>
+        {user.email ? (
+          <Link href={`mailto:${user.email}`}>
+            <Text className="text-info underline">{user.email}</Text>
+          </Link>
+        ) : (
+          <></>
+        )}
+        {user.phone ? (
+          <Link href={`phoneto:${user.phone}`}>
+            <Text className="text-info underline">{user.phone}</Text>
+          </Link>
+        ) : (
+          <>s</>
+        )}
+        {user.location ? <Text>{user.location}</Text> : <></>}
+        {user.title ? (
+          <Text className="text-subtext">{user.title}</Text>
+        ) : (
+          <> </>
+        )}
         <View className="flex-row w-full justify-evenly">
           <View className="flex-col items-center flex-1">
             <Text>100</Text>

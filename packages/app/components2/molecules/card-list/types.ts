@@ -21,4 +21,5 @@ export type InfiniteListProps<T> = BaseProps<T> & {
 export type NormalCardListProps<T> = BaseProps<T> & {
   queryOptions: UseQueryOptions<T[]>;
   infiniteQueryOptions?: never;
+  noMoreClassName?: string;
 };

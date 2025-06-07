@@ -1,6 +1,6 @@
 'use client';
 
-import { readItems } from '@directus/sdk';
+import { Query, readItems } from '@directus/sdk';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Button } from 'app/components/ui/button';
 import { Text } from 'app/components/ui/text';
@@ -78,7 +78,11 @@ export const commonFilterTitles: {
   [CommonFilters.None]: 'None',
 };
 
-export const commonFilters = {
+export const commonFilters: {
+  [k in CommonFilters]: (
+    param?: string | Record<string, any>[],
+  ) => Query<any, any>['filter'];
+} = {
   [CommonFilters.Premium]: () => ({
     featured: {
       _eq: true,
@@ -98,10 +102,10 @@ export const commonFilters = {
       },
     },
   }),
-  [CommonFilters.GroupId]: (groupId: string) => ({
+  [CommonFilters.GroupId]: (groupId) => ({
     location: {
       id: {
-        _eq: groupId,
+        _eq: groupId as string,
       },
     },
   }),
@@ -125,10 +129,10 @@ export const commonFilters = {
       _eq: 'take on rent',
     },
   }),
-  [CommonFilters.User]: (userId: string) => ({
+  [CommonFilters.User]: (userId) => ({
     user_created: {
       id: {
-        _eq: userId,
+        _eq: userId as string,
       },
     },
   }),
@@ -151,9 +155,9 @@ export const commonFilters = {
       },
     ],
   }),
-  [CommonFilters.Custom]: (filters: Record<string, any>[]) => {
+  [CommonFilters.Custom]: (filters) => {
     return {
-      _and: filters,
+      _and: filters as Record<string, any>[],
     };
   },
   [CommonFilters.None]: () => ({}),

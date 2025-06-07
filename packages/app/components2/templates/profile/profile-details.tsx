@@ -9,7 +9,7 @@ export const ProfileDetails = ({ user }: { user: User }) => {
   return (
     <View
       className="flex-col w-full gap-4 items-center p-4"
-      style={{ height: profileDetailsHeight }}
+      // style={{ height: profileDetailsHeight }}
     >
       <ProfilePic />
       <ProfileLabels user={user} />

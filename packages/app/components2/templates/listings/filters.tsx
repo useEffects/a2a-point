@@ -14,10 +14,7 @@ import { X } from 'lucide-react-native';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import {
-  SceneMap,
-  TabView,
-} from 'react-native-tab-view';
+import { SceneMap, TabView } from 'react-native-tab-view';
 
 export const ListingsFilterTemplate = ({
   onClose,
@@ -46,9 +43,6 @@ export const ListingsFilterTemplate = ({
           navigationState={{ index, routes }}
           onIndexChange={setIndex}
           renderTabBar={FiltersTabBar}
-          pagerStyle={{
-            paddingVertical: 16,
-          }}
         />
         <Text>
           Find more powerful filters on the A2A Point{' '}
@@ -77,7 +71,7 @@ const FiltersTabBar = TabBar(routes);
 
 const FirstFiltersPage = () => {
   return (
-    <View className="flex-col gap-4 flex-1">
+    <View className="flex-col gap-4 flex-1 py-4">
       <ListingsFiltersAutoCompletes />
       <SelectPurpose />
     </View>
@@ -86,7 +80,7 @@ const FirstFiltersPage = () => {
 
 const SecondFiltersPage = () => {
   return (
-    <View className="flex-col flex-1">
+    <View className="flex-col flex-1 py-4">
       <RangeSelectors />
     </View>
   );

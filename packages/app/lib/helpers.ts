@@ -473,3 +473,6 @@ export function getTimeofDay(): string {
   if (hour < 18) return 'afternoon';
   return 'evening';
 }
+
+export type RequireFields<T, K extends keyof T> = Required<Pick<T, K>> &
+  Omit<T, K>;

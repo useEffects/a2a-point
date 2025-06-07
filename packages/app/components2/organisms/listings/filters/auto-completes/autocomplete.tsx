@@ -5,12 +5,12 @@ import SearchBar from 'app/components/searchbar';
 import { CardList } from 'app/components2/molecules/card-list/card-list';
 import { renderCardsQuery2 } from 'app/lib/misc/queries';
 import { FC, useContext, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { useDebounce } from 'use-debounce';
 import { ZodObject } from 'zod';
 import { FiltersContext } from '../context';
-import { pressableWrapper } from 'app/components2/molecules/lib/pressable-wrapper';
 import { useColorScheme } from 'app/hooks/color-scheme';
+import Collapsible from 'react-native-collapsible';
 
 type AutoCompleteProps<T extends Record<string, any>, K extends keyof T> = {
   placeholderText: string;
@@ -32,6 +32,7 @@ export const AutoComplete = <
 ) => {
   const [searchText, setSearchText] = useState('');
   const [debouncedSearchText] = useDebounce(searchText, 300);
+  const [collapsed, setCollapsed] = useState(true);
   const { setFilters } = useContext(FiltersContext);
   const { colors } = useColorScheme();
 
@@ -56,13 +57,17 @@ export const AutoComplete = <
       },
     }));
     setSearchText(item[props.titleKey] as string);
+    setCollapsed(true);
   };
 
   return (
-    <View className="px-2">
+    <View className="px-2 flex-col gap-2">
       <SearchBar
         searchText={searchText}
-        setSearchText={setSearchText}
+        setSearchText={(text) => {
+          setSearchText(text);
+          setCollapsed(!text);
+        }}
         searchBarProps={{
           searchIcon: props.searchIcon,
           placeholder: props.placeholderText,
@@ -71,21 +76,31 @@ export const AutoComplete = <
           },
           inputContainerStyle: {
             borderColor: colors.border,
-            borderWidth: StyleSheet.hairlineWidth,
+            borderWidth: 1,
             boxShadow: [],
           },
         }}
       />
-      <View style={{ height: searchText ? 200 : 0 }}>
-        <CardList<T & { id: string }>
-          component={pressableWrapper(onPress, props.component)}
-          skeletonComponent={props.skeletonComponent}
-          queryOptions={createQOpts(debouncedSearchText)}
-          flatListProps={{
-            scrollEnabled: false,
-          }}
-        />
-      </View>
+      <Collapsible collapsed={collapsed}>
+        <View className="p-2 rounded-xl bg-card border border-solid border-border">
+          <CardList<T & { id: string }>
+            component={(item) => (
+              <Pressable
+                onPress={() => onPress(item)}
+                className="rounded-lg active:bg-accent"
+              >
+                {props.component(item)}
+              </Pressable>
+            )}
+            skeletonComponent={props.skeletonComponent}
+            queryOptions={createQOpts(debouncedSearchText)}
+            flatListProps={{
+              scrollEnabled: false,
+            }}
+            noMoreClassName="h-8 items-start pl-2"
+          />
+        </View>
+      </Collapsible>
     </View>
   );
 };

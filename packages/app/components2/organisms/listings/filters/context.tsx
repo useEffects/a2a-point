@@ -6,6 +6,7 @@ import {
   SetStateAction,
   useState,
 } from 'react';
+import { PurposeProps } from './select-purpose/purpose';
 
 export const FiltersContext = createContext<{
   filters: FiltersContextType;
@@ -14,6 +15,8 @@ export const FiltersContext = createContext<{
 
 export const FiltersProvider = ({ children }: { children: ReactNode }) => {
   const [filters, setFilters] = useState<FiltersContextType>({});
+  console.debug({ filters });
+
   return (
     <FiltersContext.Provider value={{ filters, setFilters }}>
       {children}
@@ -25,6 +28,6 @@ export type FiltersContextType = {
   search?: {
     location?: ExtraSmallLocationCardProps;
   };
-  purpose?: [];
+  purpose?: PurposeProps['filterType'][];
   costRange?: [];
 };

@@ -1,6 +1,7 @@
 import { RangeSlider } from '@react-native-assets/slider';
 import { Input } from 'app/components/ui/input';
 import { Text } from 'app/components/ui/text';
+import { useColorScheme } from 'app/hooks/color-scheme';
 import { positiveNumberSchema } from 'app/lib/schemas/postive-number';
 import { cn } from 'app/lib/utils';
 import {
@@ -41,9 +42,20 @@ export const RangeFilter = ({
 };
 
 RangeFilter.Slider = (props: ComponentProps<typeof RangeSlider>) => {
+  const { colors } = useColorScheme();
   return (
     <View>
-      <RangeSlider {...props} />
+      <RangeSlider
+        style={{ paddingHorizontal: 8 }}
+        inboundColor={colors.subtext}
+        outboundColor={colors.foreground}
+        thumbTintColor={colors.primary}
+        crossingAllowed={false}
+        trackHeight={1}
+        thumbSize={12}
+        trackStyle={{ height: 2 }}
+        {...props}
+      />
     </View>
   );
 };

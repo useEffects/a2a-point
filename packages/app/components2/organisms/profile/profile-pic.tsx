@@ -46,7 +46,7 @@ export const ProfilePic = () => {
     <View className="relative">
       <AsyncImage
         source={{ uri: selectedImage?.uri || buildAssetUrl(user.avatar) }}
-        className="w-32 h-32 rounded-full border-primary border border-solid border-4"
+        className="w-32 h-32 rounded-full border-primary border border-solid border-border shadow-xl shadow"
       />
       <Button
         variant={'base'}

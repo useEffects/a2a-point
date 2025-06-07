@@ -20,12 +20,8 @@ export const ProfileTemplate = ({
   document,
 }: ProfileTemplateProps) => {
   const [index, setIndex] = useState(0);
-  const { height: windowHeight } = Dimensions.get('window');
   return (
-    <View
-      className="bg-background rounded-tr-3xl rounded-tl-3xl p-4"
-      style={{ height: windowHeight - 96 - 32 - 8 }}
-    >
+    <View className="bg-background rounded-tr-3xl rounded-tl-3xl p-4">
       <TabView
         navigationState={{ index, routes }}
         onIndexChange={setIndex}
