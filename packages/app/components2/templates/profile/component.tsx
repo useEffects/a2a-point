@@ -12,6 +12,7 @@ import {
 import { TabBarWithIcon } from 'app/components2/molecules/tabbar-icon';
 import { SceneMap, TabView } from 'react-native-tab-view';
 import { FC, useState } from 'react';
+import { ListingsPosted } from 'app/components2/organisms/profile/listings-posted';
 
 export const ProfileTemplate = ({
   user,
@@ -49,6 +50,6 @@ const TabBar = TabBarWithIcon(routes, iconMap);
 
 const renderScene = SceneMap({
   first: CompanyLabels,
-  second: CompanyLabels,
+  second: ListingsPosted,
   third: CompanyLabels,
 } as Record<KeyType, FC>);

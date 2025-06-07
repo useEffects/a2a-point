@@ -45,6 +45,7 @@ export const ProfileScreen = (props: ProfileScreenProps) => {
         style={{ backgroundColor: colors.accent }}
         onScroll={scrollHandler}
         scrollEventThrottle={16}
+        nestedScrollEnabled
       >
         <Animated.View style={[hideOnScrollStyle, { overflow: 'hidden' }]}>
           <ProfileDetails user={props.user} />
