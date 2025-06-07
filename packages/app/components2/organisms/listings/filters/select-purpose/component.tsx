@@ -15,7 +15,6 @@ export const SelectPurpose = () => {
         queryOptions={createQOpts}
         flatListProps={{
           ItemSeparatorComponent: () => <View className="w-4 h-4" />,
-          contentContainerStyle: { flexGrow: 1 },
           horizontal: true,
         }}
       />

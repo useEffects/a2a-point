@@ -38,7 +38,7 @@ export const ListingsFilterTemplate = ({
           </Button>
         </View>
         <TabView
-          style={{ height: 400 }}
+          style={{ height: 500 }}
           renderScene={renderScene}
           navigationState={{ index, routes }}
           onIndexChange={setIndex}

@@ -11,7 +11,6 @@ export default function BottomSheet(props: {
   children: ReactNode;
   bottomSheetProps?: BottomSheetProps;
 }) {
-  const { height: windowHeight } = Dimensions.get('window');
   return (
     <RNEBottomSheet
       {...merge(

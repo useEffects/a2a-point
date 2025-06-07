@@ -7,6 +7,7 @@ import { FiltersContext } from '../context';
 import { cn } from 'app/lib/utils';
 import { Pressable } from 'app/components/pressable';
 import _ from 'lodash';
+import { Skeleton } from 'app/components/skeleton';
 
 export const Purpose = (props: PurposeProps) => {
   const { Icon, filterType: label, metric } = props;
@@ -31,7 +32,7 @@ export const Purpose = (props: PurposeProps) => {
   return (
     <Pressable
       className={cn(
-        'p-4 bg-card rounded-3xl flex-col gap-4 w-44 border border-solid border-border',
+        'p-4 bg-card rounded-3xl flex-col gap-4 justify-evenly w-44 border border-solid border-border h-32',
         isSelected && 'bg-primary',
       )}
       onPress={onPress}
@@ -56,7 +57,11 @@ export const Purpose = (props: PurposeProps) => {
   );
 };
 
-export const PurposeSkeleton = () => <View></View>;
+export const PurposeSkeleton = () => (
+  <View className="w-44 h-32 rounded-3xl border border-solid border-border">
+    <Skeleton className="w-full h-full rounded-3xl" />
+  </View>
+);
 
 export type PurposeProps = {
   id: string;
