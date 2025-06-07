@@ -13,7 +13,7 @@ export const PriceScene = () => {
       >
         <View className="flex-col gap-4">
           <RangeFilter.Slider />
-          <RangeFilter.Input />
+          <RangeFilter.Input maxUnit="(AED)" minUnit="(AED)" />
         </View>
       </RangeFilter>
     </View>

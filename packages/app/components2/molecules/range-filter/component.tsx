@@ -67,7 +67,15 @@ RangeFilter.Slider = (props: ComponentProps<typeof RangeSlider>) => {
   );
 };
 
-RangeFilter.Input = ({ className }: { className?: string }) => {
+RangeFilter.Input = ({
+  className,
+  minUnit = '',
+  maxUnit = '',
+}: {
+  className?: string;
+  minUnit?: string;
+  maxUnit?: string;
+}) => {
   const { filters, setFilters } = useContext(RangeFilterContext);
 
   const onChangeText = (key: 'maximumValue' | 'minimumValue') => {
@@ -90,8 +98,8 @@ RangeFilter.Input = ({ className }: { className?: string }) => {
     <View className={cn('flex-row gap-4 items-center', className)}>
       {(
         [
-          { label: 'Minimum', key: 'minimumValue' },
-          { label: 'Maximum', key: 'maximumValue' },
+          { label: `Minimum ${minUnit}`, key: 'minimumValue' },
+          { label: `Maximum ${maxUnit}`, key: 'maximumValue' },
         ] as const
       ).map(({ label, key }) => (
         <View key={key} className="flex-col gap-2 flex-1">
