@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const positiveNumberSchema = z
+export const positiveNumberSchema = z.coerce
   .number()
   .positive()
   .refine((val) => !Number.isNaN(val), {

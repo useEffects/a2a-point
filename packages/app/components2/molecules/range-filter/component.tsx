@@ -43,6 +43,11 @@ export const RangeFilter = ({
 
 RangeFilter.Slider = (props: ComponentProps<typeof RangeSlider>) => {
   const { colors } = useColorScheme();
+  const { filters, setFilters } = useContext(RangeFilterContext);
+  const onChange = (range: [number, number]) => {
+    setFilters((p) => ({ ...p, range }));
+  };
+
   return (
     <View>
       <RangeSlider
@@ -54,6 +59,8 @@ RangeFilter.Slider = (props: ComponentProps<typeof RangeSlider>) => {
         trackHeight={1}
         thumbSize={12}
         trackStyle={{ height: 2 }}
+        onValueChange={onChange}
+        {...filters}
         {...props}
       />
     </View>
@@ -65,9 +72,17 @@ RangeFilter.Input = ({ className }: { className?: string }) => {
 
   const onChangeText = (key: 'maximumValue' | 'minimumValue') => {
     return (newVal: string) => {
-      positiveNumberSchema.safeParse(newVal).success
-        ? setFilters((p) => ({ ...p, [key]: Number(newVal) }))
-        : undefined;
+      const newRange = [...filters.range!] as [number, number];
+      const parsedNum = positiveNumberSchema.safeParse(
+        newVal.replaceAll(',', ''),
+      );
+      if (!parsedNum.success) return;
+
+      if (key === 'maximumValue') {
+        newRange[1] = parsedNum.data;
+      } else newRange[0] = parsedNum.data;
+
+      setFilters((p) => ({ ...p, range: newRange }));
     };
   };
 
@@ -75,16 +90,20 @@ RangeFilter.Input = ({ className }: { className?: string }) => {
     <View className={cn('flex-row gap-4 items-center', className)}>
       {(
         [
-          { label: 'Maximum', key: 'maximumValue' },
           { label: 'Minimum', key: 'minimumValue' },
+          { label: 'Maximum', key: 'maximumValue' },
         ] as const
       ).map(({ label, key }) => (
         <View key={key} className="flex-col gap-2 flex-1">
           <Text>{label}</Text>
           <Input
-            value={filters[key]?.toLocaleString()}
+            value={(key === 'minimumValue'
+              ? filters.range?.[0]
+              : filters.range?.[1]
+            )?.toLocaleString()}
             onChangeText={onChangeText(key)}
             className="bg-card border-border"
+            keyboardType="decimal-pad"
           />
         </View>
       ))}
