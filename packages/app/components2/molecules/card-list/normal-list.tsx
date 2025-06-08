@@ -2,10 +2,13 @@ import { HorizontalFlatListProps } from '@idiosync/horizontal-flatlist/dist/hori
 import { useQuery } from '@tanstack/react-query';
 import { ViewAllButton } from 'app/components/utils/common-ui';
 import { useRouter } from 'app/context/router';
-import { FlatListProps, FlatList } from 'react-native';
+import { FlatListProps } from 'react-native';
 import { Button } from 'app/components/ui/button';
 import { NormalCardListProps } from './types';
-import { HorizontalFlatList } from 'app/components/utils/virtual-lists';
+import {
+  FlatList,
+  HorizontalFlatList,
+} from 'app/components/utils/virtual-lists';
 import { NomoreItemsToShow } from '../bottom-loader';
 
 export function NormalCardList<T extends { id: string }>({

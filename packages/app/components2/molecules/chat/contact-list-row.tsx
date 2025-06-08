@@ -6,19 +6,19 @@ import { buildAssetUrl, getDMRoomId } from 'app/lib/helpers';
 import userStore from 'app/store/user';
 import { View } from 'react-native';
 import { ContactListRowProp } from './types';
+import { Pressable } from 'app/components/pressable';
 
 export const ContactListRow = (props: ContactListRowProp) => {
   const { user } = userStore();
   const router = useRouter();
   return (
-    <Button
+    <Pressable
       onPress={() =>
         getDMRoomId([String(props.id), user.id]).then((id) =>
           router.push(`/chat/${id}`),
         )
       }
-      variant={'ghost'}
-      className="flex-row gap-4 items-center w-full justify-start !h-20"
+      className="flex-row gap-4 items-center w-full justify-start !h-20 active:bg-accent rounded p-4"
     >
       <AsyncImage
         className="w-12 h-12 rounded-full"
@@ -27,7 +27,7 @@ export const ContactListRow = (props: ContactListRowProp) => {
       <Text className="!text-base">
         {props.first_name} {props.last_name}
       </Text>
-    </Button>
+    </Pressable>
   );
 };
 

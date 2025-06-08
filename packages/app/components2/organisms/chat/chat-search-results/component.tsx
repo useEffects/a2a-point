@@ -15,28 +15,14 @@ import { Dimensions, View } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import { CardList } from 'app/components2/molecules/card-list/card-list';
 import { createContactListQOpts, createGroupListQOpts } from './queries';
-import { Text } from 'app/components/ui/text';
+import { useGlobalSearchParams } from 'app/context/router';
 import { SeparatorText } from 'app/components/separator-text';
+import { Text } from 'app/components/ui/text';
 
 export const ChatSearchResults = () => {
-  return (
-    <View>
-      <SearchResults>
-        <SearchResults.SearchBar
-          searchBarProps={{
-            containerStyle: { paddingHorizontal: 16, paddingTop: 16 },
-          }}
-        />
-        <ResultsWrapped />
-      </SearchResults>
-    </View>
-  );
-};
-
-const ResultsWrapped = () => {
-  const { searchText } = useContext(SearchContext);
   const [open, setOpen] = useState(false);
   const { height: windowHeight } = Dimensions.get('window');
+  const { searchText } = useGlobalSearchParams();
 
   useEffect(() => {
     if (searchText && !open) setOpen(true);
@@ -45,50 +31,34 @@ const ResultsWrapped = () => {
 
   return (
     <Collapsible collapsed={!open} collapsedHeight={0}>
-      <View className="flex-col gap-4 p-4 pt-0">
+      <View className="flex-col gap-4 p-4">
+        <SeparatorText hideLeft>
+          <Text>Contacts</Text>
+        </SeparatorText>
         <View
-          className="bg-card rounded p-4"
+          className="bg-card rounded border border-solid border-border"
           style={{ maxHeight: windowHeight / 4 }}
         >
-          <SearchResults.Results>
-            {({ debouncedSearchText }) => (
-              <CardList
-                queryOptions={createContactListQOpts(debouncedSearchText)}
-                component={ContactListRow}
-                skeletonComponent={ContactListRowSkeleton}
-                flatListProps={{
-                  ListHeaderComponent: () => (
-                    <SeparatorText hideLeft>
-                      <Text>Contacts</Text>
-                    </SeparatorText>
-                  ),
-                  showsVerticalScrollIndicator: false,
-                }}
-              />
-            )}
-          </SearchResults.Results>
+          <CardList
+            queryOptions={createContactListQOpts((searchText as string) ?? '')}
+            component={ContactListRow}
+            skeletonComponent={ContactListRowSkeleton}
+            noMoreClassName="h-8 items-start p-4"
+          />
         </View>
+        <SeparatorText hideLeft>
+          <Text>Groups</Text>
+        </SeparatorText>
         <View
-          className="bg-card rounded p-4"
+          className="bg-card rounded border border-solid border-border"
           style={{ maxHeight: windowHeight / 4 }}
         >
-          <SearchResults.Results>
-            {({ debouncedSearchText }) => (
-              <CardList
-                queryOptions={createGroupListQOpts(debouncedSearchText)}
-                component={GroupListRow}
-                skeletonComponent={GroupListRowSkeleton}
-                flatListProps={{
-                  ListHeaderComponent: () => (
-                    <SeparatorText hideLeft>
-                      <Text>Groups</Text>
-                    </SeparatorText>
-                  ),
-                  showsVerticalScrollIndicator: false,
-                }}
-              />
-            )}
-          </SearchResults.Results>
+          <CardList
+            queryOptions={createGroupListQOpts((searchText as string) ?? '')}
+            component={GroupListRow}
+            skeletonComponent={GroupListRowSkeleton}
+            noMoreClassName="h-8 items-start p-4"
+          />
         </View>
       </View>
     </Collapsible>
