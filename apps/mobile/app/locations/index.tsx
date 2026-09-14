@@ -1,0 +1,44 @@
+import {
+  getListingsCountForLocation,
+  getMembersCountForLocation,
+  renderCardsQuery,
+} from 'app/lib/misc/queries';
+import { MediumLocationCardProps, mediumLocationFields } from 'app/lib/props';
+import {
+  LocationsList as LocationsListComponent,
+  LocationsListScreenHeader,
+} from 'app/screens/locations';
+import { useQuery } from '@tanstack/react-query';
+import { Stacked } from '../../components/stacked';
+
+export default function LocationsScreen() {
+  const { data } = useQuery({
+    queryKey: ['locations'],
+    queryFn: async () =>
+      await renderCardsQuery<MediumLocationCardProps>({
+        collection: 'rooms',
+        fields: mediumLocationFields,
+        filter: {
+          type: {
+            _eq: 'group',
+          },
+        },
+      }).then(
+        async (res) =>
+          await Promise.all(
+            res.map(async (r) => {
+              const membersCount = await getMembersCountForLocation(r.id);
+              const listingsCount = await getListingsCountForLocation(r.id);
+              return { ...r, membersCount, listingsCount };
+            }),
+          ),
+      ),
+    initialData: [],
+  });
+
+  return (
+    <Stacked header={() => <LocationsListScreenHeader />}>
+      <LocationsListComponent data={data} />
+    </Stacked>
+  );
+}

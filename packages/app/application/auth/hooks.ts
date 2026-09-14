@@ -1,0 +1,69 @@
+import { useQuery } from '@tanstack/react-query';
+import _ from 'lodash';
+import { createTokensQOpts } from '../../infra/queries/tokens/queries';
+import { queryClient } from 'app/store/query';
+import { tryCatch } from 'app/shared/utils/try-catch';
+import {
+  directusTokenFlow,
+  exchangeKcTokenWithDirectus,
+  runAuthEffects,
+} from './utils';
+
+export const useAuthFlow = () =>
+  useQuery({
+    queryKey: ['AUTHFLOW QUERY CONTEXT'],
+    queryFn: async () => {
+      const isAuthenticated = await runAuthFlow();
+      return { isAuthenticated };
+    },
+    initialData: {
+      isAuthenticated: false,
+    },
+  });
+
+const runAuthFlow = async (): Promise<boolean> => {
+  const tokens = await queryClient.fetchQuery(createTokensQOpts());
+
+  const [directusOK] = await tryCatch(
+    directusTokenFlow({
+      accessToken: tokens.directusAccessToken,
+      refreshToken: tokens.directusRefreshToken,
+    }),
+  );
+
+  if (directusOK) {
+    console.debug('Directus Token Flow initial attempt failed');
+    return runAuthEffects(tokens);
+  }
+
+  if (!tokens.kcAccessToken || !tokens.kcRefreshToken) {
+    console.debug('No keycloak tokens found');
+    return false;
+  }
+
+  const [newTokens, newTokensErr] = await tryCatch(
+    exchangeKcTokenWithDirectus({
+      accessToken: tokens.kcAccessToken,
+      refreshToken: tokens.kcRefreshToken,
+    }),
+  );
+
+  if (newTokensErr) {
+    console.debug('Keycloak exchange token failed', newTokensErr);
+    return false;
+  }
+
+  const [_, err] = await tryCatch(
+    directusTokenFlow({
+      accessToken: newTokens.directusAccessToken,
+      refreshToken: newTokens.directusRefreshToken,
+    }),
+  );
+
+  if (err) {
+    console.warn('Directus token validation after KC exchange failed', err);
+    return false;
+  }
+
+  return runAuthEffects(newTokens);
+};

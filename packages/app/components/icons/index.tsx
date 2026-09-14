@@ -1,5 +1,71 @@
-import { iconWithClassName } from "app/lib/iconsWithClassName";
-import { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot, Star, Badge, Award, Building2, Rocket, Plus, CreditCard, ChevronRight, AtSign, Rows2, Users, Edit, Delete, MessageCircleMore, Lock, Trash, LogIn, Phone, BriefcaseBusiness, Shield, UserCog2, Handshake, HousePlus, Group, TrendingUp, MapPin, ArrowUp, Info, Expand, MessageCircle, Shrink, FileLock2, Construction, Home, User, CircleAlert } from "lucide-react-native";
+import { iconWithClassName } from 'app/lib/iconsWithClassName';
+import {
+  Check,
+  ChevronDown,
+  ChevronUp,
+  ArrowUpRight,
+  LogOut,
+  Sparkles,
+  Search,
+  X,
+  EllipsisVertical,
+  WandSparkles,
+  Paperclip,
+  Camera,
+  Image,
+  File,
+  Send,
+  Clock,
+  Bath,
+  BedDouble,
+  Bookmark,
+  Eye,
+  Building,
+  CarFront,
+  ExternalLink,
+  ArrowLeft,
+  Bell,
+  LandPlot,
+  Star,
+  Badge,
+  Award,
+  Building2,
+  Rocket,
+  Plus,
+  CreditCard,
+  ChevronRight,
+  AtSign,
+  Rows2,
+  Users,
+  Edit,
+  Delete,
+  MessageCircleMore,
+  Lock,
+  Trash,
+  LogIn,
+  Phone,
+  BriefcaseBusiness,
+  Shield,
+  UserCog2,
+  Handshake,
+  HousePlus,
+  Group,
+  TrendingUp,
+  MapPin,
+  ArrowUp,
+  Info,
+  Expand,
+  MessageCircle,
+  Shrink,
+  FileLock2,
+  Construction,
+  Home,
+  User,
+  CircleAlert,
+  MoveRight,
+  Redo2,
+  Share2,
+} from 'lucide-react-native';
 
 iconWithClassName(Check);
 iconWithClassName(ChevronDown);
@@ -12,29 +78,29 @@ iconWithClassName(X);
 iconWithClassName(EllipsisVertical);
 iconWithClassName(WandSparkles);
 iconWithClassName(Paperclip);
-iconWithClassName(Camera)
-iconWithClassName(Image)
-iconWithClassName(File)
-iconWithClassName(Send)
-iconWithClassName(Clock)
-iconWithClassName(Bath)
-iconWithClassName(BedDouble)
-iconWithClassName(Bookmark)
-iconWithClassName(Eye)
-iconWithClassName(Building)
-iconWithClassName(CarFront)
-iconWithClassName(ExternalLink)
-iconWithClassName(ArrowLeft)
-iconWithClassName(Bell)
-iconWithClassName(LandPlot)
-iconWithClassName(Star)
-iconWithClassName(Badge)
-iconWithClassName(Award)
-iconWithClassName(Building2)
-iconWithClassName(Rocket)
-iconWithClassName(Plus)
-iconWithClassName(CreditCard)
-iconWithClassName(ChevronRight)
+iconWithClassName(Camera);
+iconWithClassName(Image);
+iconWithClassName(File);
+iconWithClassName(Send);
+iconWithClassName(Clock);
+iconWithClassName(Bath);
+iconWithClassName(BedDouble);
+iconWithClassName(Bookmark);
+iconWithClassName(Eye);
+iconWithClassName(Building);
+iconWithClassName(CarFront);
+iconWithClassName(ExternalLink);
+iconWithClassName(ArrowLeft);
+iconWithClassName(Bell);
+iconWithClassName(LandPlot);
+iconWithClassName(Star);
+iconWithClassName(Badge);
+iconWithClassName(Award);
+iconWithClassName(Building2);
+iconWithClassName(Rocket);
+iconWithClassName(Plus);
+iconWithClassName(CreditCard);
+iconWithClassName(ChevronRight);
 iconWithClassName(AtSign);
 iconWithClassName(Rows2);
 iconWithClassName(Users);
@@ -62,6 +128,75 @@ iconWithClassName(FileLock2);
 iconWithClassName(Construction);
 iconWithClassName(Home);
 iconWithClassName(User);
-iconWithClassName(CircleAlert)
+iconWithClassName(CircleAlert);
+iconWithClassName(MoveRight);
+iconWithClassName(Redo2);
+iconWithClassName(Share2);
 
-export { Check, ChevronDown, ChevronUp, ArrowUpRight, LogOut, Sparkles, Search, X, EllipsisVertical, WandSparkles, Paperclip, Camera, Image, File, Send, Clock, Bath, BedDouble, Bookmark, Eye, Building, CarFront, ExternalLink, ArrowLeft, Bell, LandPlot, Star, Badge, Award, Building2, Rocket, Plus, CreditCard, ChevronRight, AtSign, Rows2, Users, Edit, Delete, MessageCircleMore, Lock, Trash, LogIn, Phone, BriefcaseBusiness, Shield, UserCog2, Handshake, HousePlus, Group, TrendingUp, MapPin, ArrowUp, Info, Expand, MessageCircle, Shrink, FileLock2, Construction, Home, User, CircleAlert };
+export {
+  Check,
+  ChevronDown,
+  ChevronUp,
+  ArrowUpRight,
+  LogOut,
+  Sparkles,
+  Search,
+  X,
+  EllipsisVertical,
+  WandSparkles,
+  Paperclip,
+  Camera,
+  Image,
+  File,
+  Send,
+  Clock,
+  Bath,
+  BedDouble,
+  Bookmark,
+  Eye,
+  Building,
+  CarFront,
+  ExternalLink,
+  ArrowLeft,
+  Bell,
+  LandPlot,
+  Star,
+  Badge,
+  Award,
+  Building2,
+  Rocket,
+  Plus,
+  CreditCard,
+  ChevronRight,
+  AtSign,
+  Rows2,
+  Users,
+  Edit,
+  Delete,
+  MessageCircleMore,
+  Lock,
+  Trash,
+  LogIn,
+  Phone,
+  BriefcaseBusiness,
+  Shield,
+  UserCog2,
+  Handshake,
+  HousePlus,
+  Group,
+  TrendingUp,
+  MapPin,
+  ArrowUp,
+  Info,
+  Expand,
+  MessageCircle,
+  Shrink,
+  FileLock2,
+  Construction,
+  Home,
+  User,
+  CircleAlert,
+  MoveRight,
+  Redo2,
+  Share2,
+};

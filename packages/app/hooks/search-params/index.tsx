@@ -1,6 +1,6 @@
-import { useSearchParams as useSearchParamsSN } from "solito/navigation"
+import { useGlobalSearchParams } from "expo-router"
 
 export const useSearchParams = () => {
     /** undefined for native */
-    return undefined as ReturnType<typeof useSearchParamsSN>
+    return undefined
 }

@@ -1,318 +1,433 @@
-"use client"
+'use client';
 
-import { readItems } from "@directus/sdk"
-import { useInfiniteQuery } from "@tanstack/react-query"
-import { Button } from "app/components/ui/button"
-import { Text } from "app/components/ui/text"
-import { ViewAllButton } from "app/components/utils/common-ui"
-import { FlatList } from "app/components/utils/virtual-lists"
-import { useColorScheme } from "app/hooks/color-scheme"
-import { useRouter } from "app/hooks/router"
-import { InViewPort } from "app/lib/detect-viewport"
-import { getListingMetrics } from "app/lib/misc/queries"
-import { extraSmallListingsFields, mediumListingsFields, photoListingsFields, smallListingsFields } from "app/lib/props"
-import { FilterParam } from "app/screens/listings"
-import directusStore from "app/store/directus"
-import userStore from "app/store/user"
-import { uniqBy } from "lodash"
-import { useMemo, useState } from "react"
-import { ActivityIndicator, FlatListProps, Platform, View } from "react-native"
-import { AdvertisementCard, AdvertisementCardProps } from "../atoms/advertisements"
-import { ExtraSmallListingCard, ExtraSmallListingCardProps } from "../atoms/extra-small"
-import { MediumListingCard, MediumListingCardProps } from "../atoms/medium"
-import { PhotoListingCard, PhotoListingProps } from "../atoms/photo"
-import { SmallListingCard, SmallListingCardProps } from "../atoms/small"
+import { Query, readItems } from '@directus/sdk';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { Button } from 'app/components/ui/button';
+import { Text } from 'app/components/ui/text';
+import { ViewAllButton } from 'app/components/utils/common-ui';
+import { FlatList } from 'app/components/utils/virtual-lists';
+import { useColorScheme } from 'app/hooks/color-scheme';
+import { useRouter } from 'app/hooks/router';
+import { InViewPort } from 'app/lib/detect-viewport';
+import { getListingMetrics } from 'app/lib/misc/queries';
+import {
+  extraSmallListingsFields,
+  mediumListingsFields,
+  photoListingsFields,
+  smallListingsFields,
+} from 'app/lib/props';
+import { FilterParam } from 'app/screens/listings';
+import { directusStore } from 'app/store/directus';
+import userStore from 'app/store/user';
+import { uniqBy } from 'lodash';
+import { useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, FlatListProps, Platform, View } from 'react-native';
+import {
+  AdvertisementCard,
+  AdvertisementCardProps,
+} from '../atoms/advertisements';
+import {
+  ExtraSmallListingCard,
+  ExtraSmallListingCardProps,
+} from '../atoms/extra-small';
+import { MediumListingCard, MediumListingCardProps } from '../atoms/medium';
+import { PhotoListingCard, PhotoListingProps } from '../atoms/photo';
+import { SmallListingCard, SmallListingCardProps } from '../atoms/small';
+import { SeparatorText } from 'app/components/separator-text';
 
-type ListCardProps = SmallListingCardProps | ExtraSmallListingCardProps | MediumListingCardProps | PhotoListingProps
+type ListCardProps =
+  | SmallListingCardProps
+  | ExtraSmallListingCardProps
+  | MediumListingCardProps
+  | PhotoListingProps;
 
 interface RenderType<T extends ListCardProps> {
-    fields: string[],
-    renderMethod: (props: T) => JSX.Element
+  fields: string[];
+  renderMethod: (props: T) => JSX.Element;
 }
 
 export enum CommonFilters {
-    Premium = 'premium',
-    ViewedByMe = 'viewed-by-me',
-    SavedByMe = 'saved-by-me',
-    GroupId = 'groupId',
-    Buy = "buy",
-    Sale = "sale",
-    GiveOnRent = "give-on-rent",
-    TakeOnRent = "take-on-rent",
-    User = "user",
-    Photo = "with-photo",
-    Custom = "custom",
-    None = "none"
+  Premium = 'premium',
+  ViewedByMe = 'viewed-by-me',
+  SavedByMe = 'saved-by-me',
+  GroupId = 'groupId',
+  Buy = 'buy',
+  Sale = 'sale',
+  GiveOnRent = 'give-on-rent',
+  TakeOnRent = 'take-on-rent',
+  User = 'user',
+  Photo = 'with-photo',
+  Custom = 'custom',
+  None = 'none',
 }
 
-export const commonFilterTitles: { [K in CommonFilters]: ((label: string) => string) | string } = {
-    [CommonFilters.Premium]: "Premium",
-    [CommonFilters.ViewedByMe]: "Viewed by Me",
-    [CommonFilters.SavedByMe]: "Saved by Me",
-    [CommonFilters.GroupId]: "Group",
-    [CommonFilters.Buy]: "Buy",
-    [CommonFilters.Sale]: "Sale",
-    [CommonFilters.GiveOnRent]: "Give on rent",
-    [CommonFilters.TakeOnRent]: "Take on rent",
-    [CommonFilters.User]: (label: string) => label,
-    [CommonFilters.Photo]: "With Photo",
-    [CommonFilters.Custom]: "Custom",
-    [CommonFilters.None]: "None"
-}
+export const commonFilterTitles: {
+  [K in CommonFilters]: ((label: string) => string) | string;
+} = {
+  [CommonFilters.Premium]: 'Premium',
+  [CommonFilters.ViewedByMe]: 'Viewed by Me',
+  [CommonFilters.SavedByMe]: 'Saved by Me',
+  [CommonFilters.GroupId]: 'Group',
+  [CommonFilters.Buy]: 'Buy',
+  [CommonFilters.Sale]: 'Sale',
+  [CommonFilters.GiveOnRent]: 'Give on rent',
+  [CommonFilters.TakeOnRent]: 'Take on rent',
+  [CommonFilters.User]: (label: string) => label,
+  [CommonFilters.Photo]: 'With Photo',
+  [CommonFilters.Custom]: 'Custom',
+  [CommonFilters.None]: 'None',
+};
 
-export const commonFilters = {
-    [CommonFilters.Premium]: () => ({
-        featured: {
-            _eq: true
-        }
-    }),
-    [CommonFilters.ViewedByMe]: () => ({
-        viewed_by: {
-            directus_users_id: {
-                _eq: userStore.getState().user.id
-            }
-        }
-    }),
-    [CommonFilters.SavedByMe]: () => ({
-        saved_by: {
-            directus_users_id: {
-                _eq: userStore.getState().user.id
-            }
-        }
-    }),
-    [CommonFilters.GroupId]: (groupId: string) => ({
-        location: {
-            id: {
-                _eq: groupId
-            }
-        }
-    }),
-    [CommonFilters.Buy]: () => ({
-        deal_type: {
-            _eq: "buy"
-        }
-    }),
-    [CommonFilters.Sale]: () => ({
-        deal_type: {
-            _eq: "sale"
-        }
-    }),
-    [CommonFilters.GiveOnRent]: () => ({
-        deal_type: {
-            _eq: "give on rent"
-        }
-    }),
-    [CommonFilters.TakeOnRent]: () => ({
-        deal_type: {
-            _eq: "take on rent"
-        }
-    }),
-    [CommonFilters.User]: (userId: string) => ({
-        user_created: {
-            id: {
-                _eq: userId
-            }
-        }
-    }),
-    [CommonFilters.Photo]: () => ({
-        _or: [
-            {
-                photo_1: {
-                    _neq: null
-                }
-            },
-            {
-                photo_2: {
-                    _neq: null
-                }
-            },
-            {
-                photo_3: {
-                    _neq: null
-                }
-            }
-        ]
-    }),
-    [CommonFilters.Custom]: (filters: Record<string, any>[]) => {
-        return {
-            _and: filters
-        }
+export const commonFilters: {
+  [k in CommonFilters]: (
+    param?: string | Record<string, any>[],
+  ) => Query<any, any>['filter'];
+} = {
+  [CommonFilters.Premium]: () => ({
+    featured: {
+      _eq: true,
     },
-    [CommonFilters.None]: () => ({})
+  }),
+  [CommonFilters.ViewedByMe]: () => ({
+    viewed_by: {
+      directus_users_id: {
+        _eq: userStore.getState().user.id,
+      },
+    },
+  }),
+  [CommonFilters.SavedByMe]: () => ({
+    saved_by: {
+      directus_users_id: {
+        _eq: userStore.getState().user.id,
+      },
+    },
+  }),
+  [CommonFilters.GroupId]: (groupId) => ({
+    location: {
+      id: {
+        _eq: groupId as string,
+      },
+    },
+  }),
+  [CommonFilters.Buy]: () => ({
+    deal_type: {
+      _eq: 'buy',
+    },
+  }),
+  [CommonFilters.Sale]: () => ({
+    deal_type: {
+      _eq: 'sale',
+    },
+  }),
+  [CommonFilters.GiveOnRent]: () => ({
+    deal_type: {
+      _eq: 'give on rent',
+    },
+  }),
+  [CommonFilters.TakeOnRent]: () => ({
+    deal_type: {
+      _eq: 'take on rent',
+    },
+  }),
+  [CommonFilters.User]: (userId) => ({
+    user_created: {
+      id: {
+        _eq: userId as string,
+      },
+    },
+  }),
+  [CommonFilters.Photo]: () => ({
+    _or: [
+      {
+        photo_1: {
+          _neq: null,
+        },
+      },
+      {
+        photo_2: {
+          _neq: null,
+        },
+      },
+      {
+        photo_3: {
+          _neq: null,
+        },
+      },
+    ],
+  }),
+  [CommonFilters.Custom]: (filters) => {
+    return {
+      _and: filters as Record<string, any>[],
+    };
+  },
+  [CommonFilters.None]: () => ({}),
 };
 
 export const smallListingBody = {
-    fields: smallListingsFields,
-    renderMethod: SmallListingCard
-}
+  fields: smallListingsFields,
+  renderMethod: SmallListingCard,
+};
 
 export const bodies = {
-    extraSmall: {
-        fields: extraSmallListingsFields,
-        renderMethod: ExtraSmallListingCard
-    },
-    small: {
-        fields: smallListingsFields,
-        renderMethod: SmallListingCard
-    },
-    medium: {
-        fields: mediumListingsFields,
-        renderMethod: MediumListingCard
-    },
-    photo: {
-        fields: photoListingsFields,
-        renderMethod: PhotoListingCard
-    }
-}
+  extraSmall: {
+    fields: extraSmallListingsFields,
+    renderMethod: ExtraSmallListingCard,
+  },
+  small: {
+    fields: smallListingsFields,
+    renderMethod: SmallListingCard,
+  },
+  medium: {
+    fields: mediumListingsFields,
+    renderMethod: MediumListingCard,
+  },
+  photo: {
+    fields: photoListingsFields,
+    renderMethod: PhotoListingCard,
+  },
+};
 
-type ConfirmedAdvertisementCardProps = AdvertisementCardProps & { isAdvertisement: true }
+type ConfirmedAdvertisementCardProps = AdvertisementCardProps & {
+  isAdvertisement: true;
+};
 
 export const RenderListings = <R extends ListCardProps>({
-    initialData,
-    paramFilters,
-    render,
-    filter,
-    flatListProps, limit = 5,
-    searchText = "",
-    noAds,
-    infinite }: {
-        render: RenderType<R>,
-        initialData: R[],
-        filter?: ReturnType<typeof commonFilters[CommonFilters]>,
-        searchText?: string,
-        noAds?: boolean,
-        flatListProps?: Omit<FlatListProps<ConfirmedAdvertisementCardProps | R>,
-            "data" | "renderItem">,
-        limit?: number,
-        infinite?: boolean,
-        paramFilters?: FilterParam[],
-        viewAllButtonLink?: string
-    }) => {
-    const router = useRouter()
+  initialData,
+  paramFilters,
+  render,
+  filter,
+  flatListProps,
+  limit = 5,
+  searchText = '',
+  noAds,
+  infinite,
+}: {
+  render: RenderType<R>;
+  initialData: R[];
+  filter?: ReturnType<(typeof commonFilters)[CommonFilters]>;
+  searchText?: string;
+  noAds?: boolean;
+  flatListProps?: Omit<
+    FlatListProps<ConfirmedAdvertisementCardProps | R>,
+    'data' | 'renderItem'
+  >;
+  limit?: number;
+  infinite?: boolean;
+  paramFilters?: FilterParam[];
+  viewAllButtonLink?: string;
+}) => {
+  const router = useRouter();
 
-    const isAdvertisementCard = (item: ConfirmedAdvertisementCardProps | R): item is ConfirmedAdvertisementCardProps => {
-        return (item as ConfirmedAdvertisementCardProps).isAdvertisement !== undefined;
-    }
+  const isAdvertisementCard = (
+    item: ConfirmedAdvertisementCardProps | R,
+  ): item is ConfirmedAdvertisementCardProps => {
+    return (
+      (item as ConfirmedAdvertisementCardProps).isAdvertisement !== undefined
+    );
+  };
 
-    const { rest } = directusStore()
-    const isMedium = render.fields === bodies.medium.fields
+  const { rest } = directusStore();
+  const isMedium = render.fields === bodies.medium.fields;
 
-    const { data, hasNextPage, fetchNextPage, isLoading, ...restProps } = useInfiniteQuery<{ items: (R | ConfirmedAdvertisementCardProps)[], page: unknown }>({
-        initialPageParam: 0,
-        queryKey: ["Fetching Listings with fields: ", render.fields, filter, searchText, limit],
-        queryFn: async ({ pageParam }) => {
-            const page = pageParam as number
-            let items: (R | ConfirmedAdvertisementCardProps)[] = []
-            const listings = await rest.request(readItems("listings", {
-                fields: render.fields,
-                limit: limit,
-                offset: limit * page,
-                sort: ["-date_created"],
-                search: searchText,
-                filter: filter ?? {},
-            })).then(res => Promise.all(res.map(async listing => {
-                const metrics = await getListingMetrics(listing.id)
-                return { ...listing, ...metrics }
-            }))) as R[]
+  const { data, hasNextPage, fetchNextPage, isLoading, ...restProps } =
+    useInfiniteQuery<{
+      items: (R | ConfirmedAdvertisementCardProps)[];
+      page: unknown;
+    }>({
+      initialPageParam: 0,
+      queryKey: [
+        'Fetching Listings with fields: ',
+        render.fields,
+        filter,
+        searchText,
+        limit,
+      ],
+      queryFn: async ({ pageParam }) => {
+        const page = pageParam as number;
+        let items: (R | ConfirmedAdvertisementCardProps)[] = [];
+        const listings = (await rest
+          .request(
+            readItems('listings', {
+              fields: render.fields,
+              limit: limit,
+              offset: limit * page,
+              sort: ['-date_created'],
+              search: searchText,
+              filter: filter ?? {},
+            }),
+          )
+          .then((res) =>
+            Promise.all(
+              res.map(async (listing) => {
+                const metrics = await getListingMetrics(listing.id);
+                return { ...listing, ...metrics };
+              }),
+            ),
+          )) as R[];
 
-            items.push(...listings)
+        items.push(...listings);
 
-            if (isMedium && !noAds && listings.length) {
-                const ads = await rest.request(readItems("advertisements", {
-                    fields: ["id", "caption", "title", "photo", "link_to_open", "date_created", "user_created.id", "user_created.avatar", "user_created.first_name", "user_created.last_name", "user_created.email"],
-                    filter: {
-                        isActive: {
-                            _eq: true
-                        }
-                    },
-                    sort: ["-date_created"],
-                    limit: Math.ceil(limit / 5),
-                    offset: Math.ceil(limit / 5) * page
-                })).then(res => res.map(r => ({ ...r, isAdvertisement: true }))) as ConfirmedAdvertisementCardProps[]
-                items = mergeArraysRandomly(items, ads)
-            }
-            return {
-                items: items,
-                page: pageParam
-            }
-        },
-        getNextPageParam: (lastPage, allPages, lastPageParam) => {
-            if (lastPage.items.length < limit) {
-                return null
-            }
-            return Number(lastPageParam) + 1
-        },
-        enabled: true
-    })
+        if (isMedium && !noAds && listings.length) {
+          const ads = (await rest
+            .request(
+              readItems('advertisements', {
+                fields: [
+                  'id',
+                  'caption',
+                  'title',
+                  'photo',
+                  'link_to_open',
+                  'date_created',
+                  'user_created.id',
+                  'user_created.avatar',
+                  'user_created.first_name',
+                  'user_created.last_name',
+                  'user_created.email',
+                ],
+                filter: {
+                  isActive: {
+                    _eq: true,
+                  },
+                },
+                sort: ['-date_created'],
+                limit: Math.ceil(limit / 5),
+                offset: Math.ceil(limit / 5) * page,
+              }),
+            )
+            .then((res) =>
+              res.map((r) => ({ ...r, isAdvertisement: true })),
+            )) as ConfirmedAdvertisementCardProps[];
+          items = mergeArraysRandomly(items, ads);
+        }
+        return {
+          items: items,
+          page: pageParam,
+        };
+      },
+      getNextPageParam: (lastPage, allPages, lastPageParam) => {
+        if (lastPage.items.length < limit) {
+          return null;
+        }
+        return Number(lastPageParam) + 1;
+      },
+      enabled: true,
+    });
 
-    const items = data?.pages.map(page => page.items).flat() ?? []
+  const items = data?.pages.map((page) => page.items).flat() ?? [];
 
-    const finalData = useMemo(() => {
-        return uniqBy([...items, ...initialData], "id")
-    }, [infinite, items, initialData])
+  const finalData = useMemo(() => {
+    return uniqBy([...items, ...initialData], 'id');
+  }, [infinite, items, initialData]);
 
-    const onEndReached = () => {
-        hasNextPage && fetchNextPage()
-    }
+  const onEndReached = () => {
+    hasNextPage && fetchNextPage();
+  };
 
-    return <FlatList
-        {...flatListProps}
-        data={uniqBy(finalData, "id")}
-        renderItem={({ item }) => {
-            if (isAdvertisementCard(item)) {
-                return <AdvertisementCard {...item} />
-            } else return <render.renderMethod {...item} />
-        }}
-        ItemSeparatorComponent={flatListProps?.ItemSeparatorComponent ?? (() => <View className="w-4 h-4" />)}
-        keyExtractor={(item) => item.id}
-        onEndReached={() => infinite && Platform.OS !== "web" && onEndReached()}
-        ListFooterComponent={
-            infinite ? () => <BottomLoader endReached={!hasNextPage} onEndReached={() => Platform.OS === "web" && onEndReached()} /> :
-                <ViewAllButton horizontal={!!flatListProps?.horizontal} button={(props) => <Button onPress={() => router.push(`/listings?filters=${JSON.stringify(paramFilters)}`)} {...props} />} />}
+  return (
+    <FlatList
+      {...flatListProps}
+      data={uniqBy(finalData, 'id')}
+      renderItem={({ item }) => {
+        if (isAdvertisementCard(item)) {
+          return <AdvertisementCard {...item} />;
+        } else return <render.renderMethod {...item} />;
+      }}
+      ItemSeparatorComponent={
+        flatListProps?.ItemSeparatorComponent ??
+        (() => <View className="w-4 h-4" />)
+      }
+      keyExtractor={(item) => item.id}
+      onEndReached={() => infinite && Platform.OS !== 'web' && onEndReached()}
+      ListFooterComponent={
+        infinite ? (
+          () => (
+            <BottomLoader
+              endReached={!hasNextPage}
+              onEndReached={() => Platform.OS === 'web' && onEndReached()}
+            />
+          )
+        ) : (
+          <ViewAllButton
+            horizontal={!!flatListProps?.horizontal}
+            button={(props) => (
+              <Button
+                onPress={() =>
+                  router.push(
+                    `/listings?filters=${JSON.stringify(paramFilters)}`,
+                  )
+                }
+                {...props}
+              />
+            )}
+          />
+        )
+      }
     />
-}
+  );
+};
 
-export const BottomLoader = ({ endReached, onEndReached }: { endReached: boolean, onEndReached: () => void }) => {
-    const { colors } = useColorScheme()
-    return endReached ? <View className="w-full h-20 flex-col justify-center items-center">
+export const NomoreItemsToShow = () => {
+  return (
+    <View className="w-full h-20 flex-col justify-center items-center">
+      <SeparatorText separatorClassName="bg-destructive" wrapperClassName="p-4">
         <Text className="text-destructive">No more items to show</Text>
-    </View> : <InViewPort onEnter={onEndReached}>
-        <View className="w-full h-20 flex-col justify-center items-center">
-            <ActivityIndicator color={colors.info} />
-            <Text className="text-center text-info">loading please wait ...</Text>
-        </View>
-    </InViewPort>
-}
+      </SeparatorText>
+    </View>
+  );
+};
+
+export const BottomLoader = ({
+  endReached,
+  onEndReached,
+}: {
+  endReached: boolean;
+  onEndReached: () => void;
+}) => {
+  const { colors } = useColorScheme();
+  useEffect(() => {
+    if (!endReached) {
+      onEndReached();
+    }
+  }, [endReached, onEndReached]);
+  return endReached ? (
+    <NomoreItemsToShow />
+  ) : (
+    <View className="w-full h-20 flex-col justify-center items-center">
+      <ActivityIndicator color={colors.info} />
+      <Text className="text-center text-info">loading please wait ...</Text>
+    </View>
+  );
+};
 
 function mergeArraysRandomly<T1, T2>(array1: T1[], array2: T2[]): (T1 | T2)[] {
-    const result: (T1 | T2)[] = [];
-    let i = 0;
-    let j = 0;
+  const result: (T1 | T2)[] = [];
+  let i = 0;
+  let j = 0;
 
-    if (array1.length > 0) {
-        result.push(array1[i]!);
-        i++;
+  if (array1.length > 0) {
+    result.push(array1[i]!);
+    i++;
+  }
+
+  while (i < array1.length && j < array2.length) {
+    if (Math.random() < 0.5) {
+      result.push(array1[i]!);
+      i++;
+    } else {
+      result.push(array2[j]!);
+      j++;
     }
+  }
 
-    while (i < array1.length && j < array2.length) {
-        if (Math.random() < 0.5) {
-            result.push(array1[i]!);
-            i++;
-        } else {
-            result.push(array2[j]!);
-            j++;
-        }
-    }
+  while (i < array1.length) {
+    result.push(array1[i]!);
+    i++;
+  }
 
-    while (i < array1.length) {
-        result.push(array1[i]!);
-        i++;
-    }
+  while (j < array2.length) {
+    result.push(array2[j]!);
+    j++;
+  }
 
-    while (j < array2.length) {
-        result.push(array2[j]!);
-        j++;
-    }
-
-    return result;
+  return result;
 }

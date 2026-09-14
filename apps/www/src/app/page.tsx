@@ -1,240 +1,101 @@
-/** @jsxImportSource react */
+import Image from 'next/image';
 
-import HeroGirl from "@/assets/hero-girl.png"
-import { Phones, Testimonial, TestimonialCarousel } from "@/components/client-components/home"
-import { CompanyStats } from "@/components/company-stats"
-import { HalfWidthDiv } from "@/components/half-width-div"
-import HeroImage from "@/components/hero-image"
-import { AppStoreButton, GooglePlayButton } from "@/components/misc-buttons"
-import { NewsLetter } from "@/components/news-letter"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Button } from "@/components/ui/button"
-import { Text } from "@/components/ui/text"
-import { videoDemoUrl } from "@/lib/constants"
-import { readItems } from "@directus/sdk"
-import { getCompaniesCount, getListingsCount, getLocationsCount, getUsersCount } from "app/lib/misc/queries"
-import directusStore from "app/store/directus"
-import { queryClient } from "app/store/query"
-import Link from "next/link"
-
-export default async function HomePage() {
-    const { rest } = directusStore.getState()
-    const testimonials = await queryClient.fetchQuery<Testimonial[]>({
-        queryKey: ["testimonials"],
-        queryFn: async () => await rest.request(readItems("portfolio", {
-            fields: ["featured_testimonials.feedbacks_id.*", "featured_testimonials.feedbacks_id.user_created.avatar", "featured_testimonials.feedbacks_id.user_created.first_name", "featured_testimonials.feedbacks_id.user_created.last_name", "featured_testimonials.feedbacks_id.user_created.title"],
-        })).then(data => (data as unknown as { featured_testimonials: { feedbacks_id: Testimonial }[] }).featured_testimonials?.map(({ feedbacks_id }) => feedbacks_id))
-    })
-    const listingsCount = await getListingsCount()
-    const usesCount = await getUsersCount()
-    const companiesCount = await getCompaniesCount()
-    const locationsCount = await getLocationsCount()
-
-    return <div className="flex flex-col gap-12 md:gap-40 items-center relative">
-        <HalfWidthDiv
-            className="px-4 md:p-auto flex-col-reverse gap-8"
-            child1={
-                <div className="flex flex-col item-center justify-evenly w-full mx-auto h-full pr-4 gap-12">
-                    <div className="flex flex-col gap-4">
-                        <p className="text-xl md:text-3xl font-bold text-subtext"> Elevate your Real Estate Game </p>
-                        <p className="text-3xl md:text-7xl font-bold"> The <span className="text-primary"> One Stop </span> for All Agents </p>
-                        <p className="text-subtext">In the dynamic world of real estate, efficiency, transparency, and seamless collaboration are paramount. Introducing A2A POINT, a revolutionary portal designed exclusively for real estate agents, redefining the landscape of property transactions and deal management.</p>
-                    </div>
-                    <div className="flex flex-col md:flex-row gap-4 items-center">
-                        <div className="flex flex-col gap-4 w-full md:w-80 [&>*]:rounded-full">
-                            <Button variant={"outline"} size={"lg"} className="p-0 w-full">
-                                <Link href="/membership" className="w-full h-full flex flex-col justify-center items-center">
-                                    <Text>Browse Plans</Text>
-                                </Link>
-                            </Button>
-                            <Button variant={"outline"} size={"lg"} className="p-0 w-full">
-                                <Link href="/listings" className="w-full h-full flex flex-col justify-center items-center">
-                                    <Text>Browse listings</Text>
-                                </Link>
-                            </Button>
-                        </div>
-                        <div className="flex flex-col gap-4 w-full md:w-80">
-                            <GooglePlayButton size={"lg"}>
-                                <Text>Download on Google Play</Text>
-                            </GooglePlayButton>
-                            <AppStoreButton size={"lg"}>
-                                <Text>Download on App Store</Text>
-                            </AppStoreButton>
-                        </div>
-                    </div>
-                </div>
-            }
-            child2={
-                <div className="w-full relative -z-10">
-                    <HeroImage className="w-full h-full" />
-                    <img src={HeroGirl.src} alt="hero-image" className="w-full h-full object-contain absolute top-0 bottom-0 right-0 left-0" />
-                </div>
-            }
+export default function Home() {
+  return (
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+        <Image
+          className="dark:invert"
+          src="/next.svg"
+          alt="Next.js logo"
+          width={180}
+          height={38}
+          priority
         />
-        <div className="flex flex-col md:flex-row gap-4 md:container p-4 md:p-auto">
-            <div className="md:w-1/3 md:flex justify-center items-center">
-                <p className="text-3xl md:text-5xl font-bold max-w-sm"> Why <span className="text-primary">choose us</span> </p>
-            </div>
-            <div className="md:w-2/3 md:grid grid-cols-2 justify-center items-center flex flex-col gap-4 md:gap-12 md:p-12">
-                {whyChooseUs.map((item, index) => <div key={index} className="flex flex-col justify-center gap-2">
-                    <p className="text-xl text-primary"> {item.title} </p>
-                    <p className="text-subtext"> {item.content} </p>
-                </div>)}
-            </div>
-        </div>
-        <div className="relative">
-            <HalfWidthDiv
-                direction="right"
-                className="p-4 gap-12"
-                child1={
-                    <div className="flex flex-col gap-4 md:gap-12 w-full items-center md:items-end md:pl-12">
-                        <p className="text-3xl md:text-5xl font-extrabold md:text-right">Join the <span className="text-primary">Professional</span> Community</p>
-                        <div className="md:max-w-80 flex flex-col gap-8 ml-auto mr-0 items-end">
-                            <CompanyStats
-                                className="gap-12 md:block hidden"
-                                right
-                                counts={{
-                                    listingsCount,
-                                    usersCount: usesCount,
-                                    companiesCount,
-                                    locationsCount
-                                }}
-                            />
-                            <CompanyStats
-                                className="gap-12 block md:hidden w-full"
-                                counts={{
-                                    listingsCount,
-                                    usersCount: usesCount,
-                                    companiesCount,
-                                    locationsCount
-                                }}
-                            />
-                            <p className="md:text-right">At A2A Point, we offer exceptional properties that exceed your expectations. Join us and explore a world of possibilities!</p>
-                        </div>
-                    </div>
-                }
-                child2={
-                    <div className="md:h-[calc((50vw*9/16)+250px)]">
-                        <video controls className="w-full" src={videoDemoUrl} />
-                        <div className="hidden md:block absolute left-0 right-0">
-                            <div className="absolute h-[250px] left-0 right-auto w-1/2 bg-card"></div>
-                            <div className="container">
-                                <div className="w-1/2 h-[250px] relative z-10 flex flex-col justify-evenly py-4 gap-4">
-                                    <p className="text-3xl md:text-5xl font-bold"> We are <span className="text-primary">bigger</span> than you think </p>
-                                    <p className="">At A2A Point, our expertise and dedication far exceed expectations. We thrive on innovation and quality.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
+        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
+          <li className="mb-2">
+            Get started by editing
+            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
+              src/app/page.tsx
+            </code>
+            .
+          </li>
+          <li>Save and see your changes instantly.</li>
+        </ol>
+
+        <div className="flex gap-4 items-center flex-col sm:flex-row">
+          <a
+            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
+            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              className="dark:invert"
+              src="/vercel.svg"
+              alt="Vercel logomark"
+              width={20}
+              height={20}
             />
+            Deploy now
+          </a>
+          <a
+            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
+            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Read our docs
+          </a>
         </div>
-        <div className="container flex flex-col-reverse md:flex-row gap-8 p-4">
-            <div className="md:w-1/2 flex flex-col gap-4 md:gap-12 justify-center flex-1">
-                <p className="text-3xl md:text-5xl font-bold">Sign up and access our app <span className="text-primary">It&apos;s free to start</span></p>
-                <div className="flex flex-col gap-6">
-                    {steps.map((step, index) => <div className="flex flex-col gap-2" key={index}>
-                        <p className="text-primary text-xl"> {step.title} </p>
-                        <p className="text-subtext max-w-sm"> {step.content} </p>
-                    </div>)}
-                </div>
-            </div>
-            <div className="md:w-1/2 flex flex-col justify-center items-center flex-1">
-                <Phones />
-            </div>
-        </div>
-        <div className="container flex flex-col md:flex-row p-4 gap-12 md:gap-0">
-            <div className="md:w-1/2">
-                <div className="flex flex-col gap-4 h-full max-w-sm">
-                    <p className="text-3xl md:text-5xl font-bold text-primary"> Testimonials </p>
-                    <p className="">We love hearing from our agents</p>
-                    <p className="text-subtext">See what our agents are saying about their experience with the platform to get a better understanding.</p>
-                </div>
-            </div>
-            <div className="md:w-1/2">
-                <TestimonialCarousel testimonials={testimonials} />
-            </div>
-        </div>
-        <div className="container flex flex-col md:flex-row p-4">
-            <div className="md:w-1/2 flex flex-col gap-4 h-full">
-                <p className="text-3xl md:text-5xl font-bold text-primary"> FAQ </p>
-                <p className="text-subtext">Everything you need to know about A2APoint</p>
-            </div>
-            <div className="md:w-1/2">
-                <Accordion type="multiple">
-                    {accordionItems.map((item, index) => <AccordionItem key={index} value={index.toString()}>
-                        <AccordionTrigger>
-                            <Text>
-                                {item.title}
-                            </Text>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                            <Text>
-                                {item.content}
-                            </Text>
-                        </AccordionContent>
-                    </AccordionItem>)}
-                </Accordion>
-            </div>
-        </div>
-        <div className="p-4">
-            <NewsLetter />
-        </div>
+      </main>
+      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/file.svg"
+            alt="File icon"
+            width={16}
+            height={16}
+          />
+          Learn
+        </a>
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/window.svg"
+            alt="Window icon"
+            width={16}
+            height={16}
+          />
+          Examples
+        </a>
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/globe.svg"
+            alt="Globe icon"
+            width={16}
+            height={16}
+          />
+          Go to nextjs.org →
+        </a>
+      </footer>
     </div>
+  );
 }
-
-
-const whyChooseUs = [
-    {
-        title: "Efficiency",
-        content: "A2A POINT is designed to streamline the property transaction process, making it more efficient and hassle-free for agents."
-    },
-    {
-        title: "Transparency",
-        content: "Our platform ensures complete transparency in all transactions, making it easier for agents to manage deals and clients."
-    },
-    {
-        title: "Collaboration",
-        content: "A2A POINT enables seamless collaboration between agents, clients, and other stakeholders, ensuring a smooth and efficient deal management process."
-    },
-    {
-        title: "Security",
-        content: "We take security seriously and have implemented robust measures to protect your data and ensure a safe and secure experience for all users."
-    }
-]
-
-const steps = [
-    {
-        title: "Create a Lead or Inquiry",
-        content: "At A2A Point, initiate a lead or inquiry effortlessly. Our platform ensures a smooth start, connecting you with potential clients seamlessly."
-    }, {
-        title: "Manage Leads and Inquiries",
-        content: "Efficiently manage all your leads and inquiries with our comprehensive tools. Stay organized and never miss a follow-up or update."
-    }, {
-        title: "Collaborate with Clients and Stakeholders",
-        content: "Engage and collaborate with clients and stakeholders effectively. Our platform facilitates clear communication and productive interactions."
-    }, {
-        title: "Close the Deal",
-        content: "Seal the deal with confidence using our robust closing tools. Ensure every transaction is smooth, secure, and successful."
-    }
-]
-
-const accordionItems = [
-    {
-        title: "What is A2A POINT?",
-        content: "A2A POINT is a revolutionary portal designed exclusively for real estate agents, redefining the landscape of property transactions and deal management."
-    },
-    {
-        title: "How does A2A POINT work?",
-        content: "A2A POINT streamlines the property transaction process, making it more efficient and hassle-free for agents. It ensures complete transparency in all transactions and enables seamless collaboration between agents, clients, and other stakeholders."
-    },
-    {
-        title: "Is A2A POINT secure?",
-        content: "We take security seriously and have implemented robust measures to protect your data and ensure a safe and secure experience for all users."
-    },
-    {
-        title: "How can I get started with A2A POINT?",
-        content: "Getting started with A2A POINT is easy. Simply sign up and access our app for free to start managing your deals and clients more efficiently."
-
-    }
-]
